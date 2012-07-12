@@ -1,0 +1,28 @@
+This simple mod uses nodeboxes to supply a complete set of 3D flanged 
+pipes.  There are enough nodes defined here to bend from any axis 
+(X/Y/Z) to any other, or to join multiple pipes together from any or all 
+axes.  There are 10 unique nodes defined, times two versions for each 
+(for a total of 20).  Getting them into the right orientation is handled 
+with the usual facedir parameter.
+
+One version bears one or more dark windows on each pipe, suggesting 
+they're empty, while the other version bears green-tinted windows, as if 
+full (the two colors should also be easy to select if you want to change 
+them in a paint program).
+
+This mod requires a recent git pull or build of Minetest dated June 17, 
+2012 or later.
+
+There are no crafting recipes, however, you can use the usual /give 
+commands with names such as pipes:vertical, pipes:crossing_xy, and so 
+on, if you want to add them to your world for decorative purposes.  See 
+init.lua for more details.
+
+The overall format of the code is borrowed from the game and written by 
+me.  16x16 textures by me also.
+
+This mod is intended to be used as a basis or at least as sort of a 
+model for something else to build on (perhaps a nicer-looking oil mod?), 
+and does not provide any of the code necessary to cause the pipes to 
+rotate around as they're placed.  I may add such code later, but not 
+right now.
