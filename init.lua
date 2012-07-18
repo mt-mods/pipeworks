@@ -1,9 +1,9 @@
--- Pipes mod by VanessaE
+-- pipeworks mod by VanessaE
 -- 2012-06-12
 --
 
 -- Entirely my own code.  This mod merely supplies enough nodes to build 
--- a bunch of pipes in all directions and with all types of junctions.
+-- a bunch of pipeworks in all directions and with all types of junctions.
 --
 -- License: WTFPL
 --
@@ -14,21 +14,21 @@ local DEBUG = 1
 
 local dbg = function(s)
 	if DEBUG == 1 then
-		print('[PIPES] ' .. s)
+		print('[PIPEWORKS] ' .. s)
 	end
 end
 
 -- Nodes (empty)
 
-minetest.register_node("pipes:vertical", {
+minetest.register_node("pipeworks:vertical", {
         description = "Pipe (vertical)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_plain.png",
-			"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png"
 			},
         paramtype = "light",
 --	paramtype2 = "facedir",
@@ -49,15 +49,15 @@ minetest.register_node("pipes:vertical", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:horizontal", {
+minetest.register_node("pipeworks:horizontal", {
         description = "Pipe (horizontal)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_plain.png"
+        tile_images = {	"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_plain.png"
 			},
         paramtype = "light",
 	paramtype2 = "facedir",
@@ -78,15 +78,15 @@ minetest.register_node("pipes:horizontal", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:junction_xy", {
+minetest.register_node("pipeworks:junction_xy", {
         description = "Pipe (junction between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png"
 			},
 
         paramtype = "light",
@@ -110,15 +110,15 @@ minetest.register_node("pipes:junction_xy", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:junction_xz", {
+minetest.register_node("pipeworks:junction_xz", {
         description = "Pipe (junction between X/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png"
+        tile_images = {	"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png"
 			},
 
         paramtype = "light",
@@ -142,15 +142,15 @@ minetest.register_node("pipes:junction_xz", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:bend_xy_down", {
+minetest.register_node("pipeworks:bend_xy_down", {
         description = "Pipe (downward bend between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_plain.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png"
+        tile_images = {	"pipeworks_plain.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png"
 			},
 
         paramtype = "light",
@@ -173,15 +173,15 @@ minetest.register_node("pipes:bend_xy_down", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:bend_xy_up", {
+minetest.register_node("pipeworks:bend_xy_up", {
         description = "Pipe (upward bend between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png"
 			},
 
         paramtype = "light",
@@ -204,15 +204,15 @@ minetest.register_node("pipes:bend_xy_up", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:bend_xz", {
+minetest.register_node("pipeworks:bend_xz", {
         description = "Pipe (bend between X/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png"
+        tile_images = {	"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png"
 			},
 
         paramtype = "light",
@@ -235,15 +235,15 @@ minetest.register_node("pipes:bend_xz", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:crossing_xz", {
+minetest.register_node("pipeworks:crossing_xz", {
         description = "Pipe (4-way crossing between X/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png"
+        tile_images = {	"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png"
 			},
 
         paramtype = "light",
@@ -269,15 +269,15 @@ minetest.register_node("pipes:crossing_xz", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:crossing_xy", {
+minetest.register_node("pipeworks:crossing_xy", {
         description = "Pipe (4-way crossing between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_windowed_empty.png",
-			"pipes_windowed_empty.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_windowed_empty.png",
+			"pipeworks_windowed_empty.png"
 			},
 
         paramtype = "light",
@@ -304,15 +304,15 @@ minetest.register_node("pipes:crossing_xy", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:crossing_xyz", {
+minetest.register_node("pipeworks:crossing_xyz", {
         description = "Pipe (6-way crossing between X/Y/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png"
 			},
 
         paramtype = "light",
@@ -346,15 +346,15 @@ minetest.register_node("pipes:crossing_xyz", {
 
 -- Nodes (full/loaded)
 
-minetest.register_node("pipes:vertical_loaded", {
+minetest.register_node("pipeworks:vertical_loaded", {
         description = "Pipe (vertical)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_plain.png",
-			"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png"
 			},
         paramtype = "light",
 --	paramtype2 = "facedir",
@@ -375,15 +375,15 @@ minetest.register_node("pipes:vertical_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:horizontal_loaded", {
+minetest.register_node("pipeworks:horizontal_loaded", {
         description = "Pipe (horizontal)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_plain.png"
+        tile_images = {	"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_plain.png"
 			},
         paramtype = "light",
 	paramtype2 = "facedir",
@@ -404,15 +404,15 @@ minetest.register_node("pipes:horizontal_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:junction_xy_loaded", {
+minetest.register_node("pipeworks:junction_xy_loaded", {
         description = "Pipe (junction between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png"
 			},
 
         paramtype = "light",
@@ -436,15 +436,15 @@ minetest.register_node("pipes:junction_xy_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:junction_xz_loaded", {
+minetest.register_node("pipeworks:junction_xz_loaded", {
         description = "Pipe (junction between X/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png"
+        tile_images = {	"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png"
 			},
 
         paramtype = "light",
@@ -468,15 +468,15 @@ minetest.register_node("pipes:junction_xz_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:bend_xy_down_loaded", {
+minetest.register_node("pipeworks:bend_xy_down_loaded", {
         description = "Pipe (downward bend between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_plain.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png"
+        tile_images = {	"pipeworks_plain.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png"
 			},
 
         paramtype = "light",
@@ -499,15 +499,15 @@ minetest.register_node("pipes:bend_xy_down_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:bend_xy_up_loaded", {
+minetest.register_node("pipeworks:bend_xy_up_loaded", {
         description = "Pipe (upward bend between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png"
 			},
 
         paramtype = "light",
@@ -530,15 +530,15 @@ minetest.register_node("pipes:bend_xy_up_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:bend_xz_loaded", {
+minetest.register_node("pipeworks:bend_xz_loaded", {
         description = "Pipe (bend between X/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png",
-			"pipes_pipe_end.png",
-			"pipes_plain.png"
+        tile_images = {	"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_plain.png"
 			},
 
         paramtype = "light",
@@ -561,15 +561,15 @@ minetest.register_node("pipes:bend_xz_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:crossing_xz_loaded", {
+minetest.register_node("pipeworks:crossing_xz_loaded", {
         description = "Pipe (4-way crossing between X/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png"
+        tile_images = {	"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png"
 			},
 
         paramtype = "light",
@@ -595,15 +595,15 @@ minetest.register_node("pipes:crossing_xz_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:crossing_xy_loaded", {
+minetest.register_node("pipeworks:crossing_xy_loaded", {
         description = "Pipe (4-way crossing between X/Y axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_windowed_loaded.png",
-			"pipes_windowed_loaded.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_windowed_loaded.png",
+			"pipeworks_windowed_loaded.png"
 			},
 
         paramtype = "light",
@@ -630,15 +630,15 @@ minetest.register_node("pipes:crossing_xy_loaded", {
 	walkable = true,
 })
 
-minetest.register_node("pipes:crossing_xyz_loaded", {
+minetest.register_node("pipeworks:crossing_xyz_loaded", {
         description = "Pipe (6-way crossing between X/Y/Z axes)",
         drawtype = "nodebox",
-        tile_images = {	"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png",
-			"pipes_pipe_end.png"
+        tile_images = {	"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png",
+			"pipeworks_pipe_end.png"
 			},
 
         paramtype = "light",
@@ -669,4 +669,4 @@ minetest.register_node("pipes:crossing_xyz_loaded", {
 	walkable = true,
 })
 
-print("[Pipes] Loaded!")
+print("[Pipeworks] Loaded!")
