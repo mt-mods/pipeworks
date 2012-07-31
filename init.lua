@@ -8,7 +8,7 @@
 -- License: WTFPL
 --
 
-local DEBUG = 1
+local DEBUG = 0
 
 -- Local Functions
 
