@@ -1,9 +1,7 @@
--- pipeworks mod by VanessaE
--- 2012-06-12
+-- Pipeworks mod by Vanessa Ezekowitz - 2012-08-05
 --
-
 -- Entirely my own code.  This mod merely supplies enough nodes to build 
--- a bunch of pipeworks in all directions and with all types of junctions.
+-- a bunch of pipes in all directions and with all types of junctions
 --
 -- License: WTFPL
 --
@@ -18,655 +16,227 @@ local dbg = function(s)
 	end
 end
 
--- Nodes (empty)
+local nodenames = {
+	"vertical",
+	"horizontal",
+	"junction_xy",
+	"junction_xz",
+	"bend_xy_down",
+	"bend_xy_up",
+	"bend_xz",
+	"crossing_xz",
+	"crossing_xy",
+	"crossing_xyz"
+}
 
-minetest.register_node("pipeworks:vertical", {
-        description = "Pipe (vertical)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png"
-			},
-        paramtype = "light",
---	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.5, -0.15, 0.15,  0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },	
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+local descriptions = {
+	"vertical",
+	"horizontal",
+	"junction between X and Y axes",
+	"junction between X and Z axes",
+	"downward bend between X and Y axes",
+	"upward bend between X and Y axes",
+	"bend between X/Z axes",
+	"4-way crossing between X and Z axes",
+	"4-way crossing between X/Z and Y axes",
+	"6-way crossing"
+}
 
-minetest.register_node("pipeworks:horizontal", {
-        description = "Pipe (horizontal)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_plain.png"
-			},
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.15, -0.15, 0.5, 0.15, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+local nodeimages = {
+	{"pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png"},
 
-minetest.register_node("pipeworks:junction_xy", {
-        description = "Pipe (junction between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png"
-			},
+	{"pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
 
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.5, -0.15, 0.5, 0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {			
-			{ -0.15, -0.5 , -0.15,  0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 ,  0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15,  0.15,  0.5 , 0.15 },	
-			{  0.1 , -0.1 , -0.1 ,  0.45,  0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 ,  0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+	{"pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png"},
 
-minetest.register_node("pipeworks:junction_xz", {
-        description = "Pipe (junction between X/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png"
-			},
+	{"pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png"},
 
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.15, -0.15, 0.5, 0.15, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.15,  0.45,  0.15, 0.15, 0.5  },
-			{ -0.1 , -0.1 ,  0.1 ,  0.1 , 0.1 , 0.45 },
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+	{"pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png"},
 
-minetest.register_node("pipeworks:bend_xy_down", {
-        description = "Pipe (downward bend between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_plain.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png"
-			},
+	{"pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png"},
 
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.5, -0.15, 0.5, 0.15, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.5 , -0.15,  0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 ,  0.1 ,  0.1 , 0.1  },
-			{ -0.1 , -0.1 , -0.1 ,  0.45,  0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 ,  0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+	{"pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png"},
 
-minetest.register_node("pipeworks:bend_xy_up", {
-        description = "Pipe (upward bend between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png"
-			},
+	{"pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png"},
 
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.15, -0.15, 0.5, 0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, 0.45 , -0.15, 0.15,  0.5, 0.15 },
-			{ -0.1 , -0.1 , -0.1 , 0.1 , 0.45, 0.1  },
-			{ -0.1 , -0.1 , -0.1 , 0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15, 0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+	{"pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png"},
 
-minetest.register_node("pipeworks:bend_xz", {
-        description = "Pipe (bend between X/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png"
-			},
+	{"pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png"}
+}
 
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.15, -0.15, 0.5, 0.15, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.15,  0.45,  0.15, 0.15, 0.5  },
-			{ -0.1 , -0.1 ,  0.1 ,  0.1 , 0.1 , 0.45 },
-			{ -0.1 , -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+local selectionboxes = {
+	{ -0.15, -0.5, -0.15, 0.15,  0.5, 0.15 },	-- vertical
+	{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.15 },	-- horizontal
+	{ -0.15, -0.5, -0.15, 0.5, 0.5, 0.15 },		-- vertical with X/Z junction
+	{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.5 },		-- horizontal with X/Z junction
+	{ -0.15, -0.5, -0.15, 0.5, 0.15, 0.15 },	-- bend down from X/Z to Y axis
+	{ -0.15, -0.15, -0.15, 0.5, 0.5, 0.15 },	-- bend up from X/Z to Y axis
+	{ -0.15, -0.15, -0.15, 0.5, 0.15, 0.5 },	-- bend between X and Z axes
+	{ -0.5, -0.15, -0.5, 0.5, 0.15, 0.5 },		-- 4-way crossing between X and Z axes
+	{ -0.5, -0.5, -0.15, 0.5, 0.5, 0.15 },		-- 4-way crossing between X/Z and Y axes
+	{ -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },		-- 6-way crossing (all 3 axes)
+}
 
-minetest.register_node("pipeworks:crossing_xz", {
-        description = "Pipe (4-way crossing between X/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png"
-			},
+local nodeboxes = {
+	{{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },	-- vertical
+	 { -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
+	 { -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 }},
 
-        paramtype = "light",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.15, -0.5, 0.5, 0.15, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
+	{{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },	-- horizontal
+	 { -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 }},
 
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
+	{{ -0.15, -0.5 , -0.15,  0.15, -0.45, 0.15 },	-- vertical with X/Z junction
+	 { -0.1 , -0.45, -0.1 ,  0.1 ,  0.45, 0.1  },
+	 { -0.15,  0.45, -0.15,  0.15,  0.5 , 0.15 },	
+	 {  0.1 , -0.1 , -0.1 ,  0.45,  0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 ,  0.15, 0.15 }},
 
-			{ -0.15, -0.15, -0.5 ,  0.15, 0.15, -0.45 },
-			{ -0.1 , -0.1 , -0.45,  0.1 , 0.1 ,  0.45 },
-			{ -0.15, -0.15,  0.45,  0.15, 0.15,  0.5  },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+	{{ -0.15, -0.15,  0.45,  0.15, 0.15, 0.5  },	-- horizontal with X/Z junction
+	 { -0.1 , -0.1 ,  0.1 ,  0.1 , 0.1 , 0.45 },
+	 { -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
+	 { -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 }},
 
-minetest.register_node("pipeworks:crossing_xy", {
-        description = "Pipe (4-way crossing between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_windowed_empty.png",
-			"pipeworks_windowed_empty.png"
-			},
+	{{ -0.15, -0.5 , -0.15,  0.15, -0.45, 0.15 },	-- bend down from X/Z to Y axis
+	 { -0.1 , -0.45, -0.1 ,  0.1 ,  0.1 , 0.1  },
+	 { -0.1 , -0.1 , -0.1 ,  0.45,  0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 ,  0.15, 0.15 }},
 
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.5, -0.15, 0.5, 0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },
-	
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },	
+	{{ -0.15, 0.45 , -0.15, 0.15,  0.5, 0.15 },	-- bend up from X/Z to Y axis
+	 { -0.1 , -0.1 , -0.1 , 0.1 , 0.45, 0.1  },
+	 { -0.1 , -0.1 , -0.1 , 0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15, 0.5 , 0.15, 0.15 }},
 
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+	{{ -0.15, -0.15,  0.45,  0.15, 0.15, 0.5  },	-- bend between X and Z axes
+	 { -0.1 , -0.1 ,  0.1 ,  0.1 , 0.1 , 0.45 },
+	 { -0.1 , -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 }},
 
-minetest.register_node("pipeworks:crossing_xyz", {
-        description = "Pipe (6-way crossing between X/Y/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png"
-			},
+	{{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },	-- 4-way crossing between X and Z axes
+	 { -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
+	 { -0.15, -0.15, -0.5 ,  0.15, 0.15, -0.45 },
+	 { -0.1 , -0.1 , -0.45,  0.1 , 0.1 ,  0.45 },
+	 { -0.15, -0.15,  0.45,  0.15, 0.15,  0.5  }},
 
-        paramtype = "light",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
+	{{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },	-- 4-way crossing between X/Z and Y axes
+	 { -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
+	 { -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },
+	 { -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
+	 { -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 }},
 
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
+	{{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },	-- 6-way crossing (all 3 axes)
+	 { -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
+	 {  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
+	 { -0.15, -0.15, -0.5 ,  0.15, 0.15, -0.45 },
+	 { -0.1 , -0.1 , -0.45,  0.1 , 0.1 ,  0.45 },
+	 { -0.15, -0.15,  0.45,  0.15, 0.15,  0.5  },
+	 { -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
+	 { -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
+	 { -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 }},
+}
 
-			{ -0.15, -0.15, -0.5 ,  0.15, 0.15, -0.45 },
-			{ -0.1 , -0.1 , -0.45,  0.1 , 0.1 ,  0.45 },
-			{ -0.15, -0.15,  0.45,  0.15, 0.15,  0.5  },
+function fix_image_names(node, replacement)
+	outtable={}
+	for i in ipairs(nodeimages[node]) do
+	print(nodeimages[node][i])
+		outtable[i]=string.gsub(nodeimages[node][i], "_XXXXX", replacement)
+	print(outtable[i])
+	end
 
-			{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },	
+	return outtable
+end
 
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
+-- Now define the actual nodes
 
+for node in ipairs(nodenames) do
+	minetest.register_node("pipeworks:"..nodenames[node], {
+		description = "Empty Pipe ("..descriptions[node]..")",
+		drawtype = "nodebox",
+		tiles = fix_image_names(node, "_empty"),
+		paramtype = "light",
+		paramtype2 = "facedir",
+		selection_box = selectionboxes[node],
+		node_box = {
+			type = "fixed",
+			fixed = nodeboxes[node]
+		},
+		groups = {snappy=3, pipe=1},
+		sounds = default.node_sound_wood_defaults(),
+		walkable = true,
+		stack_max = 99,
+		drop = "pipeworks:horizontal"
+	})
 
--- Nodes (full/loaded)
+	minetest.register_node("pipeworks:"..nodenames[node].."_loaded", {
+		description = "Loaded Pipe ("..descriptions[node]..")",
+		drawtype = "nodebox",
+		tiles = fix_image_names(node, "_loaded"),
+		paramtype = "light",
+		paramtype2 = "facedir",
+		selection_box = selectionboxes[node],
+		node_box = {
+			type = "fixed",
+			fixed = nodeboxes[node]
+		},
+		groups = {snappy=3, pipe=1},
+		sounds = default.node_sound_wood_defaults(),
+		walkable = true,
+		stack_max = 99,
+		drop = "pipeworks:horizontal"
+	})
+end
 
-minetest.register_node("pipeworks:vertical_loaded", {
-        description = "Pipe (vertical)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png"
-			},
-        paramtype = "light",
---	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.5, -0.15, 0.15,  0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },	
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:horizontal_loaded", {
-        description = "Pipe (horizontal)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_plain.png"
-			},
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.15, -0.15, 0.5, 0.15, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:junction_xy_loaded", {
-        description = "Pipe (junction between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png"
-			},
-
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.5, -0.15, 0.5, 0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {			
-			{ -0.15, -0.5 , -0.15,  0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 ,  0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15,  0.15,  0.5 , 0.15 },	
-			{  0.1 , -0.1 , -0.1 ,  0.45,  0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 ,  0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:junction_xz_loaded", {
-        description = "Pipe (junction between X/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png"
-			},
-
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.15, -0.15, 0.5, 0.15, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.15,  0.45,  0.15, 0.15, 0.5  },
-			{ -0.1 , -0.1 ,  0.1 ,  0.1 , 0.1 , 0.45 },
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:bend_xy_down_loaded", {
-        description = "Pipe (downward bend between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_plain.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png"
-			},
-
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.5, -0.15, 0.5, 0.15, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.5 , -0.15,  0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 ,  0.1 ,  0.1 , 0.1  },
-			{ -0.1 , -0.1 , -0.1 ,  0.45,  0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 ,  0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:bend_xy_up_loaded", {
-        description = "Pipe (upward bend between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png"
-			},
-
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.15, -0.15, 0.5, 0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, 0.45 , -0.15, 0.15,  0.5, 0.15 },
-			{ -0.1 , -0.1 , -0.1 , 0.1 , 0.45, 0.1  },
-			{ -0.1 , -0.1 , -0.1 , 0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15, 0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:bend_xz_loaded", {
-        description = "Pipe (bend between X/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_plain.png"
-			},
-
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.15, -0.15, -0.15, 0.5, 0.15, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.15,  0.45,  0.15, 0.15, 0.5  },
-			{ -0.1 , -0.1 ,  0.1 ,  0.1 , 0.1 , 0.45 },
-			{ -0.1 , -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:crossing_xz_loaded", {
-        description = "Pipe (4-way crossing between X/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png"
-			},
-
-        paramtype = "light",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.15, -0.5, 0.5, 0.15, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-
-			{ -0.15, -0.15, -0.5 ,  0.15, 0.15, -0.45 },
-			{ -0.1 , -0.1 , -0.45,  0.1 , 0.1 ,  0.45 },
-			{ -0.15, -0.15,  0.45,  0.15, 0.15,  0.5  },
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:crossing_xy_loaded", {
-        description = "Pipe (4-way crossing between X/Y axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_windowed_loaded.png",
-			"pipeworks_windowed_loaded.png"
-			},
-
-        paramtype = "light",
-	paramtype2 = "facedir",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.5, -0.15, 0.5, 0.5, 0.15 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-			{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },
-	
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },	
-
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-minetest.register_node("pipeworks:crossing_xyz_loaded", {
-        description = "Pipe (6-way crossing between X/Y/Z axes)",
-        drawtype = "nodebox",
-        tile_images = {	"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png",
-			"pipeworks_pipe_end.png"
-			},
-
-        paramtype = "light",
-        selection_box = {
-                type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },
-        },
-	node_box = {
-		type = "fixed",
-                fixed = {
-
-			{ -0.5 , -0.15, -0.15, -0.45, 0.15, 0.15 },
-			{ -0.45, -0.1 , -0.1 ,  0.45, 0.1 , 0.1  },
-			{  0.45, -0.15, -0.15,  0.5 , 0.15, 0.15 },
-
-			{ -0.15, -0.15, -0.5 ,  0.15, 0.15, -0.45 },
-			{ -0.1 , -0.1 , -0.45,  0.1 , 0.1 ,  0.45 },
-			{ -0.15, -0.15,  0.45,  0.15, 0.15,  0.5  },
-
-			{ -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
-			{ -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
-			{ -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 },	
-
-		}
-	},
-        groups = {snappy=3},
-        sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-})
-
-print("[Pipeworks] Loaded!")
+print("Pipeworks loaded!")
