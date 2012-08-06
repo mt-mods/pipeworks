@@ -26,7 +26,14 @@ local nodenames = {
 	"bend_xz",
 	"crossing_xz",
 	"crossing_xy",
-	"crossing_xyz"
+	"crossing_xyz",
+	"cap_center",
+	"cap_neg_x",
+	"cap_pos_x",
+	"cap_neg_y",
+	"cap_pos_y",
+	"cap_neg_z",
+	"cap_pos_z"
 }
 
 local descriptions = {
@@ -39,7 +46,14 @@ local descriptions = {
 	"bend between X/Z axes",
 	"4-way crossing between X and Z axes",
 	"4-way crossing between X/Z and Y axes",
-	"6-way crossing"
+	"6-way crossing",
+	"capped, center only",
+	"capped, negative X half only",
+	"capped, positive X half only",
+	"capped, negative Y half only",
+	"capped, positive Y half only",
+	"capped, negative Z half only",
+	"capped, positive Z half only"
 }
 
 local nodeimages = {
@@ -111,7 +125,56 @@ local nodeimages = {
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_pipe_end.png",
-	 "pipeworks_pipe_end.png"}
+	 "pipeworks_pipe_end.png"},
+
+	{"pipeworks_plain.png",		-- center segment
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
+
+	{"pipeworks_plain.png",		-- capped, anchored at -X
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
+
+	{"pipeworks_plain.png",		-- capped, anchored at +X
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
+
+	{"pipeworks_plain.png",	-- capped, anchored at -Y
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
+
+	{"pipeworks_pipe_end.png",	-- capped, anchored at +Y
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
+
+	{"pipeworks_plain.png",	-- capped, anchored at -Z
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png"},
+
+	{"pipeworks_plain.png",	-- capped, anchored at +Z
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_plain.png"},
 }
 
 local selectionboxes = {
@@ -125,6 +188,13 @@ local selectionboxes = {
 	{ -0.5, -0.15, -0.5, 0.5, 0.15, 0.5 },		-- 4-way crossing between X and Z axes
 	{ -0.5, -0.5, -0.15, 0.5, 0.5, 0.15 },		-- 4-way crossing between X/Z and Y axes
 	{ -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },		-- 6-way crossing (all 3 axes)
+	{ -0.3, -0.15, -0.15, 0.3, 0.15, 0.15 },	-- capped, center only
+	{ -0.5, -0.15, -0.15, 0, 0.15, 0.15 },		-- capped, negative X half only
+	{ 0, -0.15, -0.15, 0.5, 0.15, 0.15 },		-- capped, positive X half only
+	{ -0.15, -0.5, -0.15, 0.15, 0, 0.15 },		-- capped, negative Y half only
+	{ -0.15, 0, -0.15, 0.15, 0.5, 0.15 },		-- capped, positive Y half only
+	{ -0.15, -0.15, -0.5, 0.15, 0.15, 0 },		-- capped, negative Z half only
+	{ -0.15, -0.15, 0, 0.15, 0.15, 0.5 },		-- capped, positive Z half only
 }
 
 local nodeboxes = {
@@ -186,14 +256,58 @@ local nodeboxes = {
 	 { -0.15, -0.5 , -0.15, 0.15, -0.45, 0.15 },
 	 { -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
 	 { -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 }},
+
+	{{ -0.3 , -0.15, -0.15, -0.25, 0.15, 0.15 },	-- centered
+	 { -0.25, -0.1 , -0.1 ,  0.25, 0.1 , 0.1  },
+	 {  0.25, -0.15, -0.15,  0.3 , 0.15, 0.15 }},
+
+	{{ -0.5,  -0.15, -0.15, -0.45, 0.15, 0.15 },	-- anchored at -X
+	 { -0.45, -0.1,  -0.1,  -0.2,  0.1,  0.1  },
+	 { -0.2,  -0.15, -0.15, -0.15, 0.15, 0.15 },
+	 { -0.15, -0.12, -0.12, -0.1,  0.12, 0.12 },
+	 { -0.1,  -0.08, -0.08, -0.05, 0.08, 0.08 },
+	 { -0.05, -0.04, -0.04,  0,    0.04, 0.04 }},
+
+	{{  0.45, -0.15, -0.15, 0.5,  0.15, 0.15 },	-- anchored at +X
+	 {  0.2,  -0.1,  -0.1,  0.45, 0.1,  0.1  },
+	 {  0.15, -0.15, -0.15, 0.2,  0.15, 0.15 },
+	 {  0.1,  -0.12, -0.12, 0.15, 0.12, 0.12 },
+	 {  0.05, -0.08, -0.08, 0.1,  0.08, 0.08 },
+	 {  0,    -0.04, -0.04, 0.05, 0.04, 0.04 }},
+
+	{{ -0.15,  -0.5, -0.15,  0.15, -0.45, 0.15 },	-- anchored at -Y
+	 { -0.1,  -0.45, -0.1,   0.1,  -0.2,  0.1  },
+	 { -0.15,  -0.2, -0.15,  0.15, -0.15, 0.15 },
+	 { -0.12, -0.15, -0.12,  0.12, -0.1,  0.12 },
+	 { -0.08, -0.1,  -0.08,  0.08, -0.05, 0.08 },
+	 { -0.04, -0.05, -0.04,  0.04,  0,    0.04 }},
+
+	{{ -0.15,  0.45, -0.15, 0.15, 0.5,  0.15 },	-- anchored at +Y
+	 { -0.1,   0.2,  -0.1,  0.1,  0.45, 0.1  },
+	 { -0.15,  0.15, -0.15, 0.15, 0.2,  0.15 },
+	 { -0.12,  0.1,  -0.12, 0.12, 0.15, 0.12 },
+	 { -0.08,  0.05, -0.08, 0.08, 0.1,  0.08 } ,
+	 { -0.04,  0,    -0.04, 0.04, 0.05, 0.04 }},
+
+	{{ -0.15, -0.15, -0.5,  0.15, 0.15, -0.45 },	-- anchored at -Z
+	 { -0.1,  -0.1,  -0.45, 0.1,  0.1,  -0.2  },
+	 { -0.15, -0.15, -0.2,  0.15, 0.15, -0.15 },
+	 { -0.12, -0.12, -0.15, 0.12, 0.12, -0.1  },
+	 { -0.08, -0.08, -0.1,  0.08, 0.08, -0.05 },
+	 { -0.04, -0.04, -0.05, 0.04, 0.04,  0    }},
+
+	{{ -0.15, -0.15,  0.45, 0.15, 0.15, 0.5  },	-- anchored at +Z
+	 { -0.1,  -0.1,   0.2,  0.1,  0.1,  0.45 },
+	 { -0.15, -0.15,  0.15, 0.15, 0.15, 0.2  },
+	 { -0.12, -0.12,  0.1,  0.12, 0.12, 0.15 },
+	 { -0.08, -0.08,  0.05, 0.08, 0.08, 0.1  },
+	 { -0.04, -0.04,  0,    0.04, 0.04, 0.05 }},
 }
 
 function fix_image_names(node, replacement)
 	outtable={}
 	for i in ipairs(nodeimages[node]) do
-	print(nodeimages[node][i])
 		outtable[i]=string.gsub(nodeimages[node][i], "_XXXXX", replacement)
-	print(outtable[i])
 	end
 
 	return outtable
@@ -208,7 +322,10 @@ for node in ipairs(nodenames) do
 		tiles = fix_image_names(node, "_empty"),
 		paramtype = "light",
 		paramtype2 = "facedir",
-		selection_box = selectionboxes[node],
+		selection_box = {
+              		type = "fixed",
+			fixed = selectionboxes[node],
+		},
 		node_box = {
 			type = "fixed",
 			fixed = nodeboxes[node]
@@ -226,7 +343,10 @@ for node in ipairs(nodenames) do
 		tiles = fix_image_names(node, "_loaded"),
 		paramtype = "light",
 		paramtype2 = "facedir",
-		selection_box = selectionboxes[node],
+		selection_box = {
+              		type = "fixed",
+			fixed = selectionboxes[node],
+		},	
 		node_box = {
 			type = "fixed",
 			fixed = nodeboxes[node]
