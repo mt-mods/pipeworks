@@ -27,7 +27,7 @@ local nodenames = {
 	"crossing_xz",
 	"crossing_xy",
 	"crossing_xyz",
-	"cap_center",
+	"pipe",
 	"cap_neg_x",
 	"cap_pos_x",
 	"cap_neg_y",
@@ -47,7 +47,7 @@ local descriptions = {
 	"4-way crossing between X and Z axes",
 	"4-way crossing between X/Z and Y axes",
 	"6-way crossing",
-	"capped, center only",
+	"basic segment",
 	"capped, negative X half only",
 	"capped, positive X half only",
 	"capped, negative Y half only",
@@ -127,74 +127,74 @@ local nodeimages = {
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_pipe_end.png"},
 
-	{"pipeworks_plain.png",		-- center segment
-	 "pipeworks_plain.png",
+	{"pipeworks_windowed_XXXXX.png",
+	 "pipeworks_windowed_XXXXX.png",
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png"},
 
-	{"pipeworks_plain.png",		-- capped, anchored at -X
+	{"pipeworks_plain.png",
 	 "pipeworks_plain.png",
-	 "pipeworks_plain.png",
+	 "pipeworks_windowed_XXXXX.png",
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png"},
 
-	{"pipeworks_plain.png",		-- capped, anchored at +X
+	{"pipeworks_plain.png",
 	 "pipeworks_plain.png",
+	 "pipeworks_pipe_end.png",
+	 "pipeworks_windowed_XXXXX.png",
+	 "pipeworks_plain.png",
+	 "pipeworks_plain.png"},
+
+	{"pipeworks_windowed_XXXXX.png",
 	 "pipeworks_pipe_end.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
-	 "pipeworks_plain.png"},
-
-	{"pipeworks_plain.png",	-- capped, anchored at -Y
-	 "pipeworks_pipe_end.png",
-	 "pipeworks_plain.png",
-	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png"},
 
-	{"pipeworks_pipe_end.png",	-- capped, anchored at +Y
-	 "pipeworks_plain.png",
+	{"pipeworks_pipe_end.png",
+	 "pipeworks_windowed_XXXXX.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png"},
 
-	{"pipeworks_plain.png",	-- capped, anchored at -Z
+	{"pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
-	 "pipeworks_plain.png",
+	 "pipeworks_windowed_XXXXX.png",
 	 "pipeworks_pipe_end.png"},
 
-	{"pipeworks_plain.png",	-- capped, anchored at +Z
+	{"pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_plain.png",
 	 "pipeworks_pipe_end.png",
-	 "pipeworks_plain.png"},
+	 "pipeworks_windowed_XXXXX.png"},
 }
 
 local selectionboxes = {
-	{ -0.15, -0.5, -0.15, 0.15,  0.5, 0.15 },	-- vertical
-	{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.15 },	-- horizontal
-	{ -0.15, -0.5, -0.15, 0.5, 0.5, 0.15 },		-- vertical with X/Z junction
-	{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.5 },		-- horizontal with X/Z junction
-	{ -0.15, -0.5, -0.15, 0.5, 0.15, 0.15 },	-- bend down from X/Z to Y axis
-	{ -0.15, -0.15, -0.15, 0.5, 0.5, 0.15 },	-- bend up from X/Z to Y axis
-	{ -0.15, -0.15, -0.15, 0.5, 0.15, 0.5 },	-- bend between X and Z axes
-	{ -0.5, -0.15, -0.5, 0.5, 0.15, 0.5 },		-- 4-way crossing between X and Z axes
-	{ -0.5, -0.5, -0.15, 0.5, 0.5, 0.15 },		-- 4-way crossing between X/Z and Y axes
-	{ -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },		-- 6-way crossing (all 3 axes)
-	{ -0.3, -0.15, -0.15, 0.3, 0.15, 0.15 },	-- capped, center only
-	{ -0.5, -0.15, -0.15, 0, 0.15, 0.15 },		-- capped, negative X half only
-	{ 0, -0.15, -0.15, 0.5, 0.15, 0.15 },		-- capped, positive X half only
-	{ -0.15, -0.5, -0.15, 0.15, 0, 0.15 },		-- capped, negative Y half only
-	{ -0.15, 0, -0.15, 0.15, 0.5, 0.15 },		-- capped, positive Y half only
-	{ -0.15, -0.15, -0.5, 0.15, 0.15, 0 },		-- capped, negative Z half only
-	{ -0.15, -0.15, 0, 0.15, 0.15, 0.5 },		-- capped, positive Z half only
+	{ -0.15, -0.5, -0.15, 0.15,  0.5, 0.15 },
+	{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.15 },
+	{ -0.15, -0.5, -0.15, 0.5, 0.5, 0.15 },
+	{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.5 },
+	{ -0.15, -0.5, -0.15, 0.5, 0.15, 0.15 },
+	{ -0.15, -0.15, -0.15, 0.5, 0.5, 0.15 },
+	{ -0.15, -0.15, -0.15, 0.5, 0.15, 0.5 },
+	{ -0.5, -0.15, -0.5, 0.5, 0.15, 0.5 },
+	{ -0.5, -0.5, -0.15, 0.5, 0.5, 0.15 },
+	{ -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 },
+	{ -0.3, -0.15, -0.15, 0.3, 0.15, 0.15 },
+	{ -0.5, -0.15, -0.15, 0, 0.15, 0.15 },
+	{ 0, -0.15, -0.15, 0.5, 0.15, 0.15 },
+	{ -0.15, -0.5, -0.15, 0.15, 0, 0.15 },
+	{ -0.15, 0, -0.15, 0.15, 0.5, 0.15 },
+	{ -0.15, -0.15, -0.5, 0.15, 0.15, 0 },
+	{ -0.15, -0.15, 0, 0.15, 0.15, 0.5 },
 }
 
 local nodeboxes = {
@@ -257,7 +257,7 @@ local nodeboxes = {
 	 { -0.1 , -0.45, -0.1 , 0.1 ,  0.45, 0.1  },
 	 { -0.15,  0.45, -0.15, 0.15,  0.5 , 0.15 }},
 
-	{{ -0.3 , -0.15, -0.15, -0.25, 0.15, 0.15 },	-- centered
+	{{ -0.3 , -0.15, -0.15, -0.25, 0.15, 0.15 },	-- main center segment
 	 { -0.25, -0.1 , -0.1 ,  0.25, 0.1 , 0.1  },
 	 {  0.25, -0.15, -0.15,  0.3 , 0.15, 0.15 }},
 
@@ -334,7 +334,7 @@ for node in ipairs(nodenames) do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
-		drop = "pipeworks:horizontal"
+		drop = "pipeworks:pipe"
 	})
 
 	minetest.register_node("pipeworks:"..nodenames[node].."_loaded", {
@@ -355,7 +355,7 @@ for node in ipairs(nodenames) do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
-		drop = "pipeworks:horizontal"
+		drop = "pipeworks:pipe"
 	})
 end
 
