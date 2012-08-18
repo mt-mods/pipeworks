@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+2012-08-18: Total rewrite again.  All pipes are now nice and round-looking, and 
+they auto-connect!  Also added temporary nodes for pump and valve (each with an 
+on/off setting - punch to change).  No crafting recipes yet and the pipes still 
+don't do anything useful yet.  Soon.
+
 2012-08-06:  Moved this changelog off the forum post and into a separate file.
 
 2012-08-05 (multiple updates): Rewrote pipeworks to use loops and tables to 
