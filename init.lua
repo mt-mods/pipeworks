@@ -264,6 +264,11 @@ for zp = 0, 1 do
 		walkable = true,
 		stack_max = 99,
 		drop = "pipeworks:pipe_110000_empty",
+		pipelike=1,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		end,
 		after_place_node = function(pos)
 			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
 			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
@@ -301,6 +306,11 @@ for zp = 0, 1 do
 		walkable = true,
 		stack_max = 99,
 		drop = "pipeworks:pipe_110000_loaded",
+		pipelike=1,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		end,
 		after_place_node = function(pos)
 			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
 			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
