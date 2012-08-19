@@ -7,7 +7,7 @@
 --
 
 -- uncomment the following dofile line to enable the old pipe nodes.
--- dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
+dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
 
 -- tables
 
@@ -259,8 +259,16 @@ for zp = 0, 1 do
 
 	pname = xm..xp..ym..yp..zm..zp
 
+	if pname ~= "110000" then
+		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
+		pipedesc = "Pipe segment (empty, "..pname..")... You hacker, you."
+	else
+		pgroups = {snappy=3, pipe=1}
+		pipedesc = "Pipe segment"
+	end
+
 	minetest.register_node("pipeworks:pipe_"..pname.."_empty", {
-		description = "Pipe segment (empty, "..pname..").",
+		description = pipedesc,
 		drawtype = "nodebox",
 		tiles = fix_newpipe_names(outimgs, "_empty"),
 		paramtype = "light",
@@ -272,7 +280,7 @@ for zp = 0, 1 do
 			type = "fixed",
 			fixed = outboxes
 		},
-		groups = {snappy=3, pipe=1},
+		groups = pgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
@@ -297,7 +305,7 @@ for zp = 0, 1 do
 	})
 
 	minetest.register_node("pipeworks:pipe_"..pname.."_loaded", {
-		description = "Pipe segment (loaded, "..pname..").",
+		description = "Pipe segment (loaded, "..pname..")... You hacker, you.",
 		drawtype = "nodebox",
 		tiles = fix_newpipe_names(outimgs, "_loaded"),
 		paramtype = "light",
@@ -309,7 +317,7 @@ for zp = 0, 1 do
 			type = "fixed",
 			fixed = outboxes
 		},
-		groups = {snappy=3, pipe=1},
+		groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
@@ -366,7 +374,7 @@ minetest.register_node("pipeworks:pump_on", {
 		type = "fixed",
 		fixed = pumpboxes
 	},
-	groups = {snappy=3, pipe=1},
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	stack_max = 99,
@@ -458,7 +466,7 @@ minetest.register_node("pipeworks:valve_on", {
 		type = "fixed",
 		fixed = valveboxes
 	},
-	groups = {snappy=3, pipe=1},
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	stack_max = 99,

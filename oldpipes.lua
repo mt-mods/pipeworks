@@ -308,6 +308,13 @@ end
 -- Now define the actual nodes
 
 for node in ipairs(nodenames) do
+
+	if node ~= 2 then
+		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
+	else
+		pgroups = {snappy=3, pipe=1}
+	end
+
 	minetest.register_node("pipeworks:"..nodenames[node], {
 		description = "Empty Pipe ("..descriptions[node]..")",
 		drawtype = "nodebox",
@@ -322,7 +329,7 @@ for node in ipairs(nodenames) do
 			type = "fixed",
 			fixed = nodeboxes[node]
 		},
-		groups = {snappy=3, pipe=1},
+		groups = pgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
@@ -343,7 +350,7 @@ for node in ipairs(nodenames) do
 			type = "fixed",
 			fixed = nodeboxes[node]
 		},
-		groups = {snappy=3, pipe=1},
+		groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
