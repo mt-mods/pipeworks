@@ -13,7 +13,7 @@ dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_000000_empty")
 
-local leftstub = {
+pipe_leftstub = {
 	{ -32/64, -2/64, -6/64,   1/64, 2/64, 6/64 },	-- pipe segment against -X face
 	{ -32/64, -4/64, -5/64,   1/64, 4/64, 5/64 },
 	{ -32/64, -5/64, -4/64,   1/64, 5/64, 4/64 },
@@ -26,7 +26,7 @@ local leftstub = {
 	{ -32/64, -8/64, -3/64, -30/64, 8/64, 3/64 }
 }
 
-local rightstub = {
+pipe_rightstub = {
 	{ -1/64, -2/64, -6/64,  32/64, 2/64, 6/64 },	-- pipe segment against +X face
 	{ -1/64, -4/64, -5/64,  32/64, 4/64, 5/64 },
 	{ -1/64, -5/64, -4/64,  32/64, 5/64, 4/64 },
@@ -39,7 +39,7 @@ local rightstub = {
 	{ 30/64, -8/64, -3/64, 32/64, 8/64, 3/64 }
 }
 
-local bottomstub = {
+pipe_bottomstub = {
 	{ -2/64, -32/64, -6/64,   2/64, 1/64, 6/64 },	-- pipe segment against -Y face
 	{ -4/64, -32/64, -5/64,   4/64, 1/64, 5/64 },
 	{ -5/64, -32/64, -4/64,   5/64, 1/64, 4/64 },
@@ -53,7 +53,7 @@ local bottomstub = {
 }
 
 
-local topstub = {
+pipe_topstub = {
 	{ -2/64, -1/64, -6/64,   2/64, 32/64, 6/64 },	-- pipe segment against +Y face
 	{ -4/64, -1/64, -5/64,   4/64, 32/64, 5/64 },
 	{ -5/64, -1/64, -4/64,   5/64, 32/64, 4/64 },
@@ -66,7 +66,7 @@ local topstub = {
 	{ -8/64, 30/64, -3/64, 8/64, 32/64, 3/64 }
 }
 
-local frontstub = {
+pipe_frontstub = {
 	{ -6/64, -2/64, -32/64,   6/64, 2/64, 1/64 },	-- pipe segment against -Z face
 	{ -5/64, -4/64, -32/64,   5/64, 4/64, 1/64 },
 	{ -4/64, -5/64, -32/64,   4/64, 5/64, 1/64 },
@@ -79,7 +79,7 @@ local frontstub = {
 	{ -3/64, -8/64, -32/64, 3/64, 8/64, -30/64 }
 }
 
-local backstub = {
+pipe_backstub = {
 	{ -6/64, -2/64, -1/64,   6/64, 2/64, 32/64 },	-- pipe segment against -Z face
 	{ -5/64, -4/64, -1/64,   5/64, 4/64, 32/64 },
 	{ -4/64, -5/64, -1/64,   4/64, 5/64, 32/64 },
@@ -92,7 +92,7 @@ local backstub = {
 	{ -3/64, -8/64, 30/64, 3/64, 8/64, 32/64 }
 } 
 
-local selectboxes = {
+pipe_selectboxes = {
 	{ -32/64,  -8/64,  -8/64,  8/64,  8/64,  8/64 },
 	{ -8/64 ,  -8/64,  -8/64, 32/64,  8/64,  8/64 },
 	{ -8/64 , -32/64,  -8/64,  8/64,  8/64,  8/64 },
@@ -101,33 +101,16 @@ local selectboxes = {
 	{ -8/64 ,  -8/64,  -8/64,  8/64,  8/64, 32/64 }
 }
 
-bendsphere = {	
+pipe_bendsphere = {	
 	{ -4/64, -4/64, -4/64, 4/64, 4/64, 4/64 },
 	{ -5/64, -3/64, -3/64, 5/64, 3/64, 3/64 },
 	{ -3/64, -5/64, -3/64, 3/64, 5/64, 3/64 },
 	{ -3/64, -3/64, -5/64, 3/64, 3/64, 5/64 }
 }
 
-pumpbody = {
-	{ -6/16, -8/16, -6/16, 6/16, 8/16, 6/16 }
-}
+--  Functions
 
-valvebody = {
-	{ -4/16, -4/16, -4/16, 4/16, 4/16, 4/16 }
-}
-
-valvehandle_on = {
-	{ -5/16, 4/16, -1/16, 0, 5/16, 1/16 }
-}
-
-valvehandle_off = {
-	{ -1/16, 4/16, -5/16, 1/16, 5/16, 0 }
-}
-
-
--- Local Functions
-
-local dbg = function(s)
+dbg = function(s)
 	if DEBUG == 1 then
 		print('[PIPEWORKS] ' .. s)
 	end
@@ -142,43 +125,10 @@ function fix_newpipe_names(table, replacement)
 	return outtable
 end
 
-local function addbox(t, b)
+function pipe_addbox(t, b)
 	for i in ipairs(b)
 		do table.insert(t, b[i])
 	end
-end
-
-local function autoroute(pos, state)
-
-	local nctr = minetest.env:get_node(pos)
-	if (string.find(nctr.name, "pipeworks:pipe_") == nil) then return end
-
-	local pxm=0
-	local pxp=0
-	local pym=0
-	local pyp=0
-	local pzm=0
-	local pzp=0
-
-	local nxm = minetest.env:get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	local nxp = minetest.env:get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	local nym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	local nyp = minetest.env:get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	local nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	local nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
-
-	if (string.find(nxm.name, "pipeworks:pipe_") ~= nil) then pxm=1 end
-	if (string.find(nxp.name, "pipeworks:pipe_") ~= nil) then pxp=1 end
-	if (string.find(nym.name, "pipeworks:pipe_") ~= nil) then pym=1 end
-	if (string.find(nyp.name, "pipeworks:pipe_") ~= nil) then pyp=1 end
-	if (string.find(nzm.name, "pipeworks:pipe_") ~= nil) then pzm=1 end
-	if (string.find(nzp.name, "pipeworks:pipe_") ~= nil) then pzp=1 end
-
-	local nsurround = pxm..pxp..pym..pyp..pzm..pzp
-	
-	if nsurround == "000000" then nsurround = "110000" end
-
-	minetest.env:add_node(pos, { name = "pipeworks:pipe_"..nsurround..state })
 end
 
 -- now define the nodes!
@@ -189,55 +139,56 @@ for ym = 0, 1 do
 for yp = 0, 1 do
 for zm = 0, 1 do
 for zp = 0, 1 do
-	outboxes = {}
-	outsel = {}
-	outimgs = {}
+	local outboxes = {}
+	local outsel = {}
+	local outimgs = {}
+
 	if yp==1 then
-		addbox(outboxes, topstub)
-		table.insert(outsel, selectboxes[4])
+		pipe_addbox(outboxes, pipe_topstub)
+		table.insert(outsel, pipe_selectboxes[4])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if ym==1 then
-		addbox(outboxes, bottomstub)
-		table.insert(outsel, selectboxes[3])
+		pipe_addbox(outboxes, pipe_bottomstub)
+		table.insert(outsel, pipe_selectboxes[3])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if xp==1 then
-		addbox(outboxes, rightstub)
-		table.insert(outsel, selectboxes[2])
+		pipe_addbox(outboxes, pipe_rightstub)
+		table.insert(outsel, pipe_selectboxes[2])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if xm==1 then
-		addbox(outboxes, leftstub)
-		table.insert(outsel, selectboxes[1])
+		pipe_addbox(outboxes, pipe_leftstub)
+		table.insert(outsel, pipe_selectboxes[1])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if zp==1 then
-		addbox(outboxes, backstub)
-		table.insert(outsel, selectboxes[6])
+		pipe_addbox(outboxes, pipe_backstub)
+		table.insert(outsel, pipe_selectboxes[6])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if zm==1 then
-		addbox(outboxes, frontstub)
-		table.insert(outsel, selectboxes[5])
+		pipe_addbox(outboxes, pipe_frontstub)
+		table.insert(outsel, pipe_selectboxes[5])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 
-	jx = xp+xm
-	jy = yp+ym
-	jz = zp+zm
+	local jx = xp+xm
+	local jy = yp+ym
+	local jz = zp+zm
 
 	if (jx+jy+jz) == 1 then
 		if xm == 1 then 
@@ -267,7 +218,7 @@ for zp = 0, 1 do
 	end
 
 	if (jx==1 and jy==1 and jz~=1) or (jx==1 and jy~=1 and jz==1) or (jx~= 1 and jy==1 and jz==1) then
-		addbox(outboxes, bendsphere)
+		pipe_addbox(outboxes, pipe_bendsphere)
 	end
 
 	if (jx==2 and jy~=2 and jz~=2) then
@@ -284,7 +235,8 @@ for zp = 0, 1 do
 		table.insert(outimgs, 3, "pipeworks_windowed_XXXXX.png")
 	end
 
-	pname = xm..xp..ym..yp..zm..zp
+	local pname = xm..xp..ym..yp..zm..zp
+	local pgroups = ""
 
 	if pname ~= "110000" then
 		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
@@ -313,21 +265,21 @@ for zp = 0, 1 do
 		stack_max = 99,
 		drop = "pipeworks:pipe_110000_empty",
 		after_place_node = function(pos)
-			autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
-			autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
-			autoroute(pos, "_empty")
+			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
+			pipe_autoroute(pos, "_empty")
 		end,
 		after_dig_node = function(pos)
-			autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
-			autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
+			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
 		end
 	})
 
@@ -350,21 +302,21 @@ for zp = 0, 1 do
 		stack_max = 99,
 		drop = "pipeworks:pipe_110000_loaded",
 		after_place_node = function(pos)
-			autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
-			autoroute(pos, "_loaded")
+			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
+			pipe_autoroute(pos, "_loaded")
 		end,
 		after_dig_node = function(pos)
-			autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
-			autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
+			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
+			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
 		end
 	})
 end
@@ -374,154 +326,7 @@ end
 end
 end
 
--- the pump module
-
-pumpboxes = {}
-addbox(pumpboxes, leftstub)
-addbox(pumpboxes, pumpbody)
-addbox(pumpboxes, rightstub)
-
-minetest.register_node("pipeworks:pump_on", {
-	description = "Pump Module (on)",
-	drawtype = "nodebox",
-	tiles = {
-		"pipeworks_pump_sides.png",
-		"pipeworks_pump_sides.png",
-		"pipeworks_pump_ends.png",
-		"pipeworks_pump_ends.png",
-		"pipeworks_pump_on.png",
-		"pipeworks_pump_on.png"
-	},
-	paramtype = "light",
-	selection_box = {
-             	type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
-	},
-	node_box = {
-		type = "fixed",
-		fixed = pumpboxes
-	},
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
-	sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-	stack_max = 99,
-})
-
-minetest.register_node("pipeworks:pump_off", {
-	description = "Pump Module (off)",
-	drawtype = "nodebox",
-	tiles = {
-		"pipeworks_pump_sides.png",
-		"pipeworks_pump_sides.png",
-		"pipeworks_pump_ends.png",
-		"pipeworks_pump_ends.png",
-		"pipeworks_pump_off.png",
-		"pipeworks_pump_off.png"
-	},
-	paramtype = "light",
-	selection_box = {
-             	type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
-	},
-	node_box = {
-		type = "fixed",
-		fixed = pumpboxes
-	},
-	groups = {snappy=3, pipe=1},
-	sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-	stack_max = 99,
-})
-
--- valve module
-
-valveboxes = {}
-addbox(valveboxes, leftstub)
-addbox(valveboxes, valvebody)
-addbox(valveboxes, valvehandle_off)
-addbox(valveboxes, rightstub)
-
-minetest.register_node("pipeworks:valve_off", {
-	description = "Valve (off)",
-	drawtype = "nodebox",
-	tiles = {
-		"pipeworks_valvebody_top_off.png",
-		"pipeworks_valvebody_bottom.png",
-		"pipeworks_valvebody_ends.png",
-		"pipeworks_valvebody_ends.png",
-		"pipeworks_valvebody_sides.png",
-		"pipeworks_valvebody_sides.png",
-	},
-	paramtype = "light",
-	selection_box = {
-             	type = "fixed",
-		fixed = { -5/16, -4/16, -5/16, 6/16, 8/16, 6/16 }
-	},
-	node_box = {
-		type = "fixed",
-		fixed = valveboxes
-	},
-	groups = {snappy=3, pipe=1},
-	sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-	stack_max = 99,
-})
-
-valveboxes = {}
-addbox(valveboxes, leftstub)
-addbox(valveboxes, valvebody)
-addbox(valveboxes, valvehandle_on)
-addbox(valveboxes, rightstub)
-
-minetest.register_node("pipeworks:valve_on", {
-	description = "Valve (on)",
-	drawtype = "nodebox",
-	tiles = {
-		"pipeworks_valvebody_top_on.png",
-		"pipeworks_valvebody_bottom.png",
-		"pipeworks_valvebody_ends.png",
-		"pipeworks_valvebody_ends.png",
-		"pipeworks_valvebody_sides.png",
-		"pipeworks_valvebody_sides.png",
-	},
-	paramtype = "light",
-	selection_box = {
-             	type = "fixed",
-		fixed = { -5/16, -4/16, -5/16, 6/16, 8/16, 6/16 }
-	},
-	node_box = {
-		type = "fixed",
-		fixed = valveboxes
-	},
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
-	sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-	stack_max = 99,
-})
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_on" then 
-		minetest.env:add_node(pos, { name = "pipeworks:valve_off" })
-	end
-end)
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_off" then 
-		minetest.env:add_node(pos, { name = "pipeworks:valve_on" })
-	end
-end)
-
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:pump_on" then 
-		minetest.env:add_node(pos, { name = "pipeworks:pump_off" })
-	end
-end)
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:pump_off" then 
-		minetest.env:add_node(pos, { name = "pipeworks:pump_on" })
-	end
-end)
+dofile(minetest.get_modpath("pipeworks").."/devices.lua")
+dofile(minetest.get_modpath("pipeworks").."/autoplace.lua")
 
 print("Pipeworks loaded!")
