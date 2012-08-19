@@ -32,8 +32,8 @@ This mod is a work in progress.
 Please note that owing to the nature of this mod, I have opted to use 64px 
 textures.  Anything less just looks terrible.
 
-If you need the old node names from the previous version of this mod, edit 
-init.lua and uncomment the 'dofile' line at the top.
+If you don't need the old node names from the previous version of this mod, 
+edit init.lua and comment-out the 'dofile' line at the top.
 
 Dependencies: None, but your copy of Minetest must be newer than git commit 
 1788709e2d for correct handling of nodeboxes and texture rotations (otherwise, 
