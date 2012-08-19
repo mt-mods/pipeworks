@@ -13,7 +13,7 @@ to change them in a paint program).  These windows only appear on straight
 lengths and on T-junctions.
 
 There are no crafting recipes, yet, but you can use /giveme as usual, namely 
-"/giveme pipeworks:pipe_empty 999" or so, and then place them as needed.  See 
+"/giveme pipeworks:pipe 999" or so, and then place them as needed.  See 
 init.lua for more details.
 
 This mod is intended to be used as a basis or at least as sort of a model for 
