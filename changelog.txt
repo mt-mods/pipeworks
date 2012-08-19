@@ -1,6 +1,9 @@
 Changelog
 ---------
 
+2012-08-19: Pumps and valves now fully participate in the 
+auto-rotate/auto-place algorithm.
+
 2012-08-18: Total rewrite again.  All pipes are now nice and round-looking, and 
 they auto-connect!  Also added temporary nodes for pump and valve (each with an 
 on/off setting - punch to change).  No crafting recipes yet and the pipes still 
