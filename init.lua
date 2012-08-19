@@ -6,7 +6,7 @@
 -- License: WTFPL
 --
 
--- uncomment the following dofile line to enable the old pipe nodes.
+-- comment-out the following dofile line to disnable the old pipe nodes.
 dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
 
 -- tables
