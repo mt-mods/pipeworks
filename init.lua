@@ -239,6 +239,33 @@ for zp = 0, 1 do
 	jy = yp+ym
 	jz = zp+zm
 
+	if (jx+jy+jz) == 1 then
+		if xm == 1 then 
+			table.remove(outimgs, 3)
+			table.insert(outimgs, 3, "pipeworks_pipe_end_XXXXX.png")
+		end
+		if xp == 1 then 
+			table.remove(outimgs, 4)
+			table.insert(outimgs, 4, "pipeworks_pipe_end_XXXXX.png")
+		end
+		if ym == 1 then 
+			table.remove(outimgs, 1)
+			table.insert(outimgs, 1, "pipeworks_pipe_end_XXXXX.png")
+		end
+		if xp == 1 then 
+			table.remove(outimgs, 2)
+			table.insert(outimgs, 2, "pipeworks_pipe_end_XXXXX.png")
+		end
+		if zm == 1 then 
+			table.remove(outimgs, 5)
+			table.insert(outimgs, 5, "pipeworks_pipe_end_XXXXX.png")
+		end
+		if zp == 1 then 
+			table.remove(outimgs, 6)
+			table.insert(outimgs, 6, "pipeworks_pipe_end_XXXXX.png")
+		end
+	end
+
 	if (jx==1 and jy==1 and jz~=1) or (jx==1 and jy~=1 and jz==1) or (jx~= 1 and jy==1 and jz==1) then
 		addbox(outboxes, bendsphere)
 	end
