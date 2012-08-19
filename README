@@ -1,28 +1,43 @@
-This simple mod uses nodeboxes to supply a complete set of 3D flanged 
-pipes.  There are enough nodes defined here to bend from any axis 
-(X/Y/Z) to any other, or to join multiple pipes together from any or all 
-axes.  There are 10 unique nodes defined, times two versions for each 
-(for a total of 20).  Getting them into the right orientation is handled 
-with the usual facedir parameter.
+This simple mod uses nodeboxes to supply a complete set of 3D flanged pipes.  
+Also included in this mod are "valve" and "pump" devices.
 
-One version bears one or more dark windows on each pipe, suggesting 
-they're empty, while the other version bears green-tinted windows, as if 
-full (the two colors should also be easy to select if you want to change 
-them in a paint program).
+Pipes are rounded thanks abusing minetest's nodeboxes ;-) , and when placed, 
+they'll automatically join together as needed.  Pipes can go vertically or 
+horizontally, and there are enough nodes defined to allow for all possible 
+connections.
 
-This mod requires a recent git pull or build of Minetest dated June 17, 
-2012 or later.
+Pipes come in two variants: one type bears one or more dark windows on each 
+pipe, suggesting they're empty, while the other type bears green-tinted 
+windows, as if full (the two colors should also be easy to select if you want 
+to change them in a paint program).  These windows only appear on straight 
+lengths and on T-junctions.
 
-There are no crafting recipes, however, you can use the usual /give 
-commands with names such as pipes:vertical, pipes:crossing_xy, and so 
-on, if you want to add them to your world for decorative purposes.  See 
+There are no crafting recipes, yet, but you can use /giveme as usual, namely 
+"/giveme pipeworks:pipe_empty 999" or so, and then place them as needed.  See 
 init.lua for more details.
 
-The overall format of the code is borrowed from the game and written by 
-me.  16x16 textures by me also.
+This mod is intended to be used as a basis or at least as sort of a model for 
+something else to build on (perhaps a nicer-looking oil mod?), and does not 
+provide any of the code necessary to cause anything to flow through them.  Like 
+the pipes, the valve and pump don't do anything useful yet, but you can punch 
+them to turn them "on" and "off".  Note that the valve and pump do not rotate 
+yet, and the textures and shapes are not yet complete (hence their boxy 
+appearance).
 
-This mod is intended to be used as a basis or at least as sort of a 
-model for something else to build on (perhaps a nicer-looking oil mod?), 
-and does not provide any of the code necessary to cause the pipes to 
-rotate around as they're placed.  I may add such code later, but not 
-right now.
+Only the full horizontal segments of the old and new pipes, and the 'off' pump 
+and valve will appear in your creative inventory.
+
+This mod is a work in progress.
+
+Please note that owing to the nature of this mod, I have opted to use 64px 
+textures.  Anything less just looks terrible.
+
+If you need the old node names from the previous version of this mod, edit 
+init.lua and uncomment the 'dofile' line at the top.
+
+Dependencies: None, but your copy of Minetest must be newer than git commit 
+1788709e2d for correct handling of nodeboxes and texture rotations (otherwise, 
+the pipes will still work but will look wrong).  0.4.2-rc1 will work fine if 
+you don't want to fetch from git.
+
+License: WTFPL (applies to all parts)
