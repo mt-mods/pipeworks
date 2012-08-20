@@ -173,7 +173,12 @@ for s in ipairs(states) do
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		drop = "pipeworks:valve_off_x"
+		drop = "pipeworks:valve_off_x",
+		pipelike=1,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		end,
 	})
 
 	local valveboxes = {}
@@ -218,36 +223,13 @@ for s in ipairs(states) do
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		drop = "pipeworks:valve_off_x"
+		drop = "pipeworks:valve_off_x",
+		pipelike=1,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		end,
 	})
-end
-
-local axes = { "x", "z" }
-
-for a in ipairs(axes) do
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:valve_on_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:valve_off_"..axes[a] })
-		end
-	end)
-
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:valve_off_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:valve_on_"..axes[a] })
-		end
-	end)
-
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:pump_on_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:pump_off_"..axes[a] })
-		end
-	end)
-
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:pump_off_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:pump_on_"..axes[a] })
-		end
-	end)
 end
 
 -- intake grate
@@ -275,7 +257,12 @@ minetest.register_node("pipeworks:intake", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	stack_max = 99
+	stack_max = 99,
+	pipelike=1,
+	on_construct = function(pos)
+	local meta = minetest.env:get_meta(pos)
+	meta:set_int("pipelike",1)
+	end,
 })
 
 -- tank
@@ -294,7 +281,12 @@ minetest.register_node("pipeworks:storage_tank_x", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	stack_max = 99
+	stack_max = 99,
+	pipelike=1,
+	on_construct = function(pos)
+	local meta = minetest.env:get_meta(pos)
+	meta:set_int("pipelike",1)
+	end,
 })
 
 minetest.register_node("pipeworks:storage_tank_z", {
@@ -311,8 +303,44 @@ minetest.register_node("pipeworks:storage_tank_z", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	stack_max = 99
+	stack_max = 99,
+	pipelike=1,
+	on_construct = function(pos)
+	local meta = minetest.env:get_meta(pos)
+	meta:set_int("pipelike",1)
+	end,
 })
 
+-- various actions
+
+local axes = { "x", "z" }
+
+for a in ipairs(axes) do
+	minetest.register_on_punchnode(function (pos, node)
+		if node.name=="pipeworks:valve_on_"..axes[a] then 
+			minetest.env:add_node(pos, { name = "pipeworks:valve_off_"..axes[a] })
+			meta:set_int("pipelike",0)
+		end
+	end)
+
+	minetest.register_on_punchnode(function (pos, node)
+		if node.name=="pipeworks:valve_off_"..axes[a] then 
+			minetest.env:add_node(pos, { name = "pipeworks:valve_on_"..axes[a] })
+			meta:set_int("pipelike",1)
+		end
+	end)
+
+	minetest.register_on_punchnode(function (pos, node)
+		if node.name=="pipeworks:pump_on_"..axes[a] then 
+			minetest.env:add_node(pos, { name = "pipeworks:pump_off_"..axes[a] })
+		end
+	end)
+
+	minetest.register_on_punchnode(function (pos, node)
+		if node.name=="pipeworks:pump_off_"..axes[a] then 
+			minetest.env:add_node(pos, { name = "pipeworks:pump_on_"..axes[a] })
+		end
+	end)
+end
 
 print("Pipeworks loaded!")
