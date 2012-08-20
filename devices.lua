@@ -250,4 +250,69 @@ for a in ipairs(axes) do
 	end)
 end
 
+-- intake grate
+
+minetest.register_node("pipeworks:intake", {
+	description = "Intake grate",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_intake_top.png",
+		"pipeworks_intake_sides.png",
+		"pipeworks_intake_sides.png",
+		"pipeworks_intake_sides.png",
+		"pipeworks_intake_sides.png",
+		"pipeworks_intake_sides.png"
+	},
+	selection_box = {
+             	type = "fixed",
+		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
+	},
+	node_box = {
+		type = "fixed",
+		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
+	},
+	paramtype = "light",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	stack_max = 99
+})
+
+-- tank
+
+minetest.register_node("pipeworks:storage_tank_x", {
+	description = "Fluid Storage Tank",
+	tiles = {
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_sides.png",
+		"pipeworks_storage_tank_sides.png"
+	},
+	paramtype = "light",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	stack_max = 99
+})
+
+minetest.register_node("pipeworks:storage_tank_z", {
+	description = "Fluid Storage Tank (Z axis)... You hacker, you.",
+	tiles = {
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_sides.png",
+		"pipeworks_storage_tank_sides.png",
+		"pipeworks_storage_tank_fittings.png",
+		"pipeworks_storage_tank_fittings.png"
+	},
+	paramtype = "light",
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	stack_max = 99
+})
+
+
 print("Pipeworks loaded!")
