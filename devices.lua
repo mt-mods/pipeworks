@@ -65,7 +65,7 @@ for s in ipairs(states) do
 			"pipeworks_pump_sides.png",
 			tilex,
 			tilex,
-			tilez,
+			"pipeworks_pump_sides.png",
 			tilez
 		},
 		paramtype = "light",
@@ -104,7 +104,7 @@ for s in ipairs(states) do
 			"pipeworks_pump_sides.png",
 			tilez,
 			tilez,
-			tilex,
+			"pipeworks_pump_sides.png",
 			tilex
 		},
 		paramtype = "light",
