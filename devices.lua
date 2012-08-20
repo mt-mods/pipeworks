@@ -44,7 +44,7 @@ local dgroups = ""
 
 for s in ipairs(states) do
 
-	if s == "off" then
+	if states[s] == "off" then
 		dgroups = {snappy=3, pipe=1}
 	else
 		dgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
