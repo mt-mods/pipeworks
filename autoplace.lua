@@ -101,5 +101,20 @@ pipes_scansurroundings = function(pos)
 			pzp=1
 		end
 	end
+
+	-- storage tanks and intake grates have vertical connections
+	-- also, so they require a special case
+
+	if (string.find(nym.name, "pipeworks:storage_tank_x") ~= nil) or
+	   (string.find(nym.name, "pipeworks:storage_tank_z") ~= nil) or
+	   (string.find(nym.name, "pipeworks:intake") ~= nil) then
+		pym=1
+	end
+
+	if (string.find(nyp.name, "pipeworks:storage_tank_x") ~= nil) or
+	   (string.find(nyp.name, "pipeworks:storage_tank_z") ~= nil) then
+		pyp=1
+	end
+
 end
 
