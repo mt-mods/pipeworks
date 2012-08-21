@@ -1,3 +1,11 @@
+-- List of devices for use by the autoplace algorithm
+
+pipes_devicelist = {
+	"pump",
+	"valve",
+	"storage_tank"
+}
+
 -- tables
 
 minetest.register_alias("pipeworks:pump", "pipeworks:pump_off_x")
@@ -82,7 +90,7 @@ for s in ipairs(states) do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:pump_")
+			pipe_device_autorotate(pos, states[s], "pipeworks:pump")
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -121,7 +129,7 @@ for s in ipairs(states) do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:pump_")
+			pipe_device_autorotate(pos, states[s], "pipeworks:pump")
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -167,7 +175,7 @@ for s in ipairs(states) do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:valve_")
+			pipe_device_autorotate(pos, states[s], "pipeworks:valve")
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -216,7 +224,7 @@ for s in ipairs(states) do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:valve_")
+			pipe_device_autorotate(pos, states[s], "pipeworks:valve")
 			pipe_scanforobjects(pos)
 
 		end,
@@ -258,6 +266,12 @@ minetest.register_node("pipeworks:intake", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	stack_max = 99,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
 	pipelike=1,
 	on_construct = function(pos)
 	local meta = minetest.env:get_meta(pos)
@@ -282,6 +296,13 @@ minetest.register_node("pipeworks:storage_tank_x", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	stack_max = 99,
+	after_place_node = function(pos)
+		pipe_device_autorotate(pos, nil, "pipeworks:storage_tank")
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
 	pipelike=1,
 	on_construct = function(pos)
 	local meta = minetest.env:get_meta(pos)
@@ -304,6 +325,14 @@ minetest.register_node("pipeworks:storage_tank_z", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	stack_max = 99,
+	drop = "pipeworks:storage_tank_x",
+	after_place_node = function(pos)
+		pipe_device_autorotate(pos, nil, "pipeworks:storage_tank")
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
 	pipelike=1,
 	on_construct = function(pos)
 	local meta = minetest.env:get_meta(pos)

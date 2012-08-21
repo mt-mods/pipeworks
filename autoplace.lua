@@ -25,9 +25,8 @@ function pipe_autoroute(pos, state)
 	if (string.find(nzm.name, "pipeworks:pipe_") ~= nil) then pzm=1 end
 	if (string.find(nzp.name, "pipeworks:pipe_") ~= nil) then pzp=1 end
 
-	pipe_checkfordevice(pos, "valve")
-	pipe_checkfordevice(pos, "pump")
-	
+	pipe_checkfordevice(pos)
+
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	
 	if nsurround == "000000" then nsurround = "110000" end
@@ -36,6 +35,12 @@ function pipe_autoroute(pos, state)
 end
 
 function pipe_device_autorotate(pos, state, bname)
+
+	if state == nil then
+		nname = bname
+	else
+		nname = bname.."_"..state
+	end
 
 	local nctr = minetest.env:get_node(pos)
 
@@ -54,39 +59,45 @@ function pipe_device_autorotate(pos, state, bname)
 	if (string.find(nzm.name, "pipeworks:pipe_") ~= nil) then pzm=1 end
 	if (string.find(nzp.name, "pipeworks:pipe_") ~= nil) then pzp=1 end
 
-	pipe_checkfordevice(pos, "pump")
-	pipe_checkfordevice(pos, "valve")
+	pipe_checkfordevice(pos)
 
 	if (pxm+pxp) ~= 0 then
-		minetest.env:add_node(pos, { name = bname..state.."_x" })
+		minetest.env:add_node(pos, { name = nname.."_x" })
 		return
 	end
 
 	if (pzm+pzp) ~= 0 then
-		minetest.env:add_node(pos, { name = bname..state.."_z" })
+		minetest.env:add_node(pos, { name = nname.."_z" })
 	end
 	
 end
 
-pipe_checkfordevice = function(pos, bname)
-	if (string.find(nxm.name, "pipeworks:"..bname.."_off_x") ~= nil) or
-	   (string.find(nxm.name, "pipeworks:"..bname.."_on_x") ~= nil) then
-		pxm=1
-	end
+pipe_checkfordevice = function(pos)
+	for p in ipairs(pipes_devicelist) do
+		pdev = pipes_devicelist[p]
+		if (string.find(nxm.name, "pipeworks:"..pdev.."_off_x") ~= nil) or
+		   (string.find(nxm.name, "pipeworks:"..pdev.."_on_x") ~= nil) or
+		   (string.find(nxm.name, "pipeworks:"..pdev.."_x") ~= nil) then
+			pxm=1
+		end
 
-	if (string.find(nxp.name, "pipeworks:"..bname.."_off_x") ~= nil) or
-	   (string.find(nxp.name, "pipeworks:"..bname.."_on_x") ~= nil) then
-		pxp=1
-	end
+		if (string.find(nxp.name, "pipeworks:"..pdev.."_off_x") ~= nil) or
+		   (string.find(nxp.name, "pipeworks:"..pdev.."_on_x") ~= nil) or
+		   (string.find(nxp.name, "pipeworks:"..pdev.."_x") ~= nil)  then
+			pxp=1
+		end
 
-	if (string.find(nzm.name, "pipeworks:"..bname.."_off_z") ~= nil) or
-	   (string.find(nzm.name, "pipeworks:"..bname.."_on_z") ~= nil) then
-		pzm=1
-	end
+		if (string.find(nzm.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
+		   (string.find(nzm.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
+		   (string.find(nzm.name, "pipeworks:"..pdev.."_z") ~= nil)  then
+			pzm=1
+		end
 
-	if (string.find(nzp.name, "pipeworks:"..bname.."_off_z") ~= nil) or
-	   (string.find(nzp.name, "pipeworks:"..bname.."_on_z") ~= nil) then
-		pzp=1
+		if (string.find(nzp.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
+		   (string.find(nzp.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
+		   (string.find(nzp.name, "pipeworks:"..pdev.."_z") ~= nil)  then
+			pzp=1
+		end
 	end
 end
 
