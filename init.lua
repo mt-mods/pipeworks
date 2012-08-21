@@ -270,21 +270,10 @@ for zp = 0, 1 do
 		meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
-			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
-			pipe_autoroute(pos, "_empty")
+			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
+			pipe_scanforobjects(pos)
 		end
 	})
 
@@ -312,21 +301,10 @@ for zp = 0, 1 do
 		meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
-			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
-			pipe_autoroute(pos, "_loaded")
+			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
-			pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
+			pipe_scanforobjects(pos)
 		end
 	})
 end
