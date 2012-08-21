@@ -89,19 +89,6 @@ pipes_scansurroundings = function(pos)
 			pxp=1
 		end
 
-		if (string.find(nym.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
-		   (string.find(nym.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
-		   (string.find(nym.name, "pipeworks:"..pdev.."_z") ~= nil)  then
-			pym=1
-		end
-
-		if (string.find(nyp.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
-		   (string.find(nyp.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
-		   (string.find(nyp.name, "pipeworks:"..pdev.."_z") ~= nil)  then
-			pyp=1
-		end
-
-
 		if (string.find(nzm.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
 		   (string.find(nzm.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
 		   (string.find(nzm.name, "pipeworks:"..pdev.."_z") ~= nil)  then
