@@ -319,6 +319,7 @@ for a in ipairs(axes) do
 	minetest.register_on_punchnode(function (pos, node)
 		if node.name=="pipeworks:valve_on_"..axes[a] then 
 			minetest.env:add_node(pos, { name = "pipeworks:valve_off_"..axes[a] })
+			local meta = minetest.env:get_meta(pos)
 			meta:set_int("pipelike",0)
 		end
 	end)
@@ -326,6 +327,7 @@ for a in ipairs(axes) do
 	minetest.register_on_punchnode(function (pos, node)
 		if node.name=="pipeworks:valve_off_"..axes[a] then 
 			minetest.env:add_node(pos, { name = "pipeworks:valve_on_"..axes[a] })
+			local meta = minetest.env:get_meta(pos)
 			meta:set_int("pipelike",1)
 		end
 	end)
