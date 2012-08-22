@@ -2,7 +2,9 @@ Changelog
 ---------
 
 2012-08-22: Added outlet grate, made it participate in autoplace algorithm.  
-Extended storage tank to show fill level in 10% steps (0% to 100%).
+Extended storage tank to show fill level in 10% steps (0% to 100%).  Added 
+"expansion tank" that appears if the user stacks tanks upwards.  (Downwards is 
+not checked).
 
 2012-08-21: Made storage tank participate in autoplace algorithm.  Tuned API a 
 little to allow for more flexible placement.  Re-organized code a bit to allow 

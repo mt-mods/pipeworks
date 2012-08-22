@@ -106,16 +106,18 @@ pipes_scansurroundings = function(pos)
 	-- also, so they require a special case
 
 	if (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) or
-	   (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) or
 	   (string.find(nym.name, "pipeworks:intake") ~= nil) or
 	   (string.find(nym.name, "pipeworks:outlet") ~= nil) then
 		pym=1
 	end
+end
 
-	if (string.find(nyp.name, "pipeworks:storage_tank_") ~= nil) or
-	   (string.find(nyp.name, "pipeworks:storage_tank_") ~= nil) then
-		pyp=1
+function pipe_look_for_stackable_tanks(pos)
+	tym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+
+	if string.find(tym.name, "pipeworks:storage_tank_") ~= nil or
+	    string.find(tym.name, "pipeworks:expansion_tank_") ~= nil then
+		minetest.env:add_node(pos, { name =  "pipeworks:expansion_tank_0"})
 	end
-
 end
 

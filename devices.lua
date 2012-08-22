@@ -1,4 +1,4 @@
--- List of devices for use by the autoplace algorithm
+-- List of devices that should participate in the autoplace algorithm
 
 pipes_devicelist = {
 	"pump",
@@ -327,7 +327,8 @@ minetest.register_node("pipeworks:outlet", {
 	end,
 })
 
--- tank
+-- tanks
+
 for fill = 0, 10 do
 	if fill == 0 then 
 		filldesc="empty"
@@ -337,11 +338,42 @@ for fill = 0, 10 do
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1}
 	end
 
+	minetest.register_node("pipeworks:expansion_tank_"..fill, {
+		description = "Expansion Tank ("..filldesc..")... You hacker, you.",
+		tiles = {
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_back.png",
+			"pipeworks_storage_tank_back.png",
+			"pipeworks_storage_tank_back.png",
+			"pipeworks_storage_tank_front_"..fill..".png"
+		},
+		paramtype = "light",
+		paramtype2 = "facedir",
+		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1},
+		sounds = default.node_sound_wood_defaults(),
+		walkable = true,
+		stack_max = 99,
+		drop = "pipeworks:storage_tank_"..fill.."_x",
+		after_place_node = function(pos)
+			pipe_look_for_stackable_tanks(pos)
+			pipe_scanforobjects(pos)
+		end,
+		after_dig_node = function(pos)
+			pipe_scanforobjects(pos)
+		end,
+		pipelike=0,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",0)
+		end,
+	})
+
 	minetest.register_node("pipeworks:storage_tank_"..fill.."_x", {
 		description = "Fluid Storage Tank ("..filldesc..")",
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
-			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_back.png",
@@ -353,7 +385,10 @@ for fill = 0, 10 do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
+			pipe_look_for_stackable_tanks(pos)
+			if string.find(minetest.env:get_node(pos).name, "pipeworks:storage_tank_") ~= nil then
+				pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
+			end
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -370,7 +405,7 @@ for fill = 0, 10 do
 		description = "Fluid Storage Tank (Z axis, "..filldesc..")... You hacker, you.",
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
-			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_front_"..fill..".png",
 			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_fittings.png",
@@ -383,7 +418,10 @@ for fill = 0, 10 do
 		stack_max = 99,
 		drop = "pipeworks:storage_tank_"..fill.."_x",
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
+			pipe_look_for_stackable_tanks(pos)
+			if string.find(minetest.env:get_node(pos).name, "pipeworks:storage_tank_") ~= nil then
+				pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
+			end
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
