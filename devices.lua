@@ -330,15 +330,15 @@ minetest.register_node("pipeworks:outlet", {
 -- tank
 for fill = 0, 10 do
 	if fill == 0 then 
-		filldesc=""
+		filldesc="empty"
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1}
 	else
-		filldesc=fill
+		filldesc=fill.."0% full"
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1}
 	end
 
 	minetest.register_node("pipeworks:storage_tank_"..fill.."_x", {
-		description = "Fluid Storage Tank ("..filldesc.."0% full)",
+		description = "Fluid Storage Tank ("..filldesc..")",
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_fittings.png",
@@ -367,7 +367,7 @@ for fill = 0, 10 do
 	})
 	
 	minetest.register_node("pipeworks:storage_tank_"..fill.."_z", {
-		description = "Fluid Storage Tank (Z axis, "..filldesc.."0% full)... You hacker, you.",
+		description = "Fluid Storage Tank (Z axis, "..filldesc..")... You hacker, you.",
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_fittings.png",
