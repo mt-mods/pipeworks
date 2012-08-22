@@ -1,6 +1,8 @@
 Changelog
 ---------
 
+2012-08-22:  Added outlet grate, made it participate in autoplace algorithm.
+
 2012-08-21: Made storage tank participate in autoplace algorithm.  Tuned API a 
 little to allow for more flexible placement.  Re-organized code a bit to allow 
 for some upcoming rules changes.  Made storage tanks' upper/lower fittins and 

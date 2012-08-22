@@ -279,6 +279,45 @@ minetest.register_node("pipeworks:intake", {
 	end,
 })
 
+-- outlet grate
+
+minetest.register_node("pipeworks:outlet", {
+	description = "Outlet grate",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_outlet_top.png",
+		"pipeworks_outlet_sides.png",
+		"pipeworks_outlet_sides.png",
+		"pipeworks_outlet_sides.png",
+		"pipeworks_outlet_sides.png",
+		"pipeworks_outlet_sides.png"
+	},
+	selection_box = {
+             	type = "fixed",
+		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
+	},
+	node_box = {
+		type = "fixed",
+		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
+	},
+	paramtype = "light",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	stack_max = 99,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	pipelike=1,
+	on_construct = function(pos)
+	local meta = minetest.env:get_meta(pos)
+	meta:set_int("pipelike",1)
+	end,
+})
+
 -- tank
 
 minetest.register_node("pipeworks:storage_tank_x", {

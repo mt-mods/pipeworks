@@ -107,7 +107,8 @@ pipes_scansurroundings = function(pos)
 
 	if (string.find(nym.name, "pipeworks:storage_tank_x") ~= nil) or
 	   (string.find(nym.name, "pipeworks:storage_tank_z") ~= nil) or
-	   (string.find(nym.name, "pipeworks:intake") ~= nil) then
+	   (string.find(nym.name, "pipeworks:intake") ~= nil) or
+	   (string.find(nym.name, "pipeworks:outlet") ~= nil) then
 		pym=1
 	end
 
