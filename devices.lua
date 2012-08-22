@@ -3,15 +3,24 @@
 pipes_devicelist = {
 	"pump",
 	"valve",
-	"storage_tank"
+	"storage_tank_0",
+	"storage_tank_1",
+	"storage_tank_2",
+	"storage_tank_3",
+	"storage_tank_4",
+	"storage_tank_5",
+	"storage_tank_6",
+	"storage_tank_7",
+	"storage_tank_8",
+	"storage_tank_9",
+	"storage_tank_10"
 }
 
 -- tables
 
 minetest.register_alias("pipeworks:pump", "pipeworks:pump_off_x")
-minetest.register_alias("pipeworks:pump_off", "pipeworks:pump_off_x")
 minetest.register_alias("pipeworks:valve", "pipeworks:valve_off_x")
-minetest.register_alias("pipeworks:valve_off", "pipeworks:valve_off_x")
+minetest.register_alias("pipeworks:storage_tank", "pipeworks:storage_tank_0_x")
 
 pipe_pumpbody_x = {
 	{ -6/16, -8/16, -6/16, 6/16, 8/16, 6/16 }
@@ -319,65 +328,74 @@ minetest.register_node("pipeworks:outlet", {
 })
 
 -- tank
+for fill = 0, 10 do
+	if fill == 0 then 
+		filldesc=""
+		sgroups = {snappy=3, pipe=1, tankfill=fill+1}
+	else
+		filldesc=fill
+		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1}
+	end
 
-minetest.register_node("pipeworks:storage_tank_x", {
-	description = "Fluid Storage Tank",
-	tiles = {
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_sides.png",
-		"pipeworks_storage_tank_sides.png"
-	},
-	paramtype = "light",
-	groups = {snappy=3, pipe=1},
-	sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-	stack_max = 99,
-	after_place_node = function(pos)
-		pipe_device_autorotate(pos, nil, "pipeworks:storage_tank")
-		pipe_scanforobjects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
-	end,
-	pipelike=1,
-	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
-	meta:set_int("pipelike",1)
-	end,
-})
-
-minetest.register_node("pipeworks:storage_tank_z", {
-	description = "Fluid Storage Tank (Z axis)... You hacker, you.",
-	tiles = {
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_sides.png",
-		"pipeworks_storage_tank_sides.png",
-		"pipeworks_storage_tank_fittings.png",
-		"pipeworks_storage_tank_fittings.png"
-	},
-	paramtype = "light",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
-	sounds = default.node_sound_wood_defaults(),
-	walkable = true,
-	stack_max = 99,
-	drop = "pipeworks:storage_tank_x",
-	after_place_node = function(pos)
-		pipe_device_autorotate(pos, nil, "pipeworks:storage_tank")
-		pipe_scanforobjects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
-	end,
-	pipelike=1,
-	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
-	meta:set_int("pipelike",1)
-	end,
-})
+	minetest.register_node("pipeworks:storage_tank_"..fill.."_x", {
+		description = "Fluid Storage Tank ("..filldesc.."0% full)",
+		tiles = {
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_back.png",
+			"pipeworks_storage_tank_front_"..fill..".png"
+		},
+		paramtype = "light",
+		groups = sgroups,
+		sounds = default.node_sound_wood_defaults(),
+		walkable = true,
+		stack_max = 99,
+		after_place_node = function(pos)
+			pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
+			pipe_scanforobjects(pos)
+		end,
+		after_dig_node = function(pos)
+			pipe_scanforobjects(pos)
+		end,
+		pipelike=1,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		end,
+	})
+	
+	minetest.register_node("pipeworks:storage_tank_"..fill.."_z", {
+		description = "Fluid Storage Tank (Z axis, "..filldesc.."0% full)... You hacker, you.",
+		tiles = {
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_front_"..fill..".png",
+			"pipeworks_storage_tank_back.png",
+			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png"
+		},
+		paramtype = "light",
+		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1},
+		sounds = default.node_sound_wood_defaults(),
+		walkable = true,
+		stack_max = 99,
+		drop = "pipeworks:storage_tank_"..fill.."_x",
+		after_place_node = function(pos)
+			pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
+			pipe_scanforobjects(pos)
+		end,
+		after_dig_node = function(pos)
+			pipe_scanforobjects(pos)
+		end,
+		pipelike=1,
+		on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		end,
+	})
+end
 
 -- various actions
 
