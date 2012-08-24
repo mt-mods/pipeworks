@@ -274,7 +274,7 @@ for zp = 0, 1 do
 		end,
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
-		end
+		end,
 	})
 
 	minetest.register_node("pipeworks:pipe_"..pname.."_loaded", {

@@ -15,7 +15,7 @@ local nodenames = {
 	"crossing_xz",
 	"crossing_xy",
 	"crossing_xyz",
-	"pipe",
+	"pipe_segment",
 	"cap_neg_x",
 	"cap_pos_x",
 	"cap_neg_y",
