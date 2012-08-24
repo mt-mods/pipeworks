@@ -1,6 +1,9 @@
 Changelog
 ---------
 
+2012-08-24: Added square-ish pneumatic tubes, with their own autoplace code 
+(they do not connect to the steel pipes or their related devices).
+
 2012-08-22: Added outlet grate, made it participate in autoplace algorithm.  
 Extended storage tank to show fill level in 10% steps (0% to 100%).  Added 
 "expansion tank" that appears if the user stacks tanks upwards.  (Downwards is 

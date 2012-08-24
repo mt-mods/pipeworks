@@ -1,13 +1,15 @@
 -- Pipeworks mod by Vanessa Ezekowitz - 2012-08-05
 --
--- Entirely my own code.  This mod merely supplies enough nodes to build 
--- a bunch of pipes in all directions and with all types of junctions
+-- Entirely my own code.  This mod supplies various shapes of pipes
+-- and devices that they can connect to such as pumps, valves, etc.
+-- All pipes autoconnect as you lay them out, and devices will auto-
+-- connect to them.
 --
 -- License: WTFPL
 --
 
--- comment-out the following dofile line to disnable the old pipe nodes.
-dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
+-- Un-comment the following dofile line to re-enable the old pipe nodes.
+-- dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
 
 -- tables
 
@@ -116,7 +118,7 @@ dbg = function(s)
 	end
 end
 
-function fix_newpipe_names(table, replacement)
+function pipes_fix_image_names(table, replacement)
 	outtable={}
 	for i in ipairs(table) do
 		outtable[i]=string.gsub(table[i], "_XXXXX", replacement)
@@ -249,7 +251,7 @@ for zp = 0, 1 do
 	minetest.register_node("pipeworks:pipe_"..pname.."_empty", {
 		description = pipedesc,
 		drawtype = "nodebox",
-		tiles = fix_newpipe_names(outimgs, "_empty"),
+		tiles = pipes_fix_image_names(outimgs, "_empty"),
 		paramtype = "light",
 		selection_box = {
 	             	type = "fixed",
@@ -280,7 +282,7 @@ for zp = 0, 1 do
 	minetest.register_node("pipeworks:pipe_"..pname.."_loaded", {
 		description = "Pipe segment (loaded, "..pname..")... You hacker, you.",
 		drawtype = "nodebox",
-		tiles = fix_newpipe_names(outimgs, "_loaded"),
+		tiles = pipes_fix_image_names(outimgs, "_loaded"),
 		paramtype = "light",
 		selection_box = {
 	             	type = "fixed",
@@ -314,6 +316,7 @@ end
 end
 end
 
+dofile(minetest.get_modpath("pipeworks").."/tubes.lua")
 dofile(minetest.get_modpath("pipeworks").."/devices.lua")
 dofile(minetest.get_modpath("pipeworks").."/autoplace.lua")
 

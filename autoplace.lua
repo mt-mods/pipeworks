@@ -1,4 +1,6 @@
-pipe_scanforobjects = function(pos)
+-- autorouting for pipes
+
+function pipe_scanforobjects(pos)
 	pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
 	pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
 	pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
@@ -17,18 +19,58 @@ pipe_scanforobjects = function(pos)
 end
 
 function pipe_autoroute(pos, state)
-
 	nctr = minetest.env:get_node(pos)
 	if (string.find(nctr.name, "pipeworks:pipe_") == nil) then return end
 
 	pipes_scansurroundings(pos)
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
-	
 	if nsurround == "000000" then nsurround = "110000" end
-
 	minetest.env:add_node(pos, { name = "pipeworks:pipe_"..nsurround..state })
 end
+
+-- autorouting for pneumatic tubes
+
+function tube_scanforobjects(pos)
+	tube_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	tube_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	tube_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	tube_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	tube_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	tube_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	tube_autoroute(pos)
+end
+
+function tube_autoroute(pos)
+	nctr = minetest.env:get_node(pos)
+	if (string.find(nctr.name, "pipeworks:tube_") == nil) then return end
+
+	pxm=0
+	pxp=0
+	pym=0
+	pyp=0
+	pzm=0
+	pzp=0
+
+	nxm = minetest.env:get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	nxp = minetest.env:get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	nym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	nyp = minetest.env:get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+
+	if (string.find(nxm.name, "pipeworks:tube_") ~= nil) then pxm=1 end
+	if (string.find(nxp.name, "pipeworks:tube_") ~= nil) then pxp=1 end
+	if (string.find(nym.name, "pipeworks:tube_") ~= nil) then pym=1 end
+	if (string.find(nyp.name, "pipeworks:tube_") ~= nil) then pyp=1 end
+	if (string.find(nzm.name, "pipeworks:tube_") ~= nil) then pzm=1 end
+	if (string.find(nzp.name, "pipeworks:tube_") ~= nil) then pzp=1 end
+
+	nsurround = pxm..pxp..pym..pyp..pzm..pzp
+	minetest.env:add_node(pos, { name = "pipeworks:tube_"..nsurround })
+end
+
+-- auto-rotation code for various devices the tubes attach to
 
 function pipe_device_autorotate(pos, state, bname)
 
@@ -53,7 +95,7 @@ function pipe_device_autorotate(pos, state, bname)
 	
 end
 
-pipes_scansurroundings = function(pos)
+function pipes_scansurroundings(pos)
 	pxm=0
 	pxp=0
 	pym=0
