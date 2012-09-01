@@ -139,6 +139,7 @@ for zp = 0, 1 do
 		tgroups = {snappy=3, tube=1, not_in_creative_inventory=1}
 		tubedesc = "Pneumatic tube segment ("..tname..")... You hacker, you."
 		iimg=nil
+		wscale = {x=1,y=1,z=1}
 	else
 		tgroups = {snappy=3, tube=1}
 		tubedesc = "Pneumatic tube segment"
@@ -153,6 +154,7 @@ for zp = 0, 1 do
 		}
 		outboxes = { -24/64, -9/64, -9/64, 24/64, 9/64, 9/64 }
 		outsel = { -24/64, -10/64, -10/64, 24/64, 10/64, 10/64 }
+		wscale = {x=1,y=1,z=0.01}
 	end
 	
 	minetest.register_node("pipeworks:tube_"..tname, {
@@ -161,6 +163,7 @@ for zp = 0, 1 do
 		tiles = outimgs,
 		inventory_image=iimg,
 		wield_image=iimg,
+		wield_scale=wscale,
 		paramtype = "light",
 		selection_box = {
 	             	type = "fixed",
