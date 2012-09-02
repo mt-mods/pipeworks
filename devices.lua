@@ -469,4 +469,3 @@ for a in ipairs(axes) do
 	end)
 end
 
-print("Pipeworks loaded!")

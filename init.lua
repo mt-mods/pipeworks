@@ -11,9 +11,7 @@
 -- Un-comment the following dofile line to re-enable the old pipe nodes.
 -- dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
 
--- tables
-
-minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_000000_empty")
+minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 
 pipe_leftstub = {
 	{ -32/64, -2/64, -6/64,   1/64, 2/64, 6/64 },	-- pipe segment against -X face
@@ -319,5 +317,6 @@ end
 dofile(minetest.get_modpath("pipeworks").."/tubes.lua")
 dofile(minetest.get_modpath("pipeworks").."/devices.lua")
 dofile(minetest.get_modpath("pipeworks").."/autoplace.lua")
+dofile(minetest.get_modpath("pipeworks").."/crafts.lua")
 
 print("Pipeworks loaded!")
