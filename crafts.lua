@@ -18,7 +18,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 		minetest.register_craft({
 		        type = "cooking",
 		        output = "homedecor:plastic_sheeting",
-		        recipe = "default:junglegrass 2",
+		        recipe = "default:junglegrass",
 		})
 
 		minetest.register_craft({
