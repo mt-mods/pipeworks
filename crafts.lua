@@ -29,7 +29,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	end
 
 	minetest.register_craft( {
-	        output = "pipeworks:pipe_110000_empty 6",
+	        output = "pipeworks:pipe_110000_empty 12",
 	        recipe = {
 	                { "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
 	                { "", "", "" },
@@ -38,7 +38,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-	        output = "pipeworks:pump",
+	        output = "pipeworks:pump 2",
 	        recipe = {
 	                { "default:stone", "default:stone", "default:stone" },
 	                { "default:steel_ingot", "default:stick", "default:steel_ingot" },
@@ -47,7 +47,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-	        output = "pipeworks:valve",
+	        output = "pipeworks:valve 2",
 	        recipe = {
 	                { "", "default:stick", "" },
 	                { "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
@@ -56,7 +56,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-	        output = "pipeworks:storage_tank",
+	        output = "pipeworks:storage_tank 2",
 	        recipe = {
 	                { "", "default:steel_ingot", "default:steel_ingot" },
 	                { "default:steel_ingot", "default:glass", "default:steel_ingot" },
@@ -65,7 +65,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-	        output = "pipeworks:intake",
+	        output = "pipeworks:intake 2",
 	        recipe = {
 	                { "", "default:steel_ingot", "" },
 	                { "default:steel_ingot", "", "default:steel_ingot" },
@@ -74,7 +74,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-	        output = "pipeworks:outlet",
+	        output = "pipeworks:outlet 2",
 	        recipe = {
 	                { "default:steel_ingot", "", "default:steel_ingot" },
 	                { "", "default:steel_ingot", "" },
@@ -83,7 +83,7 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-		output = "pipeworks:tube 6",
+		output = "pipeworks:tube 12",
 		recipe = {
 		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 		        { "", "", "" },
