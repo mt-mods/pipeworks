@@ -43,7 +43,9 @@ end
 
 function tube_autoroute(pos)
 	nctr = minetest.env:get_node(pos)
-	if (string.find(nctr.name, "pipeworks:tube_") == nil) then return end
+	print ("minetest.get_item_group("..nctr.name..',"tubedevice") == '..minetest.get_item_group(nctr.name, "tubedevice"))
+	if (string.find(nctr.name, "pipeworks:tube_") == nil)
+		and minetest.get_item_group(nctr.name, "tubedevice") ~= 1 then return end
 
 	pxm=0
 	pxp=0
@@ -59,15 +61,24 @@ function tube_autoroute(pos)
 	nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
 	nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
-	if (string.find(nxm.name, "pipeworks:tube_") ~= nil) then pxm=1 end
-	if (string.find(nxp.name, "pipeworks:tube_") ~= nil) then pxp=1 end
-	if (string.find(nym.name, "pipeworks:tube_") ~= nil) then pym=1 end
-	if (string.find(nyp.name, "pipeworks:tube_") ~= nil) then pyp=1 end
-	if (string.find(nzm.name, "pipeworks:tube_") ~= nil) then pzm=1 end
-	if (string.find(nzp.name, "pipeworks:tube_") ~= nil) then pzp=1 end
+	if (string.find(nxm.name, "pipeworks:tube_") ~= nil) 
+		or minetest.get_item_group(nxm.name, "tubedevice") == 1 then pxm=1 end
+	if (string.find(nxp.name, "pipeworks:tube_") ~= nil) 
+		or minetest.get_item_group(nxp.name, "tubedevice") == 1 then pxp=1 end
+	if (string.find(nym.name, "pipeworks:tube_") ~= nil) 
+		or minetest.get_item_group(nym.name, "tubedevice") == 1 then pym=1 end
+	if (string.find(nyp.name, "pipeworks:tube_") ~= nil) 
+		or minetest.get_item_group(nyp.name, "tubedevice") == 1 then pyp=1 end
+	if (string.find(nzm.name, "pipeworks:tube_") ~= nil) 
+		or minetest.get_item_group(nzm.name, "tubedevice") == 1 then pzm=1 end
+	if (string.find(nzp.name, "pipeworks:tube_") ~= nil) 
+		or minetest.get_item_group(nzp.name, "tubedevice") == 1 then pzp=1 end
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
-	minetest.env:add_node(pos, { name = "pipeworks:tube_"..nsurround })
+	if minetest.get_item_group(nctr.name, "tubedevice") ~= 1 then
+		minetest.env:add_node(pos, { name = "pipeworks:tube_"..nsurround })
+	end
+
 end
 
 -- auto-rotation code for various devices the tubes attach to

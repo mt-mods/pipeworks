@@ -1,4 +1,21 @@
--- This file supplies pneumatic tubes.
+-- This file supplies pneumatic tubes and a 'test' device
+
+minetest.register_node("pipeworks:testobject", {
+	description = "Pneumatic tube test ojbect",
+	tiles = {
+		"pipeworks_testobject.png",
+	},
+	paramtype = "light",
+	groups = {snappy=3, tubedevice=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	after_place_node = function(pos)
+			tube_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+			tube_scanforobjects(pos)
+	end,
+})
 
 -- tables
 
