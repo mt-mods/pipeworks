@@ -121,6 +121,10 @@ spigot_bottomstub = {
 	{ -8/64, -16/64, -3/64, 8/64, -14/64, 3/64 }
 }
 
+entry_panel = {
+	{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
+}
+
 --  Functions
 
 dbg = function(s)
@@ -307,7 +311,7 @@ for zp = 0, 1 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
-		drop = "pipeworks:pipe_110000_loaded",
+		drop = "pipeworks:pipe_110000_empty",
 		pipelike=1,
 		on_construct = function(pos)
 		local meta = minetest.env:get_meta(pos)

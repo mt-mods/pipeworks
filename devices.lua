@@ -213,6 +213,48 @@ minetest.register_node("pipeworks:spigot", {
 	}
 })
 
+-- sealed pipe entry/exit (decorative horizontal pipe passing through a metal
+-- wall, for use in places where walls should look like they're airtight)
+
+	local airtightboxes = {}
+	pipe_addbox(airtightboxes, pipe_frontstub)
+	pipe_addbox(airtightboxes, pipe_backstub)
+	pipe_addbox(airtightboxes, entry_panel)
+
+minetest.register_node("pipeworks:entry_panel", {
+	description = "Airtight Pipe entry/exit",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_pipe_end_empty.png",
+		"pipeworks_pipe_end_empty.png"
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	stack_max = 99,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	pipelike=1,
+	on_construct = function(pos)
+	local meta = minetest.env:get_meta(pos)
+	meta:set_int("pipelike",1)
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = airtightboxes,
+	},
+})
+
 -- tanks
 
 for fill = 0, 10 do

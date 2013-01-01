@@ -149,6 +149,28 @@ function pipes_scansurroundings(pos)
 		pzp=1
 	end
 
+-- ...sealed pipe entry/exit...
+
+	if (string.find(nxm.name, "pipeworks:entry_panel") ~= nil)
+	  and (nxm.param2 == 1 or nxm.param2 == 3) then
+		pxm=1
+	end
+
+	if (string.find(nxp.name, "pipeworks:entry_panel") ~= nil)
+	  and (nxp.param2 == 1 or nxp.param2 == 3) then
+		pxp=1
+	end
+
+	if (string.find(nzm.name, "pipeworks:entry_panel") ~= nil)
+	  and (nzm.param2 == 0 or nzm.param2 == 2) then
+		pzm=1
+	end
+
+	if (string.find(nzp.name, "pipeworks:entry_panel") ~= nil)
+	  and (nzp.param2 == 0 or nzp.param2 == 2) then
+		pzp=1
+	end
+
 -- ...pumps, grates, and storage tanks
 
 	if (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) or
