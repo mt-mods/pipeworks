@@ -234,7 +234,7 @@ for zp = 0, 1 do
 		end
 	end
 
-	if (jx==1 and jy==1 and jz~=1) or (jx==1 and jy~=1 and jz==1) or (jx~= 1 and jy==1 and jz==1) then
+	if jx+jy+jz >= 2 then
 		pipe_addbox(outboxes, pipe_bendsphere)
 	end
 
