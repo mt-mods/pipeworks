@@ -181,11 +181,11 @@ function pipes_scansurroundings(pos)
 end
 
 function pipe_look_for_stackable_tanks(pos)
-	tym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	local tym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
 
 	if string.find(tym.name, "pipeworks:storage_tank_") ~= nil or
 	    string.find(tym.name, "pipeworks:expansion_tank_") ~= nil then
-		minetest.env:add_node(pos, { name =  "pipeworks:expansion_tank_0"})
+		minetest.env:add_node(pos, { name =  "pipeworks:expansion_tank_0", param2 = tym.param2})
 	end
 end
 
