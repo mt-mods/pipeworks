@@ -171,7 +171,7 @@ minetest.register_node("pipeworks:grating", {
 -- outlet spigot
 
 	local spigotboxes = {}
-	pipe_addbox(spigotboxes, pipe_leftstub)
+	pipe_addbox(spigotboxes, pipe_backstub)
 	pipe_addbox(spigotboxes, spigot_bottomstub)
 	pipe_addbox(spigotboxes, pipe_bendsphere)
 
@@ -209,7 +209,7 @@ minetest.register_node("pipeworks:spigot", {
 	},
 	selection_box = {
 		type = "fixed",
-		fixed = { -8/16, -6/16, -2/16, 2/16, 2/16, 2/16 }
+		fixed = { -2/16, -6/16, -2/16, 2/16, 2/16, 8/16 }
 	}
 })
 

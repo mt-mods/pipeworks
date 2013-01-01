@@ -130,22 +130,22 @@ function pipes_scansurroundings(pos)
 -- ...spigots...
 
 	if (string.find(nxm.name, "pipeworks:spigot") ~= nil)
-	  and nxm.param2 == 2 then
+	  and nxm.param2 == 1 then
 		pxm=1
 	end
 
 	if (string.find(nxp.name, "pipeworks:spigot") ~= nil)
-	  and nxp.param2 == 0 then
+	  and nxp.param2 == 3 then
 		pxp=1
 	end
 
 	if (string.find(nzm.name, "pipeworks:spigot") ~= nil)
-	  and nzm.param2 == 1 then
+	  and nzm.param2 == 0 then
 		pzm=1
 	end
 
 	if (string.find(nzp.name, "pipeworks:spigot") ~= nil)
-	  and nzp.param2 == 3 then
+	  and nzp.param2 == 2 then
 		pzp=1
 	end
 
