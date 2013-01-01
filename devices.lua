@@ -18,40 +18,21 @@ pipes_devicelist = {
 
 -- tables
 
-minetest.register_alias("pipeworks:pump", "pipeworks:pump_off_x")
-minetest.register_alias("pipeworks:valve", "pipeworks:valve_off_x")
-minetest.register_alias("pipeworks:storage_tank", "pipeworks:storage_tank_0_x")
-
-pipe_pumpbody_x = {
-	{ -6/16, -8/16, -6/16, 6/16, 8/16, 6/16 }
+pipe_pumpbody = {
+	{ -7/16, -6/16, -7/16, 7/16,  5/16, 7/16 },
+	{ -8/16, -8/16, -8/16, 8/16, -6/16, 8/16 }
 }
 
-pipe_pumpbody_z = {
-	{ -6/16, -8/16, -6/16, 6/16, 8/16, 6/16 }
-}
-
-pipe_valvebody_x = {
+pipe_valvebody = {
 	{ -4/16, -4/16, -4/16, 4/16, 4/16, 4/16 }
 }
 
-pipe_valvebody_z = {
-	{ -4/16, -4/16, -4/16, 4/16, 4/16, 4/16 }
-}
-
-pipe_valvehandle_on_x = {
+pipe_valvehandle_on = {
 	{ -5/16, 4/16, -1/16, 0, 5/16, 1/16 }
 }
 
-pipe_valvehandle_on_z = {
+pipe_valvehandle_off = {
 	{ -1/16, 4/16, -5/16, 1/16, 5/16, 0 }
-}
-
-pipe_valvehandle_off_x = {
-	{ -1/16, 4/16, -5/16, 1/16, 5/16, 0 }
-}
-
-pipe_valvehandle_off_z = {
-	{ -5/16, 4/16, -1/16, 0, 5/16, 1/16 }
 }
 
 -- Now define the nodes.
@@ -68,24 +49,22 @@ for s in ipairs(states) do
 	end
 
 	local pumpboxes = {}
-	pipe_addbox(pumpboxes, pipe_leftstub)
-	pipe_addbox(pumpboxes, pipe_pumpbody_x)
-	pipe_addbox(pumpboxes, pipe_rightstub)
-	local tilex = "pipeworks_pump_ends.png"
-	local tilez = "pipeworks_pump_"..states[s]..".png"
+	pipe_addbox(pumpboxes, pipe_pumpbody)
+	pipe_addbox(pumpboxes, pipe_topstub)
 
-	minetest.register_node("pipeworks:pump_"..states[s].."_x", {
-		description = "Pump Module ("..states[s]..")",
+	minetest.register_node("pipeworks:pump_"..states[s], {
+		description = "Pump/Intake Module",
 		drawtype = "nodebox",
 		tiles = {
-			"pipeworks_pump_top_x.png",
+			"pipeworks_pump_top.png",
+			"pipeworks_pump_bottom.png",
 			"pipeworks_pump_sides.png",
-			tilex,
-			tilex,
 			"pipeworks_pump_sides.png",
-			tilez
+			"pipeworks_pump_sides.png",
+			"pipeworks_pump_"..states[s]..".png"
 		},
 		paramtype = "light",
+		paramtype2 = "facedir",
 		selection_box = {
 	             	type = "fixed",
 			fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
@@ -99,71 +78,31 @@ for s in ipairs(states) do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:pump")
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		drop = "pipeworks:pump_off_x"
+		drop = "pipeworks:pump_off"
 	})
 	
-	local pumpboxes = {}
-	pipe_addbox(pumpboxes, pipe_frontstub)
-	pipe_addbox(pumpboxes, pipe_pumpbody_z)
-	pipe_addbox(pumpboxes, pipe_backstub)
-
-	minetest.register_node("pipeworks:pump_"..states[s].."_z", {
-		description = "Pump Module ("..states[s]..", Z-axis)",
-		drawtype = "nodebox",
-		tiles = {
-			"pipeworks_pump_top_z.png",
-			"pipeworks_pump_sides.png",
-			tilez,
-			tilez,
-			"pipeworks_pump_sides.png",
-			tilex
-		},
-		paramtype = "light",
-		selection_box = {
-	             	type = "fixed",
-			fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
-		},
-		node_box = {
-			type = "fixed",
-			fixed = pumpboxes
-		},
-		groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
-		sounds = default.node_sound_wood_defaults(),
-		walkable = true,
-		stack_max = 99,
-		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:pump")
-			pipe_scanforobjects(pos)
-		end,
-		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
-		end,
-		drop = "pipeworks:pump_off_x"
-	})
-
 	local valveboxes = {}
 	pipe_addbox(valveboxes, pipe_leftstub)
-	pipe_addbox(valveboxes, pipe_valvebody_x)
+	pipe_addbox(valveboxes, pipe_valvebody)
 	if states[s] == "off" then 
-		pipe_addbox(valveboxes, pipe_valvehandle_off_x)
+		pipe_addbox(valveboxes, pipe_valvehandle_off)
 	else
-		pipe_addbox(valveboxes, pipe_valvehandle_on_x)
+		pipe_addbox(valveboxes, pipe_valvehandle_on)
 	end
 	pipe_addbox(valveboxes, pipe_rightstub)
 	local tilex = "pipeworks_valvebody_ends.png"
 	local tilez = "pipeworks_valvebody_sides.png"
 
-	minetest.register_node("pipeworks:valve_"..states[s].."_x", {
-		description = "Valve ("..states[s]..")",
+	minetest.register_node("pipeworks:valve_"..states[s], {
+		description = "Valve",
 		drawtype = "nodebox",
 		tiles = {
-			"pipeworks_valvebody_top_"..states[s].."_x.png",
+			"pipeworks_valvebody_top_"..states[s]..".png",
 			"pipeworks_valvebody_bottom.png",
 			tilex,
 			tilex,
@@ -171,6 +110,7 @@ for s in ipairs(states) do
 			tilez,
 		},
 		paramtype = "light",
+		paramtype2 = "facedir",
 		selection_box = {
 	             	type = "fixed",
 			fixed = { -8/16, -4/16, -5/16, 8/16, 5/16, 5/16 }
@@ -184,63 +124,12 @@ for s in ipairs(states) do
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:valve")
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		drop = "pipeworks:valve_off_x",
-		pipelike=1,
-		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
-		meta:set_int("pipelike",1)
-		end,
-	})
-
-	local valveboxes = {}
-	pipe_addbox(valveboxes, pipe_frontstub)
-	pipe_addbox(valveboxes, pipe_valvebody_z)
-	if states[s] == "off" then 
-		pipe_addbox(valveboxes, pipe_valvehandle_off_z)
-	else
-		pipe_addbox(valveboxes, pipe_valvehandle_on_z)
-	end
-	pipe_addbox(valveboxes, pipe_backstub)
-
-	minetest.register_node("pipeworks:valve_"..states[s].."_z", {
-		description = "Valve ("..states[s]..", Z-axis)",
-		drawtype = "nodebox",
-		tiles = {
-			"pipeworks_valvebody_top_"..states[s].."_z.png",
-			"pipeworks_valvebody_bottom.png",
-			tilez,
-			tilez,
-			tilex,
-			tilex,
-		},
-		paramtype = "light",
-		selection_box = {
-	             	type = "fixed",
-			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
-		},
-		node_box = {
-			type = "fixed",
-			fixed = valveboxes
-		},
-		groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
-		sounds = default.node_sound_wood_defaults(),
-		walkable = true,
-		stack_max = 99,
-		after_place_node = function(pos)
-			pipe_device_autorotate(pos, states[s], "pipeworks:valve")
-			pipe_scanforobjects(pos)
-
-		end,
-		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
-		end,
-		drop = "pipeworks:valve_off_x",
+		drop = "pipeworks:valve_off",
 		pipelike=1,
 		on_construct = function(pos)
 		local meta = minetest.env:get_meta(pos)
@@ -249,26 +138,17 @@ for s in ipairs(states) do
 	})
 end
 
--- intake grate
+-- grating
 
-minetest.register_node("pipeworks:intake", {
-	description = "Intake grate",
-	drawtype = "nodebox",
+minetest.register_node("pipeworks:grating", {
+	description = "Decorative grating",
 	tiles = {
-		"pipeworks_intake_top.png",
-		"pipeworks_intake_sides.png",
-		"pipeworks_intake_sides.png",
-		"pipeworks_intake_sides.png",
-		"pipeworks_intake_sides.png",
-		"pipeworks_intake_sides.png"
-	},
-	selection_box = {
-             	type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
-	},
-	node_box = {
-		type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
+		"pipeworks_grating_top.png",
+		"pipeworks_grating_sides.png",
+		"pipeworks_grating_sides.png",
+		"pipeworks_grating_sides.png",
+		"pipeworks_grating_sides.png",
+		"pipeworks_grating_sides.png"
 	},
 	paramtype = "light",
 	groups = {snappy=3, pipe=1},
@@ -288,28 +168,26 @@ minetest.register_node("pipeworks:intake", {
 	end,
 })
 
--- outlet grate
+-- outlet spigot
 
-minetest.register_node("pipeworks:outlet", {
-	description = "Outlet grate",
+	local spigotboxes = {}
+	pipe_addbox(spigotboxes, pipe_leftstub)
+	pipe_addbox(spigotboxes, spigot_bottomstub)
+	pipe_addbox(spigotboxes, pipe_bendsphere)
+
+minetest.register_node("pipeworks:spigot", {
+	description = "Spigot outlet",
 	drawtype = "nodebox",
 	tiles = {
-		"pipeworks_outlet_top.png",
-		"pipeworks_outlet_sides.png",
-		"pipeworks_outlet_sides.png",
-		"pipeworks_outlet_sides.png",
-		"pipeworks_outlet_sides.png",
-		"pipeworks_outlet_sides.png"
-	},
-	selection_box = {
-             	type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
-	},
-	node_box = {
-		type = "fixed",
-		fixed = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
+		"pipeworks_spigot_sides.png",
+		"pipeworks_pipe_end_empty.png",
+		"pipeworks_spigot_sides.png",
+		"pipeworks_pipe_end_empty.png",
+		"pipeworks_spigot_sides.png",
+		"pipeworks_spigot_sides.png"
 	},
 	paramtype = "light",
+	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
@@ -325,6 +203,14 @@ minetest.register_node("pipeworks:outlet", {
 	local meta = minetest.env:get_meta(pos)
 	meta:set_int("pipelike",1)
 	end,
+	node_box = {
+		type = "fixed",
+		fixed = spigotboxes,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = { -8/16, -6/16, -2/16, 2/16, 2/16, 2/16 }
+	}
 })
 
 -- tanks
@@ -354,7 +240,7 @@ for fill = 0, 10 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
-		drop = "pipeworks:storage_tank_"..fill.."_x",
+		drop = "pipeworks:storage_tank_"..fill,
 		after_place_node = function(pos)
 			pipe_look_for_stackable_tanks(pos)
 			pipe_scanforobjects(pos)
@@ -369,59 +255,24 @@ for fill = 0, 10 do
 		end,
 	})
 
-	minetest.register_node("pipeworks:storage_tank_"..fill.."_x", {
+	minetest.register_node("pipeworks:storage_tank_"..fill, {
 		description = "Fluid Storage Tank ("..filldesc..")",
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_back.png",
-			"pipeworks_storage_tank_fittings.png",
-			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_back.png",
+			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_front_"..fill..".png"
 		},
 		paramtype = "light",
+		paramtype2 = "facedir",
 		groups = sgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
 		after_place_node = function(pos)
 			pipe_look_for_stackable_tanks(pos)
-			if string.find(minetest.env:get_node(pos).name, "pipeworks:storage_tank_") ~= nil then
-				pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
-			end
-			pipe_scanforobjects(pos)
-		end,
-		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
-		end,
-		pipelike=1,
-		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
-		meta:set_int("pipelike",1)
-		end,
-	})
-	
-	minetest.register_node("pipeworks:storage_tank_"..fill.."_z", {
-		description = "Fluid Storage Tank (Z axis, "..filldesc..")... You hacker, you.",
-		tiles = {
-			"pipeworks_storage_tank_fittings.png",
-			"pipeworks_storage_tank_back.png",
-			"pipeworks_storage_tank_front_"..fill..".png",
-			"pipeworks_storage_tank_back.png",
-			"pipeworks_storage_tank_fittings.png",
-			"pipeworks_storage_tank_fittings.png"
-		},
-		paramtype = "light",
-		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1},
-		sounds = default.node_sound_wood_defaults(),
-		walkable = true,
-		stack_max = 99,
-		drop = "pipeworks:storage_tank_"..fill.."_x",
-		after_place_node = function(pos)
-			pipe_look_for_stackable_tanks(pos)
-			if string.find(minetest.env:get_node(pos).name, "pipeworks:storage_tank_") ~= nil then
-				pipe_device_autorotate(pos, nil, "pipeworks:storage_tank_"..fill)
-			end
 			pipe_scanforobjects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -437,35 +288,70 @@ end
 
 -- various actions
 
-local axes = { "x", "z" }
+minetest.register_on_punchnode(function (pos, node)
+	if node.name=="pipeworks:valve_on" then 
+		fdir = minetest.env:get_node(pos).param2
+		minetest.env:add_node(pos, { name = "pipeworks:valve_off", param2 = fdir })
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",0)
+	end
+end)
 
-for a in ipairs(axes) do
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:valve_on_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:valve_off_"..axes[a] })
-			local meta = minetest.env:get_meta(pos)
-			meta:set_int("pipelike",0)
-		end
-	end)
+minetest.register_on_punchnode(function (pos, node)
+	if node.name=="pipeworks:valve_off" then 
+		fdir = minetest.env:get_node(pos).param2
+		minetest.env:add_node(pos, { name = "pipeworks:valve_on", param2 = fdir })
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+	end
+end)
 
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:valve_off_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:valve_on_"..axes[a] })
-			local meta = minetest.env:get_meta(pos)
-			meta:set_int("pipelike",1)
-		end
-	end)
+minetest.register_on_punchnode(function (pos, node)
+	if node.name=="pipeworks:pump_on" then 
+		fdir = minetest.env:get_node(pos).param2
+		minetest.env:add_node(pos, { name = "pipeworks:pump_off", param2 = fdir })
+	end
+end)
 
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:pump_on_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:pump_off_"..axes[a] })
-		end
-	end)
+minetest.register_on_punchnode(function (pos, node)
+	if node.name=="pipeworks:pump_off" then 
+		fdir = minetest.env:get_node(pos).param2
+		minetest.env:add_node(pos, { name = "pipeworks:pump_on", param2 = fdir })
+	end
+end)
 
-	minetest.register_on_punchnode(function (pos, node)
-		if node.name=="pipeworks:pump_off_"..axes[a] then 
-			minetest.env:add_node(pos, { name = "pipeworks:pump_on_"..axes[a] })
-		end
-	end)
-end
+-- backwards compatibility
+
+minetest.register_alias("pipeworks:intake", "pipeworks:grating")
+minetest.register_alias("pipeworks:outlet", "pipeworks:grating")
+minetest.register_alias("pipeworks:pump_off_x", "pipeworks:pump_off")
+minetest.register_alias("pipeworks:pump_off_z", "pipeworks:pump_off")
+minetest.register_alias("pipeworks:pump_on_x", "pipeworks:pump_on")
+minetest.register_alias("pipeworks:pump_on_z", "pipeworks:pump_on")
+minetest.register_alias("pipeworks:valve_off_x", "pipeworks:valve_off")
+minetest.register_alias("pipeworks:valve_off_z", "pipeworks:valve_off")
+minetest.register_alias("pipeworks:valve_on_x", "pipeworks:valve_on")
+minetest.register_alias("pipeworks:valve_on_z", "pipeworks:valve_on")
+minetest.register_alias("pipeworks:storage_tank_0_x", "pipeworks:storage_tank_0")
+minetest.register_alias("pipeworks:storage_tank_0_z", "pipeworks:storage_tank_0")
+minetest.register_alias("pipeworks:storage_tank_1_x", "pipeworks:storage_tank_1")
+minetest.register_alias("pipeworks:storage_tank_1_z", "pipeworks:storage_tank_1")
+minetest.register_alias("pipeworks:storage_tank_2_x", "pipeworks:storage_tank_2")
+minetest.register_alias("pipeworks:storage_tank_2_z", "pipeworks:storage_tank_2")
+minetest.register_alias("pipeworks:storage_tank_3_x", "pipeworks:storage_tank_3")
+minetest.register_alias("pipeworks:storage_tank_3_z", "pipeworks:storage_tank_3")
+minetest.register_alias("pipeworks:storage_tank_4_x", "pipeworks:storage_tank_4")
+minetest.register_alias("pipeworks:storage_tank_4_z", "pipeworks:storage_tank_4")
+minetest.register_alias("pipeworks:storage_tank_5_x", "pipeworks:storage_tank_5")
+minetest.register_alias("pipeworks:storage_tank_5_z", "pipeworks:storage_tank_5")
+minetest.register_alias("pipeworks:storage_tank_6_x", "pipeworks:storage_tank_6")
+minetest.register_alias("pipeworks:storage_tank_6_z", "pipeworks:storage_tank_6")
+minetest.register_alias("pipeworks:storage_tank_7_x", "pipeworks:storage_tank_7")
+minetest.register_alias("pipeworks:storage_tank_7_z", "pipeworks:storage_tank_7")
+minetest.register_alias("pipeworks:storage_tank_8_x", "pipeworks:storage_tank_8")
+minetest.register_alias("pipeworks:storage_tank_8_z", "pipeworks:storage_tank_8")
+minetest.register_alias("pipeworks:storage_tank_9_x", "pipeworks:storage_tank_9")
+minetest.register_alias("pipeworks:storage_tank_9_z", "pipeworks:storage_tank_9")
+minetest.register_alias("pipeworks:storage_tank_10_x", "pipeworks:storage_tank_10")
+minetest.register_alias("pipeworks:storage_tank_10_z", "pipeworks:storage_tank_10")
 

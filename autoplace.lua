@@ -83,29 +83,6 @@ end
 
 -- auto-rotation code for various devices the tubes attach to
 
-function pipe_device_autorotate(pos, state, bname)
-
-	if state == nil then
-		nname = bname
-	else
-		nname = bname.."_"..state
-	end
-
-	local nctr = minetest.env:get_node(pos)
-
-	pipes_scansurroundings(pos)
-
-	if (pxm+pxp) ~= 0 then
-		minetest.env:add_node(pos, { name = nname.."_x" })
-		return
-	end
-
-	if (pzm+pzp) ~= 0 then
-		minetest.env:add_node(pos, { name = nname.."_z" })
-	end
-	
-end
-
 function pipes_scansurroundings(pos)
 	pxm=0
 	pxp=0
@@ -128,39 +105,55 @@ function pipes_scansurroundings(pos)
 	if (string.find(nzm.name, "pipeworks:pipe_") ~= nil) then pzm=1 end
 	if (string.find(nzp.name, "pipeworks:pipe_") ~= nil) then pzp=1 end
 
-	for p in ipairs(pipes_devicelist) do
-		pdev = pipes_devicelist[p]
-		if (string.find(nxm.name, "pipeworks:"..pdev.."_off_x") ~= nil) or
-		   (string.find(nxm.name, "pipeworks:"..pdev.."_on_x") ~= nil) or
-		   (string.find(nxm.name, "pipeworks:"..pdev.."_x") ~= nil) then
-			pxm=1
-		end
+-- Special handling for valves...
 
-		if (string.find(nxp.name, "pipeworks:"..pdev.."_off_x") ~= nil) or
-		   (string.find(nxp.name, "pipeworks:"..pdev.."_on_x") ~= nil) or
-		   (string.find(nxp.name, "pipeworks:"..pdev.."_x") ~= nil)  then
-			pxp=1
-		end
-
-		if (string.find(nzm.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
-		   (string.find(nzm.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
-		   (string.find(nzm.name, "pipeworks:"..pdev.."_z") ~= nil)  then
-			pzm=1
-		end
-
-		if (string.find(nzp.name, "pipeworks:"..pdev.."_off_z") ~= nil) or
-		   (string.find(nzp.name, "pipeworks:"..pdev.."_on_z") ~= nil) or
-		   (string.find(nzp.name, "pipeworks:"..pdev.."_z") ~= nil)  then
-			pzp=1
-		end
+	if (string.find(nxm.name, "pipeworks:valve") ~= nil)
+	  and (nxm.param2 == 0 or nxm.param2 == 2) then
+		pxm=1
 	end
 
-	-- storage tanks and intake grates have vertical connections
-	-- also, so they require a special case
+	if (string.find(nxp.name, "pipeworks:valve") ~= nil)
+	  and (nxp.param2 == 0 or nxp.param2 == 2) then
+		pxp=1
+	end
+
+	if (string.find(nzm.name, "pipeworks:valve") ~= nil)
+	  and (nzm.param2 == 1 or nzm.param2 == 3) then
+		pzm=1
+	end
+
+	if (string.find(nzp.name, "pipeworks:valve") ~= nil)
+	  and (nzp.param2 == 1 or nzp.param2 == 3) then
+		pzp=1
+	end
+
+-- ...spigots...
+
+	if (string.find(nxm.name, "pipeworks:spigot") ~= nil)
+	  and nxm.param2 == 2 then
+		pxm=1
+	end
+
+	if (string.find(nxp.name, "pipeworks:spigot") ~= nil)
+	  and nxp.param2 == 0 then
+		pxp=1
+	end
+
+	if (string.find(nzm.name, "pipeworks:spigot") ~= nil)
+	  and nzm.param2 == 1 then
+		pzm=1
+	end
+
+	if (string.find(nzp.name, "pipeworks:spigot") ~= nil)
+	  and nzp.param2 == 3 then
+		pzp=1
+	end
+
+-- ...pumps, grates, and storage tanks
 
 	if (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) or
-	   (string.find(nym.name, "pipeworks:intake") ~= nil) or
-	   (string.find(nym.name, "pipeworks:outlet") ~= nil) then
+	   (string.find(nym.name, "pipeworks:grating") ~= nil) or
+	   (string.find(nym.name, "pipeworks:pump") ~= nil) then
 		pym=1
 	end
 end
