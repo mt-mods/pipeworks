@@ -1,7 +1,7 @@
 -- This file supplies pneumatic tubes and a 'test' device
 
 minetest.register_node("pipeworks:testobject", {
-	description = "Pneumatic tube test ojbect",
+	description = "Pneumatic tube test object",
 	tiles = {
 		"pipeworks_testobject.png",
 	},
