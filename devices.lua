@@ -182,8 +182,8 @@ minetest.register_node("pipeworks:spigot", {
 		"pipeworks_spigot_sides.png",
 		"pipeworks_pipe_end_empty.png",
 		"pipeworks_spigot_sides.png",
-		"pipeworks_pipe_end_empty.png",
 		"pipeworks_spigot_sides.png",
+		"pipeworks_pipe_end_empty.png",
 		"pipeworks_spigot_sides.png"
 	},
 	paramtype = "light",
