@@ -10,8 +10,10 @@
 
 -- Un-comment the following dofile line to re-enable the old pipe nodes.
 -- dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
+--
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
+local DEBUG = true
 
 pipe_leftstub = {
 	{ -32/64, -2/64, -6/64,   1/64, 2/64, 6/64 },	-- pipe segment against -X face
@@ -108,27 +110,10 @@ pipe_bendsphere = {
 	{ -3/64, -3/64, -5/64, 3/64, 3/64, 5/64 }
 }
 
-spigot_bottomstub = {
-	{ -2/64, -16/64, -6/64,   2/64, 1/64, 6/64 },	-- pipe segment against -Y face
-	{ -4/64, -16/64, -5/64,   4/64, 1/64, 5/64 },
-	{ -5/64, -16/64, -4/64,   5/64, 1/64, 4/64 },
-	{ -6/64, -16/64, -2/64,   6/64, 1/64, 2/64 },
-
-	{ -3/64, -16/64, -8/64, 3/64, -14/64, 8/64 },	-- (the flange for it)
-	{ -5/64, -16/64, -7/64, 5/64, -14/64, 7/64 },
-	{ -6/64, -16/64, -6/64, 6/64, -14/64, 6/64 },
-	{ -7/64, -16/64, -5/64, 7/64, -14/64, 5/64 },
-	{ -8/64, -16/64, -3/64, 8/64, -14/64, 3/64 }
-}
-
-entry_panel = {
-	{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
-}
-
 --  Functions
 
 dbg = function(s)
-	if DEBUG == 1 then
+	if DEBUG then
 		print('[PIPEWORKS] ' .. s)
 	end
 end
@@ -149,6 +134,9 @@ function pipe_addbox(t, b)
 end
 
 -- now define the nodes!
+
+local empty_nodenames = {}
+local full_nodenames = {}
 
 for xm = 0, 1 do
 for xp = 0, 1 do
@@ -279,12 +267,11 @@ for zp = 0, 1 do
 		groups = pgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
 		drop = "pipeworks:pipe_110000_empty",
 		pipelike=1,
 		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
-		meta:set_int("pipelike",1)
+			local meta = minetest.env:get_meta(pos)
+			meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
@@ -310,12 +297,11 @@ for zp = 0, 1 do
 		groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
 		drop = "pipeworks:pipe_110000_empty",
 		pipelike=1,
 		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
-		meta:set_int("pipelike",1)
+			local meta = minetest.env:get_meta(pos)
+			meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
@@ -324,6 +310,8 @@ for zp = 0, 1 do
 			pipe_scanforobjects(pos)
 		end
 	})
+	table.insert(empty_nodenames,"pipeworks:pipe_"..pname.."_empty") -- for the abms
+	table.insert(full_nodenames,"pipeworks:pipe_"..pname.."_loaded") -- for bacon
 end
 end
 end
@@ -335,5 +323,6 @@ dofile(minetest.get_modpath("pipeworks").."/tubes.lua")
 dofile(minetest.get_modpath("pipeworks").."/devices.lua")
 dofile(minetest.get_modpath("pipeworks").."/autoplace.lua")
 dofile(minetest.get_modpath("pipeworks").."/crafts.lua")
+dofile(minetest.get_modpath("pipeworks").."/flowing_logic.lua")
 
 print("Pipeworks loaded!")

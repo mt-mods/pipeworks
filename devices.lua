@@ -35,6 +35,22 @@ pipe_valvehandle_off = {
 	{ -1/16, 4/16, -5/16, 1/16, 5/16, 0 }
 }
 
+spigot_bottomstub = {
+	{ -2/64, -16/64, -6/64,   2/64, 1/64, 6/64 },	-- pipe segment against -Y face
+	{ -4/64, -16/64, -5/64,   4/64, 1/64, 5/64 },
+	{ -5/64, -16/64, -4/64,   5/64, 1/64, 4/64 },
+	{ -6/64, -16/64, -2/64,   6/64, 1/64, 2/64 },
+
+	{ -3/64, -16/64, -8/64, 3/64, -14/64, 8/64 },	-- (the flange for it)
+	{ -5/64, -16/64, -7/64, 5/64, -14/64, 7/64 },
+	{ -6/64, -16/64, -6/64, 6/64, -14/64, 6/64 },
+	{ -7/64, -16/64, -5/64, 7/64, -14/64, 5/64 },
+	{ -8/64, -16/64, -3/64, 8/64, -14/64, 3/64 }
+}
+
+entry_panel = {
+	{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
+}
 -- Now define the nodes.
 
 local states = { "on", "off" }
@@ -76,7 +92,11 @@ for s in ipairs(states) do
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
+		pipelike = 1,
+		on_construct = function(pos)
+			local meta = minetest.env:get_meta(pos)
+			meta:set_int("pipelike",1)
+		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
@@ -122,7 +142,11 @@ for s in ipairs(states) do
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
+		pipelike = 1,
+		on_construct = function(pos)
+			local meta = minetest.env:get_meta(pos)
+			meta:set_int("pipelike",1)
+		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
@@ -131,10 +155,6 @@ for s in ipairs(states) do
 		end,
 		drop = "pipeworks:valve_off",
 		pipelike=1,
-		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
-		meta:set_int("pipelike",1)
-		end,
 	})
 end
 
@@ -154,7 +174,6 @@ minetest.register_node("pipeworks:grating", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	stack_max = 99,
 	after_place_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
@@ -191,17 +210,16 @@ minetest.register_node("pipeworks:spigot", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	stack_max = 99,
+	pipelike=1,
+	on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+	end,
 	after_place_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
 	after_dig_node = function(pos)
 		pipe_scanforobjects(pos)
-	end,
-	pipelike=1,
-	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
-	meta:set_int("pipelike",1)
 	end,
 	node_box = {
 		type = "fixed",
@@ -237,7 +255,6 @@ minetest.register_node("pipeworks:entry_panel", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	stack_max = 99,
 	after_place_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
@@ -281,7 +298,6 @@ for fill = 0, 10 do
 		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1},
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
 		drop = "pipeworks:storage_tank_"..fill,
 		after_place_node = function(pos)
 			pipe_look_for_stackable_tanks(pos)
@@ -312,7 +328,6 @@ for fill = 0, 10 do
 		groups = sgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
 		after_place_node = function(pos)
 			pipe_look_for_stackable_tanks(pos)
 			pipe_scanforobjects(pos)

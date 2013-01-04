@@ -178,6 +178,14 @@ function pipes_scansurroundings(pos)
 	   (string.find(nym.name, "pipeworks:pump") ~= nil) then
 		pym=1
 	end
+
+-- ...extra devices specified via the function's parameters
+-- ...except that this part is not implemented yet
+--
+--	if (string.find(nym.name, "aero:outlet") ~= nil) then
+--		pxm, pxp, pym, and/or pyp = 1 depending on the needed rules	
+--	end
+
 end
 
 function pipe_look_for_stackable_tanks(pos)
