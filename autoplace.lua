@@ -182,9 +182,19 @@ function pipes_scansurroundings(pos)
 -- ...extra devices specified via the function's parameters
 -- ...except that this part is not implemented yet
 --
---	if (string.find(nym.name, "aero:outlet") ~= nil) then
---		pxm, pxp, pym, and/or pyp = 1 depending on the needed rules	
+-- xxx = nxm, nxp, nym, nyp, nzm, or nzp depending on the direction to check
+-- yyy = pxm, pxp, pym, pyp, pzm, or pzp accordingly.
+--
+--	if string.find(xxx.name, "modname:nodename") ~= nil then
+--		yyy = 1
 --	end
+--
+-- for example:
+--
+--	if string.find(nym.name, "aero:outlet") ~= nil then
+--		pym = 1
+--	end
+--
 
 end
 

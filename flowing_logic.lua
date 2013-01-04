@@ -42,8 +42,8 @@ local check4inflows = function(pos,node)
 			if newnode ~= nil then dbg(newnode) end
 		end
 	end
-	if newnode then dbg(newnode..' to replace '..node.name) end
 	if newnode then 
+		dbg(newnode..' to replace '..node.name) 
 		minetest.env:add_node(pos,{name=newnode}) 
 		minetest.env:get_meta(pos):set_string('source',minetest.pos_to_string(source))
 	end
