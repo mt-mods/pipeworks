@@ -86,22 +86,22 @@ local spigot_check = function(pos,node)
 end
 
 minetest.register_abm({
-	nodenames = empty_nodenames,
-	interval = 15,
+	nodenames = pipes_empty_nodenames,
+	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider) check4inflows(pos,node) end
 })
 
 minetest.register_abm({
-	nodenames = full_nodenames,
-	interval = 10,
+	nodenames = pipes_full_nodenames,
+	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider) checksources(pos,node) end
 })
 
 minetest.register_abm({
 	nodenames = {'pipeworks:outlet','pipeworks:spigot'},
-	interval = 10,
+	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider) 
 		if node.name == 'pipeworks:outlet' then update_outlet(pos)

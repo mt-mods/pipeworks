@@ -135,8 +135,8 @@ end
 
 -- now define the nodes!
 
-local empty_nodenames = {}
-local full_nodenames = {}
+pipes_empty_nodenames = {}
+pipes_full_nodenames = {}
 
 for xm = 0, 1 do
 for xp = 0, 1 do
@@ -310,8 +310,8 @@ for zp = 0, 1 do
 			pipe_scanforobjects(pos)
 		end
 	})
-	table.insert(empty_nodenames,"pipeworks:pipe_"..pname.."_empty") -- for the abms
-	table.insert(full_nodenames,"pipeworks:pipe_"..pname.."_loaded") -- for bacon
+	table.insert(pipes_empty_nodenames,"pipeworks:pipe_"..pname.."_empty") -- for the abms
+	table.insert(pipes_full_nodenames,"pipeworks:pipe_"..pname.."_loaded") -- for bacon
 end
 end
 end
