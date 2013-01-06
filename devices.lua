@@ -291,7 +291,7 @@ for fill = 0, 10 do
 			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_back.png",
-			"pipeworks_storage_tank_front_"..fill..".png"
+			pipeworks_liquid_texture.."^pipeworks_storage_tank_front_"..fill..".png"
 		},
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -317,11 +317,11 @@ for fill = 0, 10 do
 		description = "Fluid Storage Tank ("..filldesc..")",
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
+			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_back.png",
 			"pipeworks_storage_tank_back.png",
-			"pipeworks_storage_tank_back.png",
-			"pipeworks_storage_tank_front_"..fill..".png"
+			pipeworks_liquid_texture.."^pipeworks_storage_tank_front_"..fill..".png"
 		},
 		paramtype = "light",
 		paramtype2 = "facedir",

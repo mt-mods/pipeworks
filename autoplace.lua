@@ -171,12 +171,21 @@ function pipes_scansurroundings(pos)
 		pzp=1
 	end
 
--- ...pumps, grates, and storage tanks
+-- ...pumps, grates...
 
-	if (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) or
-	   (string.find(nym.name, "pipeworks:grating") ~= nil) or
+	if (string.find(nym.name, "pipeworks:grating") ~= nil) or
 	   (string.find(nym.name, "pipeworks:pump") ~= nil) then
 		pym=1
+	end
+
+-- ... and storage tanks.
+
+	if (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) then
+		pym=1
+	end
+
+	if (string.find(nyp.name, "pipeworks:storage_tank_") ~= nil) then
+		pyp=1
 	end
 
 -- ...extra devices specified via the function's parameters

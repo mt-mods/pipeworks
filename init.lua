@@ -15,6 +15,8 @@
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 local DEBUG = true
 
+pipeworks_liquid_texture = "default_water.png"
+
 pipe_leftstub = {
 	{ -32/64, -2/64, -6/64,   1/64, 2/64, 6/64 },	-- pipe segment against -X face
 	{ -32/64, -4/64, -5/64,   1/64, 4/64, 5/64 },
@@ -198,27 +200,27 @@ for zp = 0, 1 do
 	if (jx+jy+jz) == 1 then
 		if xm == 1 then 
 			table.remove(outimgs, 3)
-			table.insert(outimgs, 3, "pipeworks_pipe_end_XXXXX.png")
+			table.insert(outimgs, 3, "^pipeworks_plain.png")
 		end
 		if xp == 1 then 
 			table.remove(outimgs, 4)
-			table.insert(outimgs, 4, "pipeworks_pipe_end_XXXXX.png")
+			table.insert(outimgs, 4, "^pipeworks_plain.png")
 		end
 		if ym == 1 then 
 			table.remove(outimgs, 1)
-			table.insert(outimgs, 1, "pipeworks_pipe_end_XXXXX.png")
+			table.insert(outimgs, 1, "^pipeworks_plain.png")
 		end
 		if xp == 1 then 
 			table.remove(outimgs, 2)
-			table.insert(outimgs, 2, "pipeworks_pipe_end_XXXXX.png")
+			table.insert(outimgs, 2, "^pipeworks_plain.png")
 		end
 		if zm == 1 then 
 			table.remove(outimgs, 5)
-			table.insert(outimgs, 5, "pipeworks_pipe_end_XXXXX.png")
+			table.insert(outimgs, 5, "^pipeworks_plain.png")
 		end
 		if zp == 1 then 
 			table.remove(outimgs, 6)
-			table.insert(outimgs, 6, "pipeworks_pipe_end_XXXXX.png")
+			table.insert(outimgs, 6, "^pipeworks_plain.png")
 		end
 	end
 
@@ -229,15 +231,15 @@ for zp = 0, 1 do
 	if (jx==2 and jy~=2 and jz~=2) then
 		table.remove(outimgs, 5)
 		table.remove(outimgs, 5)
-		table.insert(outimgs, 5, "pipeworks_windowed_XXXXX.png")
-		table.insert(outimgs, 5, "pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 5, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 5, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
 	end
 
 	if (jx~=2 and jy~=2 and jz==2) or (jx~=2 and jy==2 and jz~=2) then
 		table.remove(outimgs, 3)
 		table.remove(outimgs, 3)
-		table.insert(outimgs, 3, "pipeworks_windowed_XXXXX.png")
-		table.insert(outimgs, 3, "pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 3, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 3, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
 	end
 
 	local pname = xm..xp..ym..yp..zm..zp
