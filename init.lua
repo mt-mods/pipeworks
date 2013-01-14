@@ -13,7 +13,7 @@
 --
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
-local DEBUG = true
+local DEBUG = false
 
 pipeworks_liquid_texture = "default_water.png"
 
@@ -326,5 +326,7 @@ dofile(minetest.get_modpath("pipeworks").."/devices.lua")
 dofile(minetest.get_modpath("pipeworks").."/autoplace.lua")
 dofile(minetest.get_modpath("pipeworks").."/crafts.lua")
 dofile(minetest.get_modpath("pipeworks").."/flowing_logic.lua")
+dofile(minetest.get_modpath("pipeworks").."/compat.lua")
+dofile(minetest.get_modpath("pipeworks").."/item_transport.lua")
 
 print("Pipeworks loaded!")
