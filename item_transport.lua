@@ -1,9 +1,13 @@
-minetest.register_craftitem(":item_transport:filter", {
+modpath=minetest.get_modpath("pipeworks")
+
+dofile(modpath.."/compat.lua")
+
+minetest.register_craftitem("pipeworks:filter", {
 	description = "Filter",
 	stack_max = 99,
 })
 
-minetest.register_node(":item_transport:filter", {
+minetest.register_node("pipeworks:filter", {
 	description = "filter",
 	tiles = {"filter_top.png", "filter_top.png", "filter_output.png",
 		"filter_input.png", "filter_side.png", "filter_top.png"},
@@ -94,12 +98,12 @@ end,
 function tube_item(pos, item)
 	-- Take item in any format
 	local stack = ItemStack(item)
-	local obj = minetest.env:add_entity(pos, "item_transport:tubed_item")
+	local obj = minetest.env:add_entity(pos, "pipeworks:tubed_item")
 	obj:get_luaentity():set_item(stack:to_string())
 	return obj
 end
 
-minetest.register_entity(":item_transport:tubed_item", {
+minetest.register_entity("pipeworks:tubed_item", {
 	initial_properties = {
 		hp_max = 1,
 		physical = false,
@@ -188,61 +192,69 @@ minetest.register_entity(":item_transport:tubed_item", {
 	local velocity=self.object:getvelocity()
 	
 	if velocity==nil then return end
-
-	if minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
-		leftover = minetest.registered_nodes[node.name].tube.insert_object(pos,node,stack,velocity)
-		drop_pos=minetest.env:find_node_near(pos,1,"air")
-		if drop_pos and not leftover:is_empty() then minetest.item_drop(leftover,"",drop_pos) end
-		self.object:remove()
-		return
-	end
-
+	
+	local velocitycopy={x=velocity.x,y=velocity.y,z=velocity.z}
+	
+	local moved=false
+	
 	if math.abs(velocity.x)==1 then
 		local next_node=math.abs(pos.x-self.start_pos.x)
 		if next_node >= 1 then 
 			self.start_pos.x=self.start_pos.x+velocity.x
-			if go_next (self.start_pos, velocity, stack)==0 then
-				drop_pos=minetest.env:find_node_near({x=self.start_pos.x,y=self.start_pos.y,z=self.start_pos.z+velocity.x}, 1, "air")
-				if drop_pos then minetest.item_drop(stack, "", drop_pos) end
-				self.object:remove()
-				end
-			self.object:setpos(self.start_pos)
-			self.object:setvelocity(velocity)
-			return
-			end
+			moved=true
 		end
-
-	if math.abs(velocity.y)==1 then
+	elseif math.abs(velocity.y)==1 then
 		local next_node=math.abs(pos.y-self.start_pos.y)
 		if next_node >= 1 then 
 			self.start_pos.y=self.start_pos.y+velocity.y
-			if go_next (self.start_pos, velocity, stack)==0 then
-				drop_pos=minetest.env:find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
-				if drop_pos then minetest.item_drop(stack, "", drop_pos) end
-				self.object:remove()
-				end
-			self.object:setpos(self.start_pos)
-			self.object:setvelocity(velocity)
-			return 
-			end
-		end
-	
-	if math.abs(velocity.z)==1 then
+			moved=true
+		end	
+	elseif math.abs(velocity.z)==1 then
 		local next_node=math.abs(pos.z-self.start_pos.z)
 		if next_node >= 1 then 
 			self.start_pos.z=self.start_pos.z+velocity.z
-			if go_next (self.start_pos, velocity, stack)==0 then
-				drop_pos=minetest.env:find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
-				if drop_pos then minetest.item_drop(stack, "", drop_pos) end
-				self.object:remove()
-				end
-			self.object:setpos(self.start_pos)
-			self.object:setvelocity(velocity)
+			moved=true
+		end
+	end
+	
+	node = minetest.env:get_node(self.start_pos)
+	if moved and minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
+		if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
+			leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos,node,stack,velocity)
+		else
+			leftover = stack
+		end
+		--drop_pos=minetest.env:find_node_near(self.start_pos,1,"air")
+		--if drop_pos and not leftover:is_empty() then minetest.item_drop(leftover,"",drop_pos) end
+		--self.object:remove()
+		if leftover:is_empty() then
+			self.object:remove()
 			return
+		end
+		velocity.x=-velocity.x
+		velocity.y=-velocity.y
+		velocity.z=-velocity.z
+		self.object:setvelocity(velocity)
+		self:set_item(leftover:to_string())
+		return
+	end
+	
+	if moved then
+		if go_next (self.start_pos, velocity, stack)==0 then
+			drop_pos=minetest.env:find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
+			if drop_pos then 
+				minetest.item_drop(stack, "", drop_pos)
+				self.object:remove()
 			end
 		end
 	end
+	
+	if velocity.x~=velocitycopy.x or velocity.y~=velocitycopy.y or velocity.z~=velocitycopy.z then
+		self.object:setpos(self.start_pos)
+		self.object:setvelocity(velocity)
+	end
 
+	end
 end
 })
 
@@ -254,7 +266,7 @@ end
 adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
 function go_next(pos,velocity,stack)
-	print(dump(pos))
+	--print(dump(pos))
 	local chests={}
 	local tubes={}
 	local cmeta=minetest.env:get_meta(pos)
@@ -273,7 +285,9 @@ function go_next(pos,velocity,stack)
 			meta=minetest.env:get_meta(npos)
 			tubelike=meta:get_int("tubelike")
 			if tube_receiver==1 then
-				if minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
+				if minetest.registered_nodes[node.name].tube and
+					minetest.registered_nodes[node.name].tube.can_insert and
+					minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
 					local i=1
 					repeat
 						if chests[i]==nil then break end
@@ -305,9 +319,13 @@ function go_next(pos,velocity,stack)
 				i=i+1
 			until false
 			n=meta:get_int("tubedir")+1
-			if n==i then
-				n=1
-			end
+			repeat
+				if n>=i then
+					n=n-i+1
+				else
+					break
+				end
+			until false
 			meta:set_int("tubedir",n)
 			velocity.x=tubes[n].vect.x
 			velocity.y=tubes[n].vect.y
@@ -320,9 +338,13 @@ function go_next(pos,velocity,stack)
 			i=i+1
 		until false
 		n=meta:get_int("tubedir")+1
-		if n==i then
-			n=1
-		end
+		repeat
+			if n>=i then
+				n=n-i+1
+			else
+				break
+			end
+		until false
 		velocity.x=chests[n].vect.x
 		velocity.y=chests[n].vect.y
 		velocity.z=chests[n].vect.z
