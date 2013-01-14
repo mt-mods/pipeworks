@@ -48,6 +48,12 @@ spigot_bottomstub = {
 	{ -8/64, -16/64, -3/64, 8/64, -14/64, 3/64 }
 }
 
+spigot_stream = { 
+	{ -3/64, -48/64, -5/64, 3/64, -16/64, 5/64 },
+	{ -4/64, -48/64, -4/64, 4/64, -16/64, 4/64 },
+	{ -5/64, -48/64, -3/64, 5/64, -16/64, 3/64 }
+}
+
 entry_panel = {
 	{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
 }
@@ -194,12 +200,18 @@ minetest.register_node("pipeworks:grating", {
 	pipe_addbox(spigotboxes, spigot_bottomstub)
 	pipe_addbox(spigotboxes, pipe_bendsphere)
 
+	local spigotboxes_pouring = {}
+	pipe_addbox(spigotboxes_pouring, spigot_stream)
+	pipe_addbox(spigotboxes_pouring, pipe_backstub)
+	pipe_addbox(spigotboxes_pouring, spigot_bottomstub)
+	pipe_addbox(spigotboxes_pouring, pipe_bendsphere)
+
 minetest.register_node("pipeworks:spigot", {
 	description = "Spigot outlet",
 	drawtype = "nodebox",
 	tiles = {
 		"pipeworks_spigot_sides.png",
-		"pipeworks_pipe_end_empty.png",
+		"pipeworks_spigot_sides.png",
 		"pipeworks_spigot_sides.png",
 		"pipeworks_spigot_sides.png",
 		"pipeworks_pipe_end_empty.png",
@@ -230,6 +242,45 @@ minetest.register_node("pipeworks:spigot", {
 		fixed = { -2/16, -6/16, -2/16, 2/16, 2/16, 8/16 }
 	}
 })
+
+minetest.register_node("pipeworks:spigot_pouring", {
+	description = "Spigot outlet",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_spigot_sides.png",
+		"pipeworks_spigot_sides.png",
+		"default_water.png^pipeworks_spigot_sides2.png",
+		"default_water.png^pipeworks_spigot_sides2.png",
+		"default_water.png^pipeworks_spigot_sides2.png",
+		"default_water.png^pipeworks_spigot_sides2.png"
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	pipelike=1,
+	on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+	end,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = spigotboxes_pouring,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = { -2/16, -6/16, -2/16, 2/16, 2/16, 8/16 }
+	},
+	drop = "pipeworks:spigot",
+})
+
 
 -- sealed pipe entry/exit (decorative horizontal pipe passing through a metal
 -- wall, for use in places where walls should look like they're airtight)

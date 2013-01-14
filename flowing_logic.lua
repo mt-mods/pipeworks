@@ -79,8 +79,10 @@ local spigot_check = function(pos,node)
 	local top = minetest.env:get_node(check[node.param2+1]).name
 	dbg('found '..top)
 	if string.find(top,'_loaded') then
+		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot_pouring'}) 
 		minetest.env:add_node({x=pos.x,y=pos.y-1,z=pos.z},{name='default:water_source'}) 
 	elseif minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name == 'default:water_source' then
+		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot'}) 
 		minetest.env:remove_node({x=pos.x,y=pos.y-1,z=pos.z})
 	end
 end
@@ -100,11 +102,11 @@ minetest.register_abm({
 })
 
 minetest.register_abm({
-	nodenames = {'pipeworks:outlet','pipeworks:spigot'},
+	nodenames = {'pipeworks:outlet','pipeworks:spigot','pipeworks:spigot_pouring'},
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider) 
 		if node.name == 'pipeworks:outlet' then update_outlet(pos)
-		elseif node.name == 'pipeworks:spigot' then spigot_check(pos,node) end
+		elseif node.name == 'pipeworks:spigot' or node.name == 'pipeworks:spigot_pouring' then spigot_check(pos,node) end
 	end
 })
