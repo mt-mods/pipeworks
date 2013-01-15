@@ -74,15 +74,16 @@ local update_outlet = function(pos)
 end
 
 local spigot_check = function(pos,node)
+	local fdir=node.param2
 	local check = {{x=pos.x,y=pos.y,z=pos.z+1},{x=pos.x+1,y=pos.y,z=pos.z},{x=pos.x,y=pos.y,z=pos.z-1},{x=pos.x-1,y=pos.y,z=pos.z}	}
-	dbg(node.param2..' checking '..minetest.pos_to_string(check[node.param2+1])..' for spigot at '..minetest.pos_to_string(pos))
-	local top = minetest.env:get_node(check[node.param2+1]).name
+	dbg(fdir..' checking '..minetest.pos_to_string(check[fdir+1])..' for spigot at '..minetest.pos_to_string(pos))
+	local top = minetest.env:get_node(check[fdir+1]).name
 	dbg('found '..top)
 	if string.find(top,'_loaded') then
-		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot_pouring'}) 
+		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot_pouring', param2 = fdir}) 
 		minetest.env:add_node({x=pos.x,y=pos.y-1,z=pos.z},{name='default:water_source'}) 
 	elseif minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name == 'default:water_source' then
-		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot'}) 
+		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot', param2 = fdir}) 
 		minetest.env:remove_node({x=pos.x,y=pos.y-1,z=pos.z})
 	end
 end
