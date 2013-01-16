@@ -90,13 +90,34 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 		},
 	})
 
-		minetest.register_craft( {
-	        output = "pipeworks:entry_panel 2",
-	        recipe = {
-			{ "", "default:steel_ingot", "" },
-	                { "", "pipeworks:pipe_110000_empty", "" },
-			{ "", "default:steel_ingot", "" },
-	        },
+	minetest.register_craft( {
+		output = "pipeworks:mese_tube_000000 2",
+		recipe = {
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+		        { "", "default:mese_crystal", "" },
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:mese_tube_000000",
+		recipe = {
+		    "pipeworks:tube_000000",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment"
+		},
+	})
+
+	minetest.register_craft( {
+        output = "pipeworks:entry_panel 2",
+        recipe = {
+		{ "", "default:steel_ingot", "" },
+                { "", "pipeworks:pipe_110000_empty", "" },
+		{ "", "default:steel_ingot", "" },
+        },
 	})
 
 end
