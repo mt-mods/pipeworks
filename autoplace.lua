@@ -41,10 +41,21 @@ function tube_scanforobjects(pos)
 	tube_autoroute(pos)
 end
 
+function in_table(table,element)
+	for _,el in ipairs(table) do
+		if el==element then return true end
+	end
+	return false
+end
+
+function is_tube(nodename)
+	return in_table(tubenodes,nodename)
+end
+
 function tube_autoroute(pos)
 	nctr = minetest.env:get_node(pos)
 	print ("minetest.get_item_group("..nctr.name..',"tubedevice") == '..minetest.get_item_group(nctr.name, "tubedevice"))
-	if (string.find(nctr.name, "pipeworks:tube_") == nil)
+	if (is_tube(nctr.name) == nil)
 		and minetest.get_item_group(nctr.name, "tubedevice") ~= 1 then return end
 
 	pxm=0
@@ -61,22 +72,22 @@ function tube_autoroute(pos)
 	nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
 	nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
-	if (string.find(nxm.name, "pipeworks:tube_") ~= nil) 
+	if is_tube(nxm.name) 
 		or minetest.get_item_group(nxm.name, "tubedevice") == 1 then pxm=1 end
-	if (string.find(nxp.name, "pipeworks:tube_") ~= nil) 
+	if is_tube(nxp.name) 
 		or minetest.get_item_group(nxp.name, "tubedevice") == 1 then pxp=1 end
-	if (string.find(nym.name, "pipeworks:tube_") ~= nil) 
+	if is_tube(nym.name) 
 		or minetest.get_item_group(nym.name, "tubedevice") == 1 then pym=1 end
-	if (string.find(nyp.name, "pipeworks:tube_") ~= nil) 
+	if is_tube(nyp.name) 
 		or minetest.get_item_group(nyp.name, "tubedevice") == 1 then pyp=1 end
-	if (string.find(nzm.name, "pipeworks:tube_") ~= nil) 
+	if is_tube(nzm.name) 
 		or minetest.get_item_group(nzm.name, "tubedevice") == 1 then pzm=1 end
-	if (string.find(nzp.name, "pipeworks:tube_") ~= nil) 
+	if is_tube(nzp.name) 
 		or minetest.get_item_group(nzp.name, "tubedevice") == 1 then pzp=1 end
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
-	if minetest.get_item_group(nctr.name, "tubedevice") ~= 1 then
-		minetest.env:add_node(pos, { name = "pipeworks:tube_"..nsurround })
+	if is_tube(nctr.name) then
+		minetest.env:add_node(pos, { name = string.sub(nctr.name,1,-7)..nsurround })
 	end
 
 end
