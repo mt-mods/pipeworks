@@ -269,6 +269,7 @@ function go_next(pos,velocity,stack)
 	--print(dump(pos))
 	local chests={}
 	local tubes={}
+	local cnode=minetest.env:get_node(pos)
 	local cmeta=minetest.env:get_meta(pos)
 	local node
 	local meta
@@ -276,7 +277,13 @@ function go_next(pos,velocity,stack)
 	local tube_receiver
 	local len=1
 	local n
-	for _,vect in ipairs(adjlist) do
+	local can_go
+	if minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
+		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,velocity,stack)
+	else
+		can_go=adjlist
+	end
+	for _,vect in ipairs(can_go) do
 		if vect.x~=-velocity.x or vect.y~=-velocity.y or vect.z~=-velocity.z then
 			npos=addVect(pos,vect)
 			node=minetest.env:get_node(npos)
