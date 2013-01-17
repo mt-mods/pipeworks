@@ -222,9 +222,14 @@ for zp = 0, 1 do
 
 	for key,value in pairs(special) do
 		if key=="on_construct" or key=="after_dig_node" or key=="after_place_node" then
-			key=key.."_"
+			nodedef[key.."_"]=value
+		elseif key=="groups" then
+			for group,val in pairs(value) do
+				nodedef.groups[group]=val
+			end
+		else
+			nodedef[key]=value
 		end
-		nodedef[key]=value
 	end
 	
 	minetest.register_node(name.."_"..tname, nodedef)
@@ -258,6 +263,9 @@ mese_end_textures={"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","
 mese_short_texture="pipeworks_mese_tube_short.png"
 mese_inv_texture="pipeworks_mese_tube_inv.png"
 
+detector_plain_textures={"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png",
+		"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png"}
+detector_inv_texture="pipeworks_detector_tube_inv.png"
 
 meseadjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
@@ -315,3 +323,51 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 		return (inv:is_empty("line1") and inv:is_empty("line2") and inv:is_empty("line3") and
 			inv:is_empty("line4") and inv:is_empty("line5") and inv:is_empty("line6"))
 	end})
+
+
+mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=1,y=1,z=0},{x=1,y=-1,z=0},
+		{x=-1,y=1,z=0},{x=-1,y=-1,z=0},{x=0,y=1,z=1},{x=0,y=-1,z=1},{x=0,y=1,z=-1},{x=0,y=-1,z=-1}}
+
+register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
+	end_textures,short_texture,detector_inv_texture,
+	{tube={can_go=function(pos,node,velocity,stack)
+		local meta = minetest.env:get_meta(pos)
+		local name = minetest.env:get_node(pos).name
+		local nitems=meta:get_int("nitems")+1
+		meta:set_int("nitems", nitems)
+		minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
+		return meseadjlist
+	end},
+	groups={mesecon=2,not_in_creative_inventory=1},
+	drop="pipeworks:detector_tube_off_000000",
+	mesecons={receptor={state="on",
+				rules=mesecons_rules}},
+	item_exit = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		local nitems=meta:get_int("nitems")-1
+		local name = minetest.env:get_node(pos).name
+		if nitems==0 then
+			minetest.env:set_node(pos,{name=string.gsub(name,"on","off")})
+			mesecon:receptor_off(pos,mesecons_rules)
+		else
+			meta:set_int("nitems", nitems)
+		end
+	end,
+	on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("nitems", 1)
+		local name = minetest.env:get_node(pos).name
+		minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
+	end})
+
+register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_plain_textures,noctr_textures,
+	end_textures,short_texture,detector_inv_texture,
+	{tube={can_go=function(pos,node,velocity,stack)
+		local name = minetest.env:get_node(pos).name
+		minetest.env:set_node(pos,{name=string.gsub(name,"off","on")})
+		mesecon:receptor_on(pos,mesecons_rules)
+		return meseadjlist
+	end},
+	groups={mesecon=2},
+	mesecons={receptor={state="off",
+				rules=mesecons_rules}}})
