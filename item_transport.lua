@@ -222,6 +222,8 @@ minetest.register_entity("pipeworks:tubed_item", {
 		end
 	end
 	
+	local sposcopy={x=self.start_pos.x,y=self.start_pos.y,z=self.start_pos.z}
+	
 	node = minetest.env:get_node(self.start_pos)
 	if moved and minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
 		if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
@@ -254,7 +256,8 @@ minetest.register_entity("pipeworks:tubed_item", {
 		end
 	end
 	
-	if velocity.x~=velocitycopy.x or velocity.y~=velocitycopy.y or velocity.z~=velocitycopy.z then
+	if velocity.x~=velocitycopy.x or velocity.y~=velocitycopy.y or velocity.z~=velocitycopy.z or 
+		self.start_pos.x~=sposcopy.x or self.start_pos.y~=sposcopy.y or self.start_pos.z~=sposcopy.z then
 		self.object:setpos(self.start_pos)
 		self.object:setvelocity(velocity)
 	end
