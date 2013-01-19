@@ -57,7 +57,7 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",plai
 			velocity.y=0
 			velocity.z=0
 			local meta = minetest.env:get_meta(pos)
-			channel=meta:get_int("channel")
+			channel=meta:get_string("channel")
 			goto=get_tubes_in_file(pos,channel)
 			if goto[1]==nil then return {} end
 			pos.x=goto[1].x
@@ -67,8 +67,15 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",plai
 		end},
 		on_construct = function(pos)
 			local meta = minetest.env:get_meta(pos)
-			meta:set_int("channel",0)
-			add_tube_in_file(pos,0)
+			meta:set_string("channel","0")
+			meta:set_string("formspec","size[9,1;]field[0,0.5;9,1;channel;Channel:;${channel}]")
+			add_tube_in_file(pos,"0")
+		end,
+		on_receive_fields = function(pos,formname,fields,sender)
+			local meta = minetest.env:get_meta(pos)
+			meta:set_string("channel",fields.channel)
+			remove_tube_in_file(pos)
+			add_tube_in_file(pos,fields.channel)
 		end,
 		after_dig_node = function(pos)
 			remove_tube_in_file(pos)
