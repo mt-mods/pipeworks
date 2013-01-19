@@ -328,5 +328,5 @@ dofile(minetest.get_modpath("pipeworks").."/crafts.lua")
 dofile(minetest.get_modpath("pipeworks").."/flowing_logic.lua")
 dofile(minetest.get_modpath("pipeworks").."/compat.lua")
 dofile(minetest.get_modpath("pipeworks").."/item_transport.lua")
-
+dofile(minetest.get_modpath("pipeworks").."/autocrafter.lua")
 print("Pipeworks loaded!")
