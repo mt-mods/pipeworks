@@ -273,6 +273,14 @@ end
 
 adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
+function notvel(tbl,vel)
+	tbl2={}
+	for _,val in ipairs(tbl) do
+		if val.x~=-vel.x or val.y~=-vel.y or val.z~=-vel.z then table.insert(tbl2,val) end
+	end
+	return tbl2
+end
+
 function go_next(pos,velocity,stack)
 	--print(dump(pos))
 	local chests={}
@@ -299,39 +307,37 @@ function go_next(pos,velocity,stack)
 	if minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
 	else
-		can_go=adjlist
+		can_go=notvel(adjlist,vel)
 	end
 	for _,vect in ipairs(can_go) do
-		if vect.x~=-vel.x or vect.y~=-vel.y or vect.z~=-vel.z then
-			npos=addVect(pos,vect)
-			node=minetest.env:get_node(npos)
-			tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
-			--tubelike=minetest.get_item_group(node.name,"tubelike")
-			meta=minetest.env:get_meta(npos)
-			tubelike=meta:get_int("tubelike")
-			if tube_receiver==1 then
-				if minetest.registered_nodes[node.name].tube and
-					minetest.registered_nodes[node.name].tube.can_insert and
-					minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
-					local i=1
-					repeat
-						if chests[i]==nil then break end
-						i=i+1
-					until false
-					chests[i]={}
-					chests[i].pos=npos
-					chests[i].vect=vect
-				end
-			elseif tubelike==1 then
+		npos=addVect(pos,vect)
+		node=minetest.env:get_node(npos)
+		tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
+		--tubelike=minetest.get_item_group(node.name,"tubelike")
+		meta=minetest.env:get_meta(npos)
+		tubelike=meta:get_int("tubelike")
+		if tube_receiver==1 then
+			if minetest.registered_nodes[node.name].tube and
+				minetest.registered_nodes[node.name].tube.can_insert and
+				minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
 				local i=1
 				repeat
-					if tubes[i]==nil then break end
+					if chests[i]==nil then break end
 					i=i+1
 				until false
-				tubes[i]={}
-				tubes[i].pos=npos
-				tubes[i].vect=vect
+				chests[i]={}
+				chests[i].pos=npos
+				chests[i].vect=vect
 			end
+		elseif tubelike==1 then
+			local i=1
+			repeat
+				if tubes[i]==nil then break end
+				i=i+1
+			until false
+			tubes[i]={}
+			tubes[i].pos=npos
+			tubes[i].vect=vect
 		end
 	end
 	if chests[1]==nil then--no chests found
