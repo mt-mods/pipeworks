@@ -278,17 +278,23 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 		local found=false
 		local name=stack:get_name()
 		for i,vect in ipairs(meseadjlist) do
-			for _,st in ipairs(inv:get_list("line"..tostring(i))) do
-				if st:get_name()==name then
-					found=true
-					table.insert(tbl,vect)
+			if meta:get_int("l"..tostring(i).."s")==1 then
+				for _,st in ipairs(inv:get_list("line"..tostring(i))) do
+					if st:get_name()==name then
+						found=true
+						table.insert(tbl,vect)
+						break
+					end
 				end
 			end
 		end
 		if found==false then
 			for i,vect in ipairs(meseadjlist) do
-				if inv:is_empty("line"..tostring(i)) then
-					table.insert(tbl,vect)
+				if meta:get_int("l"..tostring(i).."s")==1 then
+					if inv:is_empty("line"..tostring(i)) then
+						table.insert(tbl,vect)
+						break
+					end
 				end
 			end
 		end
@@ -296,26 +302,64 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 	end},
 	on_construct = function(pos)
 		local meta = minetest.env:get_meta(pos)
+		local inv = meta:get_inventory()
+		for i=1,6 do
+			meta:set_int("l"..tostring(i).."s",1)
+			inv:set_size("line"..tostring(i), 6*1)
+		end
 		meta:set_string("formspec",
 				"size[8,11]"..
-				"list[current_name;line1;1,0;7,1;]"..
-				"list[current_name;line2;1,1;7,1;]"..
-				"list[current_name;line3;1,2;7,1;]"..
-				"list[current_name;line4;1,3;7,1;]"..
-				"list[current_name;line5;1,4;7,1;]"..
-				"list[current_name;line6;1,5;7,1;]"..
+				"list[current_name;line1;1,0;6,1;]"..
+				"list[current_name;line2;1,1;6,1;]"..
+				"list[current_name;line3;1,2;6,1;]"..
+				"list[current_name;line4;1,3;6,1;]"..
+				"list[current_name;line5;1,4;6,1;]"..
+				"list[current_name;line6;1,5;6,1;]"..
 				"image[0,0;1,1;white.png]"..
 				"image[0,1;1,1;black.png]"..
 				"image[0,2;1,1;green.png]"..
 				"image[0,3;1,1;yellow.png]"..
 				"image[0,4;1,1;blue.png]"..
 				"image[0,5;1,1;red.png]"..
+				"button[7,0;1,1;button1;On]"..
+				"button[7,1;1,1;button2;On]"..
+				"button[7,2;1,1;button3;On]"..
+				"button[7,3;1,1;button4;On]"..
+				"button[7,4;1,1;button5;On]"..
+				"button[7,5;1,1;button6;On]"..
 				"list[current_player;main;0,7;8,4;]")
 		meta:set_string("infotext", "Mese pneumatic tube")
-		local inv = meta:get_inventory()
+	end,
+	on_receive_fields=function(pos,formname,fields,sender)
+		local meta=minetest.env:get_meta(pos)
+		local i
+		for key,_ in pairs(fields) do i=key end
+		i=string.sub(i,-1)
+		newstate=1-meta:get_int("l"..i.."s")
+		meta:set_int("l"..i.."s",newstate)
+		local frm="size[8,11]"..
+				"list[current_name;line1;1,0;6,1;]"..
+				"list[current_name;line2;1,1;6,1;]"..
+				"list[current_name;line3;1,2;6,1;]"..
+				"list[current_name;line4;1,3;6,1;]"..
+				"list[current_name;line5;1,4;6,1;]"..
+				"list[current_name;line6;1,5;6,1;]"..
+				"image[0,0;1,1;white.png]"..
+				"image[0,1;1,1;black.png]"..
+				"image[0,2;1,1;green.png]"..
+				"image[0,3;1,1;yellow.png]"..
+				"image[0,4;1,1;blue.png]"..
+				"image[0,5;1,1;red.png]"
 		for i=1,6 do
-			inv:set_size("line"..tostring(i), 7*1)
+			local st=meta:get_int("l"..tostring(i).."s")
+			if st==0 then
+				frm=frm.."button[7,"..tostring(i-1)..";1,1;button"..tostring(i)..";Off]"
+			else
+				frm=frm.."button[7,"..tostring(i-1)..";1,1;button"..tostring(i)..";On]"
+			end
 		end
+		frm=frm.."list[current_player;main;0,7;8,4;]"
+		meta:set_string("formspec",frm)
 	end,
 	can_dig = function(pos,player)
 		local meta = minetest.env:get_meta(pos);
@@ -336,7 +380,7 @@ register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker
 		local nitems=meta:get_int("nitems")+1
 		meta:set_int("nitems", nitems)
 		minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
-		return meseadjlist
+		return notvel(meseadjlist,velocity)
 	end},
 	groups={mesecon=2,not_in_creative_inventory=1},
 	drop="pipeworks:detector_tube_off_000000",
@@ -366,7 +410,7 @@ register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_pla
 		local name = minetest.env:get_node(pos).name
 		minetest.env:set_node(pos,{name=string.gsub(name,"off","on")})
 		mesecon:receptor_on(pos,mesecons_rules)
-		return meseadjlist
+		return notvel(meseadjlist,velocity)
 	end},
 	groups={mesecon=2},
 	mesecons={receptor={state="off",
@@ -376,7 +420,7 @@ register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",
 		short_texture,inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			velocity.speed=velocity.speed+1
-			return meseadjlist
+			return notvel(meseadjlist,velocity)
 		end}})
 
 modpath=minetest.get_modpath("pipeworks")
