@@ -87,7 +87,12 @@ function tube_autoroute(pos)
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	if is_tube(nctr.name) then
-		minetest.env:add_node(pos, { name = string.sub(nctr.name,1,-7)..nsurround })
+		local meta=minetest.env:get_meta(pos)
+		local meta0=meta:to_table()
+		nctr.name=string.sub(nctr.name,1,-7)..nsurround
+		minetest.env:add_node(pos, nctr)
+		local meta=minetest.env:get_meta(pos)
+		meta:from_table(meta0)
 	end
 
 end

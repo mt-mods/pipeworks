@@ -115,7 +115,25 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 		output = "pipeworks:detector_tube_off_000000 2",
 		recipe = {
 		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "default:mese_crystal_fragment", "default:mese_crystal_fragment", "default:mese_crystal_fragment" },
+		        { "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+
+	minetest.register_craft( {
+		output = "pipeworks:accelerator_tube_000000 2",
+		recipe = {
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+		        { "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+
+	minetest.register_craft( {
+		output = "pipeworks:teleport_tube_000000 2",
+		recipe = {
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+		        { "default:desert_stone", "default:mese_block", "default:desert_stone" },
 		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})

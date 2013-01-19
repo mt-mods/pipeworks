@@ -371,3 +371,13 @@ register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_pla
 	groups={mesecon=2},
 	mesecons={receptor={state="off",
 				rules=mesecons_rules}}})
+
+register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",plain_textures,noctr_textures,end_textures,
+		short_texture,inv_texture,
+		{tube={can_go=function(pos,node,velocity,stack)
+			velocity.speed=velocity.speed+1
+			return meseadjlist
+		end}})
+
+modpath=minetest.get_modpath("pipeworks")
+dofile(modpath.."/teleport_tube.lua")
