@@ -49,9 +49,17 @@ function get_tubes_in_file(pos,channel)
 	return newtbl
 end
 
+teleport_noctr_textures={"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png",
+		"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png"}
+teleport_plain_textures={"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png",
+		"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png"}
+teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png",
+		"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png"}
+teleport_short_texture="pipeworks_teleport_tube_short.png"
+teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 
-register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",plain_textures,noctr_textures,end_textures,
-		short_texture,inv_texture,
+register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",teleport_plain_textures,
+		teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			velocity.x=0
 			velocity.y=0
