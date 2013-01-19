@@ -153,10 +153,13 @@ minetest.register_entity("pipeworks:tubed_item", {
 	end,
 
 	get_staticdata = function(self)
-			
+			if self.start_pos==nil then return end
+			local velocity=self.object:getvelocity()
+			--self.object:setvelocity({x=0,y=0,z=0})
+			self.object:setpos(self.start_pos)
 			return	minetest.serialize({
 				itemstring=self.itemstring,
-				velocity=self.object:getvelocity(),
+				velocity=velocity,
 				start_pos=self.start_pos
 				})
 	end,
@@ -196,23 +199,25 @@ minetest.register_entity("pipeworks:tubed_item", {
 	local velocitycopy={x=velocity.x,y=velocity.y,z=velocity.z}
 	
 	local moved=false
+	local speed=math.abs(velocity.x+velocity.y+velocity.z)
+	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed}
 	
-	if math.abs(velocity.x)==1 then
+	if math.abs(vel.x)==1 then
 		local next_node=math.abs(pos.x-self.start_pos.x)
 		if next_node >= 1 then 
-			self.start_pos.x=self.start_pos.x+velocity.x
+			self.start_pos.x=self.start_pos.x+vel.x
 			moved=true
 		end
-	elseif math.abs(velocity.y)==1 then
+	elseif math.abs(vel.y)==1 then
 		local next_node=math.abs(pos.y-self.start_pos.y)
 		if next_node >= 1 then 
-			self.start_pos.y=self.start_pos.y+velocity.y
+			self.start_pos.y=self.start_pos.y+vel.y
 			moved=true
 		end	
-	elseif math.abs(velocity.z)==1 then
+	elseif math.abs(vel.z)==1 then
 		local next_node=math.abs(pos.z-self.start_pos.z)
 		if next_node >= 1 then 
-			self.start_pos.z=self.start_pos.z+velocity.z
+			self.start_pos.z=self.start_pos.z+vel.z
 			moved=true
 		end
 	end
@@ -220,7 +225,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 	node = minetest.env:get_node(self.start_pos)
 	if moved and minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
 		if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
-			leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos,node,stack,velocity)
+			leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos,node,stack,vel)
 		else
 			leftover = stack
 		end
@@ -278,13 +283,23 @@ function go_next(pos,velocity,stack)
 	local len=1
 	local n
 	local can_go
+	local speed=math.abs(velocity.x+velocity.y+velocity.z)
+	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed,speed=speed}
+	if speed>=4.1 then
+		speed=4
+	elseif speed>=1.1 then
+		speed=speed-0.1
+	else
+		speed=1
+	end
+	vel.speed=speed
 	if minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
-		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,velocity,stack)
+		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
 	else
 		can_go=adjlist
 	end
 	for _,vect in ipairs(can_go) do
-		if vect.x~=-velocity.x or vect.y~=-velocity.y or vect.z~=-velocity.z then
+		if vect.x~=-vel.x or vect.y~=-vel.y or vect.z~=-vel.z then
 			npos=addVect(pos,vect)
 			node=minetest.env:get_node(npos)
 			tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
@@ -334,9 +349,9 @@ function go_next(pos,velocity,stack)
 				end
 			until false
 			meta:set_int("tubedir",n)
-			velocity.x=tubes[n].vect.x
-			velocity.y=tubes[n].vect.y
-			velocity.z=tubes[n].vect.z
+			velocity.x=tubes[n].vect.x*vel.speed
+			velocity.y=tubes[n].vect.y*vel.speed
+			velocity.z=tubes[n].vect.z*vel.speed
 		end
 	else
 		local i=1
@@ -352,9 +367,9 @@ function go_next(pos,velocity,stack)
 				break
 			end
 		until false
-		velocity.x=chests[n].vect.x
-		velocity.y=chests[n].vect.y
-		velocity.z=chests[n].vect.z
+		velocity.x=chests[n].vect.x*speed
+		velocity.y=chests[n].vect.y*speed
+		velocity.z=chests[n].vect.z*speed
 	end
 	return 1
 end
