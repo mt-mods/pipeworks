@@ -4,6 +4,9 @@ function autocraft(inventory)
 	local recipe=inventory:get_list("recipe")
 	local result
 	local new
+	for i=1,9 do
+		recipe[i]=ItemStack({name=recipe[i]:get_name(),count=1})
+	end
 	result,new=minetest.get_craft_result({method="normal",width=3,items=recipe})
 	local input=inventory:get_list("input")
 	if result.item:is_empty() then return end
@@ -28,7 +31,9 @@ function autocraft(inventory)
 		inventory:remove_item("src",stack)
 	end
 	inventory:add_item("dst",result)
-	print(dump(new))
+	for i=1,9 do
+		inventory:add_item("dst",new.items[i])
+	end
 end
 
 minetest.register_node("pipeworks:autocrafter",{

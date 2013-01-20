@@ -57,6 +57,12 @@ minetest.register_node(":default:furnace", {
 		end
 		return true
 	end,
+	after_place_node = function(pos)
+		tube_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		tube_scanforobjects(pos)
+	end
 })
 
 minetest.register_node(":default:furnace_active", {
@@ -111,6 +117,12 @@ minetest.register_node(":default:furnace_active", {
 		end
 		return true
 	end,
+	after_place_node = function(pos)
+		tube_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		tube_scanforobjects(pos)
+	end
 })
 
 minetest.register_node(":default:chest", {
@@ -159,4 +171,10 @@ minetest.register_node(":default:chest", {
 		minetest.log("action", player:get_player_name()..
 				" takes stuff from chest at "..minetest.pos_to_string(pos))
 	end,
+	after_place_node = function(pos)
+		tube_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		tube_scanforobjects(pos)
+	end
 })

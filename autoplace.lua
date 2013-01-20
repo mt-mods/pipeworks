@@ -54,7 +54,7 @@ end
 
 function tube_autoroute(pos)
 	nctr = minetest.env:get_node(pos)
-	print ("minetest.get_item_group("..nctr.name..',"tubedevice") == '..minetest.get_item_group(nctr.name, "tubedevice"))
+	--print ("minetest.get_item_group("..nctr.name..',"tubedevice") == '..minetest.get_item_group(nctr.name, "tubedevice"))
 	if (is_tube(nctr.name) == nil)
 		and minetest.get_item_group(nctr.name, "tubedevice") ~= 1 then return end
 
