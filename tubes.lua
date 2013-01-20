@@ -423,5 +423,28 @@ register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",
 			return notvel(meseadjlist,velocity)
 		end}})
 
+register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",plain_textures,noctr_textures,end_textures,
+		short_texture,inv_texture,
+		{groups={sand_tube=1},
+		tube={can_go=function(pos,node,velocity,stack)
+			return meseadjlist
+		end}})
+
+minetest.register_abm({nodenames={"group:sand_tube"},interval=1,chance=1,
+	action=function(pos, node, active_object_count, active_object_count_wider)
+		for _,object in ipairs(minetest.env:get_objects_inside_radius(pos, 2)) do
+			if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
+				if object:get_luaentity().itemstring ~= "" then
+					local titem=tube_item(pos,object:get_luaentity().itemstring)
+					titem:get_luaentity().start_pos = {x=pos.x,y=pos.y-1,z=pos.z}
+					titem:setvelocity({x=0,y=1,z=0})
+					titem:setacceleration({x=0, y=0, z=0})
+				end
+				object:get_luaentity().itemstring = ""
+				object:remove()
+			end
+		end
+	end})
+
 modpath=minetest.get_modpath("pipeworks")
 dofile(modpath.."/teleport_tube.lua")
