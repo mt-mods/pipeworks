@@ -282,7 +282,6 @@ function notvel(tbl,vel)
 end
 
 function go_next(pos,velocity,stack)
-	--print(dump(pos))
 	local chests={}
 	local tubes={}
 	local cnode=minetest.env:get_node(pos)
@@ -313,7 +312,6 @@ function go_next(pos,velocity,stack)
 		npos=addVect(pos,vect)
 		node=minetest.env:get_node(npos)
 		tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
-		--tubelike=minetest.get_item_group(node.name,"tubelike")
 		meta=minetest.env:get_meta(npos)
 		tubelike=meta:get_int("tubelike")
 		if tube_receiver==1 then
