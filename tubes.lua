@@ -315,12 +315,12 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 				"list[current_name;line4;1,3;6,1;]"..
 				"list[current_name;line5;1,4;6,1;]"..
 				"list[current_name;line6;1,5;6,1;]"..
-				"image[0,0;1,1;white.png]"..
-				"image[0,1;1,1;black.png]"..
-				"image[0,2;1,1;green.png]"..
-				"image[0,3;1,1;yellow.png]"..
-				"image[0,4;1,1;blue.png]"..
-				"image[0,5;1,1;red.png]"..
+				"image[0,0;1,1;pipeworks_white.png]"..
+				"image[0,1;1,1;pipeworks_black.png]"..
+				"image[0,2;1,1;pipeworks_green.png]"..
+				"image[0,3;1,1;pipeworks_yellow.png]"..
+				"image[0,4;1,1;pipeworks_blue.png]"..
+				"image[0,5;1,1;pipeworks_red.png]"..
 				"button[7,0;1,1;button1;On]"..
 				"button[7,1;1,1;button2;On]"..
 				"button[7,2;1,1;button3;On]"..
@@ -344,12 +344,12 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 				"list[current_name;line4;1,3;6,1;]"..
 				"list[current_name;line5;1,4;6,1;]"..
 				"list[current_name;line6;1,5;6,1;]"..
-				"image[0,0;1,1;white.png]"..
-				"image[0,1;1,1;black.png]"..
-				"image[0,2;1,1;green.png]"..
-				"image[0,3;1,1;yellow.png]"..
-				"image[0,4;1,1;blue.png]"..
-				"image[0,5;1,1;red.png]"
+				"image[0,0;1,1;pipeworks_white.png]"..
+				"image[0,1;1,1;pipeworks_black.png]"..
+				"image[0,2;1,1;pipeworks_green.png]"..
+				"image[0,3;1,1;pipeworks_yellow.png]"..
+				"image[0,4;1,1;pipeworks_blue.png]"..
+				"image[0,5;1,1;pipeworks_red.png]"
 		for i=1,6 do
 			local st=meta:get_int("l"..tostring(i).."s")
 			if st==0 then

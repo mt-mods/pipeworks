@@ -9,8 +9,8 @@ minetest.register_craftitem("pipeworks:filter", {
 
 minetest.register_node("pipeworks:filter", {
 	description = "filter",
-	tiles = {"filter_top.png", "filter_top.png", "filter_output.png",
-		"filter_input.png", "filter_side.png", "filter_top.png"},
+	tiles = {"pipeworks_filter_top.png", "pipeworks_filter_top.png", "pipeworks_filter_output.png",
+		"pipeworks_filter_input.png", "pipeworks_filter_side.png", "pipeworks_filter_top.png"},
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2,tubedevice=1,mesecon=2},
 	legacy_facedir_simple = true,
