@@ -57,7 +57,7 @@ minetest.register_node("pipeworks:autocrafter",{
 		meta:set_string("formspec",
 				"size[8,11]"..
 				"list[current_name;recipe;0,0;3,3;]"..
-				"list[current_name;src;0,3;8,3;]"..
+				"list[current_name;src;0,3.5;8,3;]"..
 				"list[current_name;dst;4,0;4,3;]"..
 				"list[current_player;main;0,7;8,4;]")
 		meta:set_string("infotext", "Autocrafter")
