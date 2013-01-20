@@ -416,15 +416,33 @@ register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_pla
 	mesecons={receptor={state="off",
 				rules=mesecons_rules}}})
 
-register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",plain_textures,noctr_textures,end_textures,
-		short_texture,inv_texture,
+accelerator_noctr_textures={"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png",
+		"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png"}
+accelerator_plain_textures={"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png",
+		"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png"}
+accelerator_end_textures={"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png",
+		"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png"}
+accelerator_short_texture="pipeworks_accelerator_tube_short.png"
+accelerator_inv_texture="pipeworks_accelerator_tube_inv.png"
+
+register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",accelerator_plain_textures,
+		accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			velocity.speed=velocity.speed+1
 			return notvel(meseadjlist,velocity)
 		end}})
 
-register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",plain_textures,noctr_textures,end_textures,
-		short_texture,inv_texture,
+sand_noctr_textures={"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png",
+		"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png"}
+sand_plain_textures={"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png",
+		"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png"}
+sand_end_textures={"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png",
+		"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png"}
+sand_short_texture="pipeworks_sand_tube_short.png"
+sand_inv_texture="pipeworks_sand_tube_inv.png"
+
+register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
+		sand_short_texture,sand_inv_texture,
 		{groups={sand_tube=1},
 		tube={can_go=function(pos,node,velocity,stack)
 			return meseadjlist
