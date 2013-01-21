@@ -315,12 +315,12 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 				"list[current_name;line4;1,3;6,1;]"..
 				"list[current_name;line5;1,4;6,1;]"..
 				"list[current_name;line6;1,5;6,1;]"..
-				"image[0,0;1,1;white.png]"..
-				"image[0,1;1,1;black.png]"..
-				"image[0,2;1,1;green.png]"..
-				"image[0,3;1,1;yellow.png]"..
-				"image[0,4;1,1;blue.png]"..
-				"image[0,5;1,1;red.png]"..
+				"image[0,0;1,1;pipeworks_white.png]"..
+				"image[0,1;1,1;pipeworks_black.png]"..
+				"image[0,2;1,1;pipeworks_green.png]"..
+				"image[0,3;1,1;pipeworks_yellow.png]"..
+				"image[0,4;1,1;pipeworks_blue.png]"..
+				"image[0,5;1,1;pipeworks_red.png]"..
 				"button[7,0;1,1;button1;On]"..
 				"button[7,1;1,1;button2;On]"..
 				"button[7,2;1,1;button3;On]"..
@@ -344,12 +344,12 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 				"list[current_name;line4;1,3;6,1;]"..
 				"list[current_name;line5;1,4;6,1;]"..
 				"list[current_name;line6;1,5;6,1;]"..
-				"image[0,0;1,1;white.png]"..
-				"image[0,1;1,1;black.png]"..
-				"image[0,2;1,1;green.png]"..
-				"image[0,3;1,1;yellow.png]"..
-				"image[0,4;1,1;blue.png]"..
-				"image[0,5;1,1;red.png]"
+				"image[0,0;1,1;pipeworks_white.png]"..
+				"image[0,1;1,1;pipeworks_black.png]"..
+				"image[0,2;1,1;pipeworks_green.png]"..
+				"image[0,3;1,1;pipeworks_yellow.png]"..
+				"image[0,4;1,1;pipeworks_blue.png]"..
+				"image[0,5;1,1;pipeworks_red.png]"
 		for i=1,6 do
 			local st=meta:get_int("l"..tostring(i).."s")
 			if st==0 then
@@ -416,12 +416,53 @@ register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_pla
 	mesecons={receptor={state="off",
 				rules=mesecons_rules}}})
 
-register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",plain_textures,noctr_textures,end_textures,
-		short_texture,inv_texture,
+accelerator_noctr_textures={"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png",
+		"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png"}
+accelerator_plain_textures={"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png",
+		"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png"}
+accelerator_end_textures={"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png",
+		"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png"}
+accelerator_short_texture="pipeworks_accelerator_tube_short.png"
+accelerator_inv_texture="pipeworks_accelerator_tube_inv.png"
+
+register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",accelerator_plain_textures,
+		accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			velocity.speed=velocity.speed+1
 			return notvel(meseadjlist,velocity)
 		end}})
+
+sand_noctr_textures={"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png",
+		"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png"}
+sand_plain_textures={"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png",
+		"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png"}
+sand_end_textures={"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png",
+		"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png"}
+sand_short_texture="pipeworks_sand_tube_short.png"
+sand_inv_texture="pipeworks_sand_tube_inv.png"
+
+register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
+		sand_short_texture,sand_inv_texture,
+		{groups={sand_tube=1},
+		tube={can_go=function(pos,node,velocity,stack)
+			return meseadjlist
+		end}})
+
+minetest.register_abm({nodenames={"group:sand_tube"},interval=1,chance=1,
+	action=function(pos, node, active_object_count, active_object_count_wider)
+		for _,object in ipairs(minetest.env:get_objects_inside_radius(pos, 2)) do
+			if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
+				if object:get_luaentity().itemstring ~= "" then
+					local titem=tube_item(pos,object:get_luaentity().itemstring)
+					titem:get_luaentity().start_pos = {x=pos.x,y=pos.y-1,z=pos.z}
+					titem:setvelocity({x=0,y=1,z=0})
+					titem:setacceleration({x=0, y=0, z=0})
+				end
+				object:get_luaentity().itemstring = ""
+				object:remove()
+			end
+		end
+	end})
 
 modpath=minetest.get_modpath("pipeworks")
 dofile(modpath.."/teleport_tube.lua")
