@@ -283,7 +283,6 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 					if st:get_name()==name then
 						found=true
 						table.insert(tbl,vect)
-						break
 					end
 				end
 			end
@@ -293,7 +292,6 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 				if meta:get_int("l"..tostring(i).."s")==1 then
 					if inv:is_empty("line"..tostring(i)) then
 						table.insert(tbl,vect)
-						break
 					end
 				end
 			end
