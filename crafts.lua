@@ -155,6 +155,15 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 		        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
 		},
 	})
+	
+	minetest.register_craft( {
+		output = "pipeworks:mese_filter 2",
+		recipe = {
+		        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
+		        { "default:stick", "default:mese", "homedecor:plastic_sheeting" },
+		        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+		},
+	})
 
 	minetest.register_craft( {
         output = "pipeworks:entry_panel 2",
