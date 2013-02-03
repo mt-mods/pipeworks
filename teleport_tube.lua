@@ -41,11 +41,19 @@ end
 function get_tubes_in_file(pos,channel)
 	tbl=read_file()
 	newtbl={}
+	changed=false
 	for _,val in ipairs(tbl) do
+		local node = minetest.env:get_node(val)
+		local meta = minetest.env:get_meta(val)
+		if node.name~="ignore"  and val.channel~=meta:get_string("channel") then
+			val.channel=meta:get_string("channel")
+			changed=true
+		end
 		if val.channel==channel and (val.x~=pos.x or val.y~=pos.y or val.z~=pos.z) then
 			table.insert(newtbl,val)
 		end
 	end
+	if changed then write_file(tbl) end
 	return newtbl
 end
 
@@ -85,6 +93,6 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			remove_tube_in_file(pos)
 			add_tube_in_file(pos,fields.channel)
 		end,
-		after_dig_node = function(pos)
+		on_destruct = function(pos)
 			remove_tube_in_file(pos)
 		end})
