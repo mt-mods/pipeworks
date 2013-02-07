@@ -332,6 +332,7 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 		local meta=minetest.env:get_meta(pos)
 		local i
 		for key,_ in pairs(fields) do i=key end
+		if i==nil then return end
 		i=string.sub(i,-1)
 		newstate=1-meta:get_int("l"..i.."s")
 		meta:set_int("l"..i.."s",newstate)
