@@ -329,9 +329,11 @@ for fill = 0, 10 do
 	if fill == 0 then 
 		filldesc="empty"
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1}
+		image = nil
 	else
 		filldesc=fill.."0% full"
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1}
+		image = "pipeworks_storage_tank_fittings.png"
 	end
 
 	minetest.register_node("pipeworks:expansion_tank_"..fill, {
@@ -344,6 +346,7 @@ for fill = 0, 10 do
 			"pipeworks_storage_tank_back.png",
 			pipeworks_liquid_texture.."^pipeworks_storage_tank_front_"..fill..".png"
 		},
+		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1},
@@ -374,6 +377,7 @@ for fill = 0, 10 do
 			"pipeworks_storage_tank_back.png",
 			pipeworks_liquid_texture.."^pipeworks_storage_tank_front_"..fill..".png"
 		},
+		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = sgroups,

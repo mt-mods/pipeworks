@@ -248,15 +248,18 @@ for zp = 0, 1 do
 	if pname ~= "110000" then
 		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
 		pipedesc = "Pipe segment (empty, "..pname..")... You hacker, you."
+		image = "pipeworks_plain.png"
 	else
 		pgroups = {snappy=3, pipe=1}
 		pipedesc = "Pipe segment"
+		image = nil
 	end
 
 	minetest.register_node("pipeworks:pipe_"..pname.."_empty", {
 		description = pipedesc,
 		drawtype = "nodebox",
 		tiles = pipes_fix_image_names(outimgs, "_empty"),
+		inventory_image = image,
 		paramtype = "light",
 		selection_box = {
 	             	type = "fixed",
@@ -287,6 +290,7 @@ for zp = 0, 1 do
 		description = "Pipe segment (loaded, "..pname..")... You hacker, you.",
 		drawtype = "nodebox",
 		tiles = pipes_fix_image_names(outimgs, "_loaded"),
+		inventory_image = image,
 		paramtype = "light",
 		selection_box = {
 	             	type = "fixed",
