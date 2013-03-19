@@ -157,7 +157,7 @@ for zp = 0, 1 do
 	if tname ~= "000000" then
 		tgroups = {snappy=3, tube=1, not_in_creative_inventory=1}
 		tubedesc = desc.." ("..tname..")... You hacker, you."
-		iimg=nil
+		iimg=plain_textures[1]
 		wscale = {x=1,y=1,z=1}
 	else
 		tgroups = {snappy=3, tube=1}
