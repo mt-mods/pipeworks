@@ -311,14 +311,17 @@ for node in ipairs(nodenames) do
 
 	if node ~= 2 then
 		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
+		image = "pipeworks_plain.png"
 	else
 		pgroups = {snappy=3, pipe=1}
+		image = nil
 	end
 
 	minetest.register_node("pipeworks:"..nodenames[node], {
 		description = "Empty Pipe ("..descriptions[node]..")",
 		drawtype = "nodebox",
 		tiles = fix_image_names(node, "_empty"),
+		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
@@ -340,6 +343,7 @@ for node in ipairs(nodenames) do
 		description = "Loaded Pipe ("..descriptions[node]..")",
 		drawtype = "nodebox",
 		tiles = fix_image_names(node, "_loaded"),
+		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
