@@ -47,6 +47,7 @@ deployer_on = function(pos, node)
 			local placer={}
 			function placer:get_player_name() return "deployer" end
 			function placer:getpos() return pos end
+			function placer:get_player_control() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end
 			local stack2=minetest.item_place(stack,placer,{type="node", under=pos1, above=pos2})
 			invlist[i]=stack2
 			inv:set_list("main",invlist)
