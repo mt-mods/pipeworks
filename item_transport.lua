@@ -30,6 +30,9 @@ minetest.register_node("pipeworks:filter", {
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
+	after_place_node = function(pos)
+		tube_scanforobjects(pos)
+	end,
 	mesecons={effector={action_on=function(pos,node)
 					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
 				end}},
