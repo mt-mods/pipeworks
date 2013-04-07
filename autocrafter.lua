@@ -11,6 +11,7 @@ function autocraft(inventory)
 	local input=inventory:get_list("input")
 	if result.item:is_empty() then return end
 	result=result.item
+	if not inventory:room_for_item("dst", result) then return end
 	local to_use={}
 	for _,item in ipairs(recipe) do
 		if item~=nil and not item:is_empty() then
