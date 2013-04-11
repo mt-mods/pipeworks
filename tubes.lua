@@ -17,6 +17,20 @@ minetest.register_node("pipeworks:testobject", {
 	end,
 })
 
+function replace_name(tbl,tr,name)
+	local ntbl={}
+	for key,i in pairs(tbl) do
+		if type(i)=="string" then
+			ntbl[key]=string.gsub(i,tr,name)
+		elseif type(i)=="table" then
+			ntbl[key]=replace_name(i,tr,name)
+		else
+			ntbl[key]=i
+		end
+	end
+	return ntbl
+end
+
 tubenodes={}
 
 -- tables
@@ -227,6 +241,10 @@ for zp = 0, 1 do
 			for group,val in pairs(value) do
 				nodedef.groups[group]=val
 			end
+		elseif type(value)=="table" then
+			nodedef[key]=replace_name(value,"#id",tname)
+		elseif type(value)=="string" then
+			nodedef[key]=string.gsub(value,"#id",tname)
 		else
 			nodedef[key]=value
 		end
@@ -368,8 +386,7 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 	end})
 
 
-mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=1,y=1,z=0},{x=1,y=-1,z=0},
-		{x=-1,y=1,z=0},{x=-1,y=-1,z=0},{x=0,y=1,z=1},{x=0,y=-1,z=1},{x=0,y=1,z=-1},{x=0,y=-1,z=-1}}
+mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 
 register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
 	end_textures,short_texture,detector_inv_texture,
@@ -414,6 +431,20 @@ register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_pla
 	groups={mesecon=2},
 	mesecons={receptor={state="off",
 				rules=mesecons_rules}}})
+
+register_tube("pipeworks:conductor_tube_off","Conductor tube segment",detector_plain_textures,noctr_textures,
+	end_textures,short_texture,detector_inv_texture,
+	{groups={mesecon=2},
+	mesecons={conductor={state="off",
+				rules=mesecons_rules,
+				onstate="pipeworks:conductor_tube_on_#id"}}})
+
+register_tube("pipeworks:conductor_tube_on","Conductor tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
+	end_textures,short_texture,detector_inv_texture,
+	{groups={mesecon=2,not_in_creative_inventory=1},
+	mesecons={conductor={state="on",
+				rules=mesecons_rules,
+				offstate="pipeworks:conductor_tube_off_#id"}}})
 
 accelerator_noctr_textures={"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png",
 		"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png"}
