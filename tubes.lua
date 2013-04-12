@@ -442,6 +442,7 @@ register_tube("pipeworks:conductor_tube_off","Conductor tube segment",detector_p
 register_tube("pipeworks:conductor_tube_on","Conductor tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
 	end_textures,short_texture,detector_inv_texture,
 	{groups={mesecon=2,not_in_creative_inventory=1},
+	drop="pipeworks:conductor_tube_off_000000",
 	mesecons={conductor={state="on",
 				rules=mesecons_rules,
 				offstate="pipeworks:conductor_tube_off_#id"}}})
