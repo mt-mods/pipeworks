@@ -76,9 +76,10 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			channel=meta:get_string("channel")
 			goto=get_tubes_in_file(pos,channel)
 			if goto[1]==nil then return {} end
-			pos.x=goto[1].x
-			pos.y=goto[1].y
-			pos.z=goto[1].z
+			d=math.random(1,#goto)
+			pos.x=goto[d].x
+			pos.y=goto[d].y
+			pos.z=goto[d].z
 			return meseadjlist
 		end},
 		on_construct = function(pos)
