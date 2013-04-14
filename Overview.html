@@ -1,0 +1,160 @@
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>Pipeworks</title>
+		<style>
+body {
+	background: #FFEEEE;
+	font-family: sans-serif;
+	padding: 3em 10em 0 10em;
+}
+img {
+	width: 70%;
+	display: block;
+	border: solid 0.2em black;
+	margin: auto;
+}
+		</style>
+	</head>
+	<body>
+		<h1>Pipeworks</h1>
+		<h2>Links</h2>
+		<ul>
+			<li><a href="http://forum.minetest.net/viewtopic.php?id=2155">Forum Topic</a></li>
+			<li><a href="http://forum.minetest.net/viewtopic.php?id=2155">GitHub Repository</a></li>
+			<li><a href="http://minetest.net/">Minetest Website</a></li>
+		</ul>
+
+		<h2>Description</h2>
+		<p>Pipeworks is a mod for Minetest allowing the crafting and usage of pipes and tubes. In addition to providing pipes for transporting liquids and tubes for transporting items, it also contains a number of devices for working with them. Here's what it looks like:</p>
+		<img src="img/Pipeworks.png">
+		<p>Pipeworks requires a recent version of Minetest. Mesecons is recommended as well for the best possible experience.</p>
+		<p>To install Pipeworks, simply rename the folder to "pipeworks", and drop it into one of the Minetest mod folders. For more information, see the Minetest website for a mod installation guide.</p>
+		<p>All parts of Pipeworks are licenced under the WTFPL.</p>
+		<p>Crafting recipes noted here apply only for plain Pipeworks. If Technic is installed, Pipeworks items use alternate recipes. See the Technic documentation for more details.</p>
+
+		<h2>Fluid transport</h2>
+		<img src="img/FluidTransport.png">
+		<h3>Pipes</h3>
+		<p>Pipes are rounded, flanged devices that can transport liquids around - by default, only water. They can automatically connect to other pipes and devices that are pipe-compatible, such as pumps and spigots.</p>
+		<p>Pipes transport liquids at a speed of one meter (node) per second - a run of 30 pipes will take 30 seconds to transport liquid from one end to another.</p>
+		<p>Digging a pipe carrying liquid drops the empty pipe - the liquid inside is lost.</p>
+		<p>Pipes "light up" when they contain liquid.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftPipe.png">
+		<h3>Spigots</h3>
+		<p>Spigots output the liquid input via pipe into the world.</p>
+		<p>Spigots only connect from one side.</p>
+		<p>Connecting a spigot to a pipe carrying water makes water flow out of the bottom of the spigot.</p>
+		<img src="img/CraftSpigot.png">
+		<h3>Pumps</h3>
+		<p>Pumps can be placed inside or over a water source. They are toggled on and off by being punched.</p>
+		<p>Pumps can be connected to pipes from above. Pipes do not connect to pumps from the side or bottom.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftPump.png">
+		<h3>Valves</h3>
+		<span style="color: red;">Note: currently not working (behaves as if always closed).</span>
+		<p>Valves control fluid flow. When active, valves allow liquids to flow through them. Otherwise, liquids cannot flow through them.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftValve.png">
+		<h3>Storage Tanks</h3>
+		<span style="color: red;">Note: currently not working (does not store any liquid).</span>
+		<p>Storage tanks store liquid in a compact way. Placing multiple storage tanks on top of each other forms one large tank with the same capacity as all the single tanks added together.</p>
+		<p>Storage tanks can be connected to pipes from above or below. Pipes do not connect to storage tanks from the side.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftStorageTank.png">
+		<h3>Gratings</h3>
+		<p>Gratings are decorative items that appear similar to fine metal grids used as barriers.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftGrating.png">
+		<h3>Sealed/Airtight Pipe Entries</h3>
+		<p>Sealed/airtight pipe entries are .</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftPipeEntry.png">
+
+		<h2>Item Transport</h2>
+		<img src="img/ItemTransport.png">
+		<h3>Unprocessed Plastic Base</h3>
+		<p>Unprocessed plastic base is used primarily to make plastic sheeting, which is done through the process of smelting in a furnace.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftPlasticBase.png">
+		<p>Plastic Sheeting</p>
+		<p>Plastic sheeting is an essential part of crafting many tube-related recipes. It is the result of smelting unprocessed plastic base in a furnace.</p>
+		<p>Here's how you smelt it:</p>
+		<img src="img/CraftPlasticSheeting.png">
+		<h3>Tubes</h3>
+		<p>Tubes are boxy, transparent devices that can transport items around. They can automatically connect to other tubes and devices that are tube-compatible, such as chests and injectors.</p>
+		<p>Breaking a tube carrying items simply drops the items onto the ground.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftTube.png">
+		<h3>Chests</h3>
+		<p>Ordinary chests found in the default game connect to tubes from all sides.</p>
+		<p>Items can be added to chests using tube-related devices, or removed from them using filters/injectors.</p>
+		<p>Attempting to add items to a full chest results in the item being dropped onto the ground.</p>
+		<h3>Furnaces</h3>
+		<p>Ordinary furnaces found in the default game connect to tubes from all sides.</p>
+		<img src="img/Furnaces.png">
+		<p>Fuel items can be added to furnaces from the bottom, and items to be smelted can be added from the back. Smelted items can be removed from them using filters/injectors.</p>
+		<p>Attempting to add items to a full furnace results in the item being dropped onto the ground.</p>
+		<h3>Filters/Injectors</h3>
+		<p>Filters/injectors take items from the node behind them and sends them out in front.</p>
+		<p>Filters/injectors act only when punched, or when activated via a Mesecons signal.</p>
+		<p>Right clicking a filter/injector brings up an inventory. If items are added to the inventory, only those items will be taken from the node behind it when activated. Items that match the first slot on the filter/injector's inventory are always chosen before items in the second slot, which are always chosen before the third slot, etc.</p>
+		<p>Filters/injectors cannot be dug if they contain any items in their inventory.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftFilter.png">
+		<h3>Mese Sorting Tubes</h3>
+		<p>Mese sorting tubes are special tubes that can be used to sort items or force them to move in a certain direction.</p>
+		<img src="img/SortingTube.png">
+		<p>When placed, each direction the tube has a connection to has a distinct color.</p>
+		<p>Right clicking the tube brings up a form similar to the following:</p>
+		<img src="img/MeseSortingTubeForm.png">
+		<p>Each row is associated with the color on the left side.</p>
+		<p>The far right contains an on/off button.</p>
+		<p>When on, only items that match those in the row associated with the color are allowed to move in that direction. If there are no items in the row, all items are allowed.</p>
+		<p>When off, only items that do not match those in the row associated with the color are allowed to move in that direction. If there are no items in the row, no items are allowed.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftMeseTube1.png">
+		<p>Or alternatively:</p>
+		<img src="img/CraftMeseTube2.png">
+		<h3>Detector Tubes</h3>
+		<p>Detector tubes are special tubes that output a Mesecons signal when an item passes through them.</p>
+		<img src="img/DetectorTube.png">
+		<p>The tubes turn off again when the item leaves.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftDetectorTube.png">
+		<h3>Accelerator Tubes</h3>
+		<p>Accelerator tubes are special tubes that transport items significantly faster than normal tubes. They appear similar to normal tubes, except with a greenish-blue tint.</p>
+		<img src="img/AcceleratorTube.png">
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftAcceleratorTube.png">
+		<h3>Teleporter Tubes</h3>
+		<p>Teleporter tubes are special tubes that move items to other teleporter tubes, regardless of the distance separating them.</p>
+		<img src="img/TeleporterTube.png">
+		<p>Putting items into the tube via tube-related devices causes them to be teleported.</p>
+		<p>Right clicking a teleporter tube brings up a form allowing entry of a channel string, similar to the following:</p>
+		<img src="img/TeleporterTubeForm.png">
+		<p>Only teleporter tubes that have the same channel will be linked together and allow items to pass through.</p>
+		<p>If an item enters a teleporter tube, and there are multiple possible teleporter tubes that it can go to, a target is chosen at random from the possibilities.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftTeleporterTube.png">
+		<h3>Autocrafters</h3>
+		<p>Autocrafters are devices that can automatically follow craft recipes to make new items.</p>
+		<img src="img/Autocrafter.png">
+		<p>Right clicking an autocrafter brings up a form similar to the following:</p>
+		<img src="img/AutocrafterForm.png">
+		<p>The slots in the top left of the form represent a crafting grid, where items can be arranged in the pattern of a craft recipe. These items are not consumed when the autocrafter operates.</p>
+		<p>The slots in the top right of the form are the craft results. Items that have been crafted can be found here. These can also be retrieved from the device using filters/injectors</p>
+		<p>The slots in the middle of the form are the autocrafter's inventory, storing the input materials. Items here are used to craft when the device operates. New items can be added here using tube-related devices.</p>
+		<p>The slots at the bottom of the form are the player's inventory.</p>
+		<p>When sufficient materials are present in the autocrafter's inventory to craft according to its recipe, the device automatically starts crafting them until it runs out of materials.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftAutocrafter.png">
+		<h3>Sand Tubes</h3>
+		<p>Sand tubes are special tubes that vacuum up free items around it. When an item drops near the sand tube, it is sucked up and sent along the tube.</p>
+		<p>Sand tubes have an effective radius of 2 meters (nodes). Outside of this sphere, items are unaffected.</p>
+		<img src="img/SandTube.png">
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftSandTube.png">
+	</body>
+</html>
