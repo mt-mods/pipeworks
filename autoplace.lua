@@ -143,6 +143,28 @@ function pipes_scansurroundings(pos)
 		pzp=1
 	end
 
+-- ...flow sensors...
+
+	if (string.find(nxm.name, "pipeworks:flow_sensor") ~= nil)
+	  and (nxm.param2 == 0 or nxm.param2 == 2) then
+		pxm=1
+	end
+
+	if (string.find(nxp.name, "pipeworks:flow_sensor") ~= nil)
+	  and (nxp.param2 == 0 or nxp.param2 == 2) then
+		pxp=1
+	end
+
+	if (string.find(nzm.name, "pipeworks:flow_sensor") ~= nil)
+	  and (nzm.param2 == 1 or nzm.param2 == 3) then
+		pzm=1
+	end
+
+	if (string.find(nzp.name, "pipeworks:flow_sensor") ~= nil)
+	  and (nzp.param2 == 1 or nzp.param2 == 3) then
+		pzp=1
+	end
+
 -- ...spigots...
 
 	if (string.find(nxm.name, "pipeworks:spigot") ~= nil)

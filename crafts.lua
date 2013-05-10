@@ -64,6 +64,13 @@ minetest.register_craft( {
         },
 })
 
+minetest.register_craft( {
+        output = "pipeworks:flow_sensor_empty 2",
+        recipe = {
+                { "pipeworks:pipe_110000_empty", "mesecons:mesecon", "pipeworks:pipe_110000_empty" },
+        },
+})
+
 
 -- Various ancillary tube devices
 
@@ -163,7 +170,6 @@ if minetest.get_modpath("homedecor") == nil then
 	})
 
 end
-
 
 -- If the technic mod is present, then don't bother registering the recipes
 -- for the various tubes, as technic has its own recipes for those.

@@ -104,11 +104,13 @@ table.insert(pipes_empty_nodenames,"pipeworks:valve_on_empty")
 table.insert(pipes_empty_nodenames,"pipeworks:valve_off_empty")
 table.insert(pipes_empty_nodenames,"pipeworks:valve_on_loaded")
 table.insert(pipes_empty_nodenames,"pipeworks:entry_panel_empty")
+table.insert(pipes_empty_nodenames,"pipeworks:flow_sensor_empty")
 
 table.insert(pipes_full_nodenames,"pipeworks:valve_on_empty")
 table.insert(pipes_full_nodenames,"pipeworks:valve_off_empty")
 table.insert(pipes_full_nodenames,"pipeworks:valve_on_loaded")
 table.insert(pipes_full_nodenames,"pipeworks:entry_panel_loaded")
+table.insert(pipes_full_nodenames,"pipeworks:flow_sensor_loaded")
 
 minetest.register_abm({
 	nodenames = pipes_empty_nodenames,

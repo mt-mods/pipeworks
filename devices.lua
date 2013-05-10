@@ -1,5 +1,19 @@
 -- List of devices that should participate in the autoplace algorithm
 
+if mesecon then
+	pipereceptor_on = {
+		receptor = {
+			state = mesecon.state.on
+		}
+	}
+
+	pipereceptor_off = {
+		receptor = {
+			state = mesecon.state.off
+		}
+	}
+end
+
 pipes_devicelist = {
 	"pump",
 	"valve",
@@ -33,6 +47,10 @@ pipe_valvehandle_on = {
 
 pipe_valvehandle_off = {
 	{ -1/16, 4/16, -5/16, 1/16, 5/16, 0 }
+}
+
+pipe_sensorbody = {
+	{ -3/16, -2/16, -2/16, 3/16, 2/16, 2/16 }
 }
 
 spigot_bottomstub = {
@@ -437,6 +455,98 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 		}
 	},
 	drop = "pipeworks:entry_panel_empty"
+})
+
+local sensorboxes = {}
+pipe_addbox(sensorboxes, pipe_leftstub)
+pipe_addbox(sensorboxes, pipe_sensorbody)
+pipe_addbox(sensorboxes, pipe_rightstub)
+
+minetest.register_node("pipeworks:flow_sensor_empty", {
+	description = "Flow Sensor",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_windowed_empty.png",
+		"pipeworks_windowed_empty.png"
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	pipelike=1,
+	on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		if mesecon then
+			mesecon:receptor_off(pos, rules) 
+		end
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = sensorboxes,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{ -8/16, -2/16, -2/16, 8/16, 2/16, 2/16 },
+		}
+	},
+	mesecons = pipereceptor_off
+})
+
+minetest.register_node("pipeworks:flow_sensor_loaded", {
+	description = "Flow sensor (on)",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		pipeworks_liquid_texture.."^pipeworks_windowed_loaded.png",
+		pipeworks_liquid_texture.."^pipeworks_windowed_loaded.png"
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	pipelike=1,
+	on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+		if mesecon then
+			mesecon:receptor_on(pos, rules) 
+		end
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = sensorboxes,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{ -8/16, -2/16, -2/16, 8/16, 2/16, 2/16 },
+		}
+	},
+	drop = "pipeworks:flow_sensor_empty",
+	mesecons = pipereceptor_on
 })
 
 -- tanks
