@@ -88,11 +88,13 @@ local spigot_check = function(pos,node)
 	local name = minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
 	if string.find(top,'_loaded') and (name == 'air' or name == "default:water_source" or name == "default:water_flowing") then 
 		minetest.env:add_node({x=pos.x,y=pos.y-1,z=pos.z},{name='default:water_source'})
-		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot_pouring', param2 = fdir})
+		minetest.env:add_node(pos,{name='pipeworks:spigot_pouring', param2 = fdir})
 	else
-		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot', param2 = fdir})
-		if name == 'air' or name == "default:water_source" or name == "default:water_flowing" then
-			minetest.env:remove_node({x=pos.x,y=pos.y-1,z=pos.z})
+		if minetest.env:get_node(pos).name == 'pipeworks:spigot_pouring' then
+			minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot', param2 = fdir})
+			if name == 'air' or name == "default:water_source" or name == "default:water_flowing" then
+				minetest.env:remove_node({x=pos.x,y=pos.y-1,z=pos.z})
+			end
 		end
 	end
 end
