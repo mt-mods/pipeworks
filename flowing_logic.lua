@@ -14,7 +14,10 @@ local check4liquids = function(pos)
 		{x=pos.x,y=pos.y,z=pos.z+1},	}
 	for i =1,6 do
 		local name = minetest.env:get_node(coords[i]).name
-		if string.find(name,'water') then return true end
+		if string.find(name,'water') then 
+			minetest.env:remove_node(coords[i])
+			return true
+		end
 	end
 	return false
 end
@@ -67,7 +70,8 @@ end
 local update_outlet = function(pos)
 	local top = minetest.env:get_node({x=pos.x,y=pos.y+1,z=pos.z}).name
 	if string.find(top,'_loaded') then
-		if minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name == 'air' then
+		local name = minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
+		if name == 'air' or name == "default:water_source" or name == "default:water_flowing" then 
 			minetest.env:add_node({x=pos.x,y=pos.y-1,z=pos.z},{name='default:water_source'}) 
 		end
 	elseif minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name == 'default:water_source' then
@@ -81,14 +85,13 @@ local spigot_check = function(pos,node)
 	dbg(fdir..' checking '..minetest.pos_to_string(check[fdir+1])..' for spigot at '..minetest.pos_to_string(pos))
 	local top = minetest.env:get_node(check[fdir+1]).name
 	dbg('found '..top)
-	if string.find(top,'_loaded') then
-		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot_pouring', param2 = fdir}) 
-		if minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name == 'air' then
-			minetest.env:add_node({x=pos.x,y=pos.y-1,z=pos.z},{name='default:water_source'}) 
-		end
+	local name = minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
+	if string.find(top,'_loaded') and (name == 'air' or name == "default:water_source" or name == "default:water_flowing") then 
+		minetest.env:add_node({x=pos.x,y=pos.y-1,z=pos.z},{name='default:water_source'})
+		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot_pouring', param2 = fdir})
 	else
-		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot', param2 = fdir}) 
-		if minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z}).name == 'default:water_source' then
+		minetest.env:add_node({x=pos.x,y=pos.y,z=pos.z},{name='pipeworks:spigot', param2 = fdir})
+		if name == 'air' or name == "default:water_source" or name == "default:water_flowing" then
 			minetest.env:remove_node({x=pos.x,y=pos.y-1,z=pos.z})
 		end
 	end
