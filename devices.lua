@@ -109,7 +109,15 @@ for s in ipairs(states) do
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		drop = "pipeworks:pump_off"
+		drop = "pipeworks:pump_off",
+		mesecons = {effector = {
+			action_on = function (pos, node)
+				minetest.env:add_node(pos,{name="pipeworks:pump_on", param2 = node.param2}) 
+			end,
+			action_off = function (pos, node)
+				minetest.env:add_node(pos,{name="pipeworks:pump_off", param2 = node.param2}) 
+			end
+		}}
 	})
 	
 	local valveboxes = {}
@@ -161,6 +169,14 @@ for s in ipairs(states) do
 		end,
 		drop = "pipeworks:valve_off",
 		pipelike=1,
+		mesecons = {effector = {
+			action_on = function (pos, node)
+				minetest.env:add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
+			end,
+			action_off = function (pos, node)
+				minetest.env:add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
+			end
+		}}
 	})
 end
 
@@ -207,6 +223,14 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	end,
 	drop = "pipeworks:valve_off_empty",
 	pipelike=1,
+	mesecons = {effector = {
+		action_on = function (pos, node)
+			minetest.env:add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
+		end,
+		action_off = function (pos, node)
+			minetest.env:add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
+		end
+	}}
 })
 
 -- grating
@@ -411,7 +435,8 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
 			{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
 		}
-	}
+	},
+	drop = "pipeworks:entry_panel_empty"
 })
 
 -- tanks
