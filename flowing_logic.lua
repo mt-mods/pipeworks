@@ -47,13 +47,14 @@ local check4inflows = function(pos,node)
 	end
 	if newnode then 
 		dbg(newnode..' to replace '..node.name) 
-		minetest.env:add_node(pos,{name=newnode}) 
+		minetest.env:add_node(pos,{name=newnode, param2 = node.param2}) 
 		minetest.env:get_meta(pos):set_string('source',minetest.pos_to_string(source))
 	end
 end
 
 local checksources = function(pos,node)
 	local sourcepos = minetest.string_to_pos(minetest.env:get_meta(pos):get_string('source'))
+	if not sourcepos then return end
 	local source = minetest.env:get_node(sourcepos).name
 	local newnode = false
 	if not ((source == 'pipeworks:pump_on' and check4liquids(sourcepos)) or string.find(source,'_loaded') or source == 'ignore' ) then
@@ -62,7 +63,7 @@ local checksources = function(pos,node)
 
 	if newnode then dbg(newnode..' to replace '..node.name) end
 	if newnode then 
-		minetest.env:add_node(pos,{name=newnode}) 
+		minetest.env:add_node(pos,{name=newnode, param2 = node.param2}) 
 		minetest.env:get_meta(pos):set_string('source','')
 	end
 end
@@ -98,6 +99,16 @@ local spigot_check = function(pos,node)
 		end
 	end
 end
+
+table.insert(pipes_empty_nodenames,"pipeworks:valve_on_empty")
+table.insert(pipes_empty_nodenames,"pipeworks:valve_off_empty")
+table.insert(pipes_empty_nodenames,"pipeworks:valve_on_loaded")
+table.insert(pipes_empty_nodenames,"pipeworks:entry_panel_empty")
+
+table.insert(pipes_full_nodenames,"pipeworks:valve_on_empty")
+table.insert(pipes_full_nodenames,"pipeworks:valve_off_empty")
+table.insert(pipes_full_nodenames,"pipeworks:valve_on_loaded")
+table.insert(pipes_full_nodenames,"pipeworks:entry_panel_loaded")
 
 minetest.register_abm({
 	nodenames = pipes_empty_nodenames,

@@ -124,7 +124,7 @@ for s in ipairs(states) do
 	local tilex = "pipeworks_valvebody_ends.png"
 	local tilez = "pipeworks_valvebody_sides.png"
 
-	minetest.register_node("pipeworks:valve_"..states[s], {
+	minetest.register_node("pipeworks:valve_"..states[s].."_empty", {
 		description = "Valve",
 		drawtype = "nodebox",
 		tiles = {
@@ -163,6 +163,51 @@ for s in ipairs(states) do
 		pipelike=1,
 	})
 end
+
+local valveboxes = {}
+pipe_addbox(valveboxes, pipe_leftstub)
+pipe_addbox(valveboxes, pipe_valvebody)
+pipe_addbox(valveboxes, pipe_rightstub)
+pipe_addbox(valveboxes, pipe_valvehandle_on)
+
+minetest.register_node("pipeworks:valve_on_loaded", {
+	description = "Valve",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_valvebody_top_on.png",
+		"pipeworks_valvebody_bottom.png",
+		"pipeworks_valvebody_ends.png",
+		"pipeworks_valvebody_ends.png",
+		"pipeworks_valvebody_sides.png",
+		"pipeworks_valvebody_sides.png",
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	selection_box = {
+             	type = "fixed",
+		fixed = { -8/16, -4/16, -5/16, 8/16, 5/16, 5/16 }
+	},
+	node_box = {
+		type = "fixed",
+		fixed = valveboxes
+	},
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	pipelike = 1,
+	on_construct = function(pos)
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",1)
+	end,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	drop = "pipeworks:valve_off_empty",
+	pipelike=1,
+})
 
 -- grating
 
@@ -256,7 +301,7 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	},
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1},
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	pipelike=1,
@@ -281,16 +326,15 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	drop = "pipeworks:spigot",
 })
 
-
--- sealed pipe entry/exit (decorative horizontal pipe passing through a metal
+-- sealed pipe entry/exit (horizontal pipe passing through a metal
 -- wall, for use in places where walls should look like they're airtight)
 
-	local airtightboxes = {}
-	pipe_addbox(airtightboxes, pipe_frontstub)
-	pipe_addbox(airtightboxes, pipe_backstub)
-	pipe_addbox(airtightboxes, entry_panel)
+local airtightboxes = {}
+pipe_addbox(airtightboxes, pipe_frontstub)
+pipe_addbox(airtightboxes, pipe_backstub)
+pipe_addbox(airtightboxes, entry_panel)
 
-minetest.register_node("pipeworks:entry_panel", {
+minetest.register_node("pipeworks:entry_panel_empty", {
 	description = "Airtight Pipe entry/exit",
 	drawtype = "nodebox",
 	tiles = {
@@ -321,6 +365,53 @@ minetest.register_node("pipeworks:entry_panel", {
 		type = "fixed",
 		fixed = airtightboxes,
 	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
+			{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
+		}
+	}
+})
+
+minetest.register_node("pipeworks:entry_panel_loaded", {
+	description = "Airtight Pipe entry/exit",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_plain.png",
+		"pipeworks_pipe_end_empty.png",
+		"pipeworks_pipe_end_empty.png"
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	pipelike=1,
+	on_construct = function(pos)
+	local meta = minetest.env:get_meta(pos)
+	meta:set_int("pipelike",1)
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = airtightboxes,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {
+			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
+			{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
+		}
+	}
 })
 
 -- tanks
@@ -401,18 +492,27 @@ end
 -- various actions
 
 minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_on" then 
+	if node.name=="pipeworks:valve_on_empty" then 
 		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:valve_off", param2 = fdir })
+		minetest.env:add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
 		local meta = minetest.env:get_meta(pos)
 		meta:set_int("pipelike",0)
 	end
 end)
 
 minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_off" then 
+	if node.name=="pipeworks:valve_on_loaded" then 
 		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:valve_on", param2 = fdir })
+		minetest.env:add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
+		local meta = minetest.env:get_meta(pos)
+		meta:set_int("pipelike",0)
+	end
+end)
+
+minetest.register_on_punchnode(function (pos, node)
+	if node.name=="pipeworks:valve_off_empty" then 
+		fdir = minetest.env:get_node(pos).param2
+		minetest.env:add_node(pos, { name = "pipeworks:valve_on_empty", param2 = fdir })
 		local meta = minetest.env:get_meta(pos)
 		meta:set_int("pipelike",1)
 	end
@@ -444,6 +544,10 @@ minetest.register_alias("pipeworks:valve_off_x", "pipeworks:valve_off")
 minetest.register_alias("pipeworks:valve_off_z", "pipeworks:valve_off")
 minetest.register_alias("pipeworks:valve_on_x", "pipeworks:valve_on")
 minetest.register_alias("pipeworks:valve_on_z", "pipeworks:valve_on")
+minetest.register_alias("pipeworks:valve_off", "pipeworks:valve_off_empty")
+minetest.register_alias("pipeworks:valve_on", "pipeworks:valve_on_empty")
+minetest.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
+minetest.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")
 minetest.register_alias("pipeworks:storage_tank_0_x", "pipeworks:storage_tank_0")
 minetest.register_alias("pipeworks:storage_tank_0_z", "pipeworks:storage_tank_0")
 minetest.register_alias("pipeworks:storage_tank_1_x", "pipeworks:storage_tank_1")
