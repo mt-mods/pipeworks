@@ -21,7 +21,7 @@ img {
 		<h2>Links</h2>
 		<ul>
 			<li><a href="http://forum.minetest.net/viewtopic.php?id=2155">Forum Topic</a></li>
-			<li><a href="http://forum.minetest.net/viewtopic.php?id=2155">GitHub Repository</a></li>
+			<li><a href="https://github.com/VanessaE/pipeworks">GitHub Repository</a></li>
 			<li><a href="http://minetest.net/">Minetest Website</a></li>
 		</ul>
 
@@ -48,13 +48,12 @@ img {
 		<p>Connecting a spigot to a pipe carrying water makes water flow out of the bottom of the spigot.</p>
 		<img src="img/CraftSpigot.png">
 		<h3>Pumps</h3>
-		<p>Pumps can be placed inside or over a water source. They are toggled on and off by being punched.</p>
+		<p>Pumps can be placed inside or over a water source. They are toggled on and off by being punched, or directly controlled using Mesecons.</p>
 		<p>Pumps can be connected to pipes from above. Pipes do not connect to pumps from the side or bottom.</p>
 		<p>Here's how you craft it:</p>
 		<img src="img/CraftPump.png">
 		<h3>Valves</h3>
-		<span style="color: red;">Note: currently not working (behaves as if always closed).</span>
-		<p>Valves control fluid flow. When active, valves allow liquids to flow through them. Otherwise, liquids cannot flow through them.</p>
+		<p>Valves control fluid flow. When active, valves allow liquids to flow through them. Otherwise, liquids cannot flow through them. They are toggled on and off by being punched, or directly controlled using Mesecons.</p>
 		<p>Here's how you craft it:</p>
 		<img src="img/CraftValve.png">
 		<h3>Storage Tanks</h3>
@@ -68,9 +67,13 @@ img {
 		<p>Here's how you craft it:</p>
 		<img src="img/CraftGrating.png">
 		<h3>Sealed/Airtight Pipe Entries</h3>
-		<p>Sealed/airtight pipe entries are .</p>
+		<p>Sealed/airtight pipe entries act as pipes do, except they fill a full block and therefore are generally used for aesthetic purposes, such as running piping through walls.</p>
 		<p>Here's how you craft it:</p>
 		<img src="img/CraftPipeEntry.png">
+		<h3>Flow Sensors</h3>
+		<p>Flow sensors output a Mesecons signal when liquid is present in it, and otherwise does not. They can be used to determine when liquid has reached a particular point.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftFlowSensor.png">
 
 		<h2>Item Transport</h2>
 		<img src="img/ItemTransport.png">
