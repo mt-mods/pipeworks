@@ -74,12 +74,12 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			velocity.z=0
 			local meta = minetest.env:get_meta(pos)
 			channel=meta:get_string("channel")
-			goto=get_tubes_in_file(pos,channel)
-			if goto[1]==nil then return {} end
-			d=math.random(1,#goto)
-			pos.x=goto[d].x
-			pos.y=goto[d].y
-			pos.z=goto[d].z
+			local target=get_tubes_in_file(pos,channel)
+			if target[1]==nil then return {} end
+			d=math.random(1,#target)
+			pos.x=target[d].x
+			pos.y=target[d].y
+			pos.z=target[d].z
 			return meseadjlist
 		end},
 		on_construct = function(pos)
