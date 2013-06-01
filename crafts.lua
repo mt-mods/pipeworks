@@ -95,9 +95,9 @@ minetest.register_craft( {
 minetest.register_craft( {
 	output = "pipeworks:autocrafter 2",
 	recipe = {
-	        { "default:steel_ingot", "default:mese", "default:steel_ingot" },
+	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
 	        { "homedecor:plastic_sheeting", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:mese", "default:steel_ingot" }
+	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
 	},
 })
 
