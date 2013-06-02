@@ -474,10 +474,7 @@ sand_inv_texture="pipeworks_sand_tube_inv.png"
 
 register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
 		sand_short_texture,sand_inv_texture,
-		{groups={sand_tube=1},
-		tube={can_go=function(pos,node,velocity,stack)
-			return meseadjlist
-		end}})
+		{groups={sand_tube=1}})
 
 minetest.register_abm({nodenames={"group:sand_tube"},interval=1,chance=1,
 	action=function(pos, node, active_object_count, active_object_count_wider)
@@ -486,7 +483,7 @@ minetest.register_abm({nodenames={"group:sand_tube"},interval=1,chance=1,
 				if object:get_luaentity().itemstring ~= "" then
 					local titem=tube_item(pos,object:get_luaentity().itemstring)
 					titem:get_luaentity().start_pos = {x=pos.x,y=pos.y-1,z=pos.z}
-					titem:setvelocity({x=0,y=1,z=0})
+					titem:setvelocity({x=0.01,y=1,z=-0.01})
 					titem:setacceleration({x=0, y=0, z=0})
 				end
 				object:get_luaentity().itemstring = ""
