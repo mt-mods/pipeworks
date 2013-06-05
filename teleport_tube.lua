@@ -16,14 +16,14 @@ function write_file(tbl)
     	f:close()
 end
 
-function add_tube_in_file(pos,channel)
+function add_tube_in_file(pos,channel, cr)
 	tbl=read_file()
 	for _,val in ipairs(tbl) do
 		if val.x==pos.x and val.y==pos.y and val.z==pos.z then
 			return
 		end
 	end
-	table.insert(tbl,{x=pos.x,y=pos.y,z=pos.z,channel=channel})
+	table.insert(tbl,{x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=cr})
 	write_file(tbl)
 end
 
@@ -45,11 +45,12 @@ function get_tubes_in_file(pos,channel)
 	for _,val in ipairs(tbl) do
 		local node = minetest.env:get_node(val)
 		local meta = minetest.env:get_meta(val)
-		if node.name~="ignore"  and val.channel~=meta:get_string("channel") then
+		if node.name~="ignore"  and (val.channel~=meta:get_string("channel") or val.cr~=meta:get_int("can_receive")) then
 			val.channel=meta:get_string("channel")
+			val.cr=meta:get_int("can_receive")
 			changed=true
 		end
-		if val.channel==channel and (val.x~=pos.x or val.y~=pos.y or val.z~=pos.z) then
+		if val.cr==1 and val.channel==channel and (val.x~=pos.x or val.y~=pos.y or val.z~=pos.z) then
 			table.insert(newtbl,val)
 		end
 	end
@@ -84,15 +85,33 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 		end},
 		on_construct = function(pos)
 			local meta = minetest.env:get_meta(pos)
-			meta:set_string("channel","0")
-			meta:set_string("formspec","size[9,1;]field[0,0.5;9,1;channel;Channel:;${channel}]")
-			add_tube_in_file(pos,"0")
+			meta:set_string("channel","")
+			meta:set_int("can_receive",1)
+			meta:set_string("formspec","size[9,1;]"..
+					"field[0,0.5;7,1;channel;Channel:;${channel}]"..
+					"button[8,0;1,1;bt;On]")
+			add_tube_in_file(pos,"")
 		end,
 		on_receive_fields = function(pos,formname,fields,sender)
 			local meta = minetest.env:get_meta(pos)
+			if fields.channel==nil then fields.channel=meta:get_string("channel") end
 			meta:set_string("channel",fields.channel)
 			remove_tube_in_file(pos)
-			add_tube_in_file(pos,fields.channel)
+			local cr = meta:get_int("can_receive")
+			if fields["bt"] then
+				cr=1-cr
+				meta:set_int("can_receive",cr)
+				if cr==1 then
+					meta:set_string("formspec","size[9,1;]"..
+						"field[0,0.5;7,1;channel;Channel:;${channel}]"..
+						"button[8,0;1,1;bt;On]")
+				else
+					meta:set_string("formspec","size[9,1;]"..
+						"field[0,0.5;7,1;channel;Channel:;${channel}]"..
+						"button[8,0;1,1;bt;Off]")
+				end
+			end
+			add_tube_in_file(pos,fields.channel, cr)
 		end,
 		on_destruct = function(pos)
 			remove_tube_in_file(pos)
