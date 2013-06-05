@@ -197,6 +197,10 @@ function tube_item(pos, item)
 	return obj
 end
 
+local function roundpos(pos)
+	return {x=math.floor(pos.x+0.5),y=math.floor(pos.y+0.5),z=math.floor(pos.z+0.5)}
+end
+
 minetest.register_entity("pipeworks:tubed_item", {
 	initial_properties = {
 		hp_max = 1,
@@ -278,7 +282,10 @@ minetest.register_entity("pipeworks:tubed_item", {
 	end,
 
 	on_step = function(self, dtime)
-	if self.start_pos then
+	if self.start_pos==nil then
+		local pos = self.object:getpos()
+		self.start_pos=roundpos(pos)
+	end
 	local pos = self.object:getpos()
 	local node = minetest.env:get_node(pos)
 	local meta = minetest.env:get_meta(pos)
@@ -356,13 +363,12 @@ minetest.register_entity("pipeworks:tubed_item", {
 		self.object:setvelocity(velocity)
 	end
 
-	end
 end
 })
 
 
-function addVect(pos,vect)
-return {x=pos.x+vect.x,y=pos.y+vect.y,z=pos.z+vect.z}
+local function addVect(pos,vect)
+	return {x=pos.x+vect.x,y=pos.y+vect.y,z=pos.z+vect.z}
 end
 
 adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
