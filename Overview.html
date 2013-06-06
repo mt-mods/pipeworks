@@ -102,12 +102,19 @@ img {
 		<h3>Filters/Injectors</h3>
 		<p>Filters/injectors take items from the node behind them and sends them out in front.</p>
 		<p>Filters/injectors act only when punched, or when activated via a Mesecons signal.</p>
-		<p>Right clicking a filter/injector brings up an inventory. If items are added to the inventory, only those items will be taken from the node behind it when activated. Items that match the first slot on the filter/injector's inventory are always chosen before items in the second slot, which are always chosen before the third slot, etc.</p>
+		<p>Right clicking a filter/injector brings up an inventory. If items are added to the inventory, only items matching them will be taken from the node behind it when activated. Items that match the first slot on the filter/injector's inventory are always chosen before items in the second slot, which are always chosen before the third slot, etc.</p>
 		<p>Filters/injectors cannot be dug if they contain any items in their inventory.</p>
 		<p>Here's how you craft it:</p>
 		<img src="img/CraftFilter.png">
+		<h3>Mese Filters/Injectors</h3>
+		<p>Mese filters/injectors take entire stacks of items from the node behind them and sends them out in front all at once.</p>
+		<p>Mese filters/injectors act only when punched, or when activated via a Mesecons signal.</p>
+		<p>Right clicking a mese filter/injector brings up an inventory. If items are added to the inventory, only stacks of items matching them will be taken from the node behind it when activated. Stacks of items that match the first slot on the mese filter/injector's inventory are always chosen before stacks of items in the second slot, which are always chosen before the third slot, etc.</p>
+		<p>Mese filters/injectors cannot be dug if they contain any items in their inventory.</p>
+		<p>Here's how you craft it:</p>
+		<img src="img/CraftMeseFilter.png">
 		<h3>Mese Sorting Tubes</h3>
-		<p>Mese sorting tubes are special tubes that can be used to sort items or force them to move in a certain direction.</p>
+		<p>Mese sorting tubes are special tubes that can be used to sort items or force them to move in a certain direction at junctions.</p>
 		<img src="img/SortingTube.png">
 		<p>When placed, each direction the tube has a connection to has a distinct color.</p>
 		<p>Right clicking the tube brings up a form similar to the following:</p>
@@ -138,6 +145,7 @@ img {
 		<p>Right clicking a teleporter tube brings up a form allowing entry of a channel string, similar to the following:</p>
 		<img src="img/TeleporterTubeForm.png">
 		<p>Only teleporter tubes that have the same channel will be linked together and allow items to pass through.</p>
+		<p>The button on the right toggles between "On" and "Off". When the button reads "On", the tube can receive items. Otherwise, items can only be teleported out of the tube, but not into it.</p>
 		<p>If an item enters a teleporter tube, and there are multiple possible teleporter tubes that it can go to, a target is chosen at random from the possibilities.</p>
 		<p>Here's how you craft it:</p>
 		<img src="img/CraftTeleporterTube.png">
