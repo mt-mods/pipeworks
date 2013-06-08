@@ -209,6 +209,17 @@ function pipes_scansurroundings(pos)
 		pzp=1
 	end
 
+	if (string.find(nym.name, "pipeworks:entry_panel") ~= nil)
+	  and nym.param2 == 13 then
+		pym=1
+	end
+
+	if (string.find(nyp.name, "pipeworks:entry_panel") ~= nil)
+	  and nyp.param2 == 13 then
+		pyp=1
+	end
+
+
 -- ...pumps, grates...
 
 	if (string.find(nym.name, "pipeworks:grating") ~= nil) or

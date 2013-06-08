@@ -413,7 +413,58 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
 			{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
 		}
-	}
+	},
+	on_place = function(itemstack, placer, pointed_thing)
+		if not pipeworks_node_is_owned(pointed_thing.under, placer) 
+		   and not pipeworks_node_is_owned(pointed_thing.above, placer) then
+			local node = minetest.env:get_node(pointed_thing.under)
+
+			if not minetest.registered_nodes[node.name]
+			    or not minetest.registered_nodes[node.name].on_rightclick then
+				local pitch = placer:get_look_pitch()
+				local above = pointed_thing.above
+				local under = pointed_thing.under
+				local fdir = minetest.dir_to_facedir(placer:get_look_dir())
+				local undernode = minetest.env:get_node(under)
+				local abovenode = minetest.env:get_node(above)
+				local uname = undernode.name
+				local aname = abovenode.name
+				local isabove = (above.x == under.x) and (above.z == under.z) and (pitch > 0)
+				local pos1 = above
+
+				if above.x == under.x
+				    and above.z == under.z
+				    and ( string.find(uname, "pipeworks:pipe_")
+					 or string.find(uname, "pipeworks:storage_")
+					 or string.find(uname, "pipeworks:expansion_")
+					 or ( string.find(uname, "pipeworks:grating") and not isabove )
+					 or ( string.find(uname, "pipeworks:pump_") and not isabove )
+					 or ( string.find(uname, "pipeworks:entry_panel")
+					      and undernode.param2 == 13 )
+					 )
+				then
+					fdir = 13
+				end
+
+				if minetest.registered_nodes[uname]["buildable_to"] then
+					pos1 = under
+				end
+
+				if not minetest.registered_nodes[minetest.env:get_node(pos1).name]["buildable_to"] then return end
+
+				minetest.env:add_node(pos1, {name = "pipeworks:entry_panel_empty", param2 = fdir })
+				pipe_scanforobjects(pos1)
+
+				if not pipeworks_expect_infinite_stacks then
+					itemstack:take_item()
+				end
+
+			else
+				minetest.registered_nodes[node.name].on_rightclick(pointed_thing.under, node, placer, itemstack)
+			end
+		end
+		return itemstack
+	end
 })
 
 minetest.register_node("pipeworks:entry_panel_loaded", {
