@@ -67,9 +67,9 @@ spigot_bottomstub = {
 }
 
 spigot_stream = { 
-	{ -3/64, -48/64, -5/64, 3/64, -16/64, 5/64 },
-	{ -4/64, -48/64, -4/64, 4/64, -16/64, 4/64 },
-	{ -5/64, -48/64, -3/64, 5/64, -16/64, 3/64 }
+	{ -3/64, (-41/64)-0.01, -5/64, 3/64, -16/64, 5/64 },
+	{ -4/64, (-41/64)-0.01, -4/64, 4/64, -16/64, 4/64 },
+	{ -5/64, (-41/64)-0.01, -3/64, 5/64, -16/64, 3/64 }
 }
 
 entry_panel = {
@@ -161,6 +161,7 @@ for s in ipairs(states) do
 			tilez,
 			tilez,
 		},
+		sunlight_propagates = true,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
@@ -215,6 +216,7 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 		"pipeworks_valvebody_sides.png",
 		"pipeworks_valvebody_sides.png",
 	},
+	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	selection_box = {
@@ -263,6 +265,7 @@ minetest.register_node("pipeworks:grating", {
 		"pipeworks_grating_sides.png",
 		"pipeworks_grating_sides.png"
 	},
+	sunlight_propagates = true,
 	paramtype = "light",
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
@@ -298,12 +301,13 @@ minetest.register_node("pipeworks:spigot", {
 	drawtype = "nodebox",
 	tiles = {
 		"pipeworks_spigot_sides.png",
-		"pipeworks_spigot_sides.png",
+		"pipeworks_pipe_end_empty.png",
 		"pipeworks_spigot_sides.png",
 		"pipeworks_spigot_sides.png",
 		"pipeworks_pipe_end_empty.png",
 		"pipeworks_spigot_sides.png"
 	},
+	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1},
@@ -335,12 +339,14 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	drawtype = "nodebox",
 	tiles = {
 		"pipeworks_spigot_sides.png",
-		"pipeworks_spigot_sides.png",
+		"default_water.png^pipeworks_spigot_bottom2.png",
 		"default_water.png^pipeworks_spigot_sides2.png",
 		"default_water.png^pipeworks_spigot_sides2.png",
 		"default_water.png^pipeworks_spigot_sides2.png",
 		"default_water.png^pipeworks_spigot_sides2.png"
 	},
+	use_texture_alpha = true,
+	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
@@ -524,6 +530,7 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 		"pipeworks_windowed_empty.png",
 		"pipeworks_windowed_empty.png"
 	},
+	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1},
@@ -567,6 +574,7 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 		pipeworks_liquid_texture.."^pipeworks_windowed_loaded.png",
 		pipeworks_liquid_texture.."^pipeworks_windowed_loaded.png"
 	},
+	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
