@@ -340,11 +340,40 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	tiles = {
 		"pipeworks_spigot_sides.png",
 		"default_water.png^pipeworks_spigot_bottom2.png",
-		"default_water.png^pipeworks_spigot_sides2.png",
-		"default_water.png^pipeworks_spigot_sides2.png",
-		"default_water.png^pipeworks_spigot_sides2.png",
-		"default_water.png^pipeworks_spigot_sides2.png"
+		{ name = "default_water_flowing_animated.png^pipeworks_spigot_sides2.png",
+			animation = {
+				type = "vertical_frames",
+				aspect_w=16,
+				aspect_h=16,
+				length=0.8
+			}
+		},
+		{ name = "default_water_flowing_animated.png^pipeworks_spigot_sides2.png",
+			animation = {
+				type = "vertical_frames",
+				aspect_w=16,
+				aspect_h=16,
+				length=0.8
+			}
+		},
+		{ name = "default_water_flowing_animated.png^pipeworks_spigot_sides2.png",
+			animation = {
+				type = "vertical_frames",
+				aspect_w=16,
+				aspect_h=16,
+				length=0.8
+			}
+		},
+		{ name = "default_water_flowing_animated.png^pipeworks_spigot_sides2.png",
+			animation = {
+				type = "vertical_frames",
+				aspect_w=16,
+				aspect_h=16,
+				length=0.8
+			}
+		},
 	},
+
 	use_texture_alpha = true,
 	sunlight_propagates = true,
 	paramtype = "light",
