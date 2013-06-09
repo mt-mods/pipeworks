@@ -373,8 +373,6 @@ minetest.register_node("pipeworks:spigot_pouring", {
 			}
 		},
 	},
-
-	use_texture_alpha = true,
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
