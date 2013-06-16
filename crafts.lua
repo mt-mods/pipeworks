@@ -208,10 +208,19 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 	})
 
 	minetest.register_craft( {
-		output = "pipeworks:detector_tube_off_000000 2",
+		output = "pipeworks:conductor_tube_off_000000 12",
 		recipe = {
 		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 		        { "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+
+	minetest.register_craft( {
+		output = "pipeworks:detector_tube_off_000000 2",
+		recipe = {
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+		        { "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
 		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})
