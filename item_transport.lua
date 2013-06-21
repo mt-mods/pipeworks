@@ -205,7 +205,8 @@ minetest.register_entity("pipeworks:tubed_item", {
 	initial_properties = {
 		hp_max = 1,
 		physical = false,
-		collisionbox = {0,0,0,0,0,0},
+--		collisionbox = {0,0,0,0,0,0},
+		collisionbox = {0.1,0.1,0.1,0.1,0.1,0.1},
 		visual = "sprite",
 		visual_size = {x=0.5, y=0.5},
 		textures = {""},
