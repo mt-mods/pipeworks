@@ -509,7 +509,6 @@ minetest.register_abm({nodenames={"group:sand_tube"},interval=1,chance=1,
 				object:remove()
 			end
 		end
-	end})
+	end
+})
 
-modpath=minetest.get_modpath("pipeworks")
-dofile(modpath.."/teleport_tube.lua")
