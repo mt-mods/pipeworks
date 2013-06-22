@@ -249,8 +249,11 @@ for zp = 0, 1 do
 			nodedef[key]=value
 		end
 	end
-	
-	minetest.register_node(name.."_"..tname, nodedef)
+
+	local prefix=":"
+	if string.find(name, "pipeworks:") then prefix = "" end
+
+	minetest.register_node(prefix..name.."_"..tname, nodedef)
 
 end
 end
