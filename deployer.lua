@@ -1,58 +1,66 @@
+if minetest.get_modpath("technic") then --technic installed
+	--register aliases in order to use technic's deployers
+	minetest.register_alias("pipeworks:deployer_off", "technic:deployer_off")
+	minetest.register_alias("pipeworks:deployer_on", "technic:deployer_on")
+	return
+end
+
+--register aliases for when someone had technic installed, but then uninstalled it but not pipeworks
+minetest.register_alias("technic:deployer_off", "pipeworks:deployer_off")
+minetest.register_alias("technic:deployer_on", "pipeworks:deployer_on")
+
 minetest.register_craft({
 	output = 'pipeworks:deployer_off 1',
 	recipe = {
 		{'default:wood', 'default:chest','default:wood'},
 		{'default:stone', 'mesecons:piston','default:stone'},
 		{'default:stone', 'mesecons:mesecon','default:stone'},
-
 	}
 })
 
+function hacky_swap_node(pos,name)
+	local node=minetest.env:get_node(pos)
+	local meta=minetest.env:get_meta(pos)
+	local meta0=meta:to_table()
+	node.name=name
+	minetest.env:add_node(pos, node)
+	local meta=minetest.env:get_meta(pos)
+	meta:from_table(meta0)
+end
+
 deployer_on = function(pos, node)
-	local pos1={}
-	pos1.x=pos.x
-	pos1.y=pos.y
-	pos1.z=pos.z
-	local pos2={}
-	pos2.x=pos.x
-	pos2.y=pos.y
-	pos2.z=pos.z
-	if node.param2==3 then
-		pos1.x=pos1.x+1
-		pos2.x=pos2.x+2
-	end
-	if node.param2==2 then
-		pos1.z=pos1.z+1
-		pos2.z=pos2.z+2
-	end
-	if node.param2==1 then
-		pos1.x=pos1.x-1
-		pos2.x=pos2.x-2
-	end
-	if node.param2==0 then
-		pos1.z=pos1.z-1
-		pos2.z=pos2.z-2
+	if node.name ~= "pipeworks:deployer_off" then
+		return
 	end
 
-	if node.name == "pipeworks:deployer_off" then
-		hacky_swap_node(pos,"pipeworks:deployer_on")
-		nodeupdate(pos)
-			local meta = minetest.env:get_meta(pos);
-		
-		local inv = meta:get_inventory()
-		local invlist=inv:get_list("main")
-		for i,stack in ipairs(invlist) do
+	local pos1 = {x=pos.x, y=pos.y, z=pos.z}
+	local pos2 = {x=pos.x, y=pos.y, z=pos.z}
+	if node.param2 == 3 then
+		pos1.x, pos2.x = pos1.x + 1, pos2.x + 2
+	elseif node.param2 == 2 then
+		pos1.z, pos2.z = pos1.z + 1, pos2.z + 2
+	elseif node.param2 == 1 then
+		pos1.x, pos2.x = pos1.x - 1, pos2.x - 2
+	elseif node.param2 == 0 then
+		pos1.z, pos2.z = pos1.z - 1, pos2.z - 2
+	end
 
-		if stack:get_name() ~=nil and stack:get_name() ~="" and minetest.env:get_node(pos1).name == "air" then
-			local placer={}
-			function placer:get_player_name() return "deployer" end
-			function placer:getpos() return pos end
-			function placer:get_player_control() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end
-			local stack2=minetest.item_place(stack,placer,{type="node", under=pos1, above=pos2})
-			invlist[i]=stack2
-			inv:set_list("main",invlist)
+	hacky_swap_node(pos,"pipeworks:deployer_on")
+	nodeupdate(pos)
+	
+	local inv = minetest.env:get_meta(pos):get_inventory()
+	local invlist = inv:get_list("main")
+	for i, stack in ipairs(invlist) do
+		if stack:get_name() ~= nil and stack:get_name() ~= "" and minetest.env:get_node(pos1).name == "air" then --obtain the first non-empty item slow
+			local placer = {
+				get_player_name = function() return "deployer" end,
+				getpos = function() return pos end,
+				get_player_control = function() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end,
+			}
+			local stack2 = minetest.item_place(stack, placer, {type="node", under=pos1, above=pos2})
+			invlist[i] = stack2
+			inv:set_list("main", invlist)
 			return
-		end
 		end
 	end
 end
@@ -142,18 +150,3 @@ minetest.register_node("pipeworks:deployer_on", {
 		return inv:is_empty("main")
 	end,
 })
-
-function hacky_swap_node(pos,name)
-	local node=minetest.env:get_node(pos)
-	local meta=minetest.env:get_meta(pos)
-	local meta0=meta:to_table()
-	node.name=name
-	minetest.env:add_node(pos, node)
-	local meta=minetest.env:get_meta(pos)
-	meta:from_table(meta0)
-end
-
-
-
-
-

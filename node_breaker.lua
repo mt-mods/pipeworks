@@ -1,3 +1,14 @@
+if minetest.get_modpath("technic") then --technic installed
+	--register aliases in order to use technic's node breakers
+	minetest.register_alias("pipeworks:nodebreaker_off", "technic:nodebreaker_off")
+	minetest.register_alias("pipeworks:nodebreaker_on", "technic:nodebreaker_on")
+	return
+end
+
+--register aliases for when someone had technic installed, but then uninstalled it but not pipeworks
+minetest.register_alias("technic:nodebreaker_off", "pipeworks:nodebreaker_off")
+minetest.register_alias("technic:nodebreaker_on", "pipeworks:nodebreaker_on")
+
 minetest.register_craft({
 	output = 'pipeworks:nodebreaker_off 1',
 	recipe = {
@@ -8,7 +19,6 @@ minetest.register_craft({
 	}
 })
 
-
 function hacky_swap_node(pos,name)
 	local node=minetest.env:get_node(pos)
 	local meta=minetest.env:get_meta(pos)
@@ -18,7 +28,6 @@ function hacky_swap_node(pos,name)
 	local meta=minetest.env:get_meta(pos)
 	meta:from_table(meta0)
 end
-
 
 node_breaker_on = function(pos, node)
 	if node.name == "pipeworks:nodebreaker_off" then
@@ -33,6 +42,46 @@ node_breaker_off = function(pos, node)
 		hacky_swap_node(pos,"pipeworks:nodebreaker_off")
 		nodeupdate(pos)
 	end
+end
+
+function break_node (pos, n_param)
+	local pos1 = {x=pos.x, y=pos.y, z=pos.z}
+	local pos2 = {x=pos.x, y=pos.y, z=pos.z}
+
+	--param2 3=x+ 1=x- 2=z+ 0=z-
+	local x_velocity, z_velocity = 0, 0
+	if n_param == 3 then
+		pos2.x = pos2.x + 1
+		pos1.x = pos1.x - 1
+		x_velocity = -1
+	elseif n_param == 2 then
+		pos2.z = pos2.z + 1
+		pos1.z = pos1.z - 1
+		z_velocity = -1
+	elseif n_param == 1 then
+		pos2.x = pos2.x - 1
+		pos1.x = pos1.x + 1
+		x_velocity = 1
+	elseif n_param == 0 then
+		pos2.z = pos2.z - 1
+		pos1.x = pos1.z + 1
+		z_velocity = 1
+	end
+
+	local node = minetest.env:get_node(pos2)
+	if node.name == "air" or name == "ignore" then
+		return nil
+	elseif minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].liquidtype ~= "none" then
+		return nil
+	end
+	local drops = minetest.get_node_drops(node.name, "default:pick_mese")
+	for _, dropped_item in ipairs(drops) do
+		local item1 = tube_item({x=pos.x, y=pos.y, z=pos.z}, dropped_item)
+		item1:get_luaentity().start_pos = {x=pos.x, y=pos.y, z=pos.z}
+		item1:setvelocity({x=x_velocity, y=0, z=z_velocity})
+		item1:setacceleration({x=0, y=0, z=0})
+	end
+	minetest.env:remove_node(pos2)
 end
 
 minetest.register_node("pipeworks:nodebreaker_off", {
@@ -60,41 +109,3 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1,not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 })
-
-function break_node (pos,n_param)		
-	local pos1={}
-	local pos2={}
-	pos1.x=pos.x
-	pos1.y=pos.y
-	pos1.z=pos.z
-	pos2.x=pos.x
-	pos2.y=pos.y
-	pos2.z=pos.z
-
-	--param2 3=x+ 1=x- 2=z+ 0=z-
-	local x_velocity=0
-	local z_velocity=0
-
-	if n_param==3 then pos2.x=pos2.x+1 pos1.x=pos1.x-1 x_velocity=-1 end
-	if n_param==2 then pos2.z=pos2.z+1 pos1.z=pos1.z-1 z_velocity=-1 end
-	if n_param==1 then pos2.x=pos2.x-1 pos1.x=pos1.x+1 x_velocity=1 end
-	if n_param==0 then pos2.z=pos2.z-1 pos1.x=pos1.z+1 z_velocity=1 end
-
-	local node=minetest.env:get_node(pos2)
-	if node.name == "air" then return nil end
-	if node.name == "default:lava_source" then return nil end
-	if node.name == "default:lava_flowing" then return nil end
-	if node.name == "default:water_source" then minetest.env:remove_node(pos2) return nil end
-	if node.name == "default:water_flowing" then minetest.env:remove_node(pos2) return nil end
-	if node.name == "ignore" then minetest.env:remove_node(pos2) return nil end
-	local drops = minetest.get_node_drops(node.name, "default:pick_mese")
-		local _, dropped_item
-		for _, dropped_item in ipairs(drops) do
-			local item1=tube_item({x=pos.x,y=pos.y,z=pos.z},dropped_item)
-			item1:get_luaentity().start_pos = {x=pos.x,y=pos.y,z=pos.z}
-			item1:setvelocity({x=x_velocity, y=0, z=z_velocity})
-			item1:setacceleration({x=0, y=0, z=0})
-		end
-	minetest.env:remove_node(pos2)
-end
-

@@ -377,10 +377,7 @@ dofile(modpath.."/flowing_logic.lua")
 dofile(modpath.."/compat.lua")
 dofile(modpath.."/item_transport.lua")
 dofile(modpath.."/autocrafter.lua")
-
-minetest.register_alias("pipeworks:deployer_off", "technic:deployer_off")
-minetest.register_alias("pipeworks:deployer_on", "technic:deployer_on")
-minetest.register_alias("pipeworks:nodebreaker_off", "technic:node_breaker_off")
-minetest.register_alias("pipeworks:nodebreaker_on", "technic:node_breaker_on")
+dofile(modpath.."/deployer.lua")
+dofile(modpath.."/node_breaker.lua")
 
 print("Pipeworks loaded!")
