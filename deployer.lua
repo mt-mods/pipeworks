@@ -58,6 +58,9 @@ deployer_on = function(pos, node)
 				get_player_control = function() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end,
 			}
 			local stack2 = minetest.item_place(stack, placer, {type="node", under=pos1, above=pos2})
+			if minetest.setting_getbool("creative_mode") and not minetest.get_modpath("unified_inventory") then --infinite stacks ahoy!
+				stack2:take_item()
+			end
 			invlist[i] = stack2
 			inv:set_list("main", invlist)
 			return
