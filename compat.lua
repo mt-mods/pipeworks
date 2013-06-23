@@ -88,10 +88,6 @@ chest.tube={insert_object=function(pos,node,stack,direction)
 			return inv:room_for_item("main",stack)
 		end,
 		input_inventory="main"}
-chest.after_place_node = function(pos)
-				tube_scanforobjects(pos)
-			end
-chest.after_dig_node = function(pos)
-				tube_scanforobjects(pos)
-			end
+chest.after_place_node = tube_scanforobjects(pos)
+chest.after_dig_node = tube_scanforobjects
 minetest.register_node(":default:chest",chest)

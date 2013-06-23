@@ -93,10 +93,8 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1},
 	mesecons= {effector={action_on=node_breaker_on, action_off=node_breaker_off}},
 	sounds = default.node_sound_stone_defaults(),
-	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
-	end,
-	
+	after_place_node = tube_scanforobjects,
+	after_dig_node = tube_scanforobjects,
 })
 
 minetest.register_node("pipeworks:nodebreaker_on", {
@@ -108,4 +106,6 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1,not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
+	after_place_node = tube_scanforobjects,
+	after_dig_node = tube_scanforobjects,
 })

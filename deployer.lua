@@ -106,13 +106,13 @@ minetest.register_node("pipeworks:deployer_off", {
 		local inv = meta:get_inventory()
 		inv:set_size("main", 3*3)
 	end,
-
 	can_dig = function(pos,player)
 		local meta = minetest.env:get_meta(pos);
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
-	
+	after_place_node = tube_scanforobjects,
+	after_dig_node = tube_scanforobjects,
 })
 
 minetest.register_node("pipeworks:deployer_on", {
@@ -152,4 +152,6 @@ minetest.register_node("pipeworks:deployer_on", {
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
+	after_place_node = tube_scanforobjects,
+	after_dig_node = tube_scanforobjects,
 })
