@@ -83,32 +83,31 @@ function tube_autoroute(pos)
 -- handle regular filters
 
 	if string.find(nxm.name, "pipeworks:filter") ~= nil
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
+	  and nxm.param2 == 0 then
 		pxm=1 end
 	if string.find(nxp.name, "pipeworks:filter") ~= nil
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
+	  and nxp.param2 == 2 then
 		pxp=1 end
 	if string.find(nzm.name, "pipeworks:filter") ~= nil
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
+	  and nzm.param2 == 3 then
 		pzm=1 end
 	if string.find(nzp.name, "pipeworks:filter") ~= nil
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
+	  and nzp.param2 == 1 then
 		pzp=1 end
 
 -- handle mese filters
 
 	if string.find(nxm.name, "pipeworks:mese_filter") ~= nil
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
+	  and nxm.param2 == 0 then
 		pxm=1 end
 	if string.find(nxp.name, "pipeworks:mese_filter") ~= nil
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
+	  and nxp.param2 == 2 then
 		pxp=1 end
-
 	if string.find(nzm.name, "pipeworks:mese_filter") ~= nil
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
+	  and nzm.param2 == 3 then
 		pzm=1 end
 	if string.find(nzp.name, "pipeworks:mese_filter") ~= nil
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
+	  and nzp.param2 == 1 then
 		pzp=1 end
 
 -- handle deployers
