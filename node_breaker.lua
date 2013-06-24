@@ -15,7 +15,6 @@ minetest.register_craft({
 		{'default:wood', 'default:pick_mese','default:wood'},
 		{'default:stone', 'mesecons:piston','default:stone'},
 		{'default:stone', 'mesecons:mesecon','default:stone'},
-
 	}
 })
 
@@ -32,7 +31,7 @@ end
 node_breaker_on = function(pos, node)
 	if node.name == "pipeworks:nodebreaker_off" then
 		hacky_swap_node(pos,"pipeworks:nodebreaker_on")
-		break_node (pos,node.param2)
+		break_node(pos,node.param2)
 		nodeupdate(pos)
 	end
 end
@@ -74,6 +73,20 @@ function break_node (pos, n_param)
 	elseif minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].liquidtype ~= "none" then
 		return nil
 	end
+
+	local digger = {
+		get_player_name = function() return "node_breaker" end,
+		getpos = function() return pos end,
+		get_player_control = function() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end,
+	}
+
+	--check node to make sure it is diggable
+	local def = ItemStack({name=node.name}):get_definition()
+	if #def ~= 0 and not def.diggable or (def.can_dig and not def.can_dig(pos2, digger)) then --node is not diggable
+		return
+	end
+
+	--handle node drops
 	local drops = minetest.get_node_drops(node.name, "default:pick_mese")
 	for _, dropped_item in ipairs(drops) do
 		local item1 = tube_item({x=pos.x, y=pos.y, z=pos.z}, dropped_item)
@@ -81,7 +94,24 @@ function break_node (pos, n_param)
 		item1:setvelocity({x=x_velocity, y=0, z=z_velocity})
 		item1:setacceleration({x=0, y=0, z=0})
 	end
+
 	minetest.env:remove_node(pos2)
+
+	--handle post-digging callback
+	if def.after_dig_node then
+		-- Copy pos and node because callback can modify them
+		local pos_copy = {x=pos2.x, y=pos2.y, z=pos2.z}
+		local node_copy = {name=node.name, param1=node.param1, param2=node.param2}
+		def.after_dig_node(pos_copy, node_copy, oldmetadata, digger)
+	end
+
+	--run digging event callbacks
+	for _, callback in ipairs(minetest.registered_on_dignodes) do
+		-- Copy pos and node because callback can modify them
+		local pos_copy = {x=pos2.x, y=pos2.y, z=pos2.z}
+		local node_copy = {name=node.name, param1=node.param1, param2=node.param2}
+		callback(pos_copy, node_copy, digger)
+	end
 end
 
 minetest.register_node("pipeworks:nodebreaker_off", {
