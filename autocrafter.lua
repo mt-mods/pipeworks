@@ -71,11 +71,15 @@ minetest.register_node("pipeworks:autocrafter",{
 		local meta = minetest.env:get_meta(pos);
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("recipe") and inv:is_empty("dst"))
-	end})
+	end,
+	after_place_node = tube_scanforobjects,
+	after_dig_node = tube_scanforobjects,
+})
 
 minetest.register_abm({nodenames={"pipeworks:autocrafter"},interval=1,chance=1,
 			action=function(pos,node)
 				local meta=minetest.env:get_meta(pos)
 				local inv=meta:get_inventory()
 				autocraft(inv)
-			end})
+			end
+})
