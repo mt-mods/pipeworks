@@ -125,6 +125,19 @@ function tube_autoroute(pos)
 	  and nzp.param2 == 2 then
 		pzp=1 end
 
+	if string.find(nxm.name, "technic:deployer_") ~= nil
+	  and nxm.param2 == 1 then
+		pxm=1 end
+	if string.find(nxp.name, "technic:deployer_") ~= nil
+	  and nxp.param2 == 3 then
+		pxp=1 end
+	if string.find(nzm.name, "technic:deployer_") ~= nil
+	  and nzm.param2 == 0 then
+		pzm=1 end
+	if string.find(nzp.name, "technic:deployer_") ~= nil
+	  and nzp.param2 == 2 then
+		pzp=1 end
+
 --node breakers
 
 	if string.find(nxm.name, "pipeworks:nodebreaker_") ~= nil
@@ -137,6 +150,19 @@ function tube_autoroute(pos)
 	  and nzm.param2 == 0 then
 		pzm=1 end
 	if string.find(nzp.name, "pipeworks:nodebreaker_") ~= nil
+	  and nzp.param2 == 2 then
+		pzp=1 end
+
+	if string.find(nxm.name, "technic:nodebreaker_") ~= nil
+	  and nxm.param2 == 1 then
+		pxm=1 end
+	if string.find(nxp.name, "technic:nodebreaker_") ~= nil
+	  and nxp.param2 == 3 then
+		pxp=1 end
+	if string.find(nzm.name, "technic:nodebreaker_") ~= nil
+	  and nzm.param2 == 0 then
+		pzm=1 end
+	if string.find(nzp.name, "technic:nodebreaker_") ~= nil
 	  and nzp.param2 == 2 then
 		pzp=1 end
 
