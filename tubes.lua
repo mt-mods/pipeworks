@@ -482,7 +482,7 @@ register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",
 			return notvel(meseadjlist,velocity)
 		end}})
 
-egister_tube("pipeworks:crossing_tube","Crossing tube segment",accelerator_plain_textures,
+register_tube("pipeworks:crossing_tube","Crossing tube segment",accelerator_plain_textures,
 		accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			return velocity
