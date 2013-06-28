@@ -465,7 +465,9 @@ function go_next(pos,velocity,stack)
 					break
 				end
 			until false
-			meta:set_int("tubedir",n)
+			if CYCLIC then
+				meta:set_int("tubedir",n)
+			end
 			velocity.x=tubes[n].vect.x*vel.speed
 			velocity.y=tubes[n].vect.y*vel.speed
 			velocity.z=tubes[n].vect.z*vel.speed
@@ -484,6 +486,9 @@ function go_next(pos,velocity,stack)
 				break
 			end
 		until false
+		if CYCLIC then
+			meta:set_int("tubedir",n)
+		end
 		velocity.x=chests[n].vect.x*speed
 		velocity.y=chests[n].vect.y*speed
 		velocity.z=chests[n].vect.z*speed

@@ -14,6 +14,7 @@
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 local DEBUG = false
+local CYCLIC = true
 
 pipeworks_liquid_texture = "default_water.png"
 
