@@ -316,7 +316,7 @@ for zp = 0, 1 do
 		drop = "pipeworks:pipe_110000_empty",
 		pipelike=1,
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
@@ -348,7 +348,7 @@ for zp = 0, 1 do
 		drop = "pipeworks:pipe_110000_empty",
 		pipelike=1,
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)

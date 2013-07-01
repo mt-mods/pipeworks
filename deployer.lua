@@ -19,12 +19,12 @@ minetest.register_craft({
 })
 
 function hacky_swap_node(pos,name)
-	local node=minetest.env:get_node(pos)
-	local meta=minetest.env:get_meta(pos)
+	local node=minetest.get_node(pos)
+	local meta=minetest.get_meta(pos)
 	local meta0=meta:to_table()
 	node.name=name
-	minetest.env:add_node(pos, node)
-	local meta=minetest.env:get_meta(pos)
+	minetest.add_node(pos, node)
+	local meta=minetest.get_meta(pos)
 	meta:from_table(meta0)
 end
 
@@ -48,10 +48,10 @@ deployer_on = function(pos, node)
 	hacky_swap_node(pos,"pipeworks:deployer_on")
 	nodeupdate(pos)
 	
-	local inv = minetest.env:get_meta(pos):get_inventory()
+	local inv = minetest.get_meta(pos):get_inventory()
 	local invlist = inv:get_list("main")
 	for i, stack in ipairs(invlist) do
-		if stack:get_name() ~= nil and stack:get_name() ~= "" and minetest.env:get_node(pos1).name == "air" then --obtain the first non-empty item slow
+		if stack:get_name() ~= nil and stack:get_name() ~= "" and minetest.get_node(pos1).name == "air" then --obtain the first non-empty item slow
 			local placer = {
 				get_player_name = function() return "deployer" end,
 				getpos = function() return pos end,
@@ -81,12 +81,12 @@ minetest.register_node("pipeworks:deployer_off", {
 			"pipeworks_deployer_back.png","pipeworks_deployer_front_off.png"},
 	mesecons = {effector={action_on=deployer_on,action_off=deployer_off}},
 	tube={insert_object=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:add_item("main",stack)
 		end,
 		can_insert=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:room_for_item("main",stack)
 		end,
@@ -96,7 +96,7 @@ minetest.register_node("pipeworks:deployer_off", {
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, tubedevice_receiver=1},
 	sounds = default.node_sound_stone_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",
 				"invsize[8,9;]"..
 				"label[0,0;Deployer]"..
@@ -107,7 +107,7 @@ minetest.register_node("pipeworks:deployer_off", {
 		inv:set_size("main", 3*3)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos);
+		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
@@ -121,12 +121,12 @@ minetest.register_node("pipeworks:deployer_on", {
 			"pipeworks_deployer_back.png","pipeworks_deployer_front_on.png"},
 	mesecons = {effector={action_on=deployer_on,action_off=deployer_off}},
 	tube={insert_object=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:add_item("main",stack)
 		end,
 		can_insert=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:room_for_item("main",stack)
 		end,
@@ -137,7 +137,7 @@ minetest.register_node("pipeworks:deployer_on", {
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, tubedevice_receiver=1,not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",
 				"invsize[8,9;]"..
 				"label[0,0;Deployer]"..
@@ -148,7 +148,7 @@ minetest.register_node("pipeworks:deployer_on", {
 		inv:set_size("main", 3*3)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos);
+		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,

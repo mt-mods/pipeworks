@@ -19,12 +19,12 @@ minetest.register_craft({
 })
 
 function hacky_swap_node(pos,name)
-	local node=minetest.env:get_node(pos)
-	local meta=minetest.env:get_meta(pos)
+	local node=minetest.get_node(pos)
+	local meta=minetest.get_meta(pos)
 	local meta0=meta:to_table()
 	node.name=name
-	minetest.env:add_node(pos, node)
-	local meta=minetest.env:get_meta(pos)
+	minetest.add_node(pos, node)
+	local meta=minetest.get_meta(pos)
 	meta:from_table(meta0)
 end
 
@@ -67,7 +67,7 @@ function break_node (pos, n_param)
 		z_velocity = 1
 	end
 
-	local node = minetest.env:get_node(pos2)
+	local node = minetest.get_node(pos2)
 	if node.name == "air" or name == "ignore" then
 		return nil
 	elseif minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].liquidtype ~= "none" then
@@ -95,7 +95,7 @@ function break_node (pos, n_param)
 		item1:setacceleration({x=0, y=0, z=0})
 	end
 
-	minetest.env:remove_node(pos2)
+	minetest.remove_node(pos2)
 
 	--handle post-digging callback
 	if def.after_dig_node then

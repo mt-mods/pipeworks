@@ -212,7 +212,7 @@ for zp = 0, 1 do
 		drop = name.."_000000",
 		tubelike=1,
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("tubelike",1)
 			if minetest.registered_nodes[name.."_"..tname].on_construct_ then
 				minetest.registered_nodes[name.."_"..tname].on_construct_(pos)
@@ -294,7 +294,7 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 	mese_end_textures,mese_short_texture,mese_inv_texture,
 	{tube={can_go=function(pos,node,velocity,stack)
 		tbl={}
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		local found=false
 		local name=stack:get_name()
@@ -320,7 +320,7 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 		return tbl
 	end},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		for i=1,6 do
 			meta:set_int("l"..tostring(i).."s",1)
@@ -350,7 +350,7 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 		meta:set_string("infotext", "Mese pneumatic tube")
 	end,
 	on_receive_fields=function(pos,formname,fields,sender)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local i
 		for key,_ in pairs(fields) do i=key end
 		if i==nil then return end
@@ -382,7 +382,7 @@ register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_tex
 		meta:set_string("formspec",frm)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos);
+		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return (inv:is_empty("line1") and inv:is_empty("line2") and inv:is_empty("line3") and
 			inv:is_empty("line4") and inv:is_empty("line5") and inv:is_empty("line6"))
@@ -394,8 +394,8 @@ mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y
 register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
 	end_textures,short_texture,detector_inv_texture,
 	{tube={can_go=function(pos,node,velocity,stack)
-		local meta = minetest.env:get_meta(pos)
-		local name = minetest.env:get_node(pos).name
+		local meta = minetest.get_meta(pos)
+		local name = minetest.get_node(pos).name
 		local nitems=meta:get_int("nitems")+1
 		meta:set_int("nitems", nitems)
 		minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
@@ -406,28 +406,28 @@ register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker
 	mesecons={receptor={state="on",
 				rules=mesecons_rules}},
 	item_exit = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local nitems=meta:get_int("nitems")-1
-		local name = minetest.env:get_node(pos).name
+		local name = minetest.get_node(pos).name
 		if nitems==0 then
-			minetest.env:set_node(pos,{name=string.gsub(name,"on","off")})
+			minetest.set_node(pos,{name=string.gsub(name,"on","off")})
 			mesecon:receptor_off(pos,mesecons_rules)
 		else
 			meta:set_int("nitems", nitems)
 		end
 	end,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("nitems", 1)
-		local name = minetest.env:get_node(pos).name
+		local name = minetest.get_node(pos).name
 		minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
 	end})
 
 register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_plain_textures,noctr_textures,
 	end_textures,short_texture,detector_inv_texture,
 	{tube={can_go=function(pos,node,velocity,stack)
-		local name = minetest.env:get_node(pos).name
-		minetest.env:set_node(pos,{name=string.gsub(name,"off","on")})
+		local name = minetest.get_node(pos).name
+		minetest.set_node(pos,{name=string.gsub(name,"off","on")})
 		mesecon:receptor_on(pos,mesecons_rules)
 		return notvel(meseadjlist,velocity)
 	end},
@@ -503,7 +503,7 @@ register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_tex
 
 minetest.register_abm({nodenames={"group:sand_tube"},interval=1,chance=1,
 	action=function(pos, node, active_object_count, active_object_count_wider)
-		for _,object in ipairs(minetest.env:get_objects_inside_radius(pos, 2)) do
+		for _,object in ipairs(minetest.get_objects_inside_radius(pos, 2)) do
 			if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
 				if object:get_luaentity().itemstring ~= "" then
 					local titem=tube_item(pos,object:get_luaentity().itemstring)

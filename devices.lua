@@ -118,7 +118,7 @@ for s in ipairs(states) do
 		walkable = true,
 		pipelike = 1,
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
@@ -130,10 +130,10 @@ for s in ipairs(states) do
 		drop = "pipeworks:pump_off",
 		mesecons = {effector = {
 			action_on = function (pos, node)
-				minetest.env:add_node(pos,{name="pipeworks:pump_on", param2 = node.param2}) 
+				minetest.add_node(pos,{name="pipeworks:pump_on", param2 = node.param2}) 
 			end,
 			action_off = function (pos, node)
-				minetest.env:add_node(pos,{name="pipeworks:pump_off", param2 = node.param2}) 
+				minetest.add_node(pos,{name="pipeworks:pump_off", param2 = node.param2}) 
 			end
 		}}
 	})
@@ -177,7 +177,7 @@ for s in ipairs(states) do
 		walkable = true,
 		pipelike = 1,
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("pipelike",1)
 		end,
 		after_place_node = function(pos)
@@ -190,10 +190,10 @@ for s in ipairs(states) do
 		pipelike=1,
 		mesecons = {effector = {
 			action_on = function (pos, node)
-				minetest.env:add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
+				minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
 			end,
 			action_off = function (pos, node)
-				minetest.env:add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
+				minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 			end
 		}}
 	})
@@ -232,7 +232,7 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	walkable = true,
 	pipelike = 1,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 	end,
 	after_place_node = function(pos)
@@ -245,10 +245,10 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	pipelike=1,
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			minetest.env:add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
+			minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
 		end,
 		action_off = function (pos, node)
-			minetest.env:add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
+			minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 		end
 	}}
 })
@@ -278,7 +278,7 @@ minetest.register_node("pipeworks:grating", {
 	end,
 	pipelike=1,
 	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	meta:set_int("pipelike",1)
 	end,
 })
@@ -315,7 +315,7 @@ minetest.register_node("pipeworks:spigot", {
 	walkable = true,
 	pipelike=1,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 	end,
 	after_place_node = function(pos)
@@ -381,7 +381,7 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	walkable = true,
 	pipelike=1,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 	end,
 	after_place_node = function(pos)
@@ -433,7 +433,7 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	end,
 	pipelike=1,
 	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	meta:set_int("pipelike",1)
 	end,
 	node_box = {
@@ -450,7 +450,7 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	on_place = function(itemstack, placer, pointed_thing)
 		if not pipeworks_node_is_owned(pointed_thing.under, placer) 
 		   and not pipeworks_node_is_owned(pointed_thing.above, placer) then
-			local node = minetest.env:get_node(pointed_thing.under)
+			local node = minetest.get_node(pointed_thing.under)
 
 			if not minetest.registered_nodes[node.name]
 			    or not minetest.registered_nodes[node.name].on_rightclick then
@@ -458,8 +458,8 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 				local above = pointed_thing.above
 				local under = pointed_thing.under
 				local fdir = minetest.dir_to_facedir(placer:get_look_dir())
-				local undernode = minetest.env:get_node(under)
-				local abovenode = minetest.env:get_node(above)
+				local undernode = minetest.get_node(under)
+				local abovenode = minetest.get_node(above)
 				local uname = undernode.name
 				local aname = abovenode.name
 				local isabove = (above.x == under.x) and (above.z == under.z) and (pitch > 0)
@@ -483,9 +483,9 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 					pos1 = under
 				end
 
-				if not minetest.registered_nodes[minetest.env:get_node(pos1).name]["buildable_to"] then return end
+				if not minetest.registered_nodes[minetest.get_node(pos1).name]["buildable_to"] then return end
 
-				minetest.env:add_node(pos1, {name = "pipeworks:entry_panel_empty", param2 = fdir })
+				minetest.add_node(pos1, {name = "pipeworks:entry_panel_empty", param2 = fdir })
 				pipe_scanforobjects(pos1)
 
 				if not pipeworks_expect_infinite_stacks then
@@ -524,7 +524,7 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	end,
 	pipelike=1,
 	on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	meta:set_int("pipelike",1)
 	end,
 	node_box = {
@@ -571,7 +571,7 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	end,
 	pipelike=1,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 		if mesecon then
 			mesecon:receptor_off(pos, rules) 
@@ -615,7 +615,7 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	end,
 	pipelike=1,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 		if mesecon then
 			mesecon:receptor_on(pos, rules) 
@@ -674,7 +674,7 @@ for fill = 0, 10 do
 		end,
 		pipelike=0,
 		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",0)
 		end,
 	})
@@ -704,7 +704,7 @@ for fill = 0, 10 do
 		end,
 		pipelike=1,
 		on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 		end,
 	})
@@ -714,42 +714,42 @@ end
 
 minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:valve_on_empty" then 
-		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-		local meta = minetest.env:get_meta(pos)
+		fdir = minetest.get_node(pos).param2
+		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",0)
 	end
 end)
 
 minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:valve_on_loaded" then 
-		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-		local meta = minetest.env:get_meta(pos)
+		fdir = minetest.get_node(pos).param2
+		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",0)
 	end
 end)
 
 minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:valve_off_empty" then 
-		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:valve_on_empty", param2 = fdir })
-		local meta = minetest.env:get_meta(pos)
+		fdir = minetest.get_node(pos).param2
+		minetest.add_node(pos, { name = "pipeworks:valve_on_empty", param2 = fdir })
+		local meta = minetest.get_meta(pos)
 		meta:set_int("pipelike",1)
 	end
 end)
 
 minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:pump_on" then 
-		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:pump_off", param2 = fdir })
+		fdir = minetest.get_node(pos).param2
+		minetest.add_node(pos, { name = "pipeworks:pump_off", param2 = fdir })
 	end
 end)
 
 minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:pump_off" then 
-		fdir = minetest.env:get_node(pos).param2
-		minetest.env:add_node(pos, { name = "pipeworks:pump_on", param2 = fdir })
+		fdir = minetest.get_node(pos).param2
+		minetest.add_node(pos, { name = "pipeworks:pump_on", param2 = fdir })
 	end
 end)
 

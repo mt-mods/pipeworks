@@ -16,7 +16,7 @@ minetest.register_node("pipeworks:filter", {
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_wood_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",
 				"invsize[8,6.5;]"..
 				"list[current_name;main;0,0;8,2;]"..
@@ -26,7 +26,7 @@ minetest.register_node("pipeworks:filter", {
 		inv:set_size("main", 8*4)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos);
+		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
@@ -40,7 +40,7 @@ minetest.register_node("pipeworks:filter", {
 					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
 				end}},
 	on_punch = function (pos, node, puncher)
-	local meta = minetest.env:get_meta(pos);
+	local meta = minetest.get_meta(pos);
 	local inv = meta:get_inventory()
 	local frompos
 	local dir
@@ -57,13 +57,13 @@ minetest.register_node("pipeworks:filter", {
 		frompos={x=pos.x,y=pos.y,z=pos.z-1}
 		dir={x=0,y=0,z=1}
 	end
-	local fromnode=minetest.env:get_node(frompos)
+	local fromnode=minetest.get_node(frompos)
 	local frominv
 	if not (minetest.registered_nodes[fromnode.name].tube and 
 		minetest.registered_nodes[fromnode.name].tube.input_inventory) then
 			return
 	end
-	local frommeta=minetest.env:get_meta(frompos)
+	local frommeta=minetest.get_meta(frompos)
 	local frominvname=minetest.registered_nodes[fromnode.name].tube.input_inventory
 	local frominv=frommeta:get_inventory()
 	for _,filter in ipairs(inv:get_list("main")) do
@@ -114,7 +114,7 @@ minetest.register_node("pipeworks:mese_filter", {
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_wood_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",
 				"invsize[8,6.5;]"..
 				"list[current_name;main;0,0;8,2;]"..
@@ -124,7 +124,7 @@ minetest.register_node("pipeworks:mese_filter", {
 		inv:set_size("main", 8*4)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos);
+		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
 	end,
@@ -138,7 +138,7 @@ minetest.register_node("pipeworks:mese_filter", {
 					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
 				end}},
 	on_punch = function (pos, node, puncher)
-	local meta = minetest.env:get_meta(pos);
+	local meta = minetest.get_meta(pos);
 	local inv = meta:get_inventory()
 	local frompos
 	local dir
@@ -155,13 +155,13 @@ minetest.register_node("pipeworks:mese_filter", {
 		frompos={x=pos.x,y=pos.y,z=pos.z-1}
 		dir={x=0,y=0,z=1}
 	end
-	local fromnode=minetest.env:get_node(frompos)
+	local fromnode=minetest.get_node(frompos)
 	local frominv
 	if not (minetest.registered_nodes[fromnode.name].tube and 
 		minetest.registered_nodes[fromnode.name].tube.input_inventory) then
 			return
 	end
-	local frommeta=minetest.env:get_meta(frompos)
+	local frommeta=minetest.get_meta(frompos)
 	local frominvname=minetest.registered_nodes[fromnode.name].tube.input_inventory
 	local frominv=frommeta:get_inventory()
 	for _,filter in ipairs(inv:get_list("main")) do
@@ -201,7 +201,7 @@ end,
 function tube_item(pos, item)
 	-- Take item in any format
 	local stack = ItemStack(item)
-	local obj = minetest.env:add_entity(pos, "pipeworks:tubed_item")
+	local obj = minetest.add_entity(pos, "pipeworks:tubed_item")
 	obj:get_luaentity():set_item(stack:to_string())
 	return obj
 end
@@ -297,8 +297,8 @@ minetest.register_entity("pipeworks:tubed_item", {
 		self.start_pos=roundpos(pos)
 	end
 	local pos = self.object:getpos()
-	local node = minetest.env:get_node(pos)
-	local meta = minetest.env:get_meta(pos)
+	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
 	tubelike=meta:get_int("tubelike")
 	local stack = ItemStack(self.itemstring)
 	local drop_pos=nil
@@ -335,14 +335,14 @@ minetest.register_entity("pipeworks:tubed_item", {
 	
 	local sposcopy={x=self.start_pos.x,y=self.start_pos.y,z=self.start_pos.z}
 	
-	node = minetest.env:get_node(self.start_pos)
+	node = minetest.get_node(self.start_pos)
 	if moved and minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
 		if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
 			leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos,node,stack,vel)
 		else
 			leftover = stack
 		end
-		--drop_pos=minetest.env:find_node_near(self.start_pos,1,"air")
+		--drop_pos=minetest.find_node_near(self.start_pos,1,"air")
 		--if drop_pos and not leftover:is_empty() then minetest.item_drop(leftover,"",drop_pos) end
 		--self.object:remove()
 		if leftover:is_empty() then
@@ -359,7 +359,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 	
 	if moved then
 		if go_next (self.start_pos, velocity, stack)==0 then
-			drop_pos=minetest.env:find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
+			drop_pos=minetest.find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
 			if drop_pos then 
 				minetest.item_drop(stack, "", drop_pos)
 				self.object:remove()
@@ -394,8 +394,8 @@ end
 function go_next(pos,velocity,stack)
 	local chests={}
 	local tubes={}
-	local cnode=minetest.env:get_node(pos)
-	local cmeta=minetest.env:get_meta(pos)
+	local cnode=minetest.get_node(pos)
+	local cmeta=minetest.get_meta(pos)
 	local node
 	local meta
 	local tubelike
@@ -420,9 +420,9 @@ function go_next(pos,velocity,stack)
 	end
 	for _,vect in ipairs(can_go) do
 		npos=addVect(pos,vect)
-		node=minetest.env:get_node(npos)
+		node=minetest.get_node(npos)
 		tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
-		meta=minetest.env:get_meta(npos)
+		meta=minetest.get_meta(npos)
 		tubelike=meta:get_int("tubelike")
 		if tube_receiver==1 then
 			if minetest.registered_nodes[node.name].tube and

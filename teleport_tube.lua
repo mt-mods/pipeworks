@@ -43,8 +43,8 @@ function get_tubes_in_file(pos,channel)
 	newtbl={}
 	changed=false
 	for _,val in ipairs(tbl) do
-		local node = minetest.env:get_node(val)
-		local meta = minetest.env:get_meta(val)
+		local node = minetest.get_node(val)
+		local meta = minetest.get_meta(val)
 		if node.name~="ignore"  and (val.channel~=meta:get_string("channel") or val.cr~=meta:get_int("can_receive")) then
 			val.channel=meta:get_string("channel")
 			val.cr=meta:get_int("can_receive")
@@ -73,7 +73,7 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			velocity.x=0
 			velocity.y=0
 			velocity.z=0
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			channel=meta:get_string("channel")
 			local target=get_tubes_in_file(pos,channel)
 			if target[1]==nil then return {} end
@@ -84,7 +84,7 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			return meseadjlist
 		end},
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_string("channel","")
 			meta:set_int("can_receive",1)
 			meta:set_string("formspec","size[9,1;]"..
@@ -93,7 +93,7 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			add_tube_in_file(pos,"")
 		end,
 		on_receive_fields = function(pos,formname,fields,sender)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			if fields.channel==nil then fields.channel=meta:get_string("channel") end
 			meta:set_string("channel",fields.channel)
 			remove_tube_in_file(pos)

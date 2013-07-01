@@ -19,14 +19,14 @@ function pipe_scanforobjects(pos)
 end
 
 function pipe_autoroute(pos, state)
-	nctr = minetest.env:get_node(pos)
+	nctr = minetest.get_node(pos)
 	if (string.find(nctr.name, "pipeworks:pipe_") == nil) then return end
 
 	pipes_scansurroundings(pos)
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	if nsurround == "000000" then nsurround = "110000" end
-	minetest.env:add_node(pos, { name = "pipeworks:pipe_"..nsurround..state })
+	minetest.add_node(pos, { name = "pipeworks:pipe_"..nsurround..state })
 end
 
 -- autorouting for pneumatic tubes
@@ -62,14 +62,14 @@ function tube_autoroute(pos)
 	local pzm=0
 	local pzp=0
 
-	local nxm = minetest.env:get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	local nxp = minetest.env:get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	local nym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	local nyp = minetest.env:get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	local nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	local nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	local nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	local nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	local nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	local nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	local nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	local nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
-	local nctr = minetest.env:get_node(pos)
+	local nctr = minetest.get_node(pos)
 
 -- handle the tubes themselves
 
@@ -264,11 +264,11 @@ function tube_autoroute(pos)
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	if is_tube(nctr.name) then
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local meta0=meta:to_table()
 		nctr.name=string.sub(nctr.name,1,-7)..nsurround
-		minetest.env:add_node(pos, nctr)
-		local meta=minetest.env:get_meta(pos)
+		minetest.add_node(pos, nctr)
+		local meta=minetest.get_meta(pos)
 		meta:from_table(meta0)
 	end
 
@@ -284,12 +284,12 @@ function pipes_scansurroundings(pos)
 	pzm=0
 	pzp=0
 
-	nxm = minetest.env:get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	nxp = minetest.env:get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	nym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	nyp = minetest.env:get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
 	if (string.find(nxm.name, "pipeworks:pipe_") ~= nil) then pxm=1 end
 	if (string.find(nxp.name, "pipeworks:pipe_") ~= nil) then pxp=1 end
@@ -434,11 +434,11 @@ function pipes_scansurroundings(pos)
 end
 
 function pipe_look_for_stackable_tanks(pos)
-	local tym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	local tym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
 
 	if string.find(tym.name, "pipeworks:storage_tank_") ~= nil or
 	    string.find(tym.name, "pipeworks:expansion_tank_") ~= nil then
-		minetest.env:add_node(pos, { name =  "pipeworks:expansion_tank_0", param2 = tym.param2})
+		minetest.add_node(pos, { name =  "pipeworks:expansion_tank_0", param2 = tym.param2})
 	end
 end
 

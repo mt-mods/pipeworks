@@ -13,7 +13,7 @@ furnace=clone_node("default:furnace")
 	furnace.groups.tubedevice=1
 	furnace.groups.tubedevice_receiver=1
 	furnace.tube={insert_object = function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			if direction.y==1 then
 				return inv:add_item("fuel",stack)
@@ -22,7 +22,7 @@ furnace=clone_node("default:furnace")
 			end
 		end,
 	can_insert=function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		if direction.y==1 then
 			return inv:room_for_item("fuel",stack)
@@ -46,7 +46,7 @@ furnace=clone_node("default:furnace_active")
 	furnace.groups.tubedevice=1
 	furnace.groups.tubedevice_receiver=1
 	furnace.tube={insert_object=function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		if direction.y==1 then
 			return inv:add_item("fuel",stack)
@@ -55,7 +55,7 @@ furnace=clone_node("default:furnace_active")
 		end
 	end,
 	can_insert=function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		if direction.y==1 then
 			return inv:room_for_item("fuel",stack)
@@ -79,12 +79,12 @@ chest=clone_node("default:chest")
 	chest.groups.tubedevice=1
 	chest.groups.tubedevice_receiver=1
 	chest.tube={insert_object = function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		return inv:add_item("main",stack)
 	end,
 	can_insert=function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		return inv:room_for_item("main",stack)
 	end,

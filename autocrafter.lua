@@ -43,18 +43,18 @@ minetest.register_node("pipeworks:autocrafter",{
 	tiles={"pipeworks_autocrafter.png"},
 	groups={snappy=3,tubedevice=1,tubedevice_receiver=1},
 	tube={insert_object=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:add_item("src",stack)
 		end,
 		can_insert=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:room_for_item("src",stack)
 		end,
 		input_inventory="dst"},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",
 				"size[8,11]"..
 				"list[current_name;recipe;0,0;3,3;]"..
@@ -68,7 +68,7 @@ minetest.register_node("pipeworks:autocrafter",{
 		inv:set_size("dst",4*3)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos);
+		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("recipe") and inv:is_empty("dst"))
 	end,
@@ -78,7 +78,7 @@ minetest.register_node("pipeworks:autocrafter",{
 
 minetest.register_abm({nodenames={"pipeworks:autocrafter"},interval=1,chance=1,
 			action=function(pos,node)
-				local meta=minetest.env:get_meta(pos)
+				local meta=minetest.get_meta(pos)
 				local inv=meta:get_inventory()
 				autocraft(inv)
 			end
