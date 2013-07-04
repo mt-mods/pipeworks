@@ -8,10 +8,6 @@
 -- License: WTFPL
 --
 
--- Un-comment the following dofile line to re-enable the old pipe nodes.
--- dofile(minetest.get_modpath("pipeworks").."/oldpipes.lua")
---
-
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 local DEBUG = false
 local CYCLIC = true
