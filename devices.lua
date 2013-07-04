@@ -116,11 +116,6 @@ for s in ipairs(states) do
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		pipelike = 1,
-		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			meta:set_int("pipelike",1)
-		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
@@ -175,11 +170,6 @@ for s in ipairs(states) do
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		pipelike = 1,
-		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			meta:set_int("pipelike",1)
-		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
@@ -187,7 +177,6 @@ for s in ipairs(states) do
 			pipe_scanforobjects(pos)
 		end,
 		drop = "pipeworks:valve_off",
-		pipelike=1,
 		mesecons = {effector = {
 			action_on = function (pos, node)
 				minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
@@ -230,11 +219,6 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	pipelike = 1,
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
-	end,
 	after_place_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
@@ -242,7 +226,6 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 		pipe_scanforobjects(pos)
 	end,
 	drop = "pipeworks:valve_off_empty",
-	pipelike=1,
 	mesecons = {effector = {
 		action_on = function (pos, node)
 			minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
@@ -276,11 +259,6 @@ minetest.register_node("pipeworks:grating", {
 	after_dig_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
-	pipelike=1,
-	on_construct = function(pos)
-	local meta = minetest.get_meta(pos)
-	meta:set_int("pipelike",1)
-	end,
 })
 
 -- outlet spigot
@@ -313,11 +291,6 @@ minetest.register_node("pipeworks:spigot", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	pipelike=1,
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
-	end,
 	after_place_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
@@ -379,11 +352,6 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
-	pipelike=1,
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
-	end,
 	after_place_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
@@ -430,11 +398,6 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	end,
 	after_dig_node = function(pos)
 		pipe_scanforobjects(pos)
-	end,
-	pipelike=1,
-	on_construct = function(pos)
-	local meta = minetest.get_meta(pos)
-	meta:set_int("pipelike",1)
 	end,
 	node_box = {
 		type = "fixed",
@@ -522,11 +485,6 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	after_dig_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
-	pipelike=1,
-	on_construct = function(pos)
-	local meta = minetest.get_meta(pos)
-	meta:set_int("pipelike",1)
-	end,
 	node_box = {
 		type = "fixed",
 		fixed = airtightboxes,
@@ -569,10 +527,7 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	after_dig_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
-	pipelike=1,
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
 		if mesecon then
 			mesecon:receptor_off(pos, rules) 
 		end
@@ -613,10 +568,7 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	after_dig_node = function(pos)
 		pipe_scanforobjects(pos)
 	end,
-	pipelike=1,
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
 		if mesecon then
 			mesecon:receptor_on(pos, rules) 
 		end
@@ -672,11 +624,6 @@ for fill = 0, 10 do
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		pipelike=0,
-		on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",0)
-		end,
 	})
 
 	minetest.register_node("pipeworks:storage_tank_"..fill, {
@@ -702,11 +649,6 @@ for fill = 0, 10 do
 		after_dig_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
-		pipelike=1,
-		on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
-		end,
 	})
 end
 
@@ -716,8 +658,6 @@ minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:valve_on_empty" then 
 		fdir = minetest.get_node(pos).param2
 		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",0)
 	end
 end)
 
@@ -725,8 +665,6 @@ minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:valve_on_loaded" then 
 		fdir = minetest.get_node(pos).param2
 		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",0)
 	end
 end)
 
@@ -734,8 +672,6 @@ minetest.register_on_punchnode(function (pos, node)
 	if node.name=="pipeworks:valve_off_empty" then 
 		fdir = minetest.get_node(pos).param2
 		minetest.add_node(pos, { name = "pipeworks:valve_on_empty", param2 = fdir })
-		local meta = minetest.get_meta(pos)
-		meta:set_int("pipelike",1)
 	end
 end)
 

@@ -310,11 +310,6 @@ for zp = 0, 1 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		drop = "pipeworks:pipe_110000_empty",
-		pipelike=1,
-		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			meta:set_int("pipelike",1)
-		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
@@ -342,11 +337,6 @@ for zp = 0, 1 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		drop = "pipeworks:pipe_110000_empty",
-		pipelike=1,
-		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			meta:set_int("pipelike",1)
-		end,
 		after_place_node = function(pos)
 			pipe_scanforobjects(pos)
 		end,
