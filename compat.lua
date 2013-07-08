@@ -97,3 +97,28 @@ chest=clone_node("default:chest")
 	end
 
 minetest.register_node(":default:chest",chest)
+
+
+chest_locked=clone_node("default:chest_locked")
+	chest_locked.groups.tubedevice=1
+	chest_locked.groups.tubedevice_receiver=1
+	chest_locked.tube={insert_object = function(pos,node,stack,direction)
+		local meta=minetest.env:get_meta(pos)
+		local inv=meta:get_inventory()
+		return inv:add_item("main",stack)
+	end,
+	can_insert=function(pos,node,stack,direction)
+		local meta=minetest.env:get_meta(pos)
+		local inv=meta:get_inventory()
+		return inv:room_for_item("main",stack)
+	end}
+  local old_after_place = minetest.registered_nodes["default:chest_locked"].after_place_node;
+	chest_locked.after_place_node = function(pos, placer)
+		tube_scanforobjects(pos)
+    old_after_place(pos, placer)
+	end
+	chest_locked.after_dig_node = function(pos)
+		tube_scanforobjects(pos)
+	end
+
+minetest.register_node(":default:chest_locked",chest_locked)
