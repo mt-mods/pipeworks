@@ -251,5 +251,26 @@ if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == ni
 		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})
+	
+	minetest.register_craft( {
+		output = "pipeworks:mese_sand_tube_000000 2",
+		recipe = {
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+		        { "default:sand", "default:mese_crystal", "default:sand" },
+		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+  
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:mese_sand_tube_000000",
+		recipe = {
+      "pipeworks:sand_tube_000000",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment"
+		},
+	})
 end
 
