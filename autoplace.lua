@@ -218,7 +218,50 @@ function tube_autoroute(pos)
 
 	-- does not scan for the front side of the node.
 
---chests
+--locked chests
+
+	-- check for left/right connects
+
+	if string.find(nxm.name, "default:chest_locked") ~= nil
+	  and (nxm.param2 == 0 or nxm.param2 == 2) then
+		pxm=1 end
+	if string.find(nxp.name, "default:chest_locked") ~= nil
+	  and (nxp.param2 == 0 or nxp.param2 == 2) then
+		pxp=1 end
+
+	if string.find(nzm.name, "default:chest_locked") ~= nil
+	  and (nzm.param2 == 1 or nzm.param2 == 3) then
+		pzm=1 end
+	if string.find(nzp.name, "default:chest_locked") ~= nil
+	  and (nzp.param2 == 1 or nzp.param2 == 3) then
+		pzp=1 end
+
+	-- check for backside connects
+
+	if string.find(nxm.name, "default:chest_locked") ~= nil
+	  and nxm.param2 == 1 then
+		pxm = 1 end
+
+	if string.find(nxp.name, "default:chest_locked") ~= nil
+	  and nxp.param2 == 3 then
+		pxp = 1 end
+
+	if string.find(nzm.name, "default:chest_locked") ~= nil
+	  and nzm.param2 == 0 then
+		pzm = 1 end
+
+	if string.find(nzp.name, "default:chest_locked") ~= nil
+	  and nzp.param2 == 2 then
+		pzp = 1 end
+
+	-- check for top/bottom connections
+
+	if string.find(nym.name, "default:chest_locked") ~= nil then pym = 1 end
+	if string.find(nyp.name, "default:chest_locked") ~= nil then pyp = 1 end
+
+	-- does not scan for the front side of the node.
+
+--furnaces
 
 	-- check for left/right connects
 
