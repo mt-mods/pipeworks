@@ -1,12 +1,12 @@
 -- This file provides the actual flow and pathfinding logic that makes water
 -- move through the pipes.
 --
--- Contributed by mauvebic, 2013-01-03, with tweaks by Vanessa Ezekowitz
+-- Contributed by mauvebic, 2013-01-03, rewritten a bit by Vanessa Ezekowitz
 --
 
 local finitewater = minetest.setting_getbool("liquid_finite")
 
-local check4liquids = function(pos)
+pipeworks_check_for_liquids = function(pos)
 	local coords = {
 		{x=pos.x,y=pos.y-1,z=pos.z},
 		{x=pos.x,y=pos.y+1,z=pos.z},
@@ -24,7 +24,7 @@ local check4liquids = function(pos)
 	return false
 end
 
-local check4inflows = function(pos,node)
+pipeworks_check_for_inflows = function(pos,node)
 	local coords = {
 		{x=pos.x,y=pos.y-1,z=pos.z},
 		{x=pos.x,y=pos.y+1,z=pos.z},
@@ -37,7 +37,7 @@ local check4inflows = function(pos,node)
 	for i =1,6 do
 		if newnode then break end
 		local name = minetest.get_node(coords[i]).name
-		if (name == "pipeworks:pump_on" and check4liquids(coords[i])) or string.find(name,"_loaded") then
+		if (name == "pipeworks:pump_on" and pipeworks_check_for_liquids(coords[i])) or string.find(name,"_loaded") then
 			if string.find(name,"_loaded") then
 				local source = minetest.get_meta(coords[i]):get_string("source")
 				if source == minetest.pos_to_string(pos) then break end
@@ -52,12 +52,12 @@ local check4inflows = function(pos,node)
 	end
 end
 
-local checksources = function(pos,node)
+pipeworks_check_sources = function(pos,node)
 	local sourcepos = minetest.string_to_pos(minetest.get_meta(pos):get_string("source"))
 	if not sourcepos then return end
 	local source = minetest.get_node(sourcepos).name
 	local newnode = false
-	if not ((source == "pipeworks:pump_on" and check4liquids(sourcepos)) or string.find(source,"_loaded") or source == "ignore" ) then
+	if not ((source == "pipeworks:pump_on" and pipeworks_check_for_liquids(sourcepos)) or string.find(source,"_loaded") or source == "ignore" ) then
 		newnode = string.gsub(node.name,"loaded","empty")
 	end
 
@@ -67,7 +67,7 @@ local checksources = function(pos,node)
 	end
 end
 
-local spigot_check = function(pos, node)
+pipeworks_spigot_check = function(pos, node)
 	local belowname = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
 	if belowname == "air" or belowname == "default:water_flowing" or belowname == "default:water_source" then 
 		local spigotname = minetest.get_node(pos).name
@@ -96,34 +96,3 @@ local spigot_check = function(pos, node)
 	end
 end
 
-table.insert(pipes_empty_nodenames,"pipeworks:valve_on_empty")
-table.insert(pipes_empty_nodenames,"pipeworks:valve_off_empty")
-table.insert(pipes_empty_nodenames,"pipeworks:entry_panel_empty")
-table.insert(pipes_empty_nodenames,"pipeworks:flow_sensor_empty")
-
-table.insert(pipes_full_nodenames,"pipeworks:valve_on_loaded")
-table.insert(pipes_full_nodenames,"pipeworks:entry_panel_loaded")
-table.insert(pipes_full_nodenames,"pipeworks:flow_sensor_loaded")
-
-minetest.register_abm({
-	nodenames = pipes_empty_nodenames,
-	interval = 1,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider) check4inflows(pos,node) end
-})
-
-minetest.register_abm({
-	nodenames = pipes_full_nodenames,
-	interval = 1,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider) checksources(pos,node) end
-})
-
-minetest.register_abm({
-	nodenames = {"pipeworks:spigot","pipeworks:spigot_pouring"},
-	interval = 1,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider) 
-		spigot_check(pos,node)
-	end
-})

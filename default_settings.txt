@@ -1,0 +1,17 @@
+-- Various settings
+
+enable_pipes = true
+enable_autocrafter = true
+enable_deployer = true
+enable_node_breaker = true
+enable_teleport_tube = true
+enable_pipe_devices = true
+enable_redefines = true
+enable_mese_tube = true
+enable_detector_tube = true
+enable_conductor_tube = true
+enable_accelerator_tube = true
+enable_crossing_tube = true
+enable_sand_tube = true
+enable_mese_sand_tube = true
+

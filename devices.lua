@@ -89,8 +89,8 @@ for s in ipairs(states) do
 	end
 
 	local pumpboxes = {}
-	pipe_addbox(pumpboxes, pipe_pumpbody)
-	pipe_addbox(pumpboxes, pipe_topstub)
+	pipeworks_add_pipebox(pumpboxes, pipe_pumpbody)
+	pipeworks_add_pipebox(pumpboxes, pipe_topstub)
 
 	minetest.register_node("pipeworks:pump_"..states[s], {
 		description = "Pump/Intake Module",
@@ -134,14 +134,14 @@ for s in ipairs(states) do
 	})
 	
 	local valveboxes = {}
-	pipe_addbox(valveboxes, pipe_leftstub)
-	pipe_addbox(valveboxes, pipe_valvebody)
+	pipeworks_add_pipebox(valveboxes, pipe_leftstub)
+	pipeworks_add_pipebox(valveboxes, pipe_valvebody)
 	if states[s] == "off" then 
-		pipe_addbox(valveboxes, pipe_valvehandle_off)
+		pipeworks_add_pipebox(valveboxes, pipe_valvehandle_off)
 	else
-		pipe_addbox(valveboxes, pipe_valvehandle_on)
+		pipeworks_add_pipebox(valveboxes, pipe_valvehandle_on)
 	end
-	pipe_addbox(valveboxes, pipe_rightstub)
+	pipeworks_add_pipebox(valveboxes, pipe_rightstub)
 	local tilex = "pipeworks_valvebody_ends.png"
 	local tilez = "pipeworks_valvebody_sides.png"
 
@@ -189,10 +189,10 @@ for s in ipairs(states) do
 end
 
 local valveboxes = {}
-pipe_addbox(valveboxes, pipe_leftstub)
-pipe_addbox(valveboxes, pipe_valvebody)
-pipe_addbox(valveboxes, pipe_rightstub)
-pipe_addbox(valveboxes, pipe_valvehandle_on)
+pipeworks_add_pipebox(valveboxes, pipe_leftstub)
+pipeworks_add_pipebox(valveboxes, pipe_valvebody)
+pipeworks_add_pipebox(valveboxes, pipe_rightstub)
+pipeworks_add_pipebox(valveboxes, pipe_valvehandle_on)
 
 minetest.register_node("pipeworks:valve_on_loaded", {
 	description = "Valve",
@@ -264,15 +264,15 @@ minetest.register_node("pipeworks:grating", {
 -- outlet spigot
 
 	local spigotboxes = {}
-	pipe_addbox(spigotboxes, pipe_backstub)
-	pipe_addbox(spigotboxes, spigot_bottomstub)
-	pipe_addbox(spigotboxes, pipe_bendsphere)
+	pipeworks_add_pipebox(spigotboxes, pipe_backstub)
+	pipeworks_add_pipebox(spigotboxes, spigot_bottomstub)
+	pipeworks_add_pipebox(spigotboxes, pipe_bendsphere)
 
 	local spigotboxes_pouring = {}
-	pipe_addbox(spigotboxes_pouring, spigot_stream)
-	pipe_addbox(spigotboxes_pouring, pipe_backstub)
-	pipe_addbox(spigotboxes_pouring, spigot_bottomstub)
-	pipe_addbox(spigotboxes_pouring, pipe_bendsphere)
+	pipeworks_add_pipebox(spigotboxes_pouring, spigot_stream)
+	pipeworks_add_pipebox(spigotboxes_pouring, pipe_backstub)
+	pipeworks_add_pipebox(spigotboxes_pouring, spigot_bottomstub)
+	pipeworks_add_pipebox(spigotboxes_pouring, pipe_bendsphere)
 
 minetest.register_node("pipeworks:spigot", {
 	description = "Spigot outlet",
@@ -373,9 +373,9 @@ minetest.register_node("pipeworks:spigot_pouring", {
 -- wall, for use in places where walls should look like they're airtight)
 
 local airtightboxes = {}
-pipe_addbox(airtightboxes, pipe_frontstub)
-pipe_addbox(airtightboxes, pipe_backstub)
-pipe_addbox(airtightboxes, entry_panel)
+pipeworks_add_pipebox(airtightboxes, pipe_frontstub)
+pipeworks_add_pipebox(airtightboxes, pipe_backstub)
+pipeworks_add_pipebox(airtightboxes, entry_panel)
 
 minetest.register_node("pipeworks:entry_panel_empty", {
 	description = "Airtight Pipe entry/exit",
@@ -500,9 +500,9 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 })
 
 local sensorboxes = {}
-pipe_addbox(sensorboxes, pipe_leftstub)
-pipe_addbox(sensorboxes, pipe_sensorbody)
-pipe_addbox(sensorboxes, pipe_rightstub)
+pipeworks_add_pipebox(sensorboxes, pipe_leftstub)
+pipeworks_add_pipebox(sensorboxes, pipe_sensorbody)
+pipeworks_add_pipebox(sensorboxes, pipe_rightstub)
 
 minetest.register_node("pipeworks:flow_sensor_empty", {
 	description = "Flow Sensor",
