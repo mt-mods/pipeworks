@@ -59,8 +59,8 @@ minetest.register_node("pipeworks:filter", {
 	end
 	local fromnode=minetest.get_node(frompos)
 	local frominv
-	if not (minetest.registered_nodes[fromnode.name].tube and 
-		minetest.registered_nodes[fromnode.name].tube.input_inventory) then
+	if (not fromnode) or (not minetest.registered_nodes[fromnode.name]) or (not (minetest.registered_nodes[fromnode.name].tube and 
+		minetest.registered_nodes[fromnode.name].tube.input_inventory)) then
 			return
 	end
 	local frommeta=minetest.get_meta(frompos)
