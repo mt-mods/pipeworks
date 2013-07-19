@@ -180,6 +180,7 @@ for zp = 0, 1 do
 		stack_max = 99,
 		drop = name.."_000000",
 		tubelike=1,
+		tube = {connect_sides={front=1, back=1, left=1, right=1, top=1, bottom=1}},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			meta:set_int("tubelike",1)
@@ -209,6 +210,10 @@ for zp = 0, 1 do
 		elseif key=="groups" then
 			for group,val in pairs(value) do
 				nodedef.groups[group]=val
+			end
+		elseif key=="tube" then
+			for key,val in pairs(value) do
+				nodedef.tube[key]=val
 			end
 		elseif type(value)=="table" then
 			nodedef[key]=pipeworks_replace_name(value,"#id",tname)

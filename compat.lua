@@ -32,7 +32,8 @@ furnace=clone_node("default:furnace")
 			return 0
 	end
 	end,
-	input_inventory="dst"}
+	input_inventory="dst",
+	connect_sides={left=1, right=1, back=1, bottom=1}}
 	furnace.after_place_node= function(pos)
 		tube_scanforobjects(pos)
 	end
@@ -65,7 +66,8 @@ furnace=clone_node("default:furnace_active")
 			return 0
 		end
 	end,
-	input_inventory="dst"}
+	input_inventory="dst",
+	connect_sides={left=1, right=1, back=1, bottom=1}}
 	furnace.after_place_node= function(pos)
 		tube_scanforobjects(pos)
 	end
@@ -88,7 +90,8 @@ chest=clone_node("default:chest")
 		local inv=meta:get_inventory()
 		return inv:room_for_item("main",stack)
 	end,
-	input_inventory="main"}
+	input_inventory="main",
+	connect_sides={left=1, right=1, back=1, bottom=1, top=1}}
 	chest.after_place_node = function(pos)
 		tube_scanforobjects(pos)
 	end
@@ -111,7 +114,8 @@ chest_locked=clone_node("default:chest_locked")
 		local meta=minetest.env:get_meta(pos)
 		local inv=meta:get_inventory()
 		return inv:room_for_item("main",stack)
-	end}
+	end,
+	connect_sides={left=1, right=1, back=1, bottom=1, top=1}}
   local old_after_place = minetest.registered_nodes["default:chest_locked"].after_place_node;
 	chest_locked.after_place_node = function(pos, placer)
 		tube_scanforobjects(pos)

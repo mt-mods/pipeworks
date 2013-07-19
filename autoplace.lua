@@ -1,3 +1,78 @@
+--define the functions from https://github.com/minetest/minetest/pull/834 while waiting for the devs to notice it
+local function dir_to_facedir(dir, is6d)
+	--account for y if requested
+	if is6d and math.abs(dir.y) > math.abs(dir.x) and math.abs(dir.y) > math.abs(dir.z) then
+		
+		--from above
+		if dir.y < 0 then
+			if math.abs(dir.x) > math.abs(dir.z) then
+				if dir.x < 0 then
+					return 19
+				else
+					return 13
+				end
+			else
+				if dir.z < 0 then
+					return 10
+				else
+					return 4
+				end
+			end
+		
+		--from below
+		else
+			if math.abs(dir.x) > math.abs(dir.z) then
+				if dir.x < 0 then
+					return 15
+				else
+					return 17
+				end
+			else
+				if dir.z < 0 then
+					return 6
+				else
+					return 8
+				end
+			end
+		end
+	
+	--otherwise, place horizontally
+	elseif math.abs(dir.x) > math.abs(dir.z) then
+		if dir.x < 0 then
+			return 3
+		else
+			return 1
+		end
+	else
+		if dir.z < 0 then
+			return 2
+		else
+			return 0
+		end
+	end
+end
+
+local function facedir_to_dir(facedir)
+	--a table of possible dirs
+	return ({{x=0, y=0, z=1},
+					{x=1, y=0, z=0},
+					{x=0, y=0, z=-1},
+					{x=-1, y=0, z=0},
+					{x=0, y=-1, z=0},
+					{x=0, y=1, z=0}})
+					
+					--indexed into by a table of correlating facedirs
+					[({[0]=1, 2, 3, 4,
+						5, 2, 6, 4,
+						6, 2, 5, 4,
+						1, 5, 3, 6,
+						1, 6, 3, 5,
+						1, 4, 3, 2})
+						
+						--indexed into by the facedir in question
+						[facedir]]
+end
+
 -- autorouting for pipes
 
 function pipe_scanforobjects(pos)
@@ -55,257 +130,94 @@ function is_tube(nodename)
 end
 
 function tube_autoroute(pos)
-	local pxm=0
-	local pxp=0
-	local pym=0
-	local pyp=0
-	local pzm=0
-	local pzp=0
-
-	local nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	local nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	local nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	local nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	local nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	local nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
-
 	local nctr = minetest.get_node(pos)
 
--- handle the tubes themselves
-
-	if is_tube(nxm.name) then pxm=1 end
-	if is_tube(nxp.name) then pxp=1 end
-	if is_tube(nym.name) then pym=1 end
-	if is_tube(nyp.name) then pyp=1 end
-	if is_tube(nzm.name) then pzm=1 end
-	if is_tube(nzp.name) then pzp=1 end
-
--- handle regular filters
-
-	if string.find(nxm.name, "pipeworks:filter") ~= nil
-	  and nxm.param2 == 0 then
-		pxm=1 end
-	if string.find(nxp.name, "pipeworks:filter") ~= nil
-	  and nxp.param2 == 2 then
-		pxp=1 end
-	if string.find(nzm.name, "pipeworks:filter") ~= nil
-	  and nzm.param2 == 3 then
-		pzm=1 end
-	if string.find(nzp.name, "pipeworks:filter") ~= nil
-	  and nzp.param2 == 1 then
-		pzp=1 end
-
--- handle mese filters
-
-	if string.find(nxm.name, "pipeworks:mese_filter") ~= nil
-	  and nxm.param2 == 0 then
-		pxm=1 end
-	if string.find(nxp.name, "pipeworks:mese_filter") ~= nil
-	  and nxp.param2 == 2 then
-		pxp=1 end
-	if string.find(nzm.name, "pipeworks:mese_filter") ~= nil
-	  and nzm.param2 == 3 then
-		pzm=1 end
-	if string.find(nzp.name, "pipeworks:mese_filter") ~= nil
-	  and nzp.param2 == 1 then
-		pzp=1 end
-
--- handle deployers
-
-	if string.find(nxm.name, "pipeworks:deployer_") ~= nil
-	  and nxm.param2 == 1 then
-		pxm=1 end
-	if string.find(nxp.name, "pipeworks:deployer_") ~= nil
-	  and nxp.param2 == 3 then
-		pxp=1 end
-	if string.find(nzm.name, "pipeworks:deployer_") ~= nil
-	  and nzm.param2 == 0 then
-		pzm=1 end
-	if string.find(nzp.name, "pipeworks:deployer_") ~= nil
-	  and nzp.param2 == 2 then
-		pzp=1 end
-
-	if string.find(nxm.name, "technic:deployer_") ~= nil
-	  and nxm.param2 == 1 then
-		pxm=1 end
-	if string.find(nxp.name, "technic:deployer_") ~= nil
-	  and nxp.param2 == 3 then
-		pxp=1 end
-	if string.find(nzm.name, "technic:deployer_") ~= nil
-	  and nzm.param2 == 0 then
-		pzm=1 end
-	if string.find(nzp.name, "technic:deployer_") ~= nil
-	  and nzp.param2 == 2 then
-		pzp=1 end
-
---node breakers
-
-	if string.find(nxm.name, "pipeworks:nodebreaker_") ~= nil
-	  and nxm.param2 == 1 then
-		pxm=1 end
-	if string.find(nxp.name, "pipeworks:nodebreaker_") ~= nil
-	  and nxp.param2 == 3 then
-		pxp=1 end
-	if string.find(nzm.name, "pipeworks:nodebreaker_") ~= nil
-	  and nzm.param2 == 0 then
-		pzm=1 end
-	if string.find(nzp.name, "pipeworks:nodebreaker_") ~= nil
-	  and nzp.param2 == 2 then
-		pzp=1 end
-
-	if string.find(nxm.name, "technic:nodebreaker_") ~= nil
-	  and nxm.param2 == 1 then
-		pxm=1 end
-	if string.find(nxp.name, "technic:nodebreaker_") ~= nil
-	  and nxp.param2 == 3 then
-		pxp=1 end
-	if string.find(nzm.name, "technic:nodebreaker_") ~= nil
-	  and nzm.param2 == 0 then
-		pzm=1 end
-	if string.find(nzp.name, "technic:nodebreaker_") ~= nil
-	  and nzp.param2 == 2 then
-		pzp=1 end
-
--- autocrafter
-
-	if string.find(nxm.name, "pipeworks:autocrafter") ~= nil then pxm = 1 end
-	if string.find(nxp.name, "pipeworks:autocrafter") ~= nil then pxp = 1 end
-	if string.find(nym.name, "pipeworks:autocrafter") ~= nil then pym = 1 end
-	if string.find(nyp.name, "pipeworks:autocrafter") ~= nil then pyp = 1 end
-	if string.find(nzm.name, "pipeworks:autocrafter") ~= nil then pzm = 1 end
-	if string.find(nzp.name, "pipeworks:autocrafter") ~= nil then pzp = 1 end
-
---chests
-
-	-- check for left/right connects
-
-	if string.find(nxm.name, "default:chest") ~= nil
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
-		pxm=1 end
-	if string.find(nxp.name, "default:chest") ~= nil
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
-		pxp=1 end
-
-	if string.find(nzm.name, "default:chest") ~= nil
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
-		pzm=1 end
-	if string.find(nzp.name, "default:chest") ~= nil
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
-		pzp=1 end
-
-	-- check for backside connects
-
-	if string.find(nxm.name, "default:chest") ~= nil
-	  and nxm.param2 == 1 then
-		pxm = 1 end
-
-	if string.find(nxp.name, "default:chest") ~= nil
-	  and nxp.param2 == 3 then
-		pxp = 1 end
-
-	if string.find(nzm.name, "default:chest") ~= nil
-	  and nzm.param2 == 0 then
-		pzm = 1 end
-
-	if string.find(nzp.name, "default:chest") ~= nil
-	  and nzp.param2 == 2 then
-		pzp = 1 end
-
-	-- check for top/bottom connections
-
-	if string.find(nym.name, "default:chest") ~= nil then pym = 1 end
-	if string.find(nyp.name, "default:chest") ~= nil then pyp = 1 end
-
-	-- does not scan for the front side of the node.
-
---locked chests
-
-	-- check for left/right connects
-
-	if string.find(nxm.name, "default:chest_locked") ~= nil
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
-		pxm=1 end
-	if string.find(nxp.name, "default:chest_locked") ~= nil
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
-		pxp=1 end
-
-	if string.find(nzm.name, "default:chest_locked") ~= nil
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
-		pzm=1 end
-	if string.find(nzp.name, "default:chest_locked") ~= nil
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
-		pzp=1 end
-
-	-- check for backside connects
-
-	if string.find(nxm.name, "default:chest_locked") ~= nil
-	  and nxm.param2 == 1 then
-		pxm = 1 end
-
-	if string.find(nxp.name, "default:chest_locked") ~= nil
-	  and nxp.param2 == 3 then
-		pxp = 1 end
-
-	if string.find(nzm.name, "default:chest_locked") ~= nil
-	  and nzm.param2 == 0 then
-		pzm = 1 end
-
-	if string.find(nzp.name, "default:chest_locked") ~= nil
-	  and nzp.param2 == 2 then
-		pzp = 1 end
-
-	-- check for top/bottom connections
-
-	if string.find(nym.name, "default:chest_locked") ~= nil then pym = 1 end
-	if string.find(nyp.name, "default:chest_locked") ~= nil then pyp = 1 end
-
-	-- does not scan for the front side of the node.
-
---furnaces
-
-	-- check for left/right connects
-
-	if string.find(nxm.name, "default:furnace") ~= nil
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
-		pxm=1 end
-	if string.find(nxp.name, "default:furnace") ~= nil
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
-		pxp=1 end
-
-	if string.find(nzm.name, "default:furnace") ~= nil
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
-		pzm=1 end
-	if string.find(nzp.name, "default:furnace") ~= nil
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
-		pzp=1 end
-
-	-- check for backside connects
-
-	if string.find(nxm.name, "default:furnace") ~= nil
-	  and nxm.param2 == 1 then
-		pxm = 1 end
-
-	if string.find(nxp.name, "default:furnace") ~= nil
-	  and nxp.param2 == 3 then
-		pxp = 1 end
-
-	if string.find(nzm.name, "default:furnace") ~= nil
-	  and nzm.param2 == 0 then
-		pzm = 1 end
-
-	if string.find(nzp.name, "default:furnace") ~= nil
-	  and nzp.param2 == 2 then
-		pzp = 1 end
-
-	-- check for bottom connection
-
-	if string.find(nyp.name, "default:furnace") ~= nil then pyp = 1 end
-
-	-- does not scan for the front or top side of the node.
-
+--a function for determining which side of the node we are on
+	local function nodeside(node, tubedir)
+		
+		--get a vector pointing back
+		local backdir = facedir_to_dir(node.param2)
+		
+		--check whether the vector is equivalent to the tube direction; if it is, the tube's on the backside
+		if backdir.x == tubedir.x and backdir.y == tubedir.y and backdir.z == tubedir.z then
+			return "back"
+		end
+		
+		--check whether the vector is antiparallel with the tube direction; that indicates the front
+		if backdir.x == -tubedir.x and backdir.y == -tubedir.y and backdir.z == -tubedir.z then
+			return "front"
+		end
+		
+		--facedir is defined in terms of the top-bottom axis of the node; we'll take advantage of that
+		local topdir = ({[0]={x=0, y=1, z=0},
+										{x=0, y=0, z=1},
+										{x=0, y=0, z=-1},
+										{x=1, y=0, z=0},
+										{x=-1, y=0, z=0},
+										{x=0, y=-1, z=0}})[math.floor(node.param2/4)]
+		
+		--is this the top?
+		if topdir.x == tubedir.x and topdir.y == tubedir.y and topdir.z == tubedir.z then
+			return "top"
+		end
+		
+		--or the bottom?
+		if topdir.x == -tubedir.x and topdir.y == -tubedir.y and topdir.z == -tubedir.z then
+			return "bottom"
+		end
+		
+		--we shall apply some maths to obtain the right-facing vector
+		local rightdir = {x=topdir.y*backdir.z - backdir.y*topdir.z,
+											y=topdir.z*backdir.x - backdir.z*topdir.x,
+											z=topdir.x*backdir.y - backdir.x*topdir.y}
+		
+		--is this the right side?
+		if rightdir.x == tubedir.x and rightdir.y == tubedir.y and rightdir.z == tubedir.z then
+			return "right"
+		end
+		
+		--or the left?
+		if rightdir.x == -tubedir.x and rightdir.y == -tubedir.y and rightdir.z == -tubedir.z then
+			return "left"
+		end
+		
+		--we should be done by now; initiate panic mode
+		minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace.lua, line 382")
+		
+	end
+	
+--a further function for determining whether we should extend a tube in a certain direction
+	local function surchar(dir)
+		
+		--get the node in that direction
+		local node = minetest.get_node{x=pos.x+dir.x, y=pos.y+dir.y, z=pos.z+dir.z}
+		
+		--and its tube table
+		local nodetube = minetest.registered_nodes[node.name].tube
+		
+		--choose a surround character
+		if nodetube and nodetube.connect_sides
+						and nodetube.connect_sides[nodeside(node, {x=-dir.x, y=-dir.y, z=-dir.z})] then
+			return '1'
+		else
+			return '0'
+		end
+		
+	end
+	
+--keep track of the tube surroundings
+	local nsurround = ""
+	
+--look in each direction
+	nsurround = nsurround..surchar{x=-1, y=0, z=0}
+	nsurround = nsurround..surchar{x=1, y=0, z=0}
+	nsurround = nsurround..surchar{x=0, y=-1, z=0}
+	nsurround = nsurround..surchar{x=0, y=1, z=0}
+	nsurround = nsurround..surchar{x=0, y=0, z=-1}
+	nsurround = nsurround..surchar{x=0, y=0, z=1}
+	
 -- Apply the final routing decisions to the existing tube (if any)
 
-	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	if is_tube(nctr.name) then
 		local meta=minetest.get_meta(pos)
 		local meta0=meta:to_table()

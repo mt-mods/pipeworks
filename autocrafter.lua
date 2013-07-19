@@ -52,7 +52,8 @@ minetest.register_node("pipeworks:autocrafter",{
 			local inv=meta:get_inventory()
 			return inv:room_for_item("src",stack)
 		end,
-		input_inventory="dst"},
+		input_inventory="dst",
+		connect_sides={left=1, right=1, front=1, back=1, top=1, bottom=1}},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",
