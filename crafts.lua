@@ -174,8 +174,7 @@ end
 -- If the technic mod is present, then don't bother registering the recipes
 -- for the various tubes, as technic has its own recipes for those.
 
-if io.open(minetest.get_modpath("pipeworks").."/../technic/init.lua", "r") == nil and
-   io.open(minetest.get_modpath("pipeworks").."/../technic_master/technic/init.lua", "r") == nil then
+if not minetest.get_modpath("technic") then
 
 	minetest.register_craft( {
 		output = "pipeworks:tube 12",
