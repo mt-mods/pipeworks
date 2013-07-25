@@ -1,9 +1,3 @@
-if minetest.get_modpath("technic") then --technic installed
-	--register aliases in order to use technic's node breakers
-	minetest.register_alias("pipeworks:nodebreaker_off", "technic:nodebreaker_off")
-	minetest.register_alias("pipeworks:nodebreaker_on", "technic:nodebreaker_on")
-	return
-end
 
 --register aliases for when someone had technic installed, but then uninstalled it but not pipeworks
 minetest.register_alias("technic:nodebreaker_off", "pipeworks:nodebreaker_off")

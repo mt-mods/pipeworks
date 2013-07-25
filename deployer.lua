@@ -1,9 +1,3 @@
-if minetest.get_modpath("technic") then --technic installed
-	--register aliases in order to use technic's deployers
-	minetest.register_alias("pipeworks:deployer_off", "technic:deployer_off")
-	minetest.register_alias("pipeworks:deployer_on", "technic:deployer_on")
-	return
-end
 
 --register aliases for when someone had technic installed, but then uninstalled it but not pipeworks
 minetest.register_alias("technic:deployer_off", "pipeworks:deployer_off")
