@@ -6,14 +6,14 @@
 -- License: WTFPL
 --
 
--- Copy and/or read the config file
+-- Read (and if necessary, copy) the config file
 
 local worldpath = minetest.get_worldpath()
 local modpath = minetest.get_modpath("pipeworks")
 
-if io.open(worldpath.."/pipeworks_settings.txt","r") == nil then
+dofile(modpath.."/default_settings.txt")
 
-	dofile(modpath.."/default_settings.txt")
+if io.open(worldpath.."/pipeworks_settings.txt","r") == nil then
 
 	io.input(modpath.."/default_settings.txt")
 	io.output(worldpath.."/pipeworks_settings.txt")
@@ -21,7 +21,10 @@ if io.open(worldpath.."/pipeworks_settings.txt","r") == nil then
 	local size = 2^13      -- good buffer size (8K)
 	while true do
 		local block = io.read(size)
-		if not block then break end
+		if not block then
+			io.close()
+			break
+		end
 		io.write(block)
 	end
 
