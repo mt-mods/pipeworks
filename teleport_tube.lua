@@ -94,6 +94,25 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 		end,
 		on_receive_fields = function(pos,formname,fields,sender)
 			local meta = minetest.get_meta(pos)
+			
+			--check for private channels
+			if fields.channel ~= nil then
+				local name, mode = fields.channel:match("^([^:;]+)([:;])")
+				if name and mode and name ~= sender:get_player_name() then
+					
+					--channels starting with '[name]:' can only be used by the named player
+					if mode == ":" then
+						minetest.chat_send_player(sender:get_player_name(), "Sorry, channel '"..fields.channel.."' is reserved for exclusive use by "..name)
+						return
+					
+					--channels starting with '[name];' can be used by other players, but cannot be received from
+					elseif mode == ";" and (meta:get_int("can_receive") ~= 0) == (fields["bt"] == nil) then
+						minetest.chat_send_player(sender:get_player_name(), "Sorry, receiving from channel '"..fields.channel.."' is reserved for "..name)
+						return
+					end
+				end
+			end
+			
 			if fields.channel==nil then fields.channel=meta:get_string("channel") end
 			meta:set_string("channel",fields.channel)
 			remove_tube_in_file(pos)
