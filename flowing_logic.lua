@@ -16,7 +16,7 @@ pipeworks_check_for_liquids = function(pos)
 		{x=pos.x,y=pos.y,z=pos.z+1},	}
 	for i =1,6 do
 		local name = minetest.get_node(coords[i]).name
-		if string.find(name,"water") then
+		if name and string.find(name,"water") then
 			if finitewater then minetest.remove_node(coords[i]) end
 			return true
 		end
@@ -37,7 +37,7 @@ pipeworks_check_for_inflows = function(pos,node)
 	for i =1,6 do
 		if newnode then break end
 		local name = minetest.get_node(coords[i]).name
-		if (name == "pipeworks:pump_on" and pipeworks_check_for_liquids(coords[i])) or string.find(name,"_loaded") then
+		if name and (name == "pipeworks:pump_on" and pipeworks_check_for_liquids(coords[i])) or string.find(name,"_loaded") then
 			if string.find(name,"_loaded") then
 				local source = minetest.get_meta(coords[i]):get_string("source")
 				if source == minetest.pos_to_string(pos) then break end
@@ -57,7 +57,7 @@ pipeworks_check_sources = function(pos,node)
 	if not sourcepos then return end
 	local source = minetest.get_node(sourcepos).name
 	local newnode = false
-	if not ((source == "pipeworks:pump_on" and pipeworks_check_for_liquids(sourcepos)) or string.find(source,"_loaded") or source == "ignore" ) then
+	if source and not ((source == "pipeworks:pump_on" and pipeworks_check_for_liquids(sourcepos)) or string.find(source,"_loaded") or source == "ignore" ) then
 		newnode = string.gsub(node.name,"loaded","empty")
 	end
 
@@ -69,7 +69,7 @@ end
 
 pipeworks_spigot_check = function(pos, node)
 	local belowname = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
-	if belowname == "air" or belowname == "default:water_flowing" or belowname == "default:water_source" then 
+	if belowname and (belowname == "air" or belowname == "default:water_flowing" or belowname == "default:water_source") then 
 		local spigotname = minetest.get_node(pos).name
 		local fdir=node.param2
 		local check = {
@@ -78,8 +78,9 @@ pipeworks_spigot_check = function(pos, node)
 			{x=pos.x,y=pos.y,z=pos.z-1},
 			{x=pos.x-1,y=pos.y,z=pos.z}
 		}
-		if string.find(minetest.get_node(check[fdir+1]).name, "_loaded") then
-			if spigotname == "pipeworks:spigot" then
+		local near_node = minetest.get_node(check[fdir+1])
+		if near_node and string.find(near_node.name, "_loaded") then
+			if spigotname and spigotname == "pipeworks:spigot" then
 				minetest.add_node(pos,{name = "pipeworks:spigot_pouring", param2 = fdir})
 				if finitewater or belowname ~= "default:water_source" then
 					minetest.add_node({x=pos.x,y=pos.y-1,z=pos.z},{name = "default:water_source"})
