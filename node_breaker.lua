@@ -15,13 +15,16 @@ minetest.register_craft({
 })
 
 function hacky_swap_node(pos,name)
-	local node=minetest.get_node(pos)
-	local meta=minetest.get_meta(pos)
-	local meta0=meta:to_table()
-	node.name=name
-	minetest.add_node(pos, node)
-	local meta=minetest.get_meta(pos)
-	meta:from_table(meta0)
+    local node=minetest.get_node(pos)
+    local meta=minetest.get_meta(pos)
+    local meta0=meta:to_table()
+    if node.name == name then
+        return
+    end
+    node.name=name
+    minetest.add_node(pos, node)
+    local meta=minetest.get_meta(pos)
+    meta:from_table(meta0)
 end
 
 --define the functions from https://github.com/minetest/minetest/pull/834 while waiting for the devs to notice it
