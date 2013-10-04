@@ -110,11 +110,13 @@ minetest.register_node("pipeworks:autocrafter", {
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("recipe") and inv:is_empty("dst"))
 	end, 
-	after_place_node = tube_scanforobjects(pos),
+	after_place_node = function(pos)
+		tube_scanforobjects(pos)
+	end,
 	after_dig_node = function(pos)
-			tube_scanforobjects(pos)
-			autocrafterCache[minetest.hash_node_position(pos)] = nil
-		end
+		tube_scanforobjects(pos)
+		autocrafterCache[minetest.hash_node_position(pos)] = nil
+	end
 })
 
 minetest.register_abm({nodenames = {"pipeworks:autocrafter"}, interval = 1, chance = 1, 
