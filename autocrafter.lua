@@ -1,18 +1,4 @@
-local autocrafterCache = {}
-
-function addCacheEntry(pos, recipe, result, new)
-	if autocrafterCache[pos.x] == nil then autocrafterCache[pos.x] = {} end
-	if autocrafterCache[pos.x][pos.y] == nil then autocrafterCache[pos.x][pos.y] = {} end
-	if autocrafterCache[pos.x][pos.y][pos.z] == nil then autocrafterCache[pos.x][pos.z] = {} end
-	autocrafterCache[pos.x][pos.y][pos.z] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
-end
-
-function getCacheEntry(pos)
-	if autocrafterCache[pos.x] == nil then return nil, nil, nil end
-	if autocrafterCache[pos.x][pos.y] == nil then return nil, nil, nil end
-	if autocrafterCache[pos.x][pos.y][pos.z] == nil then return nil, nil, nil end
-	return autocrafterCache[pos.x][pos.y][pos.z]["recipe"], autocrafterCache[pos.x][pos.y][pos.z]["result"], autocrafterCache[pos.x][pos.y][pos.z]["new"]
-end
+local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
 
 function autocraft(inventory, pos)
 	local recipe = inventory:get_list("recipe")
@@ -20,15 +6,23 @@ function autocraft(inventory, pos)
 		local result
 		local new
 
-		recipe_last, result, new = getCacheEntry(pos)
-		if recipe_last ~= nil then
+		if autocrafterCache[minetest.hash_node_position(pos)] == nil then
+			--print("first call for this autocrafter at pos("..pos.x..","..pos.y..","..pos.z..")")
+			recipe_last = {}
+			for i = 1, 9 do
+				recipe_last[i] = recipe[i]
+				--print (recipe_last[i]:get_name())
+				recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
+			end
+			result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
+			autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+		else
+			local autocrafterCacheEntry = autocrafterCache[minetest.hash_node_position(pos)]
+			recipe_last = autocrafterCacheEntry["recipe"]
+			result = autocrafterCacheEntry["result"]
+			new = autocrafterCacheEntry["new"]
 			local recipeUnchanged = true
 			for i = 1, 9 do
-				--print ("recipe_base"..i.." ")
-				--print (recipe[i]:get_name())
-				--print (recipe[i]:get_count())
-				--print (recipe_last[i]:get_name())
-				--print (recipe_last[i]:get_count())
 				if recipe[i]:get_name() ~= recipe_last[i]:get_name() then
 					recipeUnchanged = False
 					break
@@ -39,26 +33,16 @@ function autocraft(inventory, pos)
 				end
 			end
 			if recipeUnchanged then
-				-- print("autocrafter recipe unchanged")
+				--print("autocrafter recipe unchanged")
 			else
-				print("autocrafter recipe changed at pos("..pos.x..","..pos.y..","..pos.z..")")
+				--print("autocrafter recipe changed at pos("..pos.x..","..pos.y..","..pos.z..")")
 				for i = 1, 9 do
 						recipe_last[i] = recipe[i]
 						recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 				end
 				result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-				addCacheEntry(pos, recipe_last, result, new)
+				autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
 			end
-		else
-			print("first call for this autocrafter at pos("..pos.x..","..pos.y..","..pos.z..")")
-			recipe_last = {}
-			for i = 1, 9 do
-				recipe_last[i] = recipe[i]
-				--print (recipe_last[i]:get_name())
-				recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
-			end
-			result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-			addCacheEntry(pos, recipe_last, result, new)
 		end
 
 		local input = inventory:get_list("input")
@@ -126,8 +110,11 @@ minetest.register_node("pipeworks:autocrafter", {
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("recipe") and inv:is_empty("dst"))
 	end, 
-	after_place_node = tube_scanforobjects, 
-	after_dig_node = tube_scanforobjects, 
+	after_place_node = tube_scanforobjects(pos),
+	after_dig_node = function(pos)
+			tube_scanforobjects(pos)
+			autocrafterCache[minetest.hash_node_position(pos)] = nil
+		end
 })
 
 minetest.register_abm({nodenames = {"pipeworks:autocrafter"}, interval = 1, chance = 1, 
