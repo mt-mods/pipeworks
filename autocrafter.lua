@@ -1,14 +1,67 @@
+local autocrafterCache={}
 
+function addCacheEntry(pos,recipe,result,new)
+    if autocrafterCache[pos.x] == nil then autocrafterCache[pos.x] = {} end
+    if autocrafterCache[pos.x][pos.y] == nil then autocrafterCache[pos.x][pos.y] = {} end
+    if autocrafterCache[pos.x][pos.y][pos.z] == nil then autocrafterCache[pos.x][pos.z] = {} end
+    autocrafterCache[pos.x][pos.y][pos.z] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+end
 
-function autocraft(inventory)
+function getCacheEntry(pos)
+    if autocrafterCache[pos.x] == nil then return nil,nil,nil end
+    if autocrafterCache[pos.x][pos.y] == nil then return nil,nil,nil end
+    if autocrafterCache[pos.x][pos.y][pos.z] == nil then return nil,nil,nil end
+    return autocrafterCache[pos.x][pos.y][pos.z]["recipe"], autocrafterCache[pos.x][pos.y][pos.z]["result"], autocrafterCache[pos.x][pos.y][pos.z]["new"]
+end
+
+function autocraft(inventory,pos)
 	local recipe=inventory:get_list("recipe")
-	local result
-	local new
-	for i=1,9 do
-		recipe[i]=ItemStack({name=recipe[i]:get_name(),count=1})
-	end
-	result,new=minetest.get_craft_result({method="normal",width=3,items=recipe})
-	local input=inventory:get_list("input")
+        local recipe_last
+        local result
+        local new
+
+        recipe_last, result, new = getCacheEntry(pos)
+        if recipe_last ~=nil then
+            local recipeUnchanged = true
+            for i=1,9 do
+                --print ("recipe_base"..i.." ")
+                --print (recipe[i]:get_name())
+                --print (recipe[i]:get_count())
+                --print (recipe_last[i]:get_name())
+                --print (recipe_last[i]:get_count())
+                if recipe[i]:get_name() ~= recipe_last[i]:get_name() then
+                    recipeUnchanged = False
+                    break
+                end
+                if recipe[i]:get_count() ~= recipe_last[i]:get_count() then
+                    recipeUnchanged = False
+                    break
+                end
+            end
+            if recipeUnchanged then
+                -- print("autocrafter recipe unchanged")
+            else
+                print("autocrafter recipe changed at pos("..pos.x..","..pos.y..","..pos.z..")")
+                for i=1,9 do
+                        recipe_last[i] = recipe[i]
+                        recipe[i]=ItemStack({name=recipe[i]:get_name(),count=1})
+                end
+                result,new=minetest.get_craft_result({method="normal",width=3,items=recipe})
+                addCacheEntry(pos,recipe_last,result,new)
+            end
+        else
+            print("first call for this autocrafter at pos("..pos.x..","..pos.y..","..pos.z..")")
+            recipe_last={}
+            for i=1,9 do
+                recipe_last[i] = recipe[i]
+                --print (recipe_last[i]:get_name())
+                recipe[i]=ItemStack({name=recipe[i]:get_name(),count=1})
+            end
+            result,new=minetest.get_craft_result({method="normal",width=3,items=recipe})
+            addCacheEntry(pos,recipe_last,result,new)
+        end
+
+        local input=inventory:get_list("input")
 	if result.item:is_empty() then return end
 	result=result.item
 	if not inventory:room_for_item("dst", result) then return end
@@ -81,6 +134,6 @@ minetest.register_abm({nodenames={"pipeworks:autocrafter"},interval=1,chance=1,
 			action=function(pos,node)
 				local meta=minetest.get_meta(pos)
 				local inv=meta:get_inventory()
-				autocraft(inv)
+				autocraft(inv,pos)
 			end
 })
