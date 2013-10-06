@@ -111,6 +111,10 @@ dofile(modpath.."/crafts.lua")
 
 dofile(modpath.."/tubes.lua")
 
+rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
+		{x=0, y=1, z=1},{x=0, y=1, z=-1},{x=1, y=1, z=0},{x=-1, y=1, z=0},
+		{x=0, y=-1, z=1},{x=0, y=-1, z=-1},{x=1, y=-1, z=0},{x=-1, y=-1, z=0},
+		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}
 if enable_pipes then dofile(modpath.."/pipes.lua") end
 if enable_teleport_tube then dofile(modpath.."/teleport_tube.lua") end
 if enable_pipe_devices then dofile(modpath.."/devices.lua") end
