@@ -138,7 +138,9 @@ function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,al
                 else
                     item=stack:take_item(count)
                     frominv:set_stack(frominvname,spos,stack)
-                    idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
+                    if idef.on_metadata_inventory_take then
+                        idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
+                    end
                 end
                 item1=tube_item(frompos,item)
                 item1:get_luaentity().start_pos = frompos
