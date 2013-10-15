@@ -100,6 +100,56 @@ minetest.register_craftitem("pipeworks:filter", {
 	stack_max = 99,
 })
 
+local fakePlayer = {
+    get_player_name = function() return ":pipeworks" end,
+    -- any other player functions called by allow_metadata_inventory_take anywhere...
+    -- perhaps a custom metaclass that errors specially when fakePlayer.<property> is not found?
+}
+
+-- adding two tube functions
+-- can_remove(pos,node,stack,dir) returns true if an item can be removed from that stack on that node
+-- remove_items(pos,node,stack,dir,count) removes count items and returns them
+-- both optional w/ sensible defaults and fallback to normal allow_* function
+-- XXX: possibly change insert_object to insert_item
+
+-- sname = the current name to allow for, or nil if it allows anything
+
+function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,all)
+    for spos,stack in ipairs(frominv:get_list(frominvname)) do
+        if ( sname == nil and stack:get_name() ~= "") or stack:get_name()==sname then
+            local doRemove = true
+            if tube.can_remove then
+                doRemove = tube.can_remove(frompos, fromnode, stack, dir)
+            elseif idef.allow_metadata_inventory_take then
+                doRemove = idef.allow_metadata_inventory_take(frompos,"main",spos, stack, fakePlayer)
+            end
+            -- stupid lack of continue statements grumble
+            if doRemove then
+                local item
+                local count
+                if all then
+                    count = stack:get_count()
+                else
+                    count = 1
+                end
+                if tube.remove_items then
+                    -- it could be the entire stack...
+                    item=tube.remove_items(frompos,fromnode,stack,dir,count)
+                else
+                    item=stack:take_item(count)
+                    frominv:set_stack(frominvname,spos,stack)
+                    idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
+                end
+                item1=tube_item(frompos,item)
+                item1:get_luaentity().start_pos = frompos
+                item1:setvelocity(dir)
+                item1:setacceleration({x=0, y=0, z=0})
+                return -- only fire one item, please
+            end
+        end
+    end
+end
+
 minetest.register_node("pipeworks:filter", {
 	description = "Filter",
 	tiles = {"pipeworks_filter_top.png", "pipeworks_filter_top.png", "pipeworks_filter_output.png",
@@ -139,44 +189,26 @@ minetest.register_node("pipeworks:filter", {
 	local dir = facedir_to_right_dir(node.param2)
 	local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
 	local fromnode=minetest.get_node(frompos)
+    if not fromnode then return end
 	local frominv
-	if (not fromnode) or (not minetest.registered_nodes[fromnode.name]) or (not (minetest.registered_nodes[fromnode.name].tube and 
-		minetest.registered_nodes[fromnode.name].tube.input_inventory)) then
-			return
-	end
+    local idef = minetest.registered_nodes[fromnode.name]
+    -- assert(idef)
+    local tube = idef.tube
+    if not (tube and tube.input_inventory) then
+        return
+    end
 	local frommeta=minetest.get_meta(frompos)
-	local frominvname=minetest.registered_nodes[fromnode.name].tube.input_inventory
+	local frominvname=tube.input_inventory
 	local frominv=frommeta:get_inventory()
 	for _,filter in ipairs(inv:get_list("main")) do
 		local sname=filter:get_name()
 		if sname ~="" then
-			for spos,stack in ipairs(frominv:get_list(frominvname)) do
-				if stack:get_name()==sname then
-					item=stack:take_item()
-					frominv:set_stack(frominvname,spos,stack)
-					pos1=pos
-					item1=tube_item({x=pos1.x,y=pos1.y,z=pos1.z},item)
-					item1:get_luaentity().start_pos = {x=pos1.x,y=pos1.y,z=pos1.z}
-					item1:setvelocity(dir)
-					item1:setacceleration({x=0, y=0, z=0})
-					return
-				end
-			end
+            -- XXX: that's a lot of parameters
+            grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir)
 		end
 	end
 	if inv:is_empty("main") then
-		for spos,stack in ipairs(frominv:get_list(frominvname)) do
-			if stack:get_name()~="" then
-				item=stack:take_item()
-				frominv:set_stack(frominvname,spos,stack)
-				pos1=pos
-				item1=tube_item({x=pos1.x,y=pos1.y,z=pos1.z},item)
-				item1:get_luaentity().start_pos = {x=pos1.x,y=pos1.y,z=pos1.z}
-				item1:setvelocity(dir)
-				item1:setacceleration({x=0, y=0, z=0})
-				return
-			end
-		end
+        grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
 	end
 end,
 })
@@ -226,43 +258,23 @@ minetest.register_node("pipeworks:mese_filter", {
 	local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
 	local fromnode=minetest.get_node(frompos)
 	local frominv
-	if not (minetest.registered_nodes[fromnode.name].tube and 
-		minetest.registered_nodes[fromnode.name].tube.input_inventory) then
-			return
-	end
+    local idef = minetest.registered_nodes[fromnode.name]
+    -- assert(idef)
+    local tube = idef.tube
+    if not (tube and tube.input_inventory) then
+        return
+    end
 	local frommeta=minetest.get_meta(frompos)
 	local frominvname=minetest.registered_nodes[fromnode.name].tube.input_inventory
 	local frominv=frommeta:get_inventory()
 	for _,filter in ipairs(inv:get_list("main")) do
 		local sname=filter:get_name()
 		if sname ~="" then
-			for spos,stack in ipairs(frominv:get_list(frominvname)) do
-				if stack:get_name()==sname then
-					item=stack:take_item(stack:get_count())
-					frominv:set_stack(frominvname,spos,stack)
-					pos1=pos
-					item1=tube_item({x=pos1.x,y=pos1.y,z=pos1.z},item)
-					item1:get_luaentity().start_pos = {x=pos1.x,y=pos1.y,z=pos1.z}
-					item1:setvelocity(dir)
-					item1:setacceleration({x=0, y=0, z=0})
-					return
-				end
-			end
+            grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,true)
 		end
 	end
 	if inv:is_empty("main") then
-		for spos,stack in ipairs(frominv:get_list(frominvname)) do
-			if stack:get_name()~="" then
-				item=stack:take_item(stack:get_count())
-				frominv:set_stack(frominvname,spos,stack)
-				pos1=pos
-				item1=tube_item({x=pos1.x,y=pos1.y,z=pos1.z},item)
-				item1:get_luaentity().start_pos = {x=pos1.x,y=pos1.y,z=pos1.z}
-				item1:setvelocity(dir)
-				item1:setacceleration({x=0, y=0, z=0})
-				return
-			end
-		end
+        grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,true)
 	end
 end,
 })

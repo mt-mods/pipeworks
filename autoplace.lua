@@ -108,7 +108,6 @@ end
 
 function tube_scanforobjects(pos)
 	if pos == nil then return end
-	print("tubes_scanforobjects called at pos "..dump(pos))
 	tube_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   })
 	tube_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   })
 	tube_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   })
@@ -129,104 +128,225 @@ function is_tube(nodename)
 	return in_table(tubenodes,nodename)
 end
 
-function tube_autoroute(pos)
-	local nctr = minetest.get_node(pos)
+if pipeworks == nil then
+    pipeworks = {}
+end
+
+-- this was tested experimentally, because I can't the whole bit arithematic
+
+-- with these facingRight means "We're facing the right side of whatever it is"
+pipeworks.connects = {
+    -- a filter's output is on the right, input on the left
+    facingLeft = function (i,param2)
+        -- measured with a mese filter
+        if i == 1 then
+            return param2 == 2 or param2 == 6 or param2 == 10 or param2 == 20
+        elseif i == 2 then
+            return param2 == 0 or param2 == 4 or param2 == 8 or param2 == 22
+        elseif i == 3 then
+            return param2 == 7 or param2 == 9 or param2 == 12 or param2 == 18
+        elseif i == 4 then
+            return param2 == 5 or param2 == 11 or param2 == 14 or param2 == 16
+        elseif i == 5 then
+            return param2 == 1 or param2 == 13 or param2 == 17 or param2 == 21
+        elseif i == 6 then
+            return param2 == 3 or param2 == 15 or param2 == 19
+        end
+    end,
+    facingRight = function (i,param2)
+        -- measured with a mese filter
+        if i == 1 then
+            return param2 == 0 or param2 == 4 or param2 == 8 or param2 == 22
+        elseif i == 2 then
+            return param2 == 2 or param2 == 6 or param2 == 10 or param2 == 20
+        elseif i == 3 then
+            return param2 == 5 or param2 == 11 or param2 == 14 or param2 == 16
+        elseif i == 4 then
+            return param2 == 7 or param2 == 9 or param2 == 12 or param2 == 18
+        elseif i == 5 then
+            return param2 == 3 or param2 == 15 or param2 == 19
+        elseif i == 6 then
+            return param2 == 1 or param2 == 13 or param2 == 17 or param2 == 21
+        end
+    end,
+    facingFront = function (i,param2)
+        -- measured with a chest and a technic:nodebreaker
+        if i == 1 then
+            return param2 == 3 or param2 == 7 or param2 == 11 or param2 == 21
+        elseif i == 2 then
+            return param2 == 1 or param2 == 5 or param2 == 9
+        elseif i == 3 then
+            return param2 == 4 or param2 == 10 or param2 == 14 or param2 == 19
+        elseif i == 4 then
+            return param2 == 6 or param2 == 8 or param2 == 15 or param2 == 17
+        elseif i == 5 then
+            return param2 == 14 or param2 == 18 or param2 == 22 or param2 == 2
+        elseif i == 6 then
+            return param2 == 12 or param2 == 16 or param2 == 20 or param2 == 0
+        end
+    end,
+    facingSide = function (i,param2)
+        -- aka not top or bottom
+        -- measured with a chair
+        if i == 1 or i == 2 then
+            return not (param2 >= 12 and param2 <= 19)
+        elseif i == 3 or i == 4 then
+            return not ((param2 >= 0 and param2 < 4) or (param2 >= 20 and param2 <= 22))
+        elseif i == 5 or i == 6 then
+            return not (param2 >= 4 and param2 <= 11)
+        end
+    end,
+    facingTop = function(i,param2)
+        -- measured with a chair
+        if i == 1 then
+            return param2 >= 16 and param2 <= 20
+        elseif i == 2 then
+            return param2 >= 12 and param2 < 16
+        elseif i == 3 then
+            return param2 >= 0 and param2 < 4
+        elseif i == 4 then
+            return param2 >= 21 and param2 < 23
+        elseif i == 5 then
+            return param2 >= 4 and param2 < 8
+        elseif i == 6 then
+            return param2 >= 8 and param2 < 12
+            -- else error bad value for i
+        end
+    end
+}
 
 --a function for determining which side of the node we are on
-	local function nodeside(node, tubedir)
-		
-		--get a vector pointing back
-		local backdir = facedir_to_dir(node.param2)
-		
-		--check whether the vector is equivalent to the tube direction; if it is, the tube's on the backside
-		if backdir.x == tubedir.x and backdir.y == tubedir.y and backdir.z == tubedir.z then
-			return "back"
-		end
-		
-		--check whether the vector is antiparallel with the tube direction; that indicates the front
-		if backdir.x == -tubedir.x and backdir.y == -tubedir.y and backdir.z == -tubedir.z then
-			return "front"
-		end
-		
-		--facedir is defined in terms of the top-bottom axis of the node; we'll take advantage of that
-		local topdir = ({[0]={x=0, y=1, z=0},
-										{x=0, y=0, z=1},
-										{x=0, y=0, z=-1},
-										{x=1, y=0, z=0},
-										{x=-1, y=0, z=0},
-										{x=0, y=-1, z=0}})[math.floor(node.param2/4)]
-		
-		--is this the top?
-		if topdir.x == tubedir.x and topdir.y == tubedir.y and topdir.z == tubedir.z then
-			return "top"
-		end
-		
-		--or the bottom?
-		if topdir.x == -tubedir.x and topdir.y == -tubedir.y and topdir.z == -tubedir.z then
-			return "bottom"
-		end
-		
-		--we shall apply some maths to obtain the right-facing vector
-		local rightdir = {x=topdir.y*backdir.z - backdir.y*topdir.z,
-											y=topdir.z*backdir.x - backdir.z*topdir.x,
-											z=topdir.x*backdir.y - backdir.x*topdir.y}
-		
-		--is this the right side?
-		if rightdir.x == tubedir.x and rightdir.y == tubedir.y and rightdir.z == tubedir.z then
-			return "right"
-		end
-		
-		--or the left?
-		if rightdir.x == -tubedir.x and rightdir.y == -tubedir.y and rightdir.z == -tubedir.z then
-			return "left"
-		end
-		
-		--we should be done by now; initiate panic mode
-		minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace.lua, line 382")
-		
-	end
-	
---a further function for determining whether we should extend a tube in a certain direction
-	local function surchar(dir)
-		
-		--get the node in that direction
-		local node = minetest.get_node{x=pos.x+dir.x, y=pos.y+dir.y, z=pos.z+dir.z}
-		
-		--and its tube table
-		local nodetube = minetest.registered_nodes[node.name].tube
-		
-		--choose a surround character
-		if nodetube and nodetube.connect_sides
-						and nodetube.connect_sides[nodeside(node, {x=-dir.x, y=-dir.y, z=-dir.z})] then
-			return '1'
-		else
-			return '0'
-		end
-		
-	end
-	
---keep track of the tube surroundings
-	local nsurround = ""
-	
---look in each direction
-	nsurround = nsurround..surchar{x=-1, y=0, z=0}
-	nsurround = nsurround..surchar{x=1, y=0, z=0}
-	nsurround = nsurround..surchar{x=0, y=-1, z=0}
-	nsurround = nsurround..surchar{x=0, y=1, z=0}
-	nsurround = nsurround..surchar{x=0, y=0, z=-1}
-	nsurround = nsurround..surchar{x=0, y=0, z=1}
-	
--- Apply the final routing decisions to the existing tube (if any)
+local function nodeside(node, tubedir)
+    --get a vector pointing back
+    local backdir = facedir_to_dir(node.param2)
 
-	if is_tube(nctr.name) then
-		local meta=minetest.get_meta(pos)
-		local meta0=meta:to_table()
-		nctr.name=string.sub(nctr.name,1,-7)..nsurround
-		minetest.add_node(pos, nctr)
-		local meta=minetest.get_meta(pos)
-		meta:from_table(meta0)
-	end
+    --check whether the vector is equivalent to the tube direction; if it is, the tube's on the backside
+    if backdir.x == tubedir.x and backdir.y == tubedir.y and backdir.z == tubedir.z then
+        return "back"
+    end
 
+    --check whether the vector is antiparallel with the tube direction; that indicates the front
+    if backdir.x == -tubedir.x and backdir.y == -tubedir.y and backdir.z == -tubedir.z then
+        return "front"
+    end
+
+    --facedir is defined in terms of the top-bottom axis of the node; we'll take advantage of that
+    local topdir = ({[0]={x=0, y=1, z=0},
+    {x=0, y=0, z=1},
+    {x=0, y=0, z=-1},
+    {x=1, y=0, z=0},
+    {x=-1, y=0, z=0},
+    {x=0, y=-1, z=0}})[math.floor(node.param2/4)]
+
+    --is this the top?
+    if topdir.x == tubedir.x and topdir.y == tubedir.y and topdir.z == tubedir.z then
+        return "top"
+    end
+
+    --or the bottom?
+    if topdir.x == -tubedir.x and topdir.y == -tubedir.y and topdir.z == -tubedir.z then
+        return "bottom"
+    end
+
+    --we shall apply some maths to obtain the right-facing vector
+    local rightdir = {x=topdir.y*backdir.z - backdir.y*topdir.z,
+    y=topdir.z*backdir.x - backdir.z*topdir.x,
+    z=topdir.x*backdir.y - backdir.x*topdir.y}
+
+    --is this the right side?
+    if rightdir.x == tubedir.x and rightdir.y == tubedir.y and rightdir.z == tubedir.z then
+        return "right"
+    end
+
+    --or the left?
+    if rightdir.x == -tubedir.x and rightdir.y == -tubedir.y and rightdir.z == -tubedir.z then
+        return "left"
+    end
+
+    --we should be done by now; initiate panic mode
+    minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace.lua, line 382")
+end
+
+function tube_autoroute(pos)
+	local active = {0, 0, 0, 0, 0, 0}
+    local nctr = minetest.get_node(pos)
+    if not is_tube(nctr.name) then return end
+
+    local adjustments = {
+        { x=-1, y=0, z=0 },
+        { x=1, y=0, z=0  },
+        { x=0, y=-1, z=0 },
+        { x=0, y=1, z=0  },
+        { x=0, y=0, z=-1 },
+        { x=0, y=0, z=1 }
+    }
+    -- xm = 1, xp = 2, ym = 3, yp = 4, zm = 5, zp = 6
+
+    local positions = {}
+    local nodes = {}
+    for i,adj in ipairs(adjustments) do
+        positions[i] = {x=pos.x+adj.x, y=pos.y+adj.y, z=pos.z+adj.z}
+        nodes[i] = minetest.get_node(positions[i])
+    end
+
+    for i,node in ipairs(nodes) do
+        local idef = minetest.registered_nodes[node.name]
+        -- handle the tubes themselves
+        if is_tube(node.name) then
+            active[i] = 1
+        -- handle new style connectors
+        elseif idef.tube and idef.tube.connects then
+            -- connects returns true if self can connect w/ neighboring position
+            -- it uses facesFront, facesTop etc to determine this
+            -- pipeworks.connects.facingFront...
+            if idef.tube.connects(i,param2) then active[i] = 1 end
+        -- oops, handle the *other* newstyle connectors
+        elseif idef.tube and idef.tube.connect_side then
+            local dir = adjustments[i]
+            if idef.connect_sides[nodeside(node, {x=-dir.x, y=-dir.y, z=-dir.z})] then active[i] = 1 end
+
+        -- legacy stuff follows
+        elseif string.find(node.name, "pipeworks:filter") ~= nil or string.find(node.name, "pipeworks:mese_filter") ~= nil then
+            -- filters only connect to pipes on their output (despite appearances)
+            -- input has to be a chest or furnace or something
+            if pipeworks.connects.facingRight(i,node.param2)
+                then
+                    active[i] = 1
+                end
+        elseif
+            -- not the front
+            string.find(node.name, "pipeworks:deployer_") ~= nil or
+            string.find(node.name, "pipeworks:nodebreaker_") ~= nil or
+            string.find(node.name, "technic:nodebreaker_") ~= nil
+            then
+                if not pipeworks.connects.facingFront(i,node.param2) then active[i] = 1 end
+        elseif
+            string.find(node.name, "default:furnace") ~= nil or
+            string.find(node.name, "default:chest") or
+            string.find(node.name, "default:chest_locked")
+            then
+                if not pipeworks.connects.facingFront(i,node.param2) or
+                    pipeworks.connects.facingTop(i,node.param2) then active[i] = 1 end
+        elseif string.find(node.name, "pipeworks:autocrafter") ~= nil then
+            active[i] = 1
+        end
+    end
+
+    -- all sides checked, now figure which tube to use.
+
+    nsurround = ""
+    for i,n in ipairs(active) do
+        nsurround = nsurround .. n
+    end
+    local newname=string.sub(nctr.name,1,-7)..nsurround
+    if newname == nctr.name then return end
+    local meta=minetest.get_meta(pos)
+    local meta0=meta:to_table() -- XXX: hacky_swap_node
+    nctr.name = newname
+    minetest.add_node(pos, nctr)
+    local meta=minetest.get_meta(pos)
+    meta:from_table(meta0)
+	local nctr = minetest.get_node(pos)
 end
 
 -- auto-rotation code for various devices the tubes attach to
