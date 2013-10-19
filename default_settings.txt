@@ -14,4 +14,4 @@ enable_accelerator_tube = true
 enable_crossing_tube = true
 enable_sand_tube = true
 enable_mese_sand_tube = true
-
+enable_one_way_tube = true
