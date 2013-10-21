@@ -1,4 +1,5 @@
-
+-- this bit of code modifies the default chests and furnaces to be compatible
+-- with pipeworks.
 
 function clone_node(name)
 	node2={}
@@ -10,6 +11,12 @@ function clone_node(name)
 end
 
 furnace=clone_node("default:furnace")
+	furnace.tiles[1] = "pipeworks_furnace_top.png"
+	furnace.tiles[2] = "pipeworks_furnace_bottom.png"
+	furnace.tiles[3] = "pipeworks_furnace_side.png"
+	furnace.tiles[4] = "pipeworks_furnace_side.png"
+	furnace.tiles[5] = "pipeworks_furnace_side.png"
+		-- note we don't redefine entry #6 - the front.
 	furnace.groups.tubedevice=1
 	furnace.groups.tubedevice_receiver=1
 	furnace.tube={insert_object = function(pos,node,stack,direction)
@@ -44,6 +51,12 @@ furnace=clone_node("default:furnace")
 minetest.register_node(":default:furnace",furnace)
 
 furnace=clone_node("default:furnace_active")
+	furnace.tiles[1] = "pipeworks_furnace_top.png"
+	furnace.tiles[2] = "pipeworks_furnace_bottom.png"
+	furnace.tiles[3] = "pipeworks_furnace_side.png"
+	furnace.tiles[4] = "pipeworks_furnace_side.png"
+	furnace.tiles[5] = "pipeworks_furnace_side.png"
+		-- note we don't redefine entry #6 - the front.
 	furnace.groups.tubedevice=1
 	furnace.groups.tubedevice_receiver=1
 	furnace.tube={insert_object=function(pos,node,stack,direction)
@@ -78,6 +91,12 @@ furnace=clone_node("default:furnace_active")
 
 
 chest=clone_node("default:chest")
+	chest.tiles[1] = "pipeworks_chest_tb.png"
+	chest.tiles[2] = "pipeworks_chest_tb.png"
+	chest.tiles[3] = "pipeworks_chest_side.png"
+	chest.tiles[4] = "pipeworks_chest_side.png"
+	chest.tiles[5] = "pipeworks_chest_side.png"
+		-- note we don't redefine entry #6 - the front.
 	chest.groups.tubedevice=1
 	chest.groups.tubedevice_receiver=1
 	chest.tube={insert_object = function(pos,node,stack,direction)
@@ -103,6 +122,12 @@ minetest.register_node(":default:chest",chest)
 
 
 chest_locked=clone_node("default:chest_locked")
+	chest_locked.tiles[1] = "pipeworks_chest_tb.png"
+	chest_locked.tiles[2] = "pipeworks_chest_tb.png"
+	chest_locked.tiles[3] = "pipeworks_chest_side.png"
+	chest_locked.tiles[4] = "pipeworks_chest_side.png"
+	chest_locked.tiles[5] = "pipeworks_chest_side.png"
+		-- note we don't redefine entry #6 - the front.
 	chest_locked.groups.tubedevice=1
 	chest_locked.groups.tubedevice_receiver=1
 	chest_locked.tube={insert_object = function(pos,node,stack,direction)
