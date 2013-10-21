@@ -8,6 +8,8 @@
 
 -- Read (and if necessary, copy) the config file
 
+local DEBUG = false
+
 local worldpath = minetest.get_worldpath()
 local modpath = minetest.get_modpath("pipeworks")
 
@@ -124,7 +126,5 @@ if enable_deployer then dofile(modpath.."/deployer.lua") end
 if enable_node_breaker then dofile(modpath.."/node_breaker.lua") end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
-local DEBUG = false
-local CYCLIC = true
 
 print("Pipeworks loaded!")
