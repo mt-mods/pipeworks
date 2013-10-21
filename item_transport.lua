@@ -394,7 +394,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 	
 	local moved=false
 	local speed=math.abs(velocity.x+velocity.y+velocity.z)
-	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed}
+	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed, speed=speed}
 	
 	if math.abs(vel.x)==1 then
 		local next_node=math.abs(pos.x-self.start_pos.x)

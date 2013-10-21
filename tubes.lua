@@ -477,7 +477,7 @@ if enable_crossing_tube then
 	register_tube("pipeworks:crossing_tube","Crossing tube segment",accelerator_plain_textures,
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
-				return velocity
+				return {velocity}
 			end}
 	})
 end
@@ -640,7 +640,7 @@ if enable_one_way_tube then
 			insert_object = function(pos,node,stack,direction)
 				item1=tube_item(pos,stack)
 				item1:get_luaentity().start_pos = pos
-				item1:setvelocity(direction)
+				item1:setvelocity({x=direction.x*direction.speed, y=direction.y*direction.speed, z=direction.z*direction.speed})
 				item1:setacceleration({x=0, y=0, z=0})
 				return ItemStack("")
 			end,
