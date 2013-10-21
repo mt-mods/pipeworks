@@ -249,8 +249,6 @@ inv_texture="pipeworks_tube_inv.png"
 
 register_tube("pipeworks:tube","Pneumatic tube segment",plain_textures,noctr_textures,end_textures,short_texture,inv_texture)
 
-
-
 if enable_mese_tube then
 
 	mese_noctr_textures={"pipeworks_mese_tube_noctr_1.png","pipeworks_mese_tube_noctr_2.png","pipeworks_mese_tube_noctr_3.png",
@@ -576,5 +574,82 @@ if enable_mese_sand_tube then
 				end
 			end
 		end
+	})
+end
+
+local function facedir_to_dir(facedir)
+	--a table of possible dirs
+	return ({{x=0, y=0, z=1},
+					{x=1, y=0, z=0},
+					{x=0, y=0, z=-1},
+					{x=-1, y=0, z=0},
+					{x=0, y=-1, z=0},
+					{x=0, y=1, z=0}})
+					
+					--indexed into by a table of correlating facedirs
+					[({[0]=1, 2, 3, 4, 
+						5, 2, 6, 4,
+						6, 2, 5, 4,
+						1, 5, 3, 6,
+						1, 6, 3, 5,
+						1, 4, 3, 2})
+						
+						--indexed into by the facedir in question
+						[facedir]]
+end
+
+local function facedir_to_right_dir(facedir)
+	
+	--find the other directions
+	local backdir = facedir_to_dir(facedir)
+	local topdir = ({[0]={x=0, y=1, z=0},
+									{x=0, y=0, z=1},
+									{x=0, y=0, z=-1},
+									{x=1, y=0, z=0},
+									{x=-1, y=0, z=0},
+									{x=0, y=-1, z=0}})[math.floor(facedir/4)]
+	
+	--return a cross product
+		return {x=topdir.y*backdir.z - backdir.y*topdir.z,
+						y=topdir.z*backdir.x - backdir.z*topdir.x,
+						z=topdir.x*backdir.y - backdir.x*topdir.y}
+end
+
+if enable_one_way_tube then
+	minetest.register_node("pipeworks:one_way_tube", {
+		description = "One way tube",
+		tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
+			"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
+		paramtype2 = "facedir",
+		drawtype = "nodebox",
+		node_box = {type="fixed",
+				fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
+		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2,tubedevice=1,tubedevice_receiver=1},
+		legacy_facedir_simple = true,
+		sounds = default.node_sound_wood_defaults(),
+		after_place_node = function(pos)
+			tube_scanforobjects(pos)
+		end,
+		after_dig_node = function(pos)
+			tube_scanforobjects(pos)
+		end,
+		tube={connect_sides={left=1, right=1},
+			can_go=function(pos,node,velocity,stack)
+					return velocity
+				end,
+			insert_object = function(pos,node,stack,direction)
+				item1=tube_item(pos,stack)
+				item1:get_luaentity().start_pos = pos
+				item1:setvelocity(direction)
+				item1:setacceleration({x=0, y=0, z=0})
+				return ItemStack("")
+			end,
+			can_insert=function(pos,node,stack,direction)
+				local dir = facedir_to_right_dir(node.param2)
+				if dir.x == direction.x and dir.y == direction.y and dir.z == direction.z then
+					return true
+				end
+				return false
+			end},
 	})
 end
