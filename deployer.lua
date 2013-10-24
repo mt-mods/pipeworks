@@ -100,6 +100,10 @@ function hacky_swap_node(pos,name)
     meta:from_table(meta0)
 end
 
+function delay(x)
+	return (function() return x end)
+end
+
 deployer_on = function(pos, node)
 	if node.name ~= "pipeworks:deployer_off" then
 		return
@@ -112,14 +116,61 @@ deployer_on = function(pos, node)
 	hacky_swap_node(pos,"pipeworks:deployer_on")
 	nodeupdate(pos)
 	
-	local inv = minetest.get_meta(pos):get_inventory()
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
 	local invlist = inv:get_list("main")
 	for i, stack in ipairs(invlist) do
 		if stack:get_name() ~= nil and stack:get_name() ~= "" and minetest.get_node(pos_under).name == "air" then --obtain the first non-empty item slot
+			local empty_function = function() return end
+			local pitch
+			local yaw
+			if dir.z < 0 then
+				yaw = 0
+				pitch = 0
+			elseif dir.z > 0 then
+				yaw = math.pi
+				pitch = 0
+			elseif dir.x < 0 then
+				yaw = 3*math.pi/2
+				pitch = 0
+			elseif dir.x > 0 then
+				yaw = math.pi/2
+				pitch = 0
+			elseif dir.y > 0 then
+				yaw = 0
+				pitch = -math.pi/2
+			else
+				yaw = 0
+				pitch = math.pi/2
+			end
 			local placer = {
-				get_player_name = function() return "deployer" end,
-				getpos = function() return pos end,
-				get_player_control = function() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end,
+				get_inventory_formspec = delay(meta:get_string("formspec")),
+				get_look_dir = delay({x = -dir.x, y = -dir.y, z = -dir.z}),
+				get_look_pitch = delay(pitch),
+				get_look_yaw = delay(yaw),
+				get_player_control = delay({jump=false, right=false, left=false, LMB=false, RMB=false, sneak=false, aux1=false, down=false, up=false}),
+				get_player_control_bits = delay(0),
+				get_player_name = delay("deployer"),
+				is_player = delay(true),
+				set_inventory_formspec = delay(),
+				getpos = delay(pos),
+				get_hp = delay(20),
+				get_inventory = delay(inv),
+				get_wielded_item = delay(stack),
+				get_wield_index = delay(i),
+				get_wield_list = delay("main"),
+				moveto = delay(),
+				punch = delay(),
+				remove = delay(),
+				right_click = delay(),
+				setpos = delay(),
+				set_hp = delay(),
+				set_properties = delay(),
+				set_wielded_item = function(self, item) inv:set_stack("main", i, item) end,
+				set_animation = delay(),
+				set_attach = delay(),
+				set_detach = delay(),
+				set_bone_position = delay(),
 			}
 			local stack2 = minetest.item_place(stack, placer, {type="node", under=pos_under, above=pos_above})
 			if minetest.setting_getbool("creative_mode") and not minetest.get_modpath("unified_inventory") then --infinite stacks ahoy!
