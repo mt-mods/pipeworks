@@ -153,7 +153,7 @@ deployer_on = function(pos, node)
 				get_player_name = delay("deployer"),
 				is_player = delay(true),
 				set_inventory_formspec = delay(),
-				getpos = delay(pos),
+				getpos = delay({x = pos.x, y = pos.y - 1.5, z = pos.z}), -- Player height
 				get_hp = delay(20),
 				get_inventory = delay(inv),
 				get_wielded_item = delay(stack),
