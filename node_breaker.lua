@@ -8,7 +8,7 @@ minetest.register_alias("technic:node_breaker_on", "pipeworks:nodebreaker_on") -
 minetest.register_craft({
 	output = 'pipeworks:nodebreaker_off 1',
 	recipe = {
-		{'default:wood', 'default:pick_mese','default:wood'},
+		{'group:wood', 'default:pick_mese','group:wood'},
 		{'default:stone', 'mesecons:piston','default:stone'},
 		{'default:stone', 'mesecons:mesecon','default:stone'},
 	}
