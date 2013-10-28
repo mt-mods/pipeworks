@@ -75,6 +75,28 @@ spigot_stream = {
 entry_panel = {
 	{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
 }
+
+
+
+fountainhead_model = {
+	{ -2/64, -32/64, -6/64,   2/64, 21/64, 6/64 },	-- main segment
+	{ -4/64, -32/64, -5/64,   4/64, 21/64, 5/64 },
+	{ -5/64, -32/64, -4/64,   5/64, 21/64, 4/64 },
+	{ -6/64, -32/64, -2/64,   6/64, 21/64, 2/64 },
+
+	{ -3/64, -32/64, -8/64, 3/64, -30/64, 8/64 },	-- bottom flange
+	{ -5/64, -32/64, -7/64, 5/64, -30/64, 7/64 },
+	{ -6/64, -32/64, -6/64, 6/64, -30/64, 6/64 },
+	{ -7/64, -32/64, -5/64, 7/64, -30/64, 5/64 },
+	{ -8/64, -32/64, -3/64, 8/64, -30/64, 3/64 },
+
+	{ -3/64, 20/64, -8/64, 3/64, 32/64, 8/64 },	-- top flange/outlet
+	{ -5/64, 20/64, -7/64, 5/64, 32/64, 7/64 },
+	{ -6/64, 20/64, -6/64, 6/64, 32/64, 6/64 },
+	{ -7/64, 20/64, -5/64, 7/64, 32/64, 5/64 },
+	{ -8/64, 20/64, -3/64, 8/64, 32/64, 3/64 }
+}
+
 -- Now define the nodes.
 
 local states = { "on", "off" }
@@ -651,6 +673,77 @@ for fill = 0, 10 do
 		end,
 	})
 end
+
+-- fountainhead
+
+minetest.register_node("pipeworks:fountainhead", {
+	description = "Fountainhead",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_fountainhead_top.png",
+		"pipeworks_pipe_end.png",
+		"pipeworks_plain.png",
+	},
+	sunlight_propagates = true,
+	paramtype = "light",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	on_construct = function(pos)
+		if mesecon then
+			mesecon:receptor_on(pos, rules) 
+		end
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = fountainhead_model ,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = { -2/16, -8/16, -2/16, 2/16, 8/16, 2/16 }
+	},
+})
+
+minetest.register_node("pipeworks:fountainhead_pouring", {
+	description = "Fountainhead",
+	drawtype = "nodebox",
+	tiles = {
+		"pipeworks_fountainhead_top.png",
+		"pipeworks_pipe_end.png",
+		"pipeworks_plain.png",
+	},
+	sunlight_propagates = true,
+	paramtype = "light",
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	after_place_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipe_scanforobjects(pos)
+	end,
+	on_construct = function(pos)
+		if mesecon then
+			mesecon:receptor_on(pos, rules) 
+		end
+	end,
+	node_box = {
+		type = "fixed",
+		fixed = fountainhead_model,
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = { -2/16, -8/16, -2/16, 2/16, 8/16, 2/16 },
+	},
+	drop = "pipeworks:fountainhead"
+})
 
 -- various actions
 

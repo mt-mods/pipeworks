@@ -97,3 +97,25 @@ pipeworks_spigot_check = function(pos, node)
 	end
 end
 
+pipeworks_fountainhead_check = function(pos, node)
+	local abovename = minetest.get_node({x=pos.x,y=pos.y+1,z=pos.z}).name
+	if abovename and (abovename == "air" or abovename == "default:water_flowing" or abovename == "default:water_source") then 
+		local fountainhead_name = minetest.get_node(pos).name
+		local near_node = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z})
+		if near_node and string.find(near_node.name, "_loaded") then
+			if fountainhead_name and fountainhead_name == "pipeworks:fountainhead" then
+				minetest.add_node(pos,{name = "pipeworks:fountainhead_pouring"})
+				if finitewater or abovename ~= "default:water_source" then
+					minetest.add_node({x=pos.x,y=pos.y+1,z=pos.z},{name = "default:water_source"})
+				end
+			end
+		else
+			if fountainhead_name == "pipeworks:fountainhead_pouring" then
+				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:fountainhead"})
+				if abovename == "default:water_source" and not finitewater then
+					minetest.remove_node({x=pos.x,y=pos.y+1,z=pos.z})
+				end
+			end
+		end
+	end
+end

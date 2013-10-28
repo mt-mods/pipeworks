@@ -312,3 +312,13 @@ minetest.register_abm({
 		pipeworks_spigot_check(pos,node)
 	end
 })
+
+minetest.register_abm({
+	nodenames = {"pipeworks:fountainhead","pipeworks:fountainhead_pouring"},
+	interval = 1,
+	chance = 1,
+	action = function(pos, node, active_object_count, active_object_count_wider) 
+		pipeworks_fountainhead_check(pos,node)
+	end
+})
+

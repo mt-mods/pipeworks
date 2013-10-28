@@ -479,6 +479,12 @@ function pipes_scansurroundings(pos)
 		pym=1
 	end
 
+-- ...fountainheads...
+
+	if (string.find(nyp.name, "pipeworks:fountainhead") ~= nil) then
+		pyp=1
+	end
+
 -- ... and storage tanks.
 
 	if (string.find(nym.name, "pipeworks:storage_tank_") ~= nil) then
