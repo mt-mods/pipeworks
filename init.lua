@@ -8,17 +8,19 @@
 
 -- Read (and if necessary, copy) the config file
 
+pipeworks = {}
+
 local DEBUG = false
 
-local worldpath = minetest.get_worldpath()
-local modpath = minetest.get_modpath("pipeworks")
+pipeworks.worldpath = minetest.get_worldpath()
+pipeworks.modpath = minetest.get_modpath("pipeworks")
 
-dofile(modpath.."/default_settings.txt")
+dofile(pipeworks.modpath.."/default_settings.txt")
 
-if io.open(worldpath.."/pipeworks_settings.txt","r") == nil then
+if io.open(pipeworks.worldpath.."/pipeworks_settings.txt","r") == nil then
 
-	io.input(modpath.."/default_settings.txt")
-	io.output(worldpath.."/pipeworks_settings.txt")
+	io.input(pipeworks.modpath.."/default_settings.txt")
+	io.output(pipeworks.worldpath.."/pipeworks_settings.txt")
 
 	local size = 2^13      -- good buffer size (8K)
 	while true do
@@ -31,7 +33,7 @@ if io.open(worldpath.."/pipeworks_settings.txt","r") == nil then
 	end
 
 else
-	dofile(worldpath.."/pipeworks_settings.txt")
+	dofile(pipeworks.worldpath.."/pipeworks_settings.txt")
 end
 
 -- Helper functions
@@ -106,24 +108,24 @@ end
 
 -- Load the various parts of the mod
 
-dofile(modpath.."/autoplace.lua")
-dofile(modpath.."/item_transport.lua")
-dofile(modpath.."/flowing_logic.lua")
-dofile(modpath.."/crafts.lua")
+dofile(pipeworks.modpath.."/autoplace.lua")
+dofile(pipeworks.modpath.."/item_transport.lua")
+dofile(pipeworks.modpath.."/flowing_logic.lua")
+dofile(pipeworks.modpath.."/crafts.lua")
 
-dofile(modpath.."/tubes.lua")
+dofile(pipeworks.modpath.."/tubes.lua")
 
 rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
 		{x=0, y=1, z=1},{x=0, y=1, z=-1},{x=1, y=1, z=0},{x=-1, y=1, z=0},
 		{x=0, y=-1, z=1},{x=0, y=-1, z=-1},{x=1, y=-1, z=0},{x=-1, y=-1, z=0},
 		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}
-if enable_pipes then dofile(modpath.."/pipes.lua") end
-if enable_teleport_tube then dofile(modpath.."/teleport_tube.lua") end
-if enable_pipe_devices then dofile(modpath.."/devices.lua") end
-if enable_redefines then dofile(modpath.."/compat.lua") end
-if enable_autocrafter then dofile(modpath.."/autocrafter.lua") end
-if enable_deployer then dofile(modpath.."/deployer.lua") end
-if enable_node_breaker then dofile(modpath.."/node_breaker.lua") end
+if enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
+if enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
+if enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
+if enable_redefines then dofile(pipeworks.modpath.."/compat.lua") end
+if enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
+if enable_deployer then dofile(pipeworks.modpath.."/deployer.lua") end
+if enable_node_breaker then dofile(pipeworks.modpath.."/node_breaker.lua") end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 

@@ -1,6 +1,4 @@
-modpath=minetest.get_modpath("pipeworks")
-
-dofile(modpath.."/compat.lua")
+dofile(pipeworks.modpath.."/compat.lua")
 
 --define the functions from https://github.com/minetest/minetest/pull/834 while waiting for the devs to notice it
 local function dir_to_facedir(dir, is6d)
