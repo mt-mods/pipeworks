@@ -100,7 +100,7 @@ function hacky_swap_node(pos,name)
     meta:from_table(meta0)
 end
 
-function delay(x)
+local function delay(x)
 	return (function() return x end)
 end
 
@@ -121,7 +121,6 @@ deployer_on = function(pos, node)
 	local invlist = inv:get_list("main")
 	for i, stack in ipairs(invlist) do
 		if stack:get_name() ~= nil and stack:get_name() ~= "" and minetest.get_node(pos_under).name == "air" then --obtain the first non-empty item slot
-			local empty_function = function() return end
 			local pitch
 			local yaw
 			if dir.z < 0 then

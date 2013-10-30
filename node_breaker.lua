@@ -118,8 +118,11 @@ node_breaker_off = function(pos, node)
 	end
 end
 
+local function delay(x)
+	return (function() return x end)
+end
+
 function break_node (pos, facedir)
-	
 	--locate the outgoing velocity, front, and back of the node via facedir_to_dir
 	local vel = facedir_to_dir(facedir);
 	local front = {x=pos.x - vel.x, y=pos.y - vel.y, z=pos.z - vel.z}
@@ -131,11 +134,58 @@ function break_node (pos, facedir)
 	elseif minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].liquidtype ~= "none" then
 		return nil
 	end
-
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+	local pitch
+	local yaw
+	if vel.z < 0 then
+		yaw = 0
+		pitch = 0
+	elseif vel.z > 0 then
+		yaw = math.pi
+		pitch = 0
+	elseif vel.x < 0 then
+		yaw = 3*math.pi/2
+		pitch = 0
+	elseif vel.x > 0 then
+		yaw = math.pi/2
+		pitch = 0
+	elseif vel.y > 0 then
+		yaw = 0
+		pitch = -math.pi/2
+	else
+		yaw = 0
+		pitch = math.pi/2
+	end
 	local digger = {
-		get_player_name = function() return "node_breaker" end,
-		getpos = function() return pos end,
-		get_player_control = function() return {jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false} end,
+		get_inventory_formspec = delay(""),
+		get_look_dir = delay({x = -vel.x, y = -vel.y, z = -vel.z}),
+		get_look_pitch = delay(pitch),
+		get_look_yaw = delay(yaw),
+		get_player_control = delay({jump=false, right=false, left=false, LMB=false, RMB=false, sneak=false, aux1=false, down=false, up=false}),
+		get_player_control_bits = delay(0),
+		get_player_name = delay("node_breaker"),
+		is_player = delay(true),
+		set_inventory_formspec = delay(),
+		getpos = delay({x = pos.x, y = pos.y - 1.5, z = pos.z}), -- Player height
+		get_hp = delay(20),
+		get_inventory = delay(inv),
+		get_wielded_item = delay(ItemStack("default:pick_mese")),
+		get_wield_index = delay(1),
+		get_wield_list = delay("pick"),
+		moveto = delay(),
+		punch = delay(),
+		remove = delay(),
+		right_click = delay(),
+		setpos = delay(),
+		set_hp = delay(),
+		set_properties = delay(),
+		set_wielded_item = delay(),
+		set_animation = delay(),
+		set_attach = delay(),
+		set_detach = delay(),
+		set_bone_position = delay(),
 	}
 
 	--check node to make sure it is diggable
@@ -182,6 +232,12 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 	mesecons= {effector={rules=rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
 	sounds = default.node_sound_stone_defaults(),
 	tube = {connect_sides={back=1}},
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		inv:set_size("pick", 1)
+		inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+	end,
 	after_place_node = function (pos, placer)
 		tube_scanforobjects(pos, placer)
 		local placer_pos = placer:getpos()
@@ -215,6 +271,12 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1,not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	tube = {connect_sides={back=1}},
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		inv:set_size("pick", 1)
+		inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+	end,
 	after_place_node = function (pos, placer)
 		tube_scanforobjects(pos, placer)
 		local placer_pos = placer:getpos()
