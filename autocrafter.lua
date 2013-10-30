@@ -1,51 +1,59 @@
 local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
 
+local function make_inventory_cache(invlist)
+	local l = {}
+	for _, stack in ipairs(invlist) do
+		l[stack:get_name()] = (l[stack:get_name()] or 0) + stack:get_count()
+	end
+	return l
+end
+
 function autocraft(inventory, pos)
 	local recipe = inventory:get_list("recipe")
-		local recipe_last
-		local result
-		local new
+	local recipe_last
+	local result
+	local new
 
-		if autocrafterCache[minetest.hash_node_position(pos)] == nil then
-			--print("first call for this autocrafter at pos("..pos.x..","..pos.y..","..pos.z..")")
-			recipe_last = {}
+	if autocrafterCache[minetest.hash_node_position(pos)] == nil then
+		--print("first call for this autocrafter at pos("..pos.x..","..pos.y..","..pos.z..")")
+		recipe_last = {}
+		for i = 1, 9 do
+			recipe_last[i] = recipe[i]
+			--print (recipe_last[i]:get_name())
+			recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
+		end
+		result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
+		autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+	else
+		local autocrafterCacheEntry = autocrafterCache[minetest.hash_node_position(pos)]
+		recipe_last = autocrafterCacheEntry["recipe"]
+		result = autocrafterCacheEntry["result"]
+		new = autocrafterCacheEntry["new"]
+		local recipeUnchanged = true
+		for i = 1, 9 do
+			if recipe[i]:get_name() ~= recipe_last[i]:get_name() then
+				recipeUnchanged = False
+				break
+			end
+			if recipe[i]:get_count() ~= recipe_last[i]:get_count() then
+				recipeUnchanged = False
+				break
+			end
+		end
+		if recipeUnchanged then
+			--print("autocrafter recipe unchanged")
+		else
+			--print("autocrafter recipe changed at pos("..pos.x..","..pos.y..","..pos.z..")")
 			for i = 1, 9 do
-				recipe_last[i] = recipe[i]
-				--print (recipe_last[i]:get_name())
-				recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
+					recipe_last[i] = recipe[i]
+					recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 			end
 			result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
 			autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
-		else
-			local autocrafterCacheEntry = autocrafterCache[minetest.hash_node_position(pos)]
-			recipe_last = autocrafterCacheEntry["recipe"]
-			result = autocrafterCacheEntry["result"]
-			new = autocrafterCacheEntry["new"]
-			local recipeUnchanged = true
-			for i = 1, 9 do
-				if recipe[i]:get_name() ~= recipe_last[i]:get_name() then
-					recipeUnchanged = False
-					break
-				end
-				if recipe[i]:get_count() ~= recipe_last[i]:get_count() then
-					recipeUnchanged = False
-					break
-				end
-			end
-			if recipeUnchanged then
-				--print("autocrafter recipe unchanged")
-			else
-				--print("autocrafter recipe changed at pos("..pos.x..","..pos.y..","..pos.z..")")
-				for i = 1, 9 do
-						recipe_last[i] = recipe[i]
-						recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
-				end
-				result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-				autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
-			end
 		end
+	end
 
-		local input = inventory:get_list("input")
+	local input = inventory:get_list("input")
 	if result.item:is_empty() then return end
 	result = result.item
 	if not inventory:room_for_item("dst", result) then return end
@@ -59,14 +67,14 @@ function autocraft(inventory, pos)
 			end
 		end
 	end
-	local stack
+	local invcache = make_inventory_cache(inventory:get_list("src"))
 	for itemname, number in pairs(to_use) do
-		stack = ItemStack({name = itemname, count = number})
-		if not inventory:contains_item("src", stack) then return end
+		if (not invcache[itemname]) or invcache[itemname] < number then return end
 	end
 	for itemname, number in pairs(to_use) do
-		stack = ItemStack({name = itemname, count = number})
-		inventory:remove_item("src", stack)
+		for i = 1, number do -- We have to do that since remove_item does not work if count > stack_max
+			inventory:remove_item("src", ItemStack(itemname))
+		end
 	end
 	inventory:add_item("dst", result)
 	for i = 1, 9 do
