@@ -3,17 +3,20 @@
 if mesecon then
 	pipereceptor_on = {
 		receptor = {
-			state = mesecon.state.on
+			state = mesecon.state.on,
+			rules = mesecons_rules
 		}
 	}
 
 	pipereceptor_off = {
 		receptor = {
-			state = mesecon.state.off
+			state = mesecon.state.off,
+			rules = mesecons_rules
 		}
 	}
 end
-
+print("pipereceptor_on = "..dump(pipereceptor_on))
+print("pipereceptor_off = "..dump(pipereceptor_off))
 pipes_devicelist = {
 	"pump",
 	"valve",
@@ -575,8 +578,8 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 		"pipeworks_plain.png",
 		"pipeworks_plain.png",
 		"pipeworks_plain.png",
-		pipeworks_liquid_texture.."^pipeworks_windowed_loaded.png",
-		pipeworks_liquid_texture.."^pipeworks_windowed_loaded.png"
+		"pipeworks_sensor_sides_on.png",
+		"pipeworks_sensor_sides_on.png"
 	},
 	sunlight_propagates = true,
 	paramtype = "light",
