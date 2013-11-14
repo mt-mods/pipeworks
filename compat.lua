@@ -1,7 +1,7 @@
 -- this bit of code modifies the default chests and furnaces to be compatible
 -- with pipeworks.
 
-function clone_node(name)
+function pipeworks:clone_node(name)
 	node2={}
 	node=minetest.registered_nodes[name]
 	for k,v in pairs(node) do
@@ -10,7 +10,7 @@ function clone_node(name)
 	return node2
 end
 
-furnace=clone_node("default:furnace")
+furnace=pipeworks:clone_node("default:furnace")
 	furnace.tiles[1] = "pipeworks_furnace_top.png"
 	furnace.tiles[2] = "pipeworks_furnace_bottom.png"
 	furnace.tiles[3] = "pipeworks_furnace_side.png"
@@ -50,7 +50,7 @@ furnace=clone_node("default:furnace")
 
 minetest.register_node(":default:furnace",furnace)
 
-furnace=clone_node("default:furnace_active")
+furnace=pipeworks:clone_node("default:furnace_active")
 	furnace.tiles[1] = "pipeworks_furnace_top.png"
 	furnace.tiles[2] = "pipeworks_furnace_bottom.png"
 	furnace.tiles[3] = "pipeworks_furnace_side.png"
@@ -90,7 +90,7 @@ furnace=clone_node("default:furnace_active")
 	minetest.register_node(":default:furnace_active",furnace)
 
 
-chest=clone_node("default:chest")
+chest=pipeworks:clone_node("default:chest")
 	chest.tiles[1] = "pipeworks_chest_tb.png"
 	chest.tiles[2] = "pipeworks_chest_tb.png"
 	chest.tiles[3] = "pipeworks_chest_side.png"
@@ -121,7 +121,7 @@ chest=clone_node("default:chest")
 minetest.register_node(":default:chest",chest)
 
 
-chest_locked=clone_node("default:chest_locked")
+chest_locked=pipeworks:clone_node("default:chest_locked")
 	chest_locked.tiles[1] = "pipeworks_chest_tb.png"
 	chest_locked.tiles[2] = "pipeworks_chest_tb.png"
 	chest_locked.tiles[3] = "pipeworks_chest_side.png"
