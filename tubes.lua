@@ -622,6 +622,7 @@ if enable_one_way_tube then
 			"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
 		paramtype2 = "facedir",
 		drawtype = "nodebox",
+		paramtype = "light",
 		node_box = {type="fixed",
 				fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
 		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2,tubedevice=1,tubedevice_receiver=1},
