@@ -57,27 +57,6 @@ local function dir_to_facedir(dir, is6d)
 	end
 end
 
-local function facedir_to_dir(facedir)
-	--a table of possible dirs
-	return ({{x=0, y=0, z=1},
-					{x=1, y=0, z=0},
-					{x=0, y=0, z=-1},
-					{x=-1, y=0, z=0},
-					{x=0, y=-1, z=0},
-					{x=0, y=1, z=0}})
-					
-					--indexed into by a table of correlating facedirs
-					[({[0]=1, 2, 3, 4, 
-						5, 2, 6, 4,
-						6, 2, 5, 4,
-						1, 5, 3, 6,
-						1, 6, 3, 5,
-						1, 4, 3, 2})
-						
-						--indexed into by the facedir in question
-						[facedir]]
-end
-
 minetest.register_craft({
 	output = 'pipeworks:deployer_off 1',
 	recipe = {
@@ -110,7 +89,7 @@ deployer_on = function(pos, node)
 	end
 	
 	--locate the above and under positions
-	local dir = facedir_to_dir(node.param2)
+	local dir = minetest.facedir_to_dir(node.param2)
 	local pos_under, pos_above = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}, {x=pos.x - 2*dir.x, y=pos.y - 2*dir.y, z=pos.z - 2*dir.z}
 
 	hacky_swap_node(pos,"pipeworks:deployer_on")

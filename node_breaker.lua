@@ -81,28 +81,6 @@ local function dir_to_facedir(dir, is6d)
 	end
 end
 
-local function facedir_to_dir(facedir)
-	--a table of possible dirs
-	return ({{x=0, y=0, z=1},
-					{x=1, y=0, z=0},
-					{x=0, y=0, z=-1},
-					{x=-1, y=0, z=0},
-					{x=0, y=-1, z=0},
-					{x=0, y=1, z=0}})
-					
-					--indexed into by a table of correlating facedirs
-					[({[0]=1, 2, 3, 4, 
-						5, 2, 6, 4,
-						6, 2, 5, 4,
-						1, 5, 3, 6,
-						1, 6, 3, 5,
-						1, 4, 3, 2})
-						
-						--indexed into by the facedir in question
-						[facedir]]
-end
-
-
 node_breaker_on = function(pos, node)
 	if node.name == "pipeworks:nodebreaker_off" then
 		hacky_swap_node(pos,"pipeworks:nodebreaker_on")
@@ -124,7 +102,7 @@ end
 
 function break_node (pos, facedir)
 	--locate the outgoing velocity, front, and back of the node via facedir_to_dir
-	local vel = facedir_to_dir(facedir);
+	local vel = minetest.facedir_to_dir(facedir);
 	local front = {x=pos.x - vel.x, y=pos.y - vel.y, z=pos.z - vel.z}
 	local back = {x=pos.x + vel.x, y=pos.y + vel.y, z=pos.z + vel.z}
 	

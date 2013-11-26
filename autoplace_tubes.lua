@@ -26,95 +26,10 @@ if pipeworks == nil then
     pipeworks = {}
 end
 
--- this was tested experimentally, because I can't the whole bit arithematic
-
--- with these facingRight means "We're facing the right side of whatever it is"
-pipeworks.connects = {
-    -- a filter's output is on the right, input on the left
-    facingLeft = function (i,param2)
-        -- measured with a mese filter
-        if i == 1 then
-            return param2 == 2 or param2 == 6 or param2 == 10 or param2 == 20
-        elseif i == 2 then
-            return param2 == 0 or param2 == 4 or param2 == 8 or param2 == 22
-        elseif i == 3 then
-            return param2 == 7 or param2 == 9 or param2 == 12 or param2 == 18
-        elseif i == 4 then
-            return param2 == 5 or param2 == 11 or param2 == 14 or param2 == 16
-        elseif i == 5 then
-            return param2 == 1 or param2 == 13 or param2 == 17 or param2 == 21
-        elseif i == 6 then
-            return param2 == 3 or param2 == 15 or param2 == 19
-        end
-    end,
-    facingRight = function (i,param2)
-        -- measured with a mese filter
-        if i == 1 then
-            return param2 == 0 or param2 == 4 or param2 == 8 or param2 == 22
-        elseif i == 2 then
-            return param2 == 2 or param2 == 6 or param2 == 10 or param2 == 20
-        elseif i == 3 then
-            return param2 == 5 or param2 == 11 or param2 == 14 or param2 == 16
-        elseif i == 4 then
-            return param2 == 7 or param2 == 9 or param2 == 12 or param2 == 18
-        elseif i == 5 then
-            return param2 == 3 or param2 == 15 or param2 == 19
-        elseif i == 6 then
-            return param2 == 1 or param2 == 13 or param2 == 17 or param2 == 21
-        end
-    end,
-    facingFront = function (i,param2)
-        -- measured with a chest and a technic:nodebreaker
-        if i == 1 then
-            return param2 == 3 or param2 == 7 or param2 == 11 or param2 == 21
-        elseif i == 2 then
-            return param2 == 1 or param2 == 5 or param2 == 9
-        elseif i == 3 then
-            return param2 == 4 or param2 == 10 or param2 == 14 or param2 == 19
-        elseif i == 4 then
-            return param2 == 6 or param2 == 8 or param2 == 15 or param2 == 17
-        elseif i == 5 then
-            return param2 == 14 or param2 == 18 or param2 == 22 or param2 == 2
-        elseif i == 6 then
-            return param2 == 12 or param2 == 16 or param2 == 20 or param2 == 0
-        end
-    end,
-    facingSide = function (i,param2)
-        -- aka not top or bottom
-        -- measured with a chair
-        if i == 1 or i == 2 then
-            return not (param2 >= 12 and param2 <= 19)
-        elseif i == 3 or i == 4 then
-            return not ((param2 >= 0 and param2 < 4) or (param2 >= 20 and param2 <= 22))
-        elseif i == 5 or i == 6 then
-            return not (param2 >= 4 and param2 <= 11)
-        end
-    end,
-    facingTop = function(i,param2)
-        -- measured with a chair
-        if i == 1 then
-            return param2 >= 16 and param2 <= 20
-        elseif i == 2 then
-            return param2 >= 12 and param2 < 16
-        elseif i == 3 then
-            return param2 >= 0 and param2 < 4
-        elseif i == 4 then
-            return param2 >= 21 and param2 < 23
-        elseif i == 5 then
-            return param2 >= 4 and param2 < 8
-        elseif i == 6 then
-            return param2 >= 8 and param2 < 12
-            -- else error bad value for i
-        end
-    end
-}
-
-
-
 --a function for determining which side of the node we are on
 local function nodeside(node, tubedir)
     --get a vector pointing back
-    local backdir = facedir_to_dir(node.param2)
+    local backdir = minetest.facedir_to_dir(node.param2)
 
     --check whether the vector is equivalent to the tube direction; if it is, the tube's on the backside
     if backdir.x == tubedir.x and backdir.y == tubedir.y and backdir.z == tubedir.z then
@@ -191,40 +106,9 @@ function tube_autoroute(pos)
         if is_tube(node.name) then
             active[i] = 1
         -- handle new style connectors
-        elseif idef.tube and idef.tube.connects then
-            -- connects returns true if self can connect w/ neighboring position
-            -- it uses facesFront, facesTop etc to determine this
-            -- pipeworks.connects.facingFront...
-            if idef.tube.connects(i,param2) then active[i] = 1 end
-        -- oops, handle the *other* newstyle connectors
-        elseif idef.tube and idef.tube.connect_side then
+        elseif idef.tube and idef.tube.connect_sides then
             local dir = adjustments[i]
-            if idef.connect_sides[nodeside(node, {x=-dir.x, y=-dir.y, z=-dir.z})] then active[i] = 1 end
-
-        -- legacy stuff follows
-        elseif string.find(node.name, "pipeworks:filter") ~= nil or string.find(node.name, "pipeworks:mese_filter") ~= nil then
-            -- filters only connect to pipes on their output (despite appearances)
-            -- input has to be a chest or furnace or something
-            if pipeworks.connects.facingRight(i,node.param2)
-                then
-                    active[i] = 1
-                end
-        elseif
-            -- not the front
-            string.find(node.name, "pipeworks:deployer_") ~= nil or
-            string.find(node.name, "pipeworks:nodebreaker_") ~= nil or
-            string.find(node.name, "technic:nodebreaker_") ~= nil
-            then
-                if not pipeworks.connects.facingFront(i,node.param2) then active[i] = 1 end
-        elseif
-            string.find(node.name, "default:furnace") ~= nil or
-            string.find(node.name, "default:chest") or
-            string.find(node.name, "default:chest_locked")
-            then
-                if not pipeworks.connects.facingFront(i,node.param2) or
-                    pipeworks.connects.facingTop(i,node.param2) then active[i] = 1 end
-        elseif string.find(node.name, "pipeworks:autocrafter") ~= nil then
-            active[i] = 1
+            if idef.tube.connect_sides[nodeside(node, {x=-dir.x, y=-dir.y, z=-dir.z})] then active[i] = 1 end
         end
     end
 
@@ -244,3 +128,18 @@ function tube_autoroute(pos)
     meta:from_table(meta0)
 	local nctr = minetest.get_node(pos)
 end
+
+minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack)
+	if minetest.registered_items[newnode.name]
+	  and minetest.registered_items[newnode.name].tube then
+		tube_scanforobjects(pos)
+	end
+end)
+
+minetest.register_on_dignode(function(pos, oldnode, digger)
+	if minetest.registered_items[oldnode.name]
+	  and minetest.registered_items[oldnode.name].tube then
+		tube_scanforobjects(pos)
+	end
+end)
+
