@@ -108,7 +108,8 @@ end
 
 -- Load the various parts of the mod
 
-dofile(pipeworks.modpath.."/autoplace.lua")
+dofile(pipeworks.modpath.."/autoplace_pipes.lua")
+dofile(pipeworks.modpath.."/autoplace_tubes.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/crafts.lua")
