@@ -15,11 +15,9 @@ function autocraft(inventory, pos)
 	local new
 
 	if autocrafterCache[minetest.hash_node_position(pos)] == nil then
-		--print("first call for this autocrafter at pos("..pos.x..","..pos.y..","..pos.z..")")
 		recipe_last = {}
 		for i = 1, 9 do
 			recipe_last[i] = recipe[i]
-			--print (recipe_last[i]:get_name())
 			recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 		end
 		result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
@@ -41,9 +39,7 @@ function autocraft(inventory, pos)
 			end
 		end
 		if recipeUnchanged then
-			--print("autocrafter recipe unchanged")
 		else
-			--print("autocrafter recipe changed at pos("..pos.x..","..pos.y..","..pos.z..")")
 			for i = 1, 9 do
 					recipe_last[i] = recipe[i]
 					recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})

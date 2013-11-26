@@ -244,4 +244,3 @@ function tube_autoroute(pos)
     meta:from_table(meta0)
 	local nctr = minetest.get_node(pos)
 end
-

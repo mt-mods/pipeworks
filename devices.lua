@@ -15,8 +15,7 @@ if mesecon then
 		}
 	}
 end
-print("pipereceptor_on = "..dump(pipereceptor_on))
-print("pipereceptor_off = "..dump(pipereceptor_off))
+
 pipes_devicelist = {
 	"pump",
 	"valve",
