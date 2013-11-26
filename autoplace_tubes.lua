@@ -75,7 +75,7 @@ local function nodeside(node, tubedir)
     end
 
     --we should be done by now; initiate panic mode
-    minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace.lua, line 382")
+    minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace_tubes.lua, line 78")
 end
 
 function tube_autoroute(pos)
@@ -131,14 +131,16 @@ end
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack)
 	if minetest.registered_items[newnode.name]
-	  and minetest.registered_items[newnode.name].tube then
+	  and minetest.registered_items[newnode.name].tube
+	  and minetest.registered_items[newnode.name].tube.connect_sides then
 		tube_scanforobjects(pos)
 	end
 end)
 
 minetest.register_on_dignode(function(pos, oldnode, digger)
 	if minetest.registered_items[oldnode.name]
-	  and minetest.registered_items[oldnode.name].tube then
+	  and minetest.registered_items[oldnode.name].tube
+	  and minetest.registered_items[oldnode.name].tube.connect_sides then
 		tube_scanforobjects(pos)
 	end
 end)
