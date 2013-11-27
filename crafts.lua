@@ -71,6 +71,13 @@ minetest.register_craft( {
         },
 })
 
+minetest.register_craft( {
+        output = "pipeworks:fountainhead 2",
+        recipe = {
+                { "pipeworks:pipe_110000_empty" },
+				{ "pipeworks:pipe_110000_empty" }
+        },
+})
 
 -- Various ancillary tube devices
 
@@ -171,8 +178,17 @@ if minetest.get_modpath("homedecor") == nil then
 
 end
 
+minetest.register_craft( {
+	output = "pipeworks:one_way_tube 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
 -- If the technic mod is present, then don't bother registering the recipes
--- for the various tubes, as technic has its own recipes for those.
+-- for some tubes, as technic has its own recipes for those.
 
 if not minetest.get_modpath("technic") then
 
