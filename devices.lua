@@ -154,7 +154,11 @@ for s in ipairs(states) do
 			action_off = function (pos, node)
 				minetest.add_node(pos,{name="pipeworks:pump_off", param2 = node.param2}) 
 			end
-		}}
+		}},
+		on_punch = function(pos, node, puncher)
+			fdir = minetest.get_node(pos).param2
+			minetest.add_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
+		end
 	})
 	
 	local valveboxes = {}
@@ -208,7 +212,11 @@ for s in ipairs(states) do
 			action_off = function (pos, node)
 				minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 			end
-		}}
+		}},
+		on_punch = function(pos, node, puncher)
+			fdir = minetest.get_node(pos).param2
+			minetest.add_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
+		end
 	})
 end
 
@@ -257,7 +265,11 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 		action_off = function (pos, node)
 			minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 		end
-	}}
+	}},
+	on_punch = function(pos, node, puncher)
+		fdir = minetest.get_node(pos).param2
+		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
+	end
 })
 
 -- grating
@@ -747,79 +759,5 @@ minetest.register_node("pipeworks:fountainhead_pouring", {
 	drop = "pipeworks:fountainhead"
 })
 
--- various actions
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_on_empty" then 
-		fdir = minetest.get_node(pos).param2
-		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-	end
-end)
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_on_loaded" then 
-		fdir = minetest.get_node(pos).param2
-		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-	end
-end)
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:valve_off_empty" then 
-		fdir = minetest.get_node(pos).param2
-		minetest.add_node(pos, { name = "pipeworks:valve_on_empty", param2 = fdir })
-	end
-end)
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:pump_on" then 
-		fdir = minetest.get_node(pos).param2
-		minetest.add_node(pos, { name = "pipeworks:pump_off", param2 = fdir })
-	end
-end)
-
-minetest.register_on_punchnode(function (pos, node)
-	if node.name=="pipeworks:pump_off" then 
-		fdir = minetest.get_node(pos).param2
-		minetest.add_node(pos, { name = "pipeworks:pump_on", param2 = fdir })
-	end
-end)
-
--- backwards compatibility
-
-minetest.register_alias("pipeworks:intake", "pipeworks:grating")
-minetest.register_alias("pipeworks:outlet", "pipeworks:grating")
-minetest.register_alias("pipeworks:pump_off_x", "pipeworks:pump_off")
-minetest.register_alias("pipeworks:pump_off_z", "pipeworks:pump_off")
-minetest.register_alias("pipeworks:pump_on_x", "pipeworks:pump_on")
-minetest.register_alias("pipeworks:pump_on_z", "pipeworks:pump_on")
-minetest.register_alias("pipeworks:valve_off_x", "pipeworks:valve_off")
-minetest.register_alias("pipeworks:valve_off_z", "pipeworks:valve_off")
-minetest.register_alias("pipeworks:valve_on_x", "pipeworks:valve_on")
-minetest.register_alias("pipeworks:valve_on_z", "pipeworks:valve_on")
-minetest.register_alias("pipeworks:valve_off", "pipeworks:valve_off_empty")
-minetest.register_alias("pipeworks:valve_on", "pipeworks:valve_on_empty")
 minetest.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
-minetest.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")
-minetest.register_alias("pipeworks:storage_tank_0_x", "pipeworks:storage_tank_0")
-minetest.register_alias("pipeworks:storage_tank_0_z", "pipeworks:storage_tank_0")
-minetest.register_alias("pipeworks:storage_tank_1_x", "pipeworks:storage_tank_1")
-minetest.register_alias("pipeworks:storage_tank_1_z", "pipeworks:storage_tank_1")
-minetest.register_alias("pipeworks:storage_tank_2_x", "pipeworks:storage_tank_2")
-minetest.register_alias("pipeworks:storage_tank_2_z", "pipeworks:storage_tank_2")
-minetest.register_alias("pipeworks:storage_tank_3_x", "pipeworks:storage_tank_3")
-minetest.register_alias("pipeworks:storage_tank_3_z", "pipeworks:storage_tank_3")
-minetest.register_alias("pipeworks:storage_tank_4_x", "pipeworks:storage_tank_4")
-minetest.register_alias("pipeworks:storage_tank_4_z", "pipeworks:storage_tank_4")
-minetest.register_alias("pipeworks:storage_tank_5_x", "pipeworks:storage_tank_5")
-minetest.register_alias("pipeworks:storage_tank_5_z", "pipeworks:storage_tank_5")
-minetest.register_alias("pipeworks:storage_tank_6_x", "pipeworks:storage_tank_6")
-minetest.register_alias("pipeworks:storage_tank_6_z", "pipeworks:storage_tank_6")
-minetest.register_alias("pipeworks:storage_tank_7_x", "pipeworks:storage_tank_7")
-minetest.register_alias("pipeworks:storage_tank_7_z", "pipeworks:storage_tank_7")
-minetest.register_alias("pipeworks:storage_tank_8_x", "pipeworks:storage_tank_8")
-minetest.register_alias("pipeworks:storage_tank_8_z", "pipeworks:storage_tank_8")
-minetest.register_alias("pipeworks:storage_tank_9_x", "pipeworks:storage_tank_9")
-minetest.register_alias("pipeworks:storage_tank_9_z", "pipeworks:storage_tank_9")
-minetest.register_alias("pipeworks:storage_tank_10_x", "pipeworks:storage_tank_10")
-minetest.register_alias("pipeworks:storage_tank_10_z", "pipeworks:storage_tank_10")
 
