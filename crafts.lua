@@ -187,105 +187,100 @@ minetest.register_craft( {
 	},
 })
 
--- If the technic mod is present, then don't bother registering the recipes
--- for some tubes, as technic has its own recipes for those.
 
-if not minetest.get_modpath("technic") then
+minetest.register_craft( {
+	output = "pipeworks:tube 6",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "", "", "" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
-	minetest.register_craft( {
-		output = "pipeworks:tube 12",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "", "", "" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
+minetest.register_craft( {
+	output = "pipeworks:mese_tube_000000 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "", "default:mese_crystal", "" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
-	minetest.register_craft( {
-		output = "pipeworks:mese_tube_000000 2",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "", "default:mese_crystal", "" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
+minetest.register_craft( {
+	type = "shapeless",
+	output = "pipeworks:mese_tube_000000",
+	recipe = {
+	    "pipeworks:tube_000000",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment"
+	},
+})
 
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_tube_000000",
-		recipe = {
-		    "pipeworks:tube_000000",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
-	})
+minetest.register_craft( {
+	output = "pipeworks:conductor_tube_off_000000 6",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
-	minetest.register_craft( {
-		output = "pipeworks:conductor_tube_off_000000 12",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
+minetest.register_craft( {
+	output = "pipeworks:detector_tube_off_000000 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
-	minetest.register_craft( {
-		output = "pipeworks:detector_tube_off_000000 2",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
+minetest.register_craft( {
+	output = "pipeworks:accelerator_tube_000000 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
-	minetest.register_craft( {
-		output = "pipeworks:accelerator_tube_000000 2",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
+minetest.register_craft( {
+	output = "pipeworks:teleport_tube_000000 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:desert_stone", "default:mese_block", "default:desert_stone" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
-	minetest.register_craft( {
-		output = "pipeworks:teleport_tube_000000 2",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "default:desert_stone", "default:mese_block", "default:desert_stone" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
-	
-	minetest.register_craft( {
-		output = "pipeworks:sand_tube_000000 2",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "default:sand", "default:sand", "default:sand" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
-	
-	minetest.register_craft( {
-		output = "pipeworks:mese_sand_tube_000000 2",
-		recipe = {
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		        { "default:sand", "default:mese_crystal", "default:sand" },
-		        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
-  
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_sand_tube_000000",
-		recipe = {
-      "pipeworks:sand_tube_000000",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
-	})
-end
+minetest.register_craft( {
+	output = "pipeworks:sand_tube_000000 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:sand", "default:sand", "default:sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:mese_sand_tube_000000 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:sand", "default:mese_crystal", "default:sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	type = "shapeless",
+	output = "pipeworks:mese_sand_tube_000000",
+	recipe = {
+  "pipeworks:sand_tube_000000",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment"
+	},
+})
 
