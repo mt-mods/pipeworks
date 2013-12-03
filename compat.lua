@@ -11,12 +11,11 @@ function pipeworks:clone_node(name)
 end
 
 furnace=pipeworks:clone_node("default:furnace")
-	furnace.tiles[1] = "pipeworks_furnace_top.png"
-	furnace.tiles[2] = "pipeworks_furnace_bottom.png"
-	furnace.tiles[3] = "pipeworks_furnace_side.png"
-	furnace.tiles[4] = "pipeworks_furnace_side.png"
-	furnace.tiles[5] = "pipeworks_furnace_side.png"
-		-- note we don't redefine entry #6 - the front.
+	furnace.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
+	furnace.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
+	furnace.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
+	furnace.tiles[5] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
+		-- note we don't redefine entries 1 and 6 (top and front)
 	furnace.groups.tubedevice=1
 	furnace.groups.tubedevice_receiver=1
 	furnace.tube={insert_object = function(pos,node,stack,direction)
@@ -51,12 +50,11 @@ furnace=pipeworks:clone_node("default:furnace")
 minetest.register_node(":default:furnace",furnace)
 
 furnace=pipeworks:clone_node("default:furnace_active")
-	furnace.tiles[1] = "pipeworks_furnace_top.png"
-	furnace.tiles[2] = "pipeworks_furnace_bottom.png"
-	furnace.tiles[3] = "pipeworks_furnace_side.png"
-	furnace.tiles[4] = "pipeworks_furnace_side.png"
-	furnace.tiles[5] = "pipeworks_furnace_side.png"
-		-- note we don't redefine entry #6 - the front.
+	furnace.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
+	furnace.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
+	furnace.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
+	furnace.tiles[5] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
+		-- note we don't redefine entries 1 and 6 (top and front)
 	furnace.groups.tubedevice=1
 	furnace.groups.tubedevice_receiver=1
 	furnace.tube={insert_object=function(pos,node,stack,direction)
@@ -91,12 +89,12 @@ furnace=pipeworks:clone_node("default:furnace_active")
 
 
 chest=pipeworks:clone_node("default:chest")
-	chest.tiles[1] = "pipeworks_chest_tb.png"
-	chest.tiles[2] = "pipeworks_chest_tb.png"
-	chest.tiles[3] = "pipeworks_chest_side.png"
-	chest.tiles[4] = "pipeworks_chest_side.png"
-	chest.tiles[5] = "pipeworks_chest_side.png"
-		-- note we don't redefine entry #6 - the front.
+	chest.tiles[1] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
+	chest.tiles[2] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
+	chest.tiles[3] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
+	chest.tiles[4] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
+	chest.tiles[5] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
+		-- note we don't redefine entry 6 (front).
 	chest.groups.tubedevice=1
 	chest.groups.tubedevice_receiver=1
 	chest.tube={insert_object = function(pos,node,stack,direction)
@@ -122,12 +120,12 @@ minetest.register_node(":default:chest",chest)
 
 
 chest_locked=pipeworks:clone_node("default:chest_locked")
-	chest_locked.tiles[1] = "pipeworks_chest_tb.png"
-	chest_locked.tiles[2] = "pipeworks_chest_tb.png"
-	chest_locked.tiles[3] = "pipeworks_chest_side.png"
-	chest_locked.tiles[4] = "pipeworks_chest_side.png"
-	chest_locked.tiles[5] = "pipeworks_chest_side.png"
-		-- note we don't redefine entry #6 - the front.
+	chest_locked.tiles[1] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
+	chest_locked.tiles[2] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
+	chest_locked.tiles[3] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
+	chest_locked.tiles[4] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
+	chest_locked.tiles[5] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
+		-- note we don't redefine entry 6 (front).
 	chest_locked.groups.tubedevice=1
 	chest_locked.groups.tubedevice_receiver=1
 	chest_locked.tube={insert_object = function(pos,node,stack,direction)
