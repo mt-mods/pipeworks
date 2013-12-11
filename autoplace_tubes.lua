@@ -28,7 +28,11 @@ end
 
 --a function for determining which side of the node we are on
 local function nodeside(node, tubedir)
-	if not tubedir or not node or not node.param2 then return "back" end
+	if not tubedir or
+	   not node or
+	   not (type(node.param2) == "number" and node.param2 > 0 and node.param2 < 23) then
+		return "back"
+	end
 
     --get a vector pointing back
     local backdir = minetest.facedir_to_dir(node.param2)
