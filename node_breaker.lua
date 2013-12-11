@@ -102,6 +102,8 @@ end
 
 function break_node (pos, facedir)
 	--locate the outgoing velocity, front, and back of the node via facedir_to_dir
+	if type(facedir) ~= "number" or facedir < 0 or facedir > 23 then return end
+
 	local vel = minetest.facedir_to_dir(facedir);
 	local front = {x=pos.x - vel.x, y=pos.y - vel.y, z=pos.z - vel.z}
 	local back = {x=pos.x + vel.x, y=pos.y + vel.y, z=pos.z + vel.z}
