@@ -29,7 +29,7 @@ end
 --a function for determining which side of the node we are on
 local function nodeside(node, tubedir)
     --get a vector pointing back
-    local backdir = minetest.facedir_to_dir(node.param2)
+    local backdir = minetest.facedir_to_dir(node.param2) or {}
 
     --check whether the vector is equivalent to the tube direction; if it is, the tube's on the backside
     if backdir.x == tubedir.x and backdir.y == tubedir.y and backdir.z == tubedir.z then
