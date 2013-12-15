@@ -461,7 +461,7 @@ if pipeworks.enable_sand_tube then
 			for _,object in ipairs(minetest.get_objects_inside_radius(pos, 2)) do
 				if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
 					if object:get_luaentity().itemstring ~= "" then
-						local titem=tube_item(pos,object:get_luaentity().itemstring)
+						local titem=pipeworks.tube_item(pos,object:get_luaentity().itemstring)
 						titem:get_luaentity().start_pos = {x=pos.x,y=pos.y-1,z=pos.z}
 						titem:setvelocity({x=0.01,y=1,z=-0.01})
 						titem:setacceleration({x=0, y=0, z=0})
@@ -522,7 +522,7 @@ if pipeworks.enable_mese_sand_tube then
 			for _,object in ipairs(get_objects_with_square_radius(pos, minetest.env:get_meta(pos):get_int("dist"))) do
 				if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
 					if object:get_luaentity().itemstring ~= "" then
-						local titem=tube_item(pos,object:get_luaentity().itemstring)
+						local titem=pipeworks.tube_item(pos,object:get_luaentity().itemstring)
 						titem:get_luaentity().start_pos = {x=pos.x,y=pos.y-1,z=pos.z}
 						titem:setvelocity({x=0.01,y=1,z=-0.01})
 						titem:setacceleration({x=0, y=0, z=0})
@@ -576,7 +576,7 @@ if pipeworks.enable_one_way_tube then
 					return velocity
 				end,
 			insert_object = function(pos,node,stack,direction)
-				item1=tube_item(pos,stack)
+				item1=pipeworks.tube_item(pos,stack)
 				item1:get_luaentity().start_pos = pos
 				item1:setvelocity({x=direction.x*direction.speed, y=direction.y*direction.speed, z=direction.z*direction.speed})
 				item1:setacceleration({x=0, y=0, z=0})

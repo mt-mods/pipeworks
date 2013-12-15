@@ -29,7 +29,7 @@ local fakePlayer = {
     -- perhaps a custom metaclass that errors specially when fakePlayer.<property> is not found?
 }
 
-local function tube_item(pos, item)
+function pipeworks.tube_item(pos, item)
 	-- Take item in any format
 	local stack = ItemStack(item)
 	local obj = minetest.add_entity(pos, "pipeworks:tubed_item")
@@ -73,7 +73,7 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
                         idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
                     end
                 end
-                local item1=tube_item(frompos,item)
+                local item1=pipeworks.tube_item(frompos,item)
                 item1:get_luaentity().start_pos = frompos
                 item1:setvelocity(dir)
                 item1:setacceleration({x=0, y=0, z=0})

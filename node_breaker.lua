@@ -162,7 +162,7 @@ local function break_node (pos, facedir)
 	--handle node drops
 	local drops = minetest.get_node_drops(node.name, "default:pick_mese")
 	for _, dropped_item in ipairs(drops) do
-		local item1 = tube_item({x=pos.x, y=pos.y, z=pos.z}, dropped_item)
+		local item1 = pipeworks.tube_item({x=pos.x, y=pos.y, z=pos.z}, dropped_item)
 		item1:get_luaentity().start_pos = {x=pos.x, y=pos.y, z=pos.z}
 		item1:setvelocity(vel)
 		item1:setacceleration({x=0, y=0, z=0})
