@@ -222,7 +222,7 @@ end
 
 local adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
-local function notvel(tbl,vel)
+function pipeworks.notvel(tbl,vel)
 	local tbl2={}
 	for _,val in ipairs(tbl) do
 		if val.x~=-vel.x or val.y~=-vel.y or val.z~=-vel.z then table.insert(tbl2,val) end
@@ -255,7 +255,7 @@ local function go_next(pos,velocity,stack)
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
 	else
-		can_go=notvel(adjlist,vel)
+		can_go=pipeworks.notvel(adjlist,vel)
 	end
 	local meta = nil
 	for _,vect in ipairs(can_go) do

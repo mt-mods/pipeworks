@@ -341,7 +341,7 @@ if pipeworks.enable_detector_tube then
 			local nitems=meta:get_int("nitems")+1
 			meta:set_int("nitems", nitems)
 			minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
-			return notvel(pipeworks.meseadjlist,velocity)
+			return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 		end},
 		groups={mesecon=2,not_in_creative_inventory=1},
 		drop="pipeworks:detector_tube_off_000000",
@@ -371,7 +371,7 @@ if pipeworks.enable_detector_tube then
 			local name = minetest.get_node(pos).name
 			minetest.set_node(pos,{name=string.gsub(name,"off","on")})
 			mesecon:receptor_on(pos,mesecons_rules)
-			return notvel(pipeworks.meseadjlist,velocity)
+			return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 		end},
 		groups={mesecon=2},
 		mesecons={receptor={state="off",
@@ -428,7 +428,7 @@ if pipeworks.enable_accelerator_tube then
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
 				velocity.speed=velocity.speed+1
-				return notvel(pipeworks.meseadjlist,velocity)
+				return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 			end}
 	})
 end
