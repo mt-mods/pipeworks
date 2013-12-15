@@ -8,7 +8,7 @@ local function make_inventory_cache(invlist)
 	return l
 end
 
-function autocraft(inventory, pos)
+local function autocraft(inventory, pos)
 	local recipe = inventory:get_list("recipe")
 	local recipe_last
 	local result
