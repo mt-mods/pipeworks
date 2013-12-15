@@ -1,104 +1,10 @@
-pipeworks_liquid_texture = "default_water.png"
+-- This file supplies the steel pipes
 
-pipe_leftstub = {
-	{ -32/64, -2/64, -6/64,   1/64, 2/64, 6/64 },	-- pipe segment against -X face
-	{ -32/64, -4/64, -5/64,   1/64, 4/64, 5/64 },
-	{ -32/64, -5/64, -4/64,   1/64, 5/64, 4/64 },
-	{ -32/64, -6/64, -2/64,   1/64, 6/64, 2/64 },
-
-	{ -32/64, -3/64, -8/64, -30/64, 3/64, 8/64 },	-- (the flange for it)
-	{ -32/64, -5/64, -7/64, -30/64, 5/64, 7/64 },
-	{ -32/64, -6/64, -6/64, -30/64, 6/64, 6/64 },
-	{ -32/64, -7/64, -5/64, -30/64, 7/64, 5/64 },
-	{ -32/64, -8/64, -3/64, -30/64, 8/64, 3/64 }
-}
-
-pipe_rightstub = {
-	{ -1/64, -2/64, -6/64,  32/64, 2/64, 6/64 },	-- pipe segment against +X face
-	{ -1/64, -4/64, -5/64,  32/64, 4/64, 5/64 },
-	{ -1/64, -5/64, -4/64,  32/64, 5/64, 4/64 },
-	{ -1/64, -6/64, -2/64,  32/64, 6/64, 2/64 },
-
-	{ 30/64, -3/64, -8/64, 32/64, 3/64, 8/64 },	-- (the flange for it)
-	{ 30/64, -5/64, -7/64, 32/64, 5/64, 7/64 },
-	{ 30/64, -6/64, -6/64, 32/64, 6/64, 6/64 },
-	{ 30/64, -7/64, -5/64, 32/64, 7/64, 5/64 },
-	{ 30/64, -8/64, -3/64, 32/64, 8/64, 3/64 }
-}
-
-pipe_bottomstub = {
-	{ -2/64, -32/64, -6/64,   2/64, 1/64, 6/64 },	-- pipe segment against -Y face
-	{ -4/64, -32/64, -5/64,   4/64, 1/64, 5/64 },
-	{ -5/64, -32/64, -4/64,   5/64, 1/64, 4/64 },
-	{ -6/64, -32/64, -2/64,   6/64, 1/64, 2/64 },
-
-	{ -3/64, -32/64, -8/64, 3/64, -30/64, 8/64 },	-- (the flange for it)
-	{ -5/64, -32/64, -7/64, 5/64, -30/64, 7/64 },
-	{ -6/64, -32/64, -6/64, 6/64, -30/64, 6/64 },
-	{ -7/64, -32/64, -5/64, 7/64, -30/64, 5/64 },
-	{ -8/64, -32/64, -3/64, 8/64, -30/64, 3/64 }
-}
-
-
-pipe_topstub = {
-	{ -2/64, -1/64, -6/64,   2/64, 32/64, 6/64 },	-- pipe segment against +Y face
-	{ -4/64, -1/64, -5/64,   4/64, 32/64, 5/64 },
-	{ -5/64, -1/64, -4/64,   5/64, 32/64, 4/64 },
-	{ -6/64, -1/64, -2/64,   6/64, 32/64, 2/64 },
-
-	{ -3/64, 30/64, -8/64, 3/64, 32/64, 8/64 },	-- (the flange for it)
-	{ -5/64, 30/64, -7/64, 5/64, 32/64, 7/64 },
-	{ -6/64, 30/64, -6/64, 6/64, 32/64, 6/64 },
-	{ -7/64, 30/64, -5/64, 7/64, 32/64, 5/64 },
-	{ -8/64, 30/64, -3/64, 8/64, 32/64, 3/64 }
-}
-
-pipe_frontstub = {
-	{ -6/64, -2/64, -32/64,   6/64, 2/64, 1/64 },	-- pipe segment against -Z face
-	{ -5/64, -4/64, -32/64,   5/64, 4/64, 1/64 },
-	{ -4/64, -5/64, -32/64,   4/64, 5/64, 1/64 },
-	{ -2/64, -6/64, -32/64,   2/64, 6/64, 1/64 },
-
-	{ -8/64, -3/64, -32/64, 8/64, 3/64, -30/64 },	-- (the flange for it)
-	{ -7/64, -5/64, -32/64, 7/64, 5/64, -30/64 },
-	{ -6/64, -6/64, -32/64, 6/64, 6/64, -30/64 },
-	{ -5/64, -7/64, -32/64, 5/64, 7/64, -30/64 },
-	{ -3/64, -8/64, -32/64, 3/64, 8/64, -30/64 }
-}
-
-pipe_backstub = {
-	{ -6/64, -2/64, -1/64,   6/64, 2/64, 32/64 },	-- pipe segment against -Z face
-	{ -5/64, -4/64, -1/64,   5/64, 4/64, 32/64 },
-	{ -4/64, -5/64, -1/64,   4/64, 5/64, 32/64 },
-	{ -2/64, -6/64, -1/64,   2/64, 6/64, 32/64 },
-
-	{ -8/64, -3/64, 30/64, 8/64, 3/64, 32/64 },	-- (the flange for it)
-	{ -7/64, -5/64, 30/64, 7/64, 5/64, 32/64 },
-	{ -6/64, -6/64, 30/64, 6/64, 6/64, 32/64 },
-	{ -5/64, -7/64, 30/64, 5/64, 7/64, 32/64 },
-	{ -3/64, -8/64, 30/64, 3/64, 8/64, 32/64 }
-} 
-
-pipe_selectboxes = {
-	{ -32/64,  -8/64,  -8/64,  8/64,  8/64,  8/64 },
-	{ -8/64 ,  -8/64,  -8/64, 32/64,  8/64,  8/64 },
-	{ -8/64 , -32/64,  -8/64,  8/64,  8/64,  8/64 },
-	{ -8/64 ,  -8/64,  -8/64,  8/64, 32/64,  8/64 },
-	{ -8/64 ,  -8/64, -32/64,  8/64,  8/64,  8/64 },
-	{ -8/64 ,  -8/64,  -8/64,  8/64,  8/64, 32/64 }
-}
-
-pipe_bendsphere = {	
-	{ -4/64, -4/64, -4/64, 4/64, 4/64, 4/64 },
-	{ -5/64, -3/64, -3/64, 5/64, 3/64, 3/64 },
-	{ -3/64, -5/64, -3/64, 3/64, 5/64, 3/64 },
-	{ -3/64, -3/64, -5/64, 3/64, 3/64, 5/64 }
-}
-
--- now define the nodes!
-
-pipes_empty_nodenames = {}
-pipes_full_nodenames = {}
+local pipes_empty_nodenames = {}
+local pipes_full_nodenames = {}
+local outboxes = {}
+local outsel = {}
+local outimgs = {}
 
 for xm = 0, 1 do
 for xp = 0, 1 do
@@ -106,48 +12,49 @@ for ym = 0, 1 do
 for yp = 0, 1 do
 for zm = 0, 1 do
 for zp = 0, 1 do
-	local outboxes = {}
-	local outsel = {}
-	local outimgs = {}
+
+	outboxes = {}
+	outsel = {}
+	outimgs = {}
 
 	if yp==1 then
-		pipeworks.add_pipebox(outboxes, pipe_topstub)
-		table.insert(outsel, pipe_selectboxes[4])
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_topstub)
+		table.insert(outsel, pipeworks.pipe_selectboxes[4])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if ym==1 then
-		pipeworks.add_pipebox(outboxes, pipe_bottomstub)
-		table.insert(outsel, pipe_selectboxes[3])
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_bottomstub)
+		table.insert(outsel, pipeworks.pipe_selectboxes[3])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if xp==1 then
-		pipeworks.add_pipebox(outboxes, pipe_rightstub)
-		table.insert(outsel, pipe_selectboxes[2])
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_rightstub)
+		table.insert(outsel, pipeworks.pipe_selectboxes[2])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if xm==1 then
-		pipeworks.add_pipebox(outboxes, pipe_leftstub)
-		table.insert(outsel, pipe_selectboxes[1])
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_leftstub)
+		table.insert(outsel, pipeworks.pipe_selectboxes[1])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if zp==1 then
-		pipeworks.add_pipebox(outboxes, pipe_backstub)
-		table.insert(outsel, pipe_selectboxes[6])
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_backstub)
+		table.insert(outsel, pipeworks.pipe_selectboxes[6])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if zm==1 then
-		pipeworks.add_pipebox(outboxes, pipe_frontstub)
-		table.insert(outsel, pipe_selectboxes[5])
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_frontstub)
+		table.insert(outsel, pipeworks.pipe_selectboxes[5])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
@@ -185,21 +92,21 @@ for zp = 0, 1 do
 	end
 
 	if jx+jy+jz >= 2 then
-		pipeworks.add_pipebox(outboxes, pipe_bendsphere)
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_bendsphere)
 	end
 
 	if (jx==2 and jy~=2 and jz~=2) then
 		table.remove(outimgs, 5)
 		table.remove(outimgs, 5)
-		table.insert(outimgs, 5, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
-		table.insert(outimgs, 5, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 5, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 5, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
 	end
 
 	if (jx~=2 and jy~=2 and jz==2) or (jx~=2 and jy==2 and jz~=2) then
 		table.remove(outimgs, 3)
 		table.remove(outimgs, 3)
-		table.insert(outimgs, 3, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
-		table.insert(outimgs, 3, pipeworks_liquid_texture.."^pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 3, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
+		table.insert(outimgs, 3, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
 	end
 
 	local pname = xm..xp..ym..yp..zm..zp

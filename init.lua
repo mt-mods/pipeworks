@@ -36,12 +36,16 @@ else
 	dofile(pipeworks.worldpath.."/pipeworks_settings.txt")
 end
 
+-- Random variables
+
 pipeworks.expect_infinite_stacks = true
 if minetest.get_modpath("unified_inventory") or not minetest.setting_getbool("creative_mode") then
 	pipeworks_expect_infinite_stacks = false
 end
 
 pipeworks.meseadjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
+
+pipeworks.liquid_texture = "default_water.png"
 
 -- Helper functions
 
@@ -54,7 +58,7 @@ function pipeworks.fix_image_names(table, replacement)
 	return outtable
 end
 
-function pipeworks.add_pipebox(t, b)
+function pipeworks.add_node_box(t, b)
 	for i in ipairs(b)
 		do table.insert(t, b[i])
 	end
@@ -107,14 +111,15 @@ function pipeworks.replace_name(tbl,tr,name)
 	return ntbl
 end
 
--- Load the various parts of the mod
+-------------------------------------------
+-- Load the various other parts of the mod
 
+dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
 dofile(pipeworks.modpath.."/autoplace_tubes.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/crafts.lua")
-
 dofile(pipeworks.modpath.."/tubes.lua")
 
 local rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},

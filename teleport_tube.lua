@@ -67,7 +67,7 @@ local teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_telepo
 local teleport_short_texture="pipeworks_teleport_tube_short.png"
 local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 
-register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",teleport_plain_textures,
+pipeworks.register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",teleport_plain_textures,
 		teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			velocity.x=0

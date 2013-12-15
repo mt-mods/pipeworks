@@ -120,18 +120,18 @@ function tube_autoroute(pos)
 
     -- all sides checked, now figure which tube to use.
 
-    nsurround = ""
-    for i,n in ipairs(active) do
-        nsurround = nsurround .. n
-    end
-    local newname=string.sub(nctr.name,1,-7)..nsurround
-    if newname == nctr.name then return end
-    local meta=minetest.get_meta(pos)
-    local meta0=meta:to_table() -- XXX: hacky_swap_node
-    nctr.name = newname
-    minetest.add_node(pos, nctr)
-    local meta=minetest.get_meta(pos)
-    meta:from_table(meta0)
+	local nsurround = ""
+	for i,n in ipairs(active) do
+		nsurround = nsurround .. n
+	end
+	local newname=string.sub(nctr.name,1,-7)..nsurround
+	if newname == nctr.name then return end
+	local meta=minetest.get_meta(pos)
+	local meta0=meta:to_table() -- XXX: hacky_swap_node
+	nctr.name = newname
+	minetest.add_node(pos, nctr)
+	local meta=minetest.get_meta(pos)
+	meta:from_table(meta0)
 	local nctr = minetest.get_node(pos)
 end
 

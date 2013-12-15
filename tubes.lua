@@ -1,104 +1,66 @@
 -- This file supplies the various kinds of pneumatic tubes
-
+print(dump(tube_backstub))
 tubenodes={}
-
--- tables
 
 minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
-local tube_leftstub = {
-	{ -32/64, -9/64, -9/64, 9/64, 9/64, 9/64 },	-- tube segment against -X face
-}
-
-local tube_rightstub = {
-	{ -9/64, -9/64, -9/64,  32/64, 9/64, 9/64 },	-- tube segment against +X face
-}
-
-local tube_bottomstub = {
-	{ -9/64, -32/64, -9/64,   9/64, 9/64, 9/64 },	-- tube segment against -Y face
-}
-
-
-local tube_topstub = {
-	{ -9/64, -9/64, -9/64,   9/64, 32/64, 9/64 },	-- tube segment against +Y face
-}
-
-local tube_frontstub = {
-	{ -9/64, -9/64, -32/64,   9/64, 9/64, 9/64 },	-- tube segment against -Z face
-}
-
-local tube_backstub = {
-	{ -9/64, -9/64, -9/64,   9/64, 9/64, 32/64 },	-- tube segment against -Z face
-} 
-
-local tube_selectboxes = {
-	{ -32/64,  -10/64,  -10/64,  10/64,  10/64,  10/64 },
-	{ -10/64 ,  -10/64,  -10/64, 32/64,  10/64,  10/64 },
-	{ -10/64 , -32/64,  -10/64,  10/64,  10/64,  10/64 },
-	{ -10/64 ,  -10/64,  -10/64,  10/64, 32/64,  10/64 },
-	{ -10/64 ,  -10/64, -32/64,  10/64,  10/64,  10/64 },
-	{ -10/64 ,  -10/64,  -10/64,  10/64,  10/64, 32/64 }
-}
-
---  Functions
-
-local function tube_addbox(t, b)
-	for i in ipairs(b)
-		do table.insert(t, b[i])
-	end
-end
-
 -- now, a function to define the tubes
 
-register_tube = function(name, desc, plain, noctrs, ends, short, inv, special)
+local outboxes = {}
+local outsel = {}
+local outimgs = {}
+
+pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, special)
+
 for xm = 0, 1 do
 for xp = 0, 1 do
 for ym = 0, 1 do
 for yp = 0, 1 do
 for zm = 0, 1 do
 for zp = 0, 1 do
-	local outboxes = {}
-	local outsel = {}
-	local outimgs = {}
+
+	outboxes = {}
+	outsel = {}
+	outimgs = {}
 
 	if yp==1 then
-		tube_addbox(outboxes, tube_topstub)
-		table.insert(outsel, tube_selectboxes[4])
+		pipeworks.add_node_box(outboxes, pipeworks.tube_topstub)
+		table.insert(outsel, pipeworks.tube_selectboxes[4])
 		table.insert(outimgs, noctrs[4])
 	else
 		table.insert(outimgs, plain[4])
 	end
 	if ym==1 then
-		tube_addbox(outboxes, tube_bottomstub)
-		table.insert(outsel, tube_selectboxes[3])
+		pipeworks.add_node_box(outboxes, pipeworks.tube_bottomstub)
+		table.insert(outsel, pipeworks.tube_selectboxes[3])
 		table.insert(outimgs, noctrs[3])
 	else
 		table.insert(outimgs, plain[3])
 	end
 	if xp==1 then
-		tube_addbox(outboxes, tube_rightstub)
-		table.insert(outsel, tube_selectboxes[2])
+		pipeworks.add_node_box(outboxes, pipeworks.tube_rightstub)
+		table.insert(outsel, pipeworks.tube_selectboxes[2])
 		table.insert(outimgs, noctrs[2])
 	else
 		table.insert(outimgs, plain[2])
 	end
 	if xm==1 then
-		tube_addbox(outboxes, tube_leftstub)
-		table.insert(outsel, tube_selectboxes[1])
+		pipeworks.add_node_box(outboxes, pipeworks.tube_leftstub)
+		table.insert(outsel, pipeworks.tube_selectboxes[1])
 		table.insert(outimgs, noctrs[1])
 	else
 		table.insert(outimgs, plain[1])
 	end
 	if zp==1 then
-		tube_addbox(outboxes, tube_backstub)
-		table.insert(outsel, tube_selectboxes[6])
+		pipeworks.add_node_box(outboxes, pipeworks.tube_backstub)
+		table.insert(outsel, pipeworks.tube_selectboxes[6])
 		table.insert(outimgs, noctrs[6])
 	else
 		table.insert(outimgs, plain[6])
 	end
 	if zm==1 then
-		tube_addbox(outboxes, tube_frontstub)
-		table.insert(outsel, tube_selectboxes[5])
+		pipeworks.add_node_box(outboxes, pipeworks.tube_frontstub)
+		table.insert(outsel, pipeworks.tube_selectboxes[5])
 		table.insert(outimgs, noctrs[5])
 	else
 		table.insert(outimgs, plain[5])
@@ -249,7 +211,7 @@ local end_textures={"pipeworks_tube_end.png","pipeworks_tube_end.png","pipeworks
 local short_texture="pipeworks_tube_short.png"
 local inv_texture="pipeworks_tube_inv.png"
 
-register_tube("pipeworks:tube","Pneumatic tube segment",plain_textures,noctr_textures,end_textures,short_texture,inv_texture)
+pipeworks.register_tube("pipeworks:tube","Pneumatic tube segment",plain_textures,noctr_textures,end_textures,short_texture,inv_texture)
 
 
 local mese_noctr_textures={"pipeworks_mese_tube_noctr_1.png","pipeworks_mese_tube_noctr_2.png","pipeworks_mese_tube_noctr_3.png",
@@ -262,7 +224,7 @@ local mese_short_texture="pipeworks_mese_tube_short.png"
 local mese_inv_texture="pipeworks_mese_tube_inv.png"
 
 if enable_mese_tube then
-	register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_textures,mese_noctr_textures,
+	pipeworks.register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_textures,mese_noctr_textures,
 		mese_end_textures,mese_short_texture,mese_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			tbl={}
@@ -371,7 +333,7 @@ if enable_detector_tube then
 			"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png"}
 	local detector_inv_texture="pipeworks_detector_tube_inv.png"
 
-	register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
+	pipeworks.register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
 		end_textures,short_texture,detector_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			local meta = minetest.get_meta(pos)
@@ -403,7 +365,7 @@ if enable_detector_tube then
 			minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
 		end})
 
-	register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_plain_textures,noctr_textures,
+	pipeworks.register_tube("pipeworks:detector_tube_off","Detector tube segment",detector_plain_textures,noctr_textures,
 		end_textures,short_texture,detector_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
 			local name = minetest.get_node(pos).name
@@ -434,7 +396,7 @@ local conductor_on_end_textures={"pipeworks_conductor_tube_on_end.png","pipework
 		"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png"}
 
 if enable_conductor_tube then
-	register_tube("pipeworks:conductor_tube_off","Conductor tube segment",conductor_plain_textures,conductor_noctr_textures,
+	pipeworks.register_tube("pipeworks:conductor_tube_off","Conductor tube segment",conductor_plain_textures,conductor_noctr_textures,
 		conductor_end_textures,conductor_short_texture,conductor_inv_texture,
 		{groups={mesecon=2},
 		mesecons={conductor={state="off",
@@ -442,7 +404,7 @@ if enable_conductor_tube then
 					onstate="pipeworks:conductor_tube_on_#id"}}
 	})
 
-	register_tube("pipeworks:conductor_tube_on","Conductor tube segment on (you hacker you)",conductor_on_plain_textures,conductor_on_noctr_textures,
+	pipeworks.register_tube("pipeworks:conductor_tube_on","Conductor tube segment on (you hacker you)",conductor_on_plain_textures,conductor_on_noctr_textures,
 		conductor_on_end_textures,conductor_short_texture,conductor_inv_texture,
 		{groups={mesecon=2,not_in_creative_inventory=1},
 		drop="pipeworks:conductor_tube_off_000000",
@@ -462,7 +424,7 @@ local accelerator_short_texture="pipeworks_accelerator_tube_short.png"
 local accelerator_inv_texture="pipeworks_accelerator_tube_inv.png"
 
 if enable_accelerator_tube then
-	register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",accelerator_plain_textures,
+	pipeworks.register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",accelerator_plain_textures,
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
 				velocity.speed=velocity.speed+1
@@ -472,7 +434,7 @@ if enable_accelerator_tube then
 end
 
 if enable_crossing_tube then
-	register_tube("pipeworks:crossing_tube","Crossing tube segment",accelerator_plain_textures,
+	pipeworks.register_tube("pipeworks:crossing_tube","Crossing tube segment",accelerator_plain_textures,
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
 				return {velocity}
@@ -490,7 +452,7 @@ local sand_short_texture="pipeworks_sand_tube_short.png"
 local sand_inv_texture="pipeworks_sand_tube_inv.png"
 
 if enable_sand_tube then
-	register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
+	pipeworks.register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
 			sand_short_texture,sand_inv_texture,
 			{groups={sand_tube=1}})
 
@@ -522,7 +484,7 @@ local mese_sand_short_texture="pipeworks_mese_sand_tube_short.png"
 local mese_sand_inv_texture="pipeworks_mese_sand_tube_inv.png"
 
 if enable_mese_sand_tube then
-	register_tube("pipeworks:mese_sand_tube","Mese sand pneumatic tube segment",mese_sand_plain_textures,mese_sand_noctr_textures,mese_sand_end_textures,
+	pipeworks.register_tube("pipeworks:mese_sand_tube","Mese sand pneumatic tube segment",mese_sand_plain_textures,mese_sand_noctr_textures,mese_sand_end_textures,
 			mese_sand_short_texture,mese_sand_inv_texture,
 			{groups={mese_sand_tube=1},
 		on_construct = function(pos)
