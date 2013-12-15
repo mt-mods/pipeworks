@@ -425,7 +425,7 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 				minetest.add_node(pos1, {name = "pipeworks:entry_panel_empty", param2 = fdir })
 				pipeworks.scan_for_pipe_objects(pos1)
 
-				if not pipeworks_expect_infinite_stacks then
+				if not pipeworks.expect_infinite_stacks then
 					itemstack:take_item()
 				end
 
