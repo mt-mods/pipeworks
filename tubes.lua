@@ -1,5 +1,5 @@
 -- This file supplies the various kinds of pneumatic tubes
-print(dump(tube_backstub))
+
 tubenodes={}
 
 minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
