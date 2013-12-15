@@ -29,6 +29,14 @@ local fakePlayer = {
     -- perhaps a custom metaclass that errors specially when fakePlayer.<property> is not found?
 }
 
+local function tube_item(pos, item)
+	-- Take item in any format
+	local stack = ItemStack(item)
+	local obj = minetest.add_entity(pos, "pipeworks:tubed_item")
+	obj:get_luaentity():set_item(stack:to_string())
+	return obj
+end
+
 -- adding two tube functions
 -- can_remove(pos,node,stack,dir) returns true if an item can be removed from that stack on that node
 -- remove_items(pos,node,stack,dir,count) removes count items and returns them
@@ -37,7 +45,7 @@ local fakePlayer = {
 
 -- sname = the current name to allow for, or nil if it allows anything
 
-function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,all)
+local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,all)
     for spos,stack in ipairs(frominv:get_list(frominvname)) do
         if ( sname == nil and stack:get_name() ~= "") or stack:get_name()==sname then
             local doRemove = true
@@ -204,16 +212,127 @@ minetest.register_node("pipeworks:mese_filter", {
 end,
 })
 
-function tube_item(pos, item)
-	-- Take item in any format
-	local stack = ItemStack(item)
-	local obj = minetest.add_entity(pos, "pipeworks:tubed_item")
-	obj:get_luaentity():set_item(stack:to_string())
-	return obj
-end
-
 local function roundpos(pos)
 	return {x=math.floor(pos.x+0.5),y=math.floor(pos.y+0.5),z=math.floor(pos.z+0.5)}
+end
+
+local function addVect(pos,vect)
+	return {x=pos.x+vect.x,y=pos.y+vect.y,z=pos.z+vect.z}
+end
+
+adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
+
+local function notvel(tbl,vel)
+	local tbl2={}
+	for _,val in ipairs(tbl) do
+		if val.x~=-vel.x or val.y~=-vel.y or val.z~=-vel.z then table.insert(tbl2,val) end
+	end
+	return tbl2
+end
+
+local function go_next(pos,velocity,stack)
+	local chests={}
+	local tubes={}
+	local cnode=minetest.get_node(pos)
+	local cmeta=minetest.get_meta(pos)
+	local node
+	local meta
+	local tubelike
+	local tube_receiver
+	local len=1
+	local n
+	local can_go
+	local speed=math.abs(velocity.x+velocity.y+velocity.z)
+	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed,speed=speed}
+	if speed>=4.1 then
+		speed=4
+	elseif speed>=1.1 then
+		speed=speed-0.1
+	else
+		speed=1
+	end
+	vel.speed=speed
+	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
+		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
+	else
+		can_go=notvel(adjlist,vel)
+	end
+	for _,vect in ipairs(can_go) do
+		npos=addVect(pos,vect)
+		node=minetest.get_node(npos)
+		tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
+		meta=minetest.get_meta(npos)
+		tubelike=meta:get_int("tubelike")
+		if tube_receiver==1 then
+			if minetest.registered_nodes[node.name].tube and
+				minetest.registered_nodes[node.name].tube.can_insert and
+				minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
+				local i=1
+				repeat
+					if chests[i]==nil then break end
+					i=i+1
+				until false
+				chests[i]={}
+				chests[i].pos=npos
+				chests[i].vect=vect
+			end
+		elseif tubelike==1 then
+			local i=1
+			repeat
+				if tubes[i]==nil then break end
+				i=i+1
+			until false
+			tubes[i]={}
+			tubes[i].pos=npos
+			tubes[i].vect=vect
+		end
+	end
+	if chests[1]==nil then--no chests found
+		if tubes[1]==nil then
+			return 0
+		else
+			local i=1
+			repeat
+				if tubes[i]==nil then break end
+				i=i+1
+			until false
+			n=meta:get_int("tubedir")+1
+			repeat
+				if n>=i then
+					n=n-i+1
+				else
+					break
+				end
+			until false
+			if pipeworks.enable_cyclic_mode then
+				meta:set_int("tubedir",n)
+			end
+			velocity.x=tubes[n].vect.x*vel.speed
+			velocity.y=tubes[n].vect.y*vel.speed
+			velocity.z=tubes[n].vect.z*vel.speed
+		end
+	else
+		local i=1
+		repeat
+			if chests[i]==nil then break end
+			i=i+1
+		until false
+		n=meta:get_int("tubedir")+1
+		repeat
+			if n>=i then
+				n=n-i+1
+			else
+				break
+			end
+		until false
+		if pipeworks.enable_cyclic_mode then
+			meta:set_int("tubedir",n)
+		end
+		velocity.x=chests[n].vect.x*speed
+		velocity.y=chests[n].vect.y*speed
+		velocity.z=chests[n].vect.z*speed
+	end
+	return 1
 end
 
 minetest.register_entity("pipeworks:tubed_item", {
@@ -383,121 +502,4 @@ end
 })
 
 
-local function addVect(pos,vect)
-	return {x=pos.x+vect.x,y=pos.y+vect.y,z=pos.z+vect.z}
-end
 
-adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
-
-function notvel(tbl,vel)
-	local tbl2={}
-	for _,val in ipairs(tbl) do
-		if val.x~=-vel.x or val.y~=-vel.y or val.z~=-vel.z then table.insert(tbl2,val) end
-	end
-	return tbl2
-end
-
-function go_next(pos,velocity,stack)
-	local chests={}
-	local tubes={}
-	local cnode=minetest.get_node(pos)
-	local cmeta=minetest.get_meta(pos)
-	local node
-	local meta
-	local tubelike
-	local tube_receiver
-	local len=1
-	local n
-	local can_go
-	local speed=math.abs(velocity.x+velocity.y+velocity.z)
-	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed,speed=speed}
-	if speed>=4.1 then
-		speed=4
-	elseif speed>=1.1 then
-		speed=speed-0.1
-	else
-		speed=1
-	end
-	vel.speed=speed
-	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
-		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
-	else
-		can_go=notvel(adjlist,vel)
-	end
-	for _,vect in ipairs(can_go) do
-		npos=addVect(pos,vect)
-		node=minetest.get_node(npos)
-		tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
-		meta=minetest.get_meta(npos)
-		tubelike=meta:get_int("tubelike")
-		if tube_receiver==1 then
-			if minetest.registered_nodes[node.name].tube and
-				minetest.registered_nodes[node.name].tube.can_insert and
-				minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
-				local i=1
-				repeat
-					if chests[i]==nil then break end
-					i=i+1
-				until false
-				chests[i]={}
-				chests[i].pos=npos
-				chests[i].vect=vect
-			end
-		elseif tubelike==1 then
-			local i=1
-			repeat
-				if tubes[i]==nil then break end
-				i=i+1
-			until false
-			tubes[i]={}
-			tubes[i].pos=npos
-			tubes[i].vect=vect
-		end
-	end
-	if chests[1]==nil then--no chests found
-		if tubes[1]==nil then
-			return 0
-		else
-			local i=1
-			repeat
-				if tubes[i]==nil then break end
-				i=i+1
-			until false
-			n=meta:get_int("tubedir")+1
-			repeat
-				if n>=i then
-					n=n-i+1
-				else
-					break
-				end
-			until false
-			if pipeworks.enable_cyclic_mode then
-				meta:set_int("tubedir",n)
-			end
-			velocity.x=tubes[n].vect.x*vel.speed
-			velocity.y=tubes[n].vect.y*vel.speed
-			velocity.z=tubes[n].vect.z*vel.speed
-		end
-	else
-		local i=1
-		repeat
-			if chests[i]==nil then break end
-			i=i+1
-		until false
-		n=meta:get_int("tubedir")+1
-		repeat
-			if n>=i then
-				n=n-i+1
-			else
-				break
-			end
-		until false
-		if pipeworks.enable_cyclic_mode then
-			meta:set_int("tubedir",n)
-		end
-		velocity.x=chests[n].vect.x*speed
-		velocity.y=chests[n].vect.y*speed
-		velocity.z=chests[n].vect.z*speed
-	end
-	return 1
-end

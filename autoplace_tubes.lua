@@ -1,24 +1,13 @@
 -- autorouting for pneumatic tubes
 
-function pipeworks.scan_for_tube_objects(pos)
-	if pos == nil then return end
-	tube_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	tube_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	tube_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	tube_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	tube_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	tube_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 })
-	tube_autoroute(pos)
-end
-
-function in_table(table,element)
+local function in_table(table,element)
 	for _,el in ipairs(table) do
 		if el==element then return true end
 	end
 	return false
 end
 
-function is_tube(nodename)
+local function is_tube(nodename)
 	return in_table(tubenodes,nodename)
 end
 
@@ -84,7 +73,7 @@ local function nodeside(node, tubedir)
     minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace_tubes.lua, line 78")
 end
 
-function tube_autoroute(pos)
+local function tube_autoroute(pos)
 	local active = {0, 0, 0, 0, 0, 0}
     local nctr = minetest.get_node(pos)
     if not is_tube(nctr.name) then return end
@@ -133,6 +122,17 @@ function tube_autoroute(pos)
 	local meta=minetest.get_meta(pos)
 	meta:from_table(meta0)
 	local nctr = minetest.get_node(pos)
+end
+
+function pipeworks.scan_for_tube_objects(pos)
+	if pos == nil then return end
+	tube_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	tube_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	tube_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	tube_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	tube_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	tube_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	tube_autoroute(pos)
 end
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack)
