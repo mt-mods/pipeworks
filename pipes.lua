@@ -112,14 +112,14 @@ for zp = 0, 1 do
 	local pname = xm..xp..ym..yp..zm..zp
 	local pgroups = ""
 
+	local image = nil
+	local pipedesc = "Pipe segment"
+	local pgroups = {snappy=3, pipe=1}
+
 	if pname ~= "110000" then
 		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
 		pipedesc = "Pipe segment (empty, "..pname..")... You hacker, you."
 		image = "pipeworks_plain.png"
-	else
-		pgroups = {snappy=3, pipe=1}
-		pipedesc = "Pipe segment"
-		image = nil
 	end
 
 	minetest.register_node("pipeworks:pipe_"..pname.."_empty", {
