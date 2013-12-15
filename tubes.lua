@@ -223,7 +223,7 @@ local mese_end_textures={"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.
 local mese_short_texture="pipeworks_mese_tube_short.png"
 local mese_inv_texture="pipeworks_mese_tube_inv.png"
 
-if enable_mese_tube then
+if pipeworks.enable_mese_tube then
 	pipeworks.register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_textures,mese_noctr_textures,
 		mese_end_textures,mese_short_texture,mese_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
@@ -327,7 +327,7 @@ end
 	local mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 
 
-if enable_detector_tube then
+if pipeworks.enable_detector_tube then
 
 	local detector_plain_textures={"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png",
 			"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png"}
@@ -395,7 +395,7 @@ local conductor_on_noctr_textures={"pipeworks_conductor_tube_on_noctr.png","pipe
 local conductor_on_end_textures={"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png",
 		"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png"}
 
-if enable_conductor_tube then
+if pipeworks.enable_conductor_tube then
 	pipeworks.register_tube("pipeworks:conductor_tube_off","Conductor tube segment",conductor_plain_textures,conductor_noctr_textures,
 		conductor_end_textures,conductor_short_texture,conductor_inv_texture,
 		{groups={mesecon=2},
@@ -423,7 +423,7 @@ local accelerator_end_textures={"pipeworks_accelerator_tube_end.png","pipeworks_
 local accelerator_short_texture="pipeworks_accelerator_tube_short.png"
 local accelerator_inv_texture="pipeworks_accelerator_tube_inv.png"
 
-if enable_accelerator_tube then
+if pipeworks.enable_accelerator_tube then
 	pipeworks.register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",accelerator_plain_textures,
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
@@ -433,7 +433,7 @@ if enable_accelerator_tube then
 	})
 end
 
-if enable_crossing_tube then
+if pipeworks.enable_crossing_tube then
 	pipeworks.register_tube("pipeworks:crossing_tube","Crossing tube segment",accelerator_plain_textures,
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
@@ -451,7 +451,7 @@ local sand_end_textures={"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.
 local sand_short_texture="pipeworks_sand_tube_short.png"
 local sand_inv_texture="pipeworks_sand_tube_inv.png"
 
-if enable_sand_tube then
+if pipeworks.enable_sand_tube then
 	pipeworks.register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
 			sand_short_texture,sand_inv_texture,
 			{groups={sand_tube=1}})
@@ -483,7 +483,7 @@ local mese_sand_end_textures={"pipeworks_mese_sand_tube_end.png","pipeworks_mese
 local mese_sand_short_texture="pipeworks_mese_sand_tube_short.png"
 local mese_sand_inv_texture="pipeworks_mese_sand_tube_inv.png"
 
-if enable_mese_sand_tube then
+if pipeworks.enable_mese_sand_tube then
 	pipeworks.register_tube("pipeworks:mese_sand_tube","Mese sand pneumatic tube segment",mese_sand_plain_textures,mese_sand_noctr_textures,mese_sand_end_textures,
 			mese_sand_short_texture,mese_sand_inv_texture,
 			{groups={mese_sand_tube=1},
@@ -552,7 +552,7 @@ local function facedir_to_right_dir(facedir)
 						z=topdir.x*backdir.y - backdir.x*topdir.y}
 end
 
-if enable_one_way_tube then
+if pipeworks.enable_one_way_tube then
 	minetest.register_node("pipeworks:one_way_tube", {
 		description = "One way tube",
 		tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",

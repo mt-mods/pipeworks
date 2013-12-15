@@ -471,7 +471,7 @@ function go_next(pos,velocity,stack)
 					break
 				end
 			until false
-			if CYCLIC then
+			if pipeworks.enable_cyclic_mode then
 				meta:set_int("tubedir",n)
 			end
 			velocity.x=tubes[n].vect.x*vel.speed
@@ -492,7 +492,7 @@ function go_next(pos,velocity,stack)
 				break
 			end
 		until false
-		if CYCLIC then
+		if pipeworks.enable_cyclic_mode then
 			meta:set_int("tubedir",n)
 		end
 		velocity.x=chests[n].vect.x*speed

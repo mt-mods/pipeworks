@@ -126,13 +126,13 @@ local rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, 
 		{x=0, y=1, z=1},{x=0, y=1, z=-1},{x=1, y=1, z=0},{x=-1, y=1, z=0},
 		{x=0, y=-1, z=1},{x=0, y=-1, z=-1},{x=1, y=-1, z=0},{x=-1, y=-1, z=0},
 		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}
-if enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
-if enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
-if enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
-if enable_redefines then dofile(pipeworks.modpath.."/compat.lua") end
-if enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
-if enable_deployer then dofile(pipeworks.modpath.."/deployer.lua") end
-if enable_node_breaker then dofile(pipeworks.modpath.."/node_breaker.lua") end
+if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
+if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
+if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
+if pipeworks.enable_redefines then dofile(pipeworks.modpath.."/compat.lua") end
+if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
+if pipeworks.enable_deployer then dofile(pipeworks.modpath.."/deployer.lua") end
+if pipeworks.enable_node_breaker then dofile(pipeworks.modpath.."/node_breaker.lua") end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 
