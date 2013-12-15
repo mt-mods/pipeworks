@@ -10,7 +10,7 @@ function pipeworks:clone_node(name)
 	return node2
 end
 
-furnace=pipeworks:clone_node("default:furnace")
+local furnace=pipeworks:clone_node("default:furnace")
 	furnace.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
@@ -41,15 +41,15 @@ furnace=pipeworks:clone_node("default:furnace")
 	input_inventory="dst",
 	connect_sides={left=1, right=1, back=1, bottom=1}}
 	furnace.after_place_node= function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 	furnace.after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 
 minetest.register_node(":default:furnace",furnace)
 
-furnace=pipeworks:clone_node("default:furnace_active")
+local furnace=pipeworks:clone_node("default:furnace_active")
 	furnace.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
@@ -80,15 +80,15 @@ furnace=pipeworks:clone_node("default:furnace_active")
 	input_inventory="dst",
 	connect_sides={left=1, right=1, back=1, bottom=1}}
 	furnace.after_place_node= function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 	furnace.after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 	minetest.register_node(":default:furnace_active",furnace)
 
 
-chest=pipeworks:clone_node("default:chest")
+local chest=pipeworks:clone_node("default:chest")
 	chest.tiles[1] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
 	chest.tiles[2] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
 	chest.tiles[3] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
@@ -110,16 +110,16 @@ chest=pipeworks:clone_node("default:chest")
 	input_inventory="main",
 	connect_sides={left=1, right=1, back=1, bottom=1, top=1}}
 	chest.after_place_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 	chest.after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 
 minetest.register_node(":default:chest",chest)
 
 
-chest_locked=pipeworks:clone_node("default:chest_locked")
+local chest_locked=pipeworks:clone_node("default:chest_locked")
 	chest_locked.tiles[1] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
 	chest_locked.tiles[2] = "default_chest_top.png^pipeworks_tube_connection_wooden.png"
 	chest_locked.tiles[3] = "default_chest_side.png^pipeworks_tube_connection_wooden.png"
@@ -141,11 +141,11 @@ chest_locked=pipeworks:clone_node("default:chest_locked")
 	connect_sides={left=1, right=1, back=1, bottom=1, top=1}}
   local old_after_place = minetest.registered_nodes["default:chest_locked"].after_place_node;
 	chest_locked.after_place_node = function(pos, placer)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
     old_after_place(pos, placer)
 	end
 	chest_locked.after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end
 
 minetest.register_node(":default:chest_locked",chest_locked)

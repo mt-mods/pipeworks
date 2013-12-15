@@ -1,50 +1,49 @@
 -- autorouting for pipes
 
-function pipe_scanforobjects(pos)
-	pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
-	pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
-	pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
-	pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
-	pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
-	pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
-	pipe_autoroute(pos, "_loaded")
-
-	pipe_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
-	pipe_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
-	pipe_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
-	pipe_autoroute({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
-	pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
-	pipe_autoroute({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
-	pipe_autoroute(pos, "_empty")
-end
-
-function pipe_autoroute(pos, state)
-	nctr = minetest.get_node(pos)
+local function autoroute_pipes(pos, state)
+	local nctr = minetest.get_node(pos)
 	if (string.find(nctr.name, "pipeworks:pipe_") == nil) then return end
 
-	pipes_scansurroundings(pos)
+	local nsurround = pipeworks.scan_pipe_surroundings(pos)
 
-	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	if nsurround == "000000" then nsurround = "110000" end
 	minetest.add_node(pos, { name = "pipeworks:pipe_"..nsurround..state })
 end
 
+function pipeworks.scan_for_pipe_objects(pos)
+	autoroute_pipes({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_loaded")
+	autoroute_pipes({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_loaded")
+	autoroute_pipes({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_loaded")
+	autoroute_pipes({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_loaded")
+	autoroute_pipes({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_loaded")
+	autoroute_pipes({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_loaded")
+	autoroute_pipes(pos, "_loaded")
+
+	autoroute_pipes({ x=pos.x-1, y=pos.y  , z=pos.z   }, "_empty")
+	autoroute_pipes({ x=pos.x+1, y=pos.y  , z=pos.z   }, "_empty")
+	autoroute_pipes({ x=pos.x  , y=pos.y-1, z=pos.z   }, "_empty")
+	autoroute_pipes({ x=pos.x  , y=pos.y+1, z=pos.z   }, "_empty")
+	autoroute_pipes({ x=pos.x  , y=pos.y  , z=pos.z-1 }, "_empty")
+	autoroute_pipes({ x=pos.x  , y=pos.y  , z=pos.z+1 }, "_empty")
+	autoroute_pipes(pos, "_empty")
+end
+
 -- auto-rotation code for various devices the tubes attach to
 
-function pipes_scansurroundings(pos)
-	pxm=0
-	pxp=0
-	pym=0
-	pyp=0
-	pzm=0
-	pzp=0
+function pipeworks.scan_pipe_surroundings(pos)
+	local pxm=0
+	local pxp=0
+	local pym=0
+	local pyp=0
+	local pzm=0
+	local pzp=0
 
-	nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	local nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	local nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	local nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	local nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	local nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	local nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
 	if (string.find(nxm.name, "pipeworks:pipe_") ~= nil) then pxm=1 end
 	if (string.find(nxp.name, "pipeworks:pipe_") ~= nil) then pxp=1 end
@@ -192,9 +191,10 @@ function pipes_scansurroundings(pos)
 --	end
 --
 
+	return pxm..pxp..pym..pyp..pzm..pzp
 end
 
-function pipe_look_for_stackable_tanks(pos)
+function pipeworks.look_for_stackable_tanks(pos)
 	local tym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
 
 	if string.find(tym.name, "pipeworks:storage_tank_") ~= nil or

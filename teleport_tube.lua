@@ -1,7 +1,7 @@
 
-filename=minetest.get_worldpath() .. "/teleport_tubes"
+local filename=minetest.get_worldpath() .. "/teleport_tubes"
 
-function read_file()
+local function read_file()
 	local f = io.open(filename, "r")
 	if f==nil then return {} end
     	local t = f:read("*all")
@@ -10,14 +10,14 @@ function read_file()
 	return minetest.deserialize(t)
 end
 
-function write_file(tbl)
+local function write_file(tbl)
 	local f = io.open(filename, "w")
     	f:write(minetest.serialize(tbl))
     	f:close()
 end
 
-function add_tube_in_file(pos,channel, cr)
-	tbl=read_file()
+local function add_tube_in_file(pos,channel, cr)
+	local tbl=read_file()
 	for _,val in ipairs(tbl) do
 		if val.x==pos.x and val.y==pos.y and val.z==pos.z then
 			return
@@ -27,9 +27,9 @@ function add_tube_in_file(pos,channel, cr)
 	write_file(tbl)
 end
 
-function remove_tube_in_file(pos)
-	tbl=read_file()
-	newtbl={}
+local function remove_tube_in_file(pos)
+	local tbl=read_file()
+	local newtbl={}
 	for _,val in ipairs(tbl) do
 		if val.x~=pos.x or val.y~=pos.y or val.z~=pos.z then
 			table.insert(newtbl,val)
@@ -38,10 +38,10 @@ function remove_tube_in_file(pos)
 	write_file(newtbl)
 end
 
-function get_tubes_in_file(pos,channel)
-	tbl=read_file()
-	newtbl={}
-	changed=false
+local function get_tubes_in_file(pos,channel)
+	local tbl=read_file()
+	local newtbl={}
+	local changed=false
 	for _,val in ipairs(tbl) do
 		local node = minetest.get_node(val)
 		local meta = minetest.get_meta(val)
@@ -58,14 +58,14 @@ function get_tubes_in_file(pos,channel)
 	return newtbl
 end
 
-teleport_noctr_textures={"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png",
+local teleport_noctr_textures={"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png",
 		"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png"}
-teleport_plain_textures={"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png",
+local teleport_plain_textures={"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png",
 		"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png"}
-teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png",
+local teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png",
 		"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png"}
-teleport_short_texture="pipeworks_teleport_tube_short.png"
-teleport_inv_texture="pipeworks_teleport_tube_inv.png"
+local teleport_short_texture="pipeworks_teleport_tube_short.png"
+local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 
 register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",teleport_plain_textures,
 		teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture,
@@ -81,7 +81,7 @@ register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",tele
 			pos.x=target[d].x
 			pos.y=target[d].y
 			pos.z=target[d].z
-			return meseadjlist
+			return pipeworks.meseadjlist
 		end},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)

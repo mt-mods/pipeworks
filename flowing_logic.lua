@@ -6,7 +6,7 @@
 
 local finitewater = minetest.setting_getbool("liquid_finite")
 
-pipeworks_check_for_liquids = function(pos)
+pipeworks.check_for_liquids = function(pos)
 	local coords = {
 		{x=pos.x,y=pos.y-1,z=pos.z},
 		{x=pos.x,y=pos.y+1,z=pos.z},
@@ -24,7 +24,7 @@ pipeworks_check_for_liquids = function(pos)
 	return false
 end
 
-pipeworks_check_for_inflows = function(pos,node)
+pipeworks.check_for_inflows = function(pos,node)
 	local coords = {
 		{x=pos.x,y=pos.y-1,z=pos.z},
 		{x=pos.x,y=pos.y+1,z=pos.z},
@@ -37,7 +37,7 @@ pipeworks_check_for_inflows = function(pos,node)
 	for i =1,6 do
 		if newnode then break end
 		local name = minetest.get_node(coords[i]).name
-		if name and (name == "pipeworks:pump_on" and pipeworks_check_for_liquids(coords[i])) or string.find(name,"_loaded") then
+		if name and (name == "pipeworks:pump_on" and pipeworks.check_for_liquids(coords[i])) or string.find(name,"_loaded") then
 			if string.find(name,"_loaded") then
 				local source = minetest.get_meta(coords[i]):get_string("source")
 				if source == minetest.pos_to_string(pos) then break end
@@ -52,12 +52,12 @@ pipeworks_check_for_inflows = function(pos,node)
 	end
 end
 
-pipeworks_check_sources = function(pos,node)
+pipeworks.check_sources = function(pos,node)
 	local sourcepos = minetest.string_to_pos(minetest.get_meta(pos):get_string("source"))
 	if not sourcepos then return end
 	local source = minetest.get_node(sourcepos).name
 	local newnode = false
-	if source and not ((source == "pipeworks:pump_on" and pipeworks_check_for_liquids(sourcepos)) or string.find(source,"_loaded") or source == "ignore" ) then
+	if source and not ((source == "pipeworks:pump_on" and pipeworks.check_for_liquids(sourcepos)) or string.find(source,"_loaded") or source == "ignore" ) then
 		newnode = string.gsub(node.name,"loaded","empty")
 	end
 
@@ -67,7 +67,7 @@ pipeworks_check_sources = function(pos,node)
 	end
 end
 
-pipeworks_spigot_check = function(pos, node)
+pipeworks.spigot_check = function(pos, node)
 	local belowname = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
 	if belowname and (belowname == "air" or belowname == "default:water_flowing" or belowname == "default:water_source") then 
 		local spigotname = minetest.get_node(pos).name
@@ -97,7 +97,7 @@ pipeworks_spigot_check = function(pos, node)
 	end
 end
 
-pipeworks_fountainhead_check = function(pos, node)
+pipeworks.fountainhead_check = function(pos, node)
 	local abovename = minetest.get_node({x=pos.x,y=pos.y+1,z=pos.z}).name
 	if abovename and (abovename == "air" or abovename == "default:water_flowing" or abovename == "default:water_source") then 
 		local fountainhead_name = minetest.get_node(pos).name

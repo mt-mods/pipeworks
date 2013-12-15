@@ -36,16 +36,17 @@ else
 	dofile(pipeworks.worldpath.."/pipeworks_settings.txt")
 end
 
--- Helper functions
-
+pipeworks.expect_infinite_stacks = true
 if minetest.get_modpath("unified_inventory") or not minetest.setting_getbool("creative_mode") then
 	pipeworks_expect_infinite_stacks = false
-else
-	pipeworks_expect_infinite_stacks = true
 end
 
-function pipeworks_fix_image_names(table, replacement)
-	outtable={}
+pipeworks.meseadjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
+
+-- Helper functions
+
+function pipeworks.fix_image_names(table, replacement)
+	local outtable={}
 	for i in ipairs(table) do
 		outtable[i]=string.gsub(table[i], "_XXXXX", replacement)
 	end
@@ -53,13 +54,13 @@ function pipeworks_fix_image_names(table, replacement)
 	return outtable
 end
 
-function pipeworks_add_pipebox(t, b)
+function pipeworks.add_pipebox(t, b)
 	for i in ipairs(b)
 		do table.insert(t, b[i])
 	end
 end
 
-function pipeworks_node_is_owned(pos, placer)
+function pipeworks.node_is_owned(pos, placer)
 	local ownername = false
 	if type(IsPlayerNodeOwner) == "function" then					-- node_ownership mod
 		if HasOwner(pos, placer) then						-- returns true if the node is owned
@@ -92,13 +93,13 @@ function pipeworks_node_is_owned(pos, placer)
 	end
 end
 
-function pipeworks_replace_name(tbl,tr,name)
+function pipeworks.replace_name(tbl,tr,name)
 	local ntbl={}
 	for key,i in pairs(tbl) do
 		if type(i)=="string" then
 			ntbl[key]=string.gsub(i,tr,name)
 		elseif type(i)=="table" then
-			ntbl[key]=pipeworks_replace_name(i,tr,name)
+			ntbl[key]=pipeworks.replace_name(i,tr,name)
 		else
 			ntbl[key]=i
 		end
@@ -116,7 +117,7 @@ dofile(pipeworks.modpath.."/crafts.lua")
 
 dofile(pipeworks.modpath.."/tubes.lua")
 
-rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
+local rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
 		{x=0, y=1, z=1},{x=0, y=1, z=-1},{x=1, y=1, z=0},{x=-1, y=1, z=0},
 		{x=0, y=-1, z=1},{x=0, y=-1, z=-1},{x=1, y=-1, z=0},{x=-1, y=-1, z=0},
 		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}
@@ -131,3 +132,4 @@ if enable_node_breaker then dofile(pipeworks.modpath.."/node_breaker.lua") end
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 
 print("Pipeworks loaded!")
+

@@ -99,10 +99,10 @@ minetest.register_node("pipeworks:filter", {
 		return inv:is_empty("main")
 	end,
 	after_place_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end,
 	mesecons={effector={action_on=function(pos,node)
 					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
@@ -167,10 +167,10 @@ minetest.register_node("pipeworks:mese_filter", {
 		return inv:is_empty("main")
 	end,
 	after_place_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end,
 	mesecons={effector={action_on=function(pos,node)
 					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
@@ -390,7 +390,7 @@ end
 adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
 function notvel(tbl,vel)
-	tbl2={}
+	local tbl2={}
 	for _,val in ipairs(tbl) do
 		if val.x~=-vel.x or val.y~=-vel.y or val.z~=-vel.z then table.insert(tbl2,val) end
 	end

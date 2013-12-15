@@ -1,5 +1,8 @@
 -- List of devices that should participate in the autoplace algorithm
 
+local pipereceptor_on = nil
+local pipereceptor_off = nil
+
 if mesecon then
 	pipereceptor_on = {
 		receptor = {
@@ -16,7 +19,7 @@ if mesecon then
 	}
 end
 
-pipes_devicelist = {
+local pipes_devicelist = {
 	"pump",
 	"valve",
 	"storage_tank_0",
@@ -34,28 +37,28 @@ pipes_devicelist = {
 
 -- tables
 
-pipe_pumpbody = {
+local pipe_pumpbody = {
 	{ -7/16, -6/16, -7/16, 7/16,  5/16, 7/16 },
 	{ -8/16, -8/16, -8/16, 8/16, -6/16, 8/16 }
 }
 
-pipe_valvebody = {
+local pipe_valvebody = {
 	{ -4/16, -4/16, -4/16, 4/16, 4/16, 4/16 }
 }
 
-pipe_valvehandle_on = {
+local pipe_valvehandle_on = {
 	{ -5/16, 4/16, -1/16, 0, 5/16, 1/16 }
 }
 
-pipe_valvehandle_off = {
+local pipe_valvehandle_off = {
 	{ -1/16, 4/16, -5/16, 1/16, 5/16, 0 }
 }
 
-pipe_sensorbody = {
+local pipe_sensorbody = {
 	{ -3/16, -2/16, -2/16, 3/16, 2/16, 2/16 }
 }
 
-spigot_bottomstub = {
+local spigot_bottomstub = {
 	{ -2/64, -16/64, -6/64,   2/64, 1/64, 6/64 },	-- pipe segment against -Y face
 	{ -4/64, -16/64, -5/64,   4/64, 1/64, 5/64 },
 	{ -5/64, -16/64, -4/64,   5/64, 1/64, 4/64 },
@@ -68,19 +71,17 @@ spigot_bottomstub = {
 	{ -8/64, -16/64, -3/64, 8/64, -14/64, 3/64 }
 }
 
-spigot_stream = { 
+local spigot_stream = { 
 	{ -3/64, (-41/64)-0.01, -5/64, 3/64, -16/64, 5/64 },
 	{ -4/64, (-41/64)-0.01, -4/64, 4/64, -16/64, 4/64 },
 	{ -5/64, (-41/64)-0.01, -3/64, 5/64, -16/64, 3/64 }
 }
 
-entry_panel = {
+local entry_panel = {
 	{ -8/16, -8/16, -1/16, 8/16, 8/16, 1/16 }
 }
 
-
-
-fountainhead_model = {
+local fountainhead_model = {
 	{ -2/64, -32/64, -6/64,   2/64, 21/64, 6/64 },	-- main segment
 	{ -4/64, -32/64, -5/64,   4/64, 21/64, 5/64 },
 	{ -5/64, -32/64, -4/64,   5/64, 21/64, 4/64 },
@@ -113,8 +114,8 @@ for s in ipairs(states) do
 	end
 
 	local pumpboxes = {}
-	pipeworks_add_pipebox(pumpboxes, pipe_pumpbody)
-	pipeworks_add_pipebox(pumpboxes, pipe_topstub)
+	pipeworks.add_pipebox(pumpboxes, pipe_pumpbody)
+	pipeworks.add_pipebox(pumpboxes, pipe_topstub)
 
 	minetest.register_node("pipeworks:pump_"..states[s], {
 		description = "Pump/Intake Module",
@@ -141,10 +142,10 @@ for s in ipairs(states) do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		after_place_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		drop = "pipeworks:pump_off",
 		mesecons = {effector = {
@@ -162,14 +163,14 @@ for s in ipairs(states) do
 	})
 	
 	local valveboxes = {}
-	pipeworks_add_pipebox(valveboxes, pipe_leftstub)
-	pipeworks_add_pipebox(valveboxes, pipe_valvebody)
+	pipeworks.add_pipebox(valveboxes, pipe_leftstub)
+	pipeworks.add_pipebox(valveboxes, pipe_valvebody)
 	if states[s] == "off" then 
-		pipeworks_add_pipebox(valveboxes, pipe_valvehandle_off)
+		pipeworks.add_pipebox(valveboxes, pipe_valvehandle_off)
 	else
-		pipeworks_add_pipebox(valveboxes, pipe_valvehandle_on)
+		pipeworks.add_pipebox(valveboxes, pipe_valvehandle_on)
 	end
-	pipeworks_add_pipebox(valveboxes, pipe_rightstub)
+	pipeworks.add_pipebox(valveboxes, pipe_rightstub)
 	local tilex = "pipeworks_valvebody_ends.png"
 	local tilez = "pipeworks_valvebody_sides.png"
 
@@ -199,12 +200,12 @@ for s in ipairs(states) do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		after_place_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
-		drop = "pipeworks:valve_off",
+	drop = "pipeworks:valve_off_empty",
 		mesecons = {effector = {
 			action_on = function (pos, node)
 				minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
@@ -221,10 +222,10 @@ for s in ipairs(states) do
 end
 
 local valveboxes = {}
-pipeworks_add_pipebox(valveboxes, pipe_leftstub)
-pipeworks_add_pipebox(valveboxes, pipe_valvebody)
-pipeworks_add_pipebox(valveboxes, pipe_rightstub)
-pipeworks_add_pipebox(valveboxes, pipe_valvehandle_on)
+pipeworks.add_pipebox(valveboxes, pipe_leftstub)
+pipeworks.add_pipebox(valveboxes, pipe_valvebody)
+pipeworks.add_pipebox(valveboxes, pipe_rightstub)
+pipeworks.add_pipebox(valveboxes, pipe_valvehandle_on)
 
 minetest.register_node("pipeworks:valve_on_loaded", {
 	description = "Valve",
@@ -252,10 +253,10 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	drop = "pipeworks:valve_off_empty",
 	mesecons = {effector = {
@@ -290,25 +291,25 @@ minetest.register_node("pipeworks:grating", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 })
 
 -- outlet spigot
 
 	local spigotboxes = {}
-	pipeworks_add_pipebox(spigotboxes, pipe_backstub)
-	pipeworks_add_pipebox(spigotboxes, spigot_bottomstub)
-	pipeworks_add_pipebox(spigotboxes, pipe_bendsphere)
+	pipeworks.add_pipebox(spigotboxes, pipe_backstub)
+	pipeworks.add_pipebox(spigotboxes, spigot_bottomstub)
+	pipeworks.add_pipebox(spigotboxes, pipe_bendsphere)
 
 	local spigotboxes_pouring = {}
-	pipeworks_add_pipebox(spigotboxes_pouring, spigot_stream)
-	pipeworks_add_pipebox(spigotboxes_pouring, pipe_backstub)
-	pipeworks_add_pipebox(spigotboxes_pouring, spigot_bottomstub)
-	pipeworks_add_pipebox(spigotboxes_pouring, pipe_bendsphere)
+	pipeworks.add_pipebox(spigotboxes_pouring, spigot_stream)
+	pipeworks.add_pipebox(spigotboxes_pouring, pipe_backstub)
+	pipeworks.add_pipebox(spigotboxes_pouring, spigot_bottomstub)
+	pipeworks.add_pipebox(spigotboxes_pouring, pipe_bendsphere)
 
 minetest.register_node("pipeworks:spigot", {
 	description = "Spigot outlet",
@@ -328,10 +329,10 @@ minetest.register_node("pipeworks:spigot", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	node_box = {
 		type = "fixed",
@@ -389,10 +390,10 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	node_box = {
 		type = "fixed",
@@ -409,9 +410,9 @@ minetest.register_node("pipeworks:spigot_pouring", {
 -- wall, for use in places where walls should look like they're airtight)
 
 local airtightboxes = {}
-pipeworks_add_pipebox(airtightboxes, pipe_frontstub)
-pipeworks_add_pipebox(airtightboxes, pipe_backstub)
-pipeworks_add_pipebox(airtightboxes, entry_panel)
+pipeworks.add_pipebox(airtightboxes, pipe_frontstub)
+pipeworks.add_pipebox(airtightboxes, pipe_backstub)
+pipeworks.add_pipebox(airtightboxes, entry_panel)
 
 minetest.register_node("pipeworks:entry_panel_empty", {
 	description = "Airtight Pipe entry/exit",
@@ -430,10 +431,10 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	node_box = {
 		type = "fixed",
@@ -447,8 +448,8 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 		}
 	},
 	on_place = function(itemstack, placer, pointed_thing)
-		if not pipeworks_node_is_owned(pointed_thing.under, placer) 
-		   and not pipeworks_node_is_owned(pointed_thing.above, placer) then
+		if not pipeworks.node_is_owned(pointed_thing.under, placer) 
+		   and not pipeworks.node_is_owned(pointed_thing.above, placer) then
 			local node = minetest.get_node(pointed_thing.under)
 
 			if not minetest.registered_nodes[node.name]
@@ -485,7 +486,7 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 				if not minetest.registered_nodes[minetest.get_node(pos1).name]["buildable_to"] then return end
 
 				minetest.add_node(pos1, {name = "pipeworks:entry_panel_empty", param2 = fdir })
-				pipe_scanforobjects(pos1)
+				pipeworks.scan_for_pipe_objects(pos1)
 
 				if not pipeworks_expect_infinite_stacks then
 					itemstack:take_item()
@@ -516,10 +517,10 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	node_box = {
 		type = "fixed",
@@ -536,9 +537,9 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 })
 
 local sensorboxes = {}
-pipeworks_add_pipebox(sensorboxes, pipe_leftstub)
-pipeworks_add_pipebox(sensorboxes, pipe_sensorbody)
-pipeworks_add_pipebox(sensorboxes, pipe_rightstub)
+pipeworks.add_pipebox(sensorboxes, pipe_leftstub)
+pipeworks.add_pipebox(sensorboxes, pipe_sensorbody)
+pipeworks.add_pipebox(sensorboxes, pipe_rightstub)
 
 minetest.register_node("pipeworks:flow_sensor_empty", {
 	description = "Flow Sensor",
@@ -558,10 +559,10 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	on_construct = function(pos)
 		if mesecon then
@@ -599,10 +600,10 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	on_construct = function(pos)
 		if mesecon then
@@ -626,11 +627,11 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 -- tanks
 
 for fill = 0, 10 do
-	if fill == 0 then 
-		filldesc="empty"
-		sgroups = {snappy=3, pipe=1, tankfill=fill+1}
-		image = nil
-	else
+	local filldesc="empty"
+	local sgroups = {snappy=3, pipe=1, tankfill=fill+1}
+	local image = nil
+
+	if fill ~= 0 then
 		filldesc=fill.."0% full"
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1}
 		image = "pipeworks_storage_tank_fittings.png"
@@ -655,10 +656,10 @@ for fill = 0, 10 do
 		drop = "pipeworks:storage_tank_"..fill,
 		after_place_node = function(pos)
 			pipe_look_for_stackable_tanks(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 	})
 
@@ -680,10 +681,10 @@ for fill = 0, 10 do
 		walkable = true,
 		after_place_node = function(pos)
 			pipe_look_for_stackable_tanks(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 	})
 end
@@ -704,10 +705,10 @@ minetest.register_node("pipeworks:fountainhead", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	on_construct = function(pos)
 		if mesecon then
@@ -738,10 +739,10 @@ minetest.register_node("pipeworks:fountainhead_pouring", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		pipe_scanforobjects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	on_construct = function(pos)
 		if mesecon then

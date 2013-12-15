@@ -66,7 +66,7 @@ minetest.register_craft({
 	}
 })
 
-function hacky_swap_node(pos,name)
+local function hacky_swap_node(pos,name)
     local node=minetest.get_node(pos)
     local meta=minetest.get_meta(pos)
     local meta0=meta:to_table()
@@ -83,7 +83,7 @@ local function delay(x)
 	return (function() return x end)
 end
 
-deployer_on = function(pos, node)
+local deployer_on = function(pos, node)
 	if node.name ~= "pipeworks:deployer_off" then
 		return
 	end
@@ -161,7 +161,7 @@ deployer_on = function(pos, node)
 	end
 end
 
-deployer_off = function(pos, node)
+local deployer_off = function(pos, node)
 	if node.name == "pipeworks:deployer_on" then
 		hacky_swap_node(pos,"pipeworks:deployer_off")
 		nodeupdate(pos)
@@ -206,7 +206,7 @@ minetest.register_node("pipeworks:deployer_off", {
 		return inv:is_empty("main")
 	end,
 	after_place_node = function (pos, placer)
-		tube_scanforobjects(pos, placer)
+		pipeworks.scan_for_tube_objects(pos, placer)
 		local placer_pos = placer:getpos()
 		
 		--correct for the player's height
@@ -225,7 +225,7 @@ minetest.register_node("pipeworks:deployer_off", {
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
 	end,
-	after_dig_node = tube_scanforobjects,
+	after_dig_node = pipeworks.scan_for_tube_objects,
 })
 
 minetest.register_node("pipeworks:deployer_on", {
@@ -267,7 +267,7 @@ minetest.register_node("pipeworks:deployer_on", {
 		return inv:is_empty("main")
 	end,
 	after_place_node = function (pos, placer)
-		tube_scanforobjects(pos, placer)
+		pipeworks.scan_for_tube_objects(pos, placer)
 		local placer_pos = placer:getpos()
 		
 		--correct for the player's height
@@ -286,5 +286,5 @@ minetest.register_node("pipeworks:deployer_on", {
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
 	end,
-	after_dig_node = tube_scanforobjects,
+	after_dig_node = pipeworks.scan_for_tube_objects,
 })

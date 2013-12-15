@@ -111,42 +111,42 @@ for zp = 0, 1 do
 	local outimgs = {}
 
 	if yp==1 then
-		pipeworks_add_pipebox(outboxes, pipe_topstub)
+		pipeworks.add_pipebox(outboxes, pipe_topstub)
 		table.insert(outsel, pipe_selectboxes[4])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if ym==1 then
-		pipeworks_add_pipebox(outboxes, pipe_bottomstub)
+		pipeworks.add_pipebox(outboxes, pipe_bottomstub)
 		table.insert(outsel, pipe_selectboxes[3])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if xp==1 then
-		pipeworks_add_pipebox(outboxes, pipe_rightstub)
+		pipeworks.add_pipebox(outboxes, pipe_rightstub)
 		table.insert(outsel, pipe_selectboxes[2])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if xm==1 then
-		pipeworks_add_pipebox(outboxes, pipe_leftstub)
+		pipeworks.add_pipebox(outboxes, pipe_leftstub)
 		table.insert(outsel, pipe_selectboxes[1])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if zp==1 then
-		pipeworks_add_pipebox(outboxes, pipe_backstub)
+		pipeworks.add_pipebox(outboxes, pipe_backstub)
 		table.insert(outsel, pipe_selectboxes[6])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
 		table.insert(outimgs, "pipeworks_plain.png")
 	end
 	if zm==1 then
-		pipeworks_add_pipebox(outboxes, pipe_frontstub)
+		pipeworks.add_pipebox(outboxes, pipe_frontstub)
 		table.insert(outsel, pipe_selectboxes[5])
 		table.insert(outimgs, "pipeworks_pipe_end.png")
 	else
@@ -185,7 +185,7 @@ for zp = 0, 1 do
 	end
 
 	if jx+jy+jz >= 2 then
-		pipeworks_add_pipebox(outboxes, pipe_bendsphere)
+		pipeworks.add_pipebox(outboxes, pipe_bendsphere)
 	end
 
 	if (jx==2 and jy~=2 and jz~=2) then
@@ -218,7 +218,7 @@ for zp = 0, 1 do
 	minetest.register_node("pipeworks:pipe_"..pname.."_empty", {
 		description = pipedesc,
 		drawtype = "nodebox",
-		tiles = pipeworks_fix_image_names(outimgs, "_empty"),
+		tiles = pipeworks.fix_image_names(outimgs, "_empty"),
 		inventory_image = image,
 		sunlight_propagates=true,
 		paramtype = "light",
@@ -235,17 +235,17 @@ for zp = 0, 1 do
 		walkable = true,
 		drop = "pipeworks:pipe_110000_empty",
 		after_place_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 	})
 
 	minetest.register_node("pipeworks:pipe_"..pname.."_loaded", {
 		description = "Pipe segment (loaded, "..pname..")... You hacker, you.",
 		drawtype = "nodebox",
-		tiles = pipeworks_fix_image_names(outimgs, "_loaded"),
+		tiles = pipeworks.fix_image_names(outimgs, "_loaded"),
 		inventory_image = image,
 		sunlight_propagates = true,
 		paramtype = "light",
@@ -262,10 +262,10 @@ for zp = 0, 1 do
 		walkable = true,
 		drop = "pipeworks:pipe_110000_empty",
 		after_place_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			pipe_scanforobjects(pos)
+			pipeworks.scan_for_pipe_objects(pos)
 		end
 	})
 	table.insert(pipes_empty_nodenames,"pipeworks:pipe_"..pname.."_empty") -- for the abms
@@ -291,7 +291,7 @@ minetest.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		pipeworks_check_for_inflows(pos,node)
+		pipeworks.check_for_inflows(pos,node)
 	end
 })
 
@@ -300,7 +300,7 @@ minetest.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		pipeworks_check_sources(pos,node)
+		pipeworks.check_sources(pos,node)
 	end
 })
 
@@ -309,7 +309,7 @@ minetest.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider) 
-		pipeworks_spigot_check(pos,node)
+		pipeworks.spigot_check(pos,node)
 	end
 })
 
@@ -318,7 +318,7 @@ minetest.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider) 
-		pipeworks_fountainhead_check(pos,node)
+		pipeworks.fountainhead_check(pos,node)
 	end
 })
 

@@ -1,18 +1,18 @@
 -- Various settings
 
-enable_pipes = true
-enable_autocrafter = true
-enable_deployer = true
-enable_node_breaker = true
-enable_teleport_tube = true
-enable_pipe_devices = true
-enable_redefines = true
-enable_mese_tube = true
-enable_detector_tube = true
-enable_conductor_tube = true
-enable_accelerator_tube = true
-enable_crossing_tube = true
-enable_sand_tube = true
-enable_mese_sand_tube = true
-enable_one_way_tube = true
-CYCLIC = true
+local enable_pipes = true
+local enable_autocrafter = true
+local enable_deployer = true
+local enable_node_breaker = true
+local enable_teleport_tube = true
+local enable_pipe_devices = true
+local enable_redefines = true
+local enable_mese_tube = true
+local enable_detector_tube = true
+local enable_conductor_tube = true
+local enable_accelerator_tube = true
+local enable_crossing_tube = true
+local enable_sand_tube = true
+local enable_mese_sand_tube = true
+local enable_one_way_tube = true
+local CYCLIC = true

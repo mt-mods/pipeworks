@@ -6,32 +6,32 @@ tubenodes={}
 
 minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
-tube_leftstub = {
+local tube_leftstub = {
 	{ -32/64, -9/64, -9/64, 9/64, 9/64, 9/64 },	-- tube segment against -X face
 }
 
-tube_rightstub = {
+local tube_rightstub = {
 	{ -9/64, -9/64, -9/64,  32/64, 9/64, 9/64 },	-- tube segment against +X face
 }
 
-tube_bottomstub = {
+local tube_bottomstub = {
 	{ -9/64, -32/64, -9/64,   9/64, 9/64, 9/64 },	-- tube segment against -Y face
 }
 
 
-tube_topstub = {
+local tube_topstub = {
 	{ -9/64, -9/64, -9/64,   9/64, 32/64, 9/64 },	-- tube segment against +Y face
 }
 
-tube_frontstub = {
+local tube_frontstub = {
 	{ -9/64, -9/64, -32/64,   9/64, 9/64, 9/64 },	-- tube segment against -Z face
 }
 
-tube_backstub = {
+local tube_backstub = {
 	{ -9/64, -9/64, -9/64,   9/64, 9/64, 32/64 },	-- tube segment against -Z face
 } 
 
-tube_selectboxes = {
+local tube_selectboxes = {
 	{ -32/64,  -10/64,  -10/64,  10/64,  10/64,  10/64 },
 	{ -10/64 ,  -10/64,  -10/64, 32/64,  10/64,  10/64 },
 	{ -10/64 , -32/64,  -10/64,  10/64,  10/64,  10/64 },
@@ -42,14 +42,15 @@ tube_selectboxes = {
 
 --  Functions
 
-function tube_addbox(t, b)
+local function tube_addbox(t, b)
 	for i in ipairs(b)
 		do table.insert(t, b[i])
 	end
 end
 
--- now define the nodes!
-function register_tube(name,desc,plain_textures,noctr_textures,end_textures,short_texture,inv_texture,special)
+-- now, a function to define the tubes
+
+register_tube = function(name, desc, plain, noctrs, ends, short, inv, special)
 for xm = 0, 1 do
 for xp = 0, 1 do
 for ym = 0, 1 do
@@ -63,44 +64,44 @@ for zp = 0, 1 do
 	if yp==1 then
 		tube_addbox(outboxes, tube_topstub)
 		table.insert(outsel, tube_selectboxes[4])
-		table.insert(outimgs, noctr_textures[4])
+		table.insert(outimgs, noctrs[4])
 	else
-		table.insert(outimgs, plain_textures[4])
+		table.insert(outimgs, plain[4])
 	end
 	if ym==1 then
 		tube_addbox(outboxes, tube_bottomstub)
 		table.insert(outsel, tube_selectboxes[3])
-		table.insert(outimgs, noctr_textures[3])
+		table.insert(outimgs, noctrs[3])
 	else
-		table.insert(outimgs, plain_textures[3])
+		table.insert(outimgs, plain[3])
 	end
 	if xp==1 then
 		tube_addbox(outboxes, tube_rightstub)
 		table.insert(outsel, tube_selectboxes[2])
-		table.insert(outimgs, noctr_textures[2])
+		table.insert(outimgs, noctrs[2])
 	else
-		table.insert(outimgs, plain_textures[2])
+		table.insert(outimgs, plain[2])
 	end
 	if xm==1 then
 		tube_addbox(outboxes, tube_leftstub)
 		table.insert(outsel, tube_selectboxes[1])
-		table.insert(outimgs, noctr_textures[1])
+		table.insert(outimgs, noctrs[1])
 	else
-		table.insert(outimgs, plain_textures[1])
+		table.insert(outimgs, plain[1])
 	end
 	if zp==1 then
 		tube_addbox(outboxes, tube_backstub)
 		table.insert(outsel, tube_selectboxes[6])
-		table.insert(outimgs, noctr_textures[6])
+		table.insert(outimgs, noctrs[6])
 	else
-		table.insert(outimgs, plain_textures[6])
+		table.insert(outimgs, plain[6])
 	end
 	if zm==1 then
 		tube_addbox(outboxes, tube_frontstub)
 		table.insert(outsel, tube_selectboxes[5])
-		table.insert(outimgs, noctr_textures[5])
+		table.insert(outimgs, noctrs[5])
 	else
-		table.insert(outimgs, plain_textures[5])
+		table.insert(outimgs, plain[5])
 	end
 
 	local jx = xp+xm
@@ -110,46 +111,45 @@ for zp = 0, 1 do
 	if (jx+jy+jz) == 1 then
 		if xm == 1 then 
 			table.remove(outimgs, 3)
-			table.insert(outimgs, 3, end_textures[3])
+			table.insert(outimgs, 3, ends[3])
 		end
 		if xp == 1 then 
 			table.remove(outimgs, 4)
-			table.insert(outimgs, 4, end_textures[4])
+			table.insert(outimgs, 4, ends[4])
 		end
 		if ym == 1 then 
 			table.remove(outimgs, 1)
-			table.insert(outimgs, 1, end_textures[1])
+			table.insert(outimgs, 1, ends[1])
 		end
 		if xp == 1 then 
 			table.remove(outimgs, 2)
-			table.insert(outimgs, 2, end_textures[2])
+			table.insert(outimgs, 2, ends[2])
 		end
 		if zm == 1 then 
 			table.remove(outimgs, 5)
-			table.insert(outimgs, 5, end_textures[5])
+			table.insert(outimgs, 5, ends[5])
 		end
 		if zp == 1 then 
 			table.remove(outimgs, 6)
-			table.insert(outimgs, 6, end_textures[6])
+			table.insert(outimgs, 6, ends[6])
 		end
 	end
 
 	local tname = xm..xp..ym..yp..zm..zp
-	local tgroups = ""
 
-	if tname ~= "000000" then
-		tgroups = {snappy=3, tube=1, not_in_creative_inventory=1}
-		tubedesc = desc.." ("..tname..")... You hacker, you."
-		iimg=plain_textures[1]
-		wscale = {x=1,y=1,z=1}
-	else
+	local tgroups = {snappy=3, tube=1, not_in_creative_inventory=1}
+	local tubedesc = desc.." ("..tname..")... You hacker, you."
+	local iimg=plain[1]
+	local wscale = {x=1,y=1,z=1}
+
+	if tname == "000000" then
 		tgroups = {snappy=3, tube=1}
 		tubedesc = desc
-		iimg=inv_texture
+		iimg=inv
 		outimgs = {
-			short_texture,short_texture,
-			end_textures[3],end_textures[4],
-			short_texture,short_texture
+			short,short,
+			ends[3],ends[4],
+			short,short
 		}
 		outboxes = { -24/64, -9/64, -9/64, 24/64, 9/64, 9/64 }
 		outsel = { -24/64, -10/64, -10/64, 24/64, 10/64, 10/64 }
@@ -158,10 +158,11 @@ for zp = 0, 1 do
 	
 	table.insert(tubenodes,name.."_"..tname)
 	
-	nodedef={
+	local nodedef={
 		description = tubedesc,
 		drawtype = "nodebox",
 		tiles = outimgs,
+		sunlight_propagates = true,
 		inventory_image=iimg,
 		wield_image=iimg,
 		wield_scale=wscale,
@@ -189,13 +190,13 @@ for zp = 0, 1 do
 			end
 		end,
 		after_place_node = function(pos)
-			tube_scanforobjects(pos)
+			pipeworks.scan_for_tube_objects(pos)
 			if minetest.registered_nodes[name.."_"..tname].after_place_node_ then
 				minetest.registered_nodes[name.."_"..tname].after_place_node_(pos)
 			end
 		end,
 		after_dig_node = function(pos)
-			tube_scanforobjects(pos)
+			pipeworks.scan_for_tube_objects(pos)
 			if minetest.registered_nodes[name.."_"..tname].after_dig_node_ then
 				minetest.registered_nodes[name.."_"..tname].after_dig_node_(pos)
 			end
@@ -216,7 +217,7 @@ for zp = 0, 1 do
 				nodedef.tube[key]=val
 			end
 		elseif type(value)=="table" then
-			nodedef[key]=pipeworks_replace_name(value,"#id",tname)
+			nodedef[key]=pipeworks.replace_name(value,"#id",tname)
 		elseif type(value)=="string" then
 			nodedef[key]=string.gsub(value,"#id",tname)
 		else
@@ -237,31 +238,30 @@ end
 end
 end
 
+-- now let's actually call that function to get the real work done!
 
-noctr_textures={"pipeworks_tube_noctr.png","pipeworks_tube_noctr.png","pipeworks_tube_noctr.png",
+local noctr_textures={"pipeworks_tube_noctr.png","pipeworks_tube_noctr.png","pipeworks_tube_noctr.png",
 		"pipeworks_tube_noctr.png","pipeworks_tube_noctr.png","pipeworks_tube_noctr.png"}
-plain_textures={"pipeworks_tube_plain.png","pipeworks_tube_plain.png","pipeworks_tube_plain.png",
+local plain_textures={"pipeworks_tube_plain.png","pipeworks_tube_plain.png","pipeworks_tube_plain.png",
 		"pipeworks_tube_plain.png","pipeworks_tube_plain.png","pipeworks_tube_plain.png"}
-end_textures={"pipeworks_tube_end.png","pipeworks_tube_end.png","pipeworks_tube_end.png",
+local end_textures={"pipeworks_tube_end.png","pipeworks_tube_end.png","pipeworks_tube_end.png",
 		"pipeworks_tube_end.png","pipeworks_tube_end.png","pipeworks_tube_end.png"}
-short_texture="pipeworks_tube_short.png"
-inv_texture="pipeworks_tube_inv.png"
+local short_texture="pipeworks_tube_short.png"
+local inv_texture="pipeworks_tube_inv.png"
 
 register_tube("pipeworks:tube","Pneumatic tube segment",plain_textures,noctr_textures,end_textures,short_texture,inv_texture)
 
+
+local mese_noctr_textures={"pipeworks_mese_tube_noctr_1.png","pipeworks_mese_tube_noctr_2.png","pipeworks_mese_tube_noctr_3.png",
+		"pipeworks_mese_tube_noctr_4.png","pipeworks_mese_tube_noctr_5.png","pipeworks_mese_tube_noctr_6.png"}
+local mese_plain_textures={"pipeworks_mese_tube_plain_1.png","pipeworks_mese_tube_plain_2.png","pipeworks_mese_tube_plain_3.png",
+		"pipeworks_mese_tube_plain_4.png","pipeworks_mese_tube_plain_5.png","pipeworks_mese_tube_plain_6.png"}
+local mese_end_textures={"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png",
+		"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png"}
+local mese_short_texture="pipeworks_mese_tube_short.png"
+local mese_inv_texture="pipeworks_mese_tube_inv.png"
+
 if enable_mese_tube then
-
-	mese_noctr_textures={"pipeworks_mese_tube_noctr_1.png","pipeworks_mese_tube_noctr_2.png","pipeworks_mese_tube_noctr_3.png",
-			"pipeworks_mese_tube_noctr_4.png","pipeworks_mese_tube_noctr_5.png","pipeworks_mese_tube_noctr_6.png"}
-	mese_plain_textures={"pipeworks_mese_tube_plain_1.png","pipeworks_mese_tube_plain_2.png","pipeworks_mese_tube_plain_3.png",
-			"pipeworks_mese_tube_plain_4.png","pipeworks_mese_tube_plain_5.png","pipeworks_mese_tube_plain_6.png"}
-	mese_end_textures={"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png",
-			"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png"}
-	mese_short_texture="pipeworks_mese_tube_short.png"
-	mese_inv_texture="pipeworks_mese_tube_inv.png"
-
-	meseadjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
-
 	register_tube("pipeworks:mese_tube","Mese pneumatic tube segment",mese_plain_textures,mese_noctr_textures,
 		mese_end_textures,mese_short_texture,mese_inv_texture,
 		{tube={can_go=function(pos,node,velocity,stack)
@@ -270,7 +270,7 @@ if enable_mese_tube then
 			local inv=meta:get_inventory()
 			local found=false
 			local name=stack:get_name()
-			for i,vect in ipairs(meseadjlist) do
+			for i,vect in ipairs(pipeworks.meseadjlist) do
 				if meta:get_int("l"..tostring(i).."s")==1 then
 					for _,st in ipairs(inv:get_list("line"..tostring(i))) do
 						if st:get_name()==name then
@@ -281,7 +281,7 @@ if enable_mese_tube then
 				end
 			end
 			if found==false then
-				for i,vect in ipairs(meseadjlist) do
+				for i,vect in ipairs(pipeworks.meseadjlist) do
 					if meta:get_int("l"..tostring(i).."s")==1 then
 						if inv:is_empty("line"..tostring(i)) then
 							table.insert(tbl,vect)
@@ -362,14 +362,14 @@ if enable_mese_tube then
 	})
 end
 
-	mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
+	local mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 
 
 if enable_detector_tube then
 
-	detector_plain_textures={"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png",
+	local detector_plain_textures={"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png",
 			"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png"}
-	detector_inv_texture="pipeworks_detector_tube_inv.png"
+	local detector_inv_texture="pipeworks_detector_tube_inv.png"
 
 	register_tube("pipeworks:detector_tube_on","Detector tube segment on (you hacker you)",detector_plain_textures,noctr_textures,
 		end_textures,short_texture,detector_inv_texture,
@@ -379,7 +379,7 @@ if enable_detector_tube then
 			local nitems=meta:get_int("nitems")+1
 			meta:set_int("nitems", nitems)
 			minetest.after(0.1,minetest.registered_nodes[name].item_exit,pos)
-			return notvel(meseadjlist,velocity)
+			return notvel(pipeworks.meseadjlist,velocity)
 		end},
 		groups={mesecon=2,not_in_creative_inventory=1},
 		drop="pipeworks:detector_tube_off_000000",
@@ -409,7 +409,7 @@ if enable_detector_tube then
 			local name = minetest.get_node(pos).name
 			minetest.set_node(pos,{name=string.gsub(name,"off","on")})
 			mesecon:receptor_on(pos,mesecons_rules)
-			return notvel(meseadjlist,velocity)
+			return notvel(pipeworks.meseadjlist,velocity)
 		end},
 		groups={mesecon=2},
 		mesecons={receptor={state="off",
@@ -417,24 +417,23 @@ if enable_detector_tube then
 	})
 end
 
+local conductor_plain_textures={"pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png",
+		"pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png"}
+local conductor_noctr_textures={"pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png",
+		"pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png"}
+local conductor_end_textures={"pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png",
+		"pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png"}
+local conductor_short_texture="pipeworks_conductor_tube_short.png"
+local conductor_inv_texture="pipeworks_conductor_tube_inv.png"
+
+local conductor_on_plain_textures={"pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png",
+		"pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png"}
+local conductor_on_noctr_textures={"pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png",
+		"pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png"}
+local conductor_on_end_textures={"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png",
+		"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png"}
+
 if enable_conductor_tube then
-
-	conductor_plain_textures={"pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png",
-			"pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png","pipeworks_conductor_tube_plain.png"}
-	conductor_noctr_textures={"pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png",
-			"pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png","pipeworks_conductor_tube_noctr.png"}
-	conductor_end_textures={"pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png",
-			"pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png","pipeworks_conductor_tube_end.png"}
-	conductor_short_texture="pipeworks_conductor_tube_short.png"
-	conductor_inv_texture="pipeworks_conductor_tube_inv.png"
-
-	conductor_on_plain_textures={"pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png",
-			"pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png","pipeworks_conductor_tube_on_plain.png"}
-	conductor_on_noctr_textures={"pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png",
-			"pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png","pipeworks_conductor_tube_on_noctr.png"}
-	conductor_on_end_textures={"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png",
-			"pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png","pipeworks_conductor_tube_on_end.png"}
-
 	register_tube("pipeworks:conductor_tube_off","Conductor tube segment",conductor_plain_textures,conductor_noctr_textures,
 		conductor_end_textures,conductor_short_texture,conductor_inv_texture,
 		{groups={mesecon=2},
@@ -453,22 +452,21 @@ if enable_conductor_tube then
 	})
 end
 
+local accelerator_noctr_textures={"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png",
+		"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png"}
+local accelerator_plain_textures={"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png",
+		"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png"}
+local accelerator_end_textures={"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png",
+		"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png"}
+local accelerator_short_texture="pipeworks_accelerator_tube_short.png"
+local accelerator_inv_texture="pipeworks_accelerator_tube_inv.png"
+
 if enable_accelerator_tube then
-
-	accelerator_noctr_textures={"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png",
-			"pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png","pipeworks_accelerator_tube_noctr.png"}
-	accelerator_plain_textures={"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png",
-			"pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png","pipeworks_accelerator_tube_plain.png"}
-	accelerator_end_textures={"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png",
-			"pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png","pipeworks_accelerator_tube_end.png"}
-	accelerator_short_texture="pipeworks_accelerator_tube_short.png"
-	accelerator_inv_texture="pipeworks_accelerator_tube_inv.png"
-
 	register_tube("pipeworks:accelerator_tube","Accelerator pneumatic tube segment",accelerator_plain_textures,
 			accelerator_noctr_textures,accelerator_end_textures,accelerator_short_texture,accelerator_inv_texture,
 			{tube={can_go=function(pos,node,velocity,stack)
 				velocity.speed=velocity.speed+1
-				return notvel(meseadjlist,velocity)
+				return notvel(pipeworks.meseadjlist,velocity)
 			end}
 	})
 end
@@ -482,17 +480,16 @@ if enable_crossing_tube then
 	})
 end
 
+local sand_noctr_textures={"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png",
+		"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png"}
+local sand_plain_textures={"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png",
+		"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png"}
+local sand_end_textures={"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png",
+		"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png"}
+local sand_short_texture="pipeworks_sand_tube_short.png"
+local sand_inv_texture="pipeworks_sand_tube_inv.png"
+
 if enable_sand_tube then
-
-	sand_noctr_textures={"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png",
-			"pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png","pipeworks_sand_tube_noctr.png"}
-	sand_plain_textures={"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png",
-			"pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png","pipeworks_sand_tube_plain.png"}
-	sand_end_textures={"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png",
-			"pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png","pipeworks_sand_tube_end.png"}
-	sand_short_texture="pipeworks_sand_tube_short.png"
-	sand_inv_texture="pipeworks_sand_tube_inv.png"
-
 	register_tube("pipeworks:sand_tube","Sand pneumatic tube segment",sand_plain_textures,sand_noctr_textures,sand_end_textures,
 			sand_short_texture,sand_inv_texture,
 			{groups={sand_tube=1}})
@@ -515,17 +512,16 @@ if enable_sand_tube then
 	})
 end
 
+local mese_sand_noctr_textures={"pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png",
+		"pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png"}
+local mese_sand_plain_textures={"pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png",
+		"pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png"}
+local mese_sand_end_textures={"pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png",
+		"pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png"}
+local mese_sand_short_texture="pipeworks_mese_sand_tube_short.png"
+local mese_sand_inv_texture="pipeworks_mese_sand_tube_inv.png"
+
 if enable_mese_sand_tube then
-
-	mese_sand_noctr_textures={"pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png",
-			"pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png","pipeworks_mese_sand_tube_noctr.png"}
-	mese_sand_plain_textures={"pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png",
-			"pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png","pipeworks_mese_sand_tube_plain.png"}
-	mese_sand_end_textures={"pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png",
-			"pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png","pipeworks_mese_sand_tube_end.png"}
-	mese_sand_short_texture="pipeworks_mese_sand_tube_short.png"
-	mese_sand_inv_texture="pipeworks_mese_sand_tube_inv.png"
-
 	register_tube("pipeworks:mese_sand_tube","Mese sand pneumatic tube segment",mese_sand_plain_textures,mese_sand_noctr_textures,mese_sand_end_textures,
 			mese_sand_short_texture,mese_sand_inv_texture,
 			{groups={mese_sand_tube=1},
@@ -608,10 +604,10 @@ if enable_one_way_tube then
 		legacy_facedir_simple = true,
 		sounds = default.node_sound_wood_defaults(),
 		after_place_node = function(pos)
-			tube_scanforobjects(pos)
+			pipeworks.scan_for_tube_objects(pos)
 		end,
 		after_dig_node = function(pos)
-			tube_scanforobjects(pos)
+			pipeworks.scan_for_tube_objects(pos)
 		end,
 		tube={connect_sides={left=1, right=1},
 			can_go=function(pos,node,velocity,stack)

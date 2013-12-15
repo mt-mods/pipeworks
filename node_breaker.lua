@@ -14,7 +14,7 @@ minetest.register_craft({
 	}
 })
 
-function hacky_swap_node(pos,name)
+local function hacky_swap_node(pos,name)
     local node=minetest.get_node(pos)
     local meta=minetest.get_meta(pos)
     local meta0=meta:to_table()
@@ -81,26 +81,11 @@ local function dir_to_facedir(dir, is6d)
 	end
 end
 
-node_breaker_on = function(pos, node)
-	if node.name == "pipeworks:nodebreaker_off" then
-		hacky_swap_node(pos,"pipeworks:nodebreaker_on")
-		break_node(pos,node.param2)
-		nodeupdate(pos)
-	end
-end
-
-node_breaker_off = function(pos, node)
-	if node.name == "pipeworks:nodebreaker_on" then
-		hacky_swap_node(pos,"pipeworks:nodebreaker_off")
-		nodeupdate(pos)
-	end
-end
-
 local function delay(x)
 	return (function() return x end)
 end
 
-function break_node (pos, facedir)
+local function break_node (pos, facedir)
 	--locate the outgoing velocity, front, and back of the node via facedir_to_dir
 	if type(facedir) ~= "number" or facedir < 0 or facedir > 23 then return end
 
@@ -202,6 +187,21 @@ function break_node (pos, facedir)
 	end
 end
 
+local node_breaker_on = function(pos, node)
+	if node.name == "pipeworks:nodebreaker_off" then
+		hacky_swap_node(pos,"pipeworks:nodebreaker_on")
+		break_node(pos,node.param2)
+		nodeupdate(pos)
+	end
+end
+
+local node_breaker_off = function(pos, node)
+	if node.name == "pipeworks:nodebreaker_on" then
+		hacky_swap_node(pos,"pipeworks:nodebreaker_off")
+		nodeupdate(pos)
+	end
+end
+
 minetest.register_node("pipeworks:nodebreaker_off", {
 	description = "Node Breaker",
 	tile_images = {"pipeworks_nodebreaker_top_off.png","pipeworks_nodebreaker_bottom_off.png","pipeworks_nodebreaker_side2_off.png","pipeworks_nodebreaker_side1_off.png",
@@ -219,7 +219,7 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 		inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
 	end,
 	after_place_node = function (pos, placer)
-		tube_scanforobjects(pos, placer)
+		pipeworks.scan_for_tube_objects(pos, placer)
 		local placer_pos = placer:getpos()
 		
 		--correct for the player's height
@@ -238,7 +238,7 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
 	end,
-	after_dig_node = tube_scanforobjects,
+	after_dig_node = pipeworks.scan_for_tube_objects,
 })
 
 minetest.register_node("pipeworks:nodebreaker_on", {
@@ -258,7 +258,7 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 		inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
 	end,
 	after_place_node = function (pos, placer)
-		tube_scanforobjects(pos, placer)
+		pipeworks.scan_for_tube_objects(pos, placer)
 		local placer_pos = placer:getpos()
 		
 		--correct for the player's height
@@ -277,5 +277,5 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
 	end,
-	after_dig_node = tube_scanforobjects,
+	after_dig_node = pipeworks.scan_for_tube_objects,
 })

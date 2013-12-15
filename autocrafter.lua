@@ -115,10 +115,10 @@ minetest.register_node("pipeworks:autocrafter", {
 		return (inv:is_empty("src") and inv:is_empty("recipe") and inv:is_empty("dst"))
 	end, 
 	after_place_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 	end,
 	after_dig_node = function(pos)
-		tube_scanforobjects(pos)
+		pipeworks.scan_for_tube_objects(pos)
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
 	end
 })
