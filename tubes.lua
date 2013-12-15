@@ -1,6 +1,6 @@
 -- This file supplies the various kinds of pneumatic tubes
 
-tubenodes={}
+pipeworks.tubenodes={}
 
 minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
@@ -118,7 +118,7 @@ for zp = 0, 1 do
 		wscale = {x=1,y=1,z=0.01}
 	end
 	
-	table.insert(tubenodes,name.."_"..tname)
+	table.insert(pipeworks.tubenodes,name.."_"..tname)
 	
 	local nodedef={
 		description = tubedesc,

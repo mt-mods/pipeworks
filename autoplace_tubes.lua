@@ -8,7 +8,7 @@ local function in_table(table,element)
 end
 
 local function is_tube(nodename)
-	return in_table(tubenodes,nodename)
+	return in_table(pipeworks.tubenodes,nodename)
 end
 
 if pipeworks == nil then

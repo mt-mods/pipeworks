@@ -220,7 +220,7 @@ local function addVect(pos,vect)
 	return {x=pos.x+vect.x,y=pos.y+vect.y,z=pos.z+vect.z}
 end
 
-adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
+local adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
 local function notvel(tbl,vel)
 	local tbl2={}
