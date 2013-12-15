@@ -73,7 +73,7 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
                         idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
                     end
                 end
-                item1=tube_item(frompos,item)
+                local item1=tube_item(frompos,item)
                 item1:get_luaentity().start_pos = frompos
                 item1:setvelocity(dir)
                 item1:setacceleration({x=0, y=0, z=0})
@@ -257,12 +257,13 @@ local function go_next(pos,velocity,stack)
 	else
 		can_go=notvel(adjlist,vel)
 	end
+	local meta = nil
 	for _,vect in ipairs(can_go) do
-		npos=addVect(pos,vect)
-		node=minetest.get_node(npos)
-		tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
+		local npos=addVect(pos,vect)
+		local node=minetest.get_node(npos)
+		local tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
 		meta=minetest.get_meta(npos)
-		tubelike=meta:get_int("tubelike")
+		local tubelike=meta:get_int("tubelike")
 		if tube_receiver==1 then
 			if minetest.registered_nodes[node.name].tube and
 				minetest.registered_nodes[node.name].tube.can_insert and
@@ -462,6 +463,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 	
 	node = minetest.get_node(self.start_pos)
 	if moved and minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
+		local leftover = nil
 		if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
 			leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos,node,stack,vel)
 		else
