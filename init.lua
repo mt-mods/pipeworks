@@ -17,8 +17,10 @@ pipeworks.modpath = minetest.get_modpath("pipeworks")
 
 dofile(pipeworks.modpath.."/default_settings.txt")
 
+-- Read the external config file if it exists.
 if io.open(pipeworks.worldpath.."/pipeworks_settings.txt","r") then
 	dofile(pipeworks.worldpath.."/pipeworks_settings.txt")
+	io.close()
 end
 
 -- Random variables
