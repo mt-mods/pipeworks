@@ -17,22 +17,7 @@ pipeworks.modpath = minetest.get_modpath("pipeworks")
 
 dofile(pipeworks.modpath.."/default_settings.txt")
 
-if io.open(pipeworks.worldpath.."/pipeworks_settings.txt","r") == nil then
-
-	io.input(pipeworks.modpath.."/default_settings.txt")
-	io.output(pipeworks.worldpath.."/pipeworks_settings.txt")
-
-	local size = 2^13      -- good buffer size (8K)
-	while true do
-		local block = io.read(size)
-		if not block then
-			io.close()
-			break
-		end
-		io.write(block)
-	end
-
-else
+if io.open(pipeworks.worldpath.."/pipeworks_settings.txt","r") ~= nil then
 	dofile(pipeworks.worldpath.."/pipeworks_settings.txt")
 end
 
