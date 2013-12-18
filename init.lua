@@ -17,7 +17,7 @@ pipeworks.modpath = minetest.get_modpath("pipeworks")
 
 dofile(pipeworks.modpath.."/default_settings.txt")
 
-if io.open(pipeworks.worldpath.."/pipeworks_settings.txt","r") ~= nil then
+if io.open(pipeworks.worldpath.."/pipeworks_settings.txt","r") then
 	dofile(pipeworks.worldpath.."/pipeworks_settings.txt")
 end
 
