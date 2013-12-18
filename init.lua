@@ -6,8 +6,6 @@
 -- License: WTFPL
 --
 
--- Read (and if necessary, copy) the config file
-
 pipeworks = {}
 
 local DEBUG = false
