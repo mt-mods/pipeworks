@@ -46,41 +46,41 @@ end
 -- sname = the current name to allow for, or nil if it allows anything
 
 local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,all)
-    for spos,stack in ipairs(frominv:get_list(frominvname)) do
-        if ( sname == nil and stack:get_name() ~= "") or stack:get_name()==sname then
-            local doRemove = true
-            if tube.can_remove then
-                doRemove = tube.can_remove(frompos, fromnode, stack, dir)
-            elseif idef.allow_metadata_inventory_take then
-                doRemove = idef.allow_metadata_inventory_take(frompos,"main",spos, stack, fakePlayer)
-            end
-            -- stupid lack of continue statements grumble
-            if doRemove then
-                local item
-                local count
-                if all then
-                    count = stack:get_count()
-                else
-                    count = 1
-                end
-                if tube.remove_items then
-                    -- it could be the entire stack...
-                    item=tube.remove_items(frompos,fromnode,stack,dir,count)
-                else
-                    item=stack:take_item(count)
-                    frominv:set_stack(frominvname,spos,stack)
-                    if idef.on_metadata_inventory_take then
-                        idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
-                    end
-                end
-                local item1=pipeworks.tube_item(frompos,item)
-                item1:get_luaentity().start_pos = frompos
-                item1:setvelocity(dir)
-                item1:setacceleration({x=0, y=0, z=0})
-                return -- only fire one item, please
-            end
-        end
-    end
+	for spos,stack in ipairs(frominv:get_list(frominvname)) do
+		if (sname == nil and stack:get_name() ~= "") or stack:get_name() == sname then
+			local doRemove = true
+			if tube.can_remove then
+				doRemove = tube.can_remove(frompos, fromnode, stack, dir)
+			elseif idef.allow_metadata_inventory_take then
+				doRemove = idef.allow_metadata_inventory_take(frompos,"main",spos, stack, fakePlayer)
+			end
+			-- stupid lack of continue statements grumble
+			if doRemove then
+				local item
+				local count
+				if all then
+					count = stack:get_count()
+				else
+					count = 1
+				end
+				if tube.remove_items then
+					-- it could be the entire stack...
+					item = tube.remove_items(frompos, fromnode, stack, dir, count)
+				else
+					item = stack:take_item(count)
+					frominv:set_stack(frominvname, spos, stack)
+					if idef.on_metadata_inventory_take then
+						idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
+					end
+				end
+				local item1 = pipeworks.tube_item(frompos, item)
+				item1:get_luaentity().start_pos = frompos
+				item1:setvelocity(dir)
+				item1:setacceleration({x=0, y=0, z=0})
+				return -- only fire one item, please
+			end
+		end
+	end
 end
 
 minetest.register_node("pipeworks:filter", {
@@ -117,33 +117,33 @@ minetest.register_node("pipeworks:filter", {
 				end}},
 	tube={connect_sides={right=1}},
 	on_punch = function (pos, node, puncher)
-	local meta = minetest.get_meta(pos);
-	local inv = meta:get_inventory()
-	local dir = facedir_to_right_dir(node.param2)
-	local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
-	local fromnode=minetest.get_node(frompos)
-    if not fromnode then return end
-	local frominv
-    local idef = minetest.registered_nodes[fromnode.name]
-    -- assert(idef)
-    local tube = idef.tube
-    if not (tube and tube.input_inventory) then
-        return
-    end
-	local frommeta=minetest.get_meta(frompos)
-	local frominvname=tube.input_inventory
-	local frominv=frommeta:get_inventory()
-	for _,filter in ipairs(inv:get_list("main")) do
-		local sname=filter:get_name()
-		if sname ~="" then
-            -- XXX: that's a lot of parameters
-            grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir)
+		local meta = minetest.get_meta(pos);
+		local inv = meta:get_inventory()
+		local dir = facedir_to_right_dir(node.param2)
+		local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
+		local fromnode=minetest.get_node(frompos)
+		if not fromnode then return end
+		local idef = minetest.registered_nodes[fromnode.name]
+		-- assert(idef)
+		local tube = idef.tube
+		if not (tube and tube.input_inventory) then
+			return
 		end
-	end
-	if inv:is_empty("main") then
-        grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
-	end
-end,
+		local frommeta = minetest.get_meta(frompos)
+		local frominvname = tube.input_inventory
+		local frominv = frommeta:get_inventory()
+		local sname
+		for _,filter in ipairs(inv:get_list("main")) do
+			sname = filter:get_name()
+			if sname ~= "" then
+				-- XXX: that's a lot of parameters
+				grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir)
+			end
+		end
+		if inv:is_empty("main") then
+		grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
+			end
+	end,
 })
 
 minetest.register_craftitem("pipeworks:mese_filter", {
@@ -185,31 +185,31 @@ minetest.register_node("pipeworks:mese_filter", {
 				end}},
 	tube={connect_sides={right=1}},
 	on_punch = function (pos, node, puncher)
-	local meta = minetest.get_meta(pos);
-	local inv = meta:get_inventory()
-	local dir = facedir_to_right_dir(node.param2)
-	local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
-	local fromnode=minetest.get_node(frompos)
-	local frominv
-    local idef = minetest.registered_nodes[fromnode.name]
-    -- assert(idef)
-    local tube = idef.tube
-    if not (tube and tube.input_inventory) then
-        return
-    end
-	local frommeta=minetest.get_meta(frompos)
-	local frominvname=minetest.registered_nodes[fromnode.name].tube.input_inventory
-	local frominv=frommeta:get_inventory()
-	for _,filter in ipairs(inv:get_list("main")) do
-		local sname=filter:get_name()
-		if sname ~="" then
-            grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,true)
+		local meta = minetest.get_meta(pos);
+		local inv = meta:get_inventory()
+		local dir = facedir_to_right_dir(node.param2)
+		local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
+		local fromnode=minetest.get_node(frompos)
+		local idef = minetest.registered_nodes[fromnode.name]
+		-- assert(idef)
+		local tube = idef.tube
+		if not (tube and tube.input_inventory) then
+			return
 		end
-	end
-	if inv:is_empty("main") then
-        grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,true)
-	end
-end,
+		local frommeta = minetest.get_meta(frompos)
+		local frominvname = minetest.registered_nodes[fromnode.name].tube.input_inventory
+		local frominv = frommeta:get_inventory()
+		local sname
+		for _,filter in ipairs(inv:get_list("main")) do
+			sname = filter:get_name()
+			if sname ~= "" then
+				grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true)
+			end
+		end
+		if inv:is_empty("main") then
+		        grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true)
+		end
+	end,
 })
 
 local function roundpos(pos)
@@ -222,28 +222,23 @@ end
 
 local adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
-function pipeworks.notvel(tbl,vel)
+function pipeworks.notvel(tbl, vel)
 	local tbl2={}
 	for _,val in ipairs(tbl) do
-		if val.x~=-vel.x or val.y~=-vel.y or val.z~=-vel.z then table.insert(tbl2,val) end
+		if val.x ~= -vel.x or val.y ~= -vel.y or val.z ~= -vel.z then table.insert(tbl2, val) end
 	end
 	return tbl2
 end
 
-local function go_next(pos,velocity,stack)
+local function go_next(pos, velocity, stack)
 	local chests = {}
 	local tubes = {}
 	local cnode = minetest.get_node(pos)
 	local cmeta = minetest.get_meta(pos)
-	local node
-	local meta
-	local tubelike
-	local tube_receiver
-	local len = 1
 	local n
 	local can_go
-	local speed = math.abs(velocity.x+velocity.y+velocity.z)
-	local vel = {x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed,speed=speed}
+	local speed = math.abs(velocity.x + velocity.y + velocity.z)
+	local vel = {x = velocity.x/speed, y = velocity.y/speed, z = velocity.z/speed,speed=speed}
 	if speed >= 4.1 then
 		speed = 4
 	elseif speed >= 1.1 then
@@ -253,9 +248,9 @@ local function go_next(pos,velocity,stack)
 	end
 	vel.speed=speed
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
-		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
+		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
 	else
-		can_go = pipeworks.notvel(adjlist,vel)
+		can_go = pipeworks.notvel(adjlist, vel)
 	end
 	local meta = nil
 	for _,vect in ipairs(can_go) do
@@ -267,35 +262,35 @@ local function go_next(pos,velocity,stack)
 		if tube_receiver == 1 then
 			if minetest.registered_nodes[node.name].tube and
 				minetest.registered_nodes[node.name].tube.can_insert and
-				minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
+				minetest.registered_nodes[node.name].tube.can_insert(npos, node, stack, vect) then
 				local i = #chests + 1
-				chests[i]={}
-				chests[i].pos=npos
-				chests[i].vect=vect
+				chests[i] = {}
+				chests[i].pos = npos
+				chests[i].vect = vect
 			end
 		elseif tubelike == 1 then
 			local i = #tubes + 1
-			tubes[i]={}
-			tubes[i].pos=npos
-			tubes[i].vect=vect
+			tubes[i] = {}
+			tubes[i].pos = npos
+			tubes[i].vect = vect
 		end
 	end
 	if chests[1] == nil then--no chests found
 		if tubes[1] == nil then
 			return 0
 		else
-			n = (meta:get_int("tubedir")%(#tubes)) + 1
+			n = (cmeta:get_int("tubedir")%(#tubes)) + 1
 			if pipeworks.enable_cyclic_mode then
-				meta:set_int("tubedir",n)
+				cmeta:set_int("tubedir",n)
 			end
 			velocity.x = tubes[n].vect.x*vel.speed
 			velocity.y = tubes[n].vect.y*vel.speed
 			velocity.z = tubes[n].vect.z*vel.speed
 		end
 	else
-		n = (meta:get_int("tubedir")%(#chests))+1
+		n = (cmeta:get_int("tubedir")%(#chests))+1
 		if pipeworks.enable_cyclic_mode then
-			meta:set_int("tubedir",n)
+			cmeta:set_int("tubedir",n)
 		end
 		velocity.x = chests[n].vect.x*speed
 		velocity.y = chests[n].vect.y*speed
