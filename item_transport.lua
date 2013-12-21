@@ -231,107 +231,75 @@ function pipeworks.notvel(tbl,vel)
 end
 
 local function go_next(pos,velocity,stack)
-	local chests={}
-	local tubes={}
-	local cnode=minetest.get_node(pos)
-	local cmeta=minetest.get_meta(pos)
+	local chests = {}
+	local tubes = {}
+	local cnode = minetest.get_node(pos)
+	local cmeta = minetest.get_meta(pos)
 	local node
 	local meta
 	local tubelike
 	local tube_receiver
-	local len=1
+	local len = 1
 	local n
 	local can_go
-	local speed=math.abs(velocity.x+velocity.y+velocity.z)
-	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed,speed=speed}
-	if speed>=4.1 then
-		speed=4
-	elseif speed>=1.1 then
-		speed=speed-0.1
+	local speed = math.abs(velocity.x+velocity.y+velocity.z)
+	local vel = {x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed,speed=speed}
+	if speed >= 4.1 then
+		speed = 4
+	elseif speed >= 1.1 then
+		speed = speed-0.1
 	else
-		speed=1
+		speed = 1
 	end
 	vel.speed=speed
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
-		can_go=minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
+		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos,node,vel,stack)
 	else
-		can_go=pipeworks.notvel(adjlist,vel)
+		can_go = pipeworks.notvel(adjlist,vel)
 	end
 	local meta = nil
 	for _,vect in ipairs(can_go) do
-		local npos=addVect(pos,vect)
-		local node=minetest.get_node(npos)
-		local tube_receiver=minetest.get_item_group(node.name,"tubedevice_receiver")
-		meta=minetest.get_meta(npos)
-		local tubelike=meta:get_int("tubelike")
-		if tube_receiver==1 then
+		local npos = addVect(pos,vect)
+		local node = minetest.get_node(npos)
+		local tube_receiver = minetest.get_item_group(node.name,"tubedevice_receiver")
+		meta = minetest.get_meta(npos)
+		local tubelike = meta:get_int("tubelike")
+		if tube_receiver == 1 then
 			if minetest.registered_nodes[node.name].tube and
 				minetest.registered_nodes[node.name].tube.can_insert and
 				minetest.registered_nodes[node.name].tube.can_insert(npos,node,stack,vect) then
-				local i=1
-				repeat
-					if chests[i]==nil then break end
-					i=i+1
-				until false
+				local i = #chests + 1
 				chests[i]={}
 				chests[i].pos=npos
 				chests[i].vect=vect
 			end
-		elseif tubelike==1 then
-			local i=1
-			repeat
-				if tubes[i]==nil then break end
-				i=i+1
-			until false
+		elseif tubelike == 1 then
+			local i = #tubes + 1
 			tubes[i]={}
 			tubes[i].pos=npos
 			tubes[i].vect=vect
 		end
 	end
-	if chests[1]==nil then--no chests found
-		if tubes[1]==nil then
+	if chests[1] == nil then--no chests found
+		if tubes[1] == nil then
 			return 0
 		else
-			local i=1
-			repeat
-				if tubes[i]==nil then break end
-				i=i+1
-			until false
-			n=meta:get_int("tubedir")+1
-			repeat
-				if n>=i then
-					n=n-i+1
-				else
-					break
-				end
-			until false
+			n = (meta:get_int("tubedir")%(#tubes)) + 1
 			if pipeworks.enable_cyclic_mode then
 				meta:set_int("tubedir",n)
 			end
-			velocity.x=tubes[n].vect.x*vel.speed
-			velocity.y=tubes[n].vect.y*vel.speed
-			velocity.z=tubes[n].vect.z*vel.speed
+			velocity.x = tubes[n].vect.x*vel.speed
+			velocity.y = tubes[n].vect.y*vel.speed
+			velocity.z = tubes[n].vect.z*vel.speed
 		end
 	else
-		local i=1
-		repeat
-			if chests[i]==nil then break end
-			i=i+1
-		until false
-		n=meta:get_int("tubedir")+1
-		repeat
-			if n>=i then
-				n=n-i+1
-			else
-				break
-			end
-		until false
+		n = (meta:get_int("tubedir")%(#chests))+1
 		if pipeworks.enable_cyclic_mode then
 			meta:set_int("tubedir",n)
 		end
-		velocity.x=chests[n].vect.x*speed
-		velocity.y=chests[n].vect.y*speed
-		velocity.z=chests[n].vect.z*speed
+		velocity.x = chests[n].vect.x*speed
+		velocity.y = chests[n].vect.y*speed
+		velocity.z = chests[n].vect.z*speed
 	end
 	return 1
 end
@@ -485,7 +453,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 	end
 	
 	if moved then
-		if go_next (self.start_pos, velocity, stack)==0 then
+		if go_next (self.start_pos, velocity, stack) == 0 then
 			drop_pos=minetest.find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
 			if drop_pos then 
 				minetest.item_drop(stack, "", drop_pos)
@@ -502,6 +470,4 @@ minetest.register_entity("pipeworks:tubed_item", {
 
 end
 })
-
-
 
