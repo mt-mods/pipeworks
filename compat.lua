@@ -2,8 +2,8 @@
 -- with pipeworks.
 
 function pipeworks:clone_node(name)
-	node2={}
-	node=minetest.registered_nodes[name]
+	local node2={}
+	local node=minetest.registered_nodes[name]
 	for k,v in pairs(node) do
 		node2[k]=v
 	end
