@@ -7,14 +7,14 @@ if mesecon then
 	pipereceptor_on = {
 		receptor = {
 			state = mesecon.state.on,
-			rules = mesecons_rules
+			rules = pipeworks.mesecons_rules
 		}
 	}
 
 	pipereceptor_off = {
 		receptor = {
 			state = mesecon.state.off,
-			rules = mesecons_rules
+			rules = pipeworks.mesecons_rules
 		}
 	}
 end

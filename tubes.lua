@@ -324,9 +324,6 @@ if pipeworks.enable_mese_tube then
 	})
 end
 
-	local mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
-
-
 if pipeworks.enable_detector_tube then
 
 	local detector_plain_textures={"pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png","pipeworks_detector_tube_plain.png",
@@ -346,14 +343,14 @@ if pipeworks.enable_detector_tube then
 		groups={mesecon=2,not_in_creative_inventory=1},
 		drop="pipeworks:detector_tube_off_000000",
 		mesecons={receptor={state="on",
-					rules=mesecons_rules}},
+					rules=pipeworks.mesecons_rules}},
 		item_exit = function(pos)
 			local meta = minetest.get_meta(pos)
 			local nitems=meta:get_int("nitems")-1
 			local name = minetest.get_node(pos).name
 			if nitems==0 then
 				minetest.set_node(pos,{name=string.gsub(name,"on","off")})
-				mesecon:receptor_off(pos,mesecons_rules)
+				mesecon:receptor_off(pos,pipeworks.mesecons_rules)
 			else
 				meta:set_int("nitems", nitems)
 			end
@@ -370,12 +367,12 @@ if pipeworks.enable_detector_tube then
 		{tube={can_go=function(pos,node,velocity,stack)
 			local name = minetest.get_node(pos).name
 			minetest.set_node(pos,{name=string.gsub(name,"off","on")})
-			mesecon:receptor_on(pos,mesecons_rules)
+			mesecon:receptor_on(pos,pipeworks.mesecons_rules)
 			return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 		end},
 		groups={mesecon=2},
 		mesecons={receptor={state="off",
-					rules=mesecons_rules}}
+					rules=pipeworks.mesecons_rules}}
 	})
 end
 
@@ -400,7 +397,7 @@ if pipeworks.enable_conductor_tube then
 		conductor_end_textures,conductor_short_texture,conductor_inv_texture,
 		{groups={mesecon=2},
 		mesecons={conductor={state="off",
-					rules=mesecons_rules,
+					rules=pipeworks.mesecons_rules,
 					onstate="pipeworks:conductor_tube_on_#id"}}
 	})
 
@@ -409,7 +406,7 @@ if pipeworks.enable_conductor_tube then
 		{groups={mesecon=2,not_in_creative_inventory=1},
 		drop="pipeworks:conductor_tube_off_000000",
 		mesecons={conductor={state="on",
-					rules=mesecons_rules,
+					rules=pipeworks.mesecons_rules,
 					offstate="pipeworks:conductor_tube_off_#id"}}
 	})
 end
