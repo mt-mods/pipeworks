@@ -68,21 +68,23 @@ local teleport_short_texture="pipeworks_teleport_tube_short.png"
 local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 
 pipeworks.register_tube("pipeworks:teleport_tube","Teleporter pneumatic tube segment",teleport_plain_textures,
-		teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture,
-		{tube={can_go=function(pos,node,velocity,stack)
-			velocity.x=0
-			velocity.y=0
-			velocity.z=0
-			local meta = minetest.get_meta(pos)
-			channel=meta:get_string("channel")
-			local target=get_tubes_in_file(pos,channel)
-			if target[1]==nil then return {} end
-			d=math.random(1,#target)
-			pos.x=target[d].x
-			pos.y=target[d].y
-			pos.z=target[d].z
-			return pipeworks.meseadjlist
-		end},
+		teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture, {
+		tube = {
+			can_go = function(pos,node,velocity,stack)
+				velocity.x = 0
+				velocity.y = 0
+				velocity.z = 0
+				local meta = minetest.get_meta(pos)
+				local channel = meta:get_string("channel")
+				local target = get_tubes_in_file(pos,channel)
+				if target[1] == nil then return {} end
+				local d = math.random(1,#target)
+				pos.x = target[d].x
+				pos.y = target[d].y
+				pos.z = target[d].z
+				return pipeworks.meseadjlist
+			end
+		},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			meta:set_string("channel","")
