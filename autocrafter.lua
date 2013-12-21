@@ -49,7 +49,6 @@ local function autocraft(inventory, pos)
 		end
 	end
 
-	local input = inventory:get_list("input")
 	if result.item:is_empty() then return end
 	result = result.item
 	if not inventory:room_for_item("dst", result) then return end

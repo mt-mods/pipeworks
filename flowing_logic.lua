@@ -39,7 +39,7 @@ pipeworks.check_for_inflows = function(pos,node)
 		local name = minetest.get_node(coords[i]).name
 		if name and (name == "pipeworks:pump_on" and pipeworks.check_for_liquids(coords[i])) or string.find(name,"_loaded") then
 			if string.find(name,"_loaded") then
-				local source = minetest.get_meta(coords[i]):get_string("source")
+				source = minetest.get_meta(coords[i]):get_string("source")
 				if source == minetest.pos_to_string(pos) then break end
 			end
 			newnode = string.gsub(node.name,"empty","loaded")
