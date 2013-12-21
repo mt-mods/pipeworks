@@ -592,7 +592,7 @@ for fill = 0, 10 do
 		walkable = true,
 		drop = "pipeworks:storage_tank_"..fill,
 		after_place_node = function(pos)
-			pipe_look_for_stackable_tanks(pos)
+			pipeworks.look_for_stackable_tanks(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -617,7 +617,7 @@ for fill = 0, 10 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		after_place_node = function(pos)
-			pipe_look_for_stackable_tanks(pos)
+			pipeworks.look_for_stackable_tanks(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
