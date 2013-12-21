@@ -14,17 +14,13 @@ minetest.register_craft({
 	}
 })
 
-local function hacky_swap_node(pos,name)
-    local node=minetest.get_node(pos)
-    local meta=minetest.get_meta(pos)
-    local meta0=meta:to_table()
+local function swap_node(pos, name)
+    local node = minetest.get_node(pos)
     if node.name == name then
         return
     end
-    node.name=name
-    minetest.add_node(pos, node)
-    local meta=minetest.get_meta(pos)
-    meta:from_table(meta0)
+    node.name = name
+    minetest.swap_node(pos, node)
 end
 
 --define the functions from https://github.com/minetest/minetest/pull/834 while waiting for the devs to notice it
@@ -91,7 +87,6 @@ local function break_node (pos, facedir)
 
 	local vel = minetest.facedir_to_dir(facedir);
 	local front = {x=pos.x - vel.x, y=pos.y - vel.y, z=pos.z - vel.z}
-	local back = {x=pos.x + vel.x, y=pos.y + vel.y, z=pos.z + vel.z}
 	
 	local node = minetest.get_node(front)
 	if node.name == "air" or node.name == "ignore" then
@@ -168,6 +163,11 @@ local function break_node (pos, facedir)
 		item1:setacceleration({x=0, y=0, z=0})
 	end
 
+	local oldmetadata = nil
+	if def.after_dig_node then
+		oldmetadata = minetest.get_meta(front):to_table()
+	end
+	
 	minetest.remove_node(front)
 
 	--handle post-digging callback
@@ -189,15 +189,15 @@ end
 
 local node_breaker_on = function(pos, node)
 	if node.name == "pipeworks:nodebreaker_off" then
-		hacky_swap_node(pos,"pipeworks:nodebreaker_on")
-		break_node(pos,node.param2)
+		swap_node(pos, "pipeworks:nodebreaker_on")
+		break_node(pos, node.param2)
 		nodeupdate(pos)
 	end
 end
 
 local node_breaker_off = function(pos, node)
 	if node.name == "pipeworks:nodebreaker_on" then
-		hacky_swap_node(pos,"pipeworks:nodebreaker_off")
+		swap_node(pos, "pipeworks:nodebreaker_off")
 		nodeupdate(pos)
 	end
 end

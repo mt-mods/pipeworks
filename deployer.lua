@@ -66,33 +66,29 @@ minetest.register_craft({
 	}
 })
 
-local function hacky_swap_node(pos,name)
-    local node=minetest.get_node(pos)
-    local meta=minetest.get_meta(pos)
-    local meta0=meta:to_table()
+local function swap_node(pos, name)
+    local node = minetest.get_node(pos)
     if node.name == name then
         return
     end
-    node.name=name
-    minetest.add_node(pos, node)
-    local meta=minetest.get_meta(pos)
-    meta:from_table(meta0)
+    node.name = name
+    minetest.swap_node(pos, node)
 end
 
 local function delay(x)
 	return (function() return x end)
 end
 
-local deployer_on = function(pos, node)
+local function deployer_on(pos, node)
 	if node.name ~= "pipeworks:deployer_off" then
 		return
 	end
 	
 	--locate the above and under positions
 	local dir = minetest.facedir_to_dir(node.param2)
-	local pos_under, pos_above = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}, {x=pos.x - 2*dir.x, y=pos.y - 2*dir.y, z=pos.z - 2*dir.z}
+	local pos_under, pos_above = {x = pos.x - dir.x, y = pos.y - dir.y, z = pos.z - dir.z}, {x = pos.x - 2*dir.x, y = pos.y - 2*dir.y, z = pos.z - 2*dir.z}
 
-	hacky_swap_node(pos,"pipeworks:deployer_on")
+	swap_node(pos, "pipeworks:deployer_on")
 	nodeupdate(pos)
 	
 	local meta = minetest.get_meta(pos)
@@ -163,7 +159,7 @@ end
 
 local deployer_off = function(pos, node)
 	if node.name == "pipeworks:deployer_on" then
-		hacky_swap_node(pos,"pipeworks:deployer_off")
+		swap_node(pos, "pipeworks:deployer_off")
 		nodeupdate(pos)
 	end
 end
