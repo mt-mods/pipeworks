@@ -209,7 +209,7 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 	is_ground_content = true,
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1},
-	mesecons= {effector={rules=rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
+	mesecons= {effector={rules=pipeworks.rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
 	sounds = default.node_sound_stone_defaults(),
 	tube = {connect_sides={back=1}},
 	on_construct = function(pos)
@@ -245,7 +245,7 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 	description = "Node Breaker",
 	tile_images = {"pipeworks_nodebreaker_top_on.png","pipeworks_nodebreaker_bottom_on.png","pipeworks_nodebreaker_side2_on.png","pipeworks_nodebreaker_side1_on.png",
 			"pipeworks_nodebreaker_back.png","pipeworks_nodebreaker_front_on.png"},
-	mesecons= {effector={rules=rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
+	mesecons= {effector={rules=pipeworks.rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
 	is_ground_content = true,
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1,not_in_creative_inventory=1},

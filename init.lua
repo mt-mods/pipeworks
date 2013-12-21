@@ -107,7 +107,7 @@ dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/crafts.lua")
 dofile(pipeworks.modpath.."/tubes.lua")
 
-local rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
+pipeworks.rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
 		{x=0, y=1, z=1},{x=0, y=1, z=-1},{x=1, y=1, z=0},{x=-1, y=1, z=0},
 		{x=0, y=-1, z=1},{x=0, y=-1, z=-1},{x=1, y=-1, z=0},{x=-1, y=-1, z=0},
 		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}

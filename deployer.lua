@@ -172,7 +172,7 @@ minetest.register_node("pipeworks:deployer_off", {
 	description = "Deployer",
 	tile_images = {"pipeworks_deployer_top.png","pipeworks_deployer_bottom.png","pipeworks_deployer_side2.png","pipeworks_deployer_side1.png",
 			"pipeworks_deployer_back.png","pipeworks_deployer_front_off.png"},
-	mesecons = {effector={rules=rules_all,action_on=deployer_on,action_off=deployer_off}},
+	mesecons = {effector={rules=pipeworks.rules_all,action_on=deployer_on,action_off=deployer_off}},
 	tube={insert_object=function(pos,node,stack,direction)
 			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
@@ -232,7 +232,7 @@ minetest.register_node("pipeworks:deployer_on", {
 	description = "Deployer",
 	tile_images = {"pipeworks_deployer_top.png","pipeworks_deployer_bottom.png","pipeworks_deployer_side2.png","pipeworks_deployer_side1.png",
 			"pipeworks_deployer_back.png","pipeworks_deployer_front_on.png"},
-	mesecons = {effector={rules=rules_all,action_on=deployer_on,action_off=deployer_off}},
+	mesecons = {effector={rules=pipeworks.rules_all,action_on=deployer_on,action_off=deployer_off}},
 	tube={insert_object=function(pos,node,stack,direction)
 			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
