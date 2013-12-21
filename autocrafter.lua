@@ -30,11 +30,11 @@ local function autocraft(inventory, pos)
 		local recipeUnchanged = true
 		for i = 1, 9 do
 			if recipe[i]:get_name() ~= recipe_last[i]:get_name() then
-				recipeUnchanged = False
+				recipeUnchanged = false
 				break
 			end
 			if recipe[i]:get_count() ~= recipe_last[i]:get_count() then
-				recipeUnchanged = False
+				recipeUnchanged = false
 				break
 			end
 		end
