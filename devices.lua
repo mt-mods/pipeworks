@@ -94,7 +94,7 @@ for s in ipairs(states) do
 			end
 		}},
 		on_punch = function(pos, node, puncher)
-			fdir = minetest.get_node(pos).param2
+			local fdir = minetest.get_node(pos).param2
 			minetest.add_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
 		end
 	})
@@ -152,7 +152,7 @@ for s in ipairs(states) do
 			end
 		}},
 		on_punch = function(pos, node, puncher)
-			fdir = minetest.get_node(pos).param2
+			local fdir = minetest.get_node(pos).param2
 			minetest.add_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
 		end
 	})
@@ -205,7 +205,7 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 		end
 	}},
 	on_punch = function(pos, node, puncher)
-		fdir = minetest.get_node(pos).param2
+		local fdir = minetest.get_node(pos).param2
 		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
 	end
 })
