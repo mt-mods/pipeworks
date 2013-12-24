@@ -51,7 +51,7 @@ local furnace = pipeworks.clone_node("default:furnace")
 minetest.register_node(":default:furnace", furnace)
 
 local furnace_active = pipeworks.clone_node("default:furnace_active")
-	furnace.tiles[1] = "default_furnace_top.png^pipeworks_tube_connection_stony.png"
+	furnace_active.tiles[1] = "default_furnace_top.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
