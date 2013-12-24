@@ -77,10 +77,11 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 				item1:get_luaentity().start_pos = frompos
 				item1:setvelocity(dir)
 				item1:setacceleration({x=0, y=0, z=0})
-				return -- only fire one item, please
+				return true-- only fire one item, please
 			end
 		end
 	end
+	return false
 end
 
 minetest.register_node("pipeworks:filter", {
@@ -137,7 +138,7 @@ minetest.register_node("pipeworks:filter", {
 			sname = filter:get_name()
 			if sname ~= "" then
 				-- XXX: that's a lot of parameters
-				grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir)
+				if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir) then return end
 			end
 		end
 		if inv:is_empty("main") then
@@ -203,11 +204,11 @@ minetest.register_node("pipeworks:mese_filter", {
 		for _,filter in ipairs(inv:get_list("main")) do
 			sname = filter:get_name()
 			if sname ~= "" then
-				grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true)
+				if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true) then return end
 			end
 		end
 		if inv:is_empty("main") then
-		        grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true)
+		        grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true)
 		end
 	end,
 })
