@@ -11,11 +11,12 @@ function pipeworks.clone_node(name)
 end
 
 local furnace = pipeworks.clone_node("default:furnace")
+	furnace.tiles[1] = "default_furnace_top.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace.tiles[5] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
-	-- note we don't redefine entries 1 and 6 (top and front)
+	-- note we don't redefine entry 6 ( front)
 	furnace.groups.tubedevice = 1
 	furnace.groups.tubedevice_receiver = 1
 	furnace.tube = {
@@ -38,7 +39,7 @@ local furnace = pipeworks.clone_node("default:furnace")
 			end
 		end,
 		input_inventory = "dst",
-		connect_sides = {left=1, right=1, back=1, bottom=1, top=1}
+		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
 	}
 	furnace.after_place_node = function(pos)
 		pipeworks.scan_for_tube_objects(pos)
@@ -50,11 +51,12 @@ local furnace = pipeworks.clone_node("default:furnace")
 minetest.register_node(":default:furnace", furnace)
 
 local furnace_active = pipeworks.clone_node("default:furnace_active")
+	furnace.tiles[1] = "default_furnace_top.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[2] = "default_furnace_bottom.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[3] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[4] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
 	furnace_active.tiles[5] = "default_furnace_side.png^pipeworks_tube_connection_stony.png"
-	-- note we don't redefine entries 1 and 6 (top and front)
+	-- note we don't redefine entry 6 (front)
 	furnace_active.groups.tubedevice = 1
 	furnace_active.groups.tubedevice_receiver = 1
 	furnace_active.tube = {
@@ -77,7 +79,7 @@ local furnace_active = pipeworks.clone_node("default:furnace_active")
 			end
 		end,
 		input_inventory = "dst",
-		connect_sides = {left=1, right=1, back=1, bottom=1, top=1}
+		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
 	}
 	furnace_active.after_place_node= function(pos)
 		pipeworks.scan_for_tube_objects(pos)
@@ -110,7 +112,7 @@ local chest = pipeworks.clone_node("default:chest")
 			return inv:room_for_item("main", stack)
 		end,
 		input_inventory = "main",
-		connect_sides = {left=1, right=1, back=1, bottom=1, top=1}
+		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
 	}
 	chest.after_place_node = function(pos)
 		pipeworks.scan_for_tube_objects(pos)
@@ -142,7 +144,7 @@ local chest_locked = pipeworks.clone_node("default:chest_locked")
 			local inv = meta:get_inventory()
 			return inv:room_for_item("main", stack)
 		end,
-		connect_sides = {left=1, right=1, back=1, bottom=1, top=1}
+		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
 	}
 	local old_after_place = minetest.registered_nodes["default:chest_locked"].after_place_node
 	chest_locked.after_place_node = function(pos, placer)
