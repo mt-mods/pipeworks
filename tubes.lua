@@ -136,71 +136,70 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 end
 
 pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, special, old_registration)
-
-if old_registration then
-	for xm = 0, 1 do
-	for xp = 0, 1 do
-	for ym = 0, 1 do
-	for yp = 0, 1 do
-	for zm = 0, 1 do
-	for zp = 0, 1 do
-		local connects = {}
-		if xm == 1 then
-			connects[#connects+1] = 0
-		end
-		if xp == 1 then
-			connects[#connects+1] = 3
-		end
-		if ym == 1 then
-			connects[#connects+1] = 1
-		end
-		if yp == 1 then
-			connects[#connects+1] = 4
-		end
-		if zm == 1 then
-			connects[#connects+1] = 2
-		end
-		if zp == 1 then
-			connects[#connects+1] = 5
-		end
-		local tname = xm..xp..ym..yp..zm..zp
-		register_one_tube(name, tname, "000000", desc, plain, noctrs, ends, short, inv, special, connects, "old")
-	end
-	end
-	end
-	end
-	end
-	end
-else
-	local cconnects = {{}, {0}, {0, 3}, {0, 1}, {0, 1, 2}, {0, 1, 3}, {0, 1, 2, 3}, {0, 1, 3, 4}, {0, 1, 2, 3, 4}, {0, 1, 2, 3, 4, 5}}
-	for index, connects in ipairs(cconnects) do
-		register_one_tube(name, tostring(index), "1", desc, plain, noctrs, ends, short, inv, special, connects, "6d")
-	end
-	if REGISTER_COMPATIBILITY then
-		local cname = name.."_compatibility"
-		minetest.register_node(cname, {
-			drawtype = "airlike",
-			style = "6d",
-			basename = name,
-			groups = {not_in_creative_inventory = 1, tube_to_update = 1}
-		})
-		table.insert(pipeworks.tubenodes,cname)
+	if old_registration then
 		for xm = 0, 1 do
 		for xp = 0, 1 do
 		for ym = 0, 1 do
 		for yp = 0, 1 do
 		for zm = 0, 1 do
 		for zp = 0, 1 do
+			local connects = {}
+			if xm == 1 then
+				connects[#connects+1] = 0
+			end
+			if xp == 1 then
+				connects[#connects+1] = 3
+			end
+			if ym == 1 then
+				connects[#connects+1] = 1
+			end
+			if yp == 1 then
+				connects[#connects+1] = 4
+			end
+			if zm == 1 then
+				connects[#connects+1] = 2
+			end
+			if zp == 1 then
+				connects[#connects+1] = 5
+			end
 			local tname = xm..xp..ym..yp..zm..zp
-			minetest.register_alias(name.."_"..tname, cname)
+			register_one_tube(name, tname, "000000", desc, plain, noctrs, ends, short, inv, special, connects, "old")
 		end
 		end
 		end
 		end
 		end
+		end
+	else
+		local cconnects = {{}, {0}, {0, 3}, {0, 1}, {0, 1, 2}, {0, 1, 3}, {0, 1, 2, 3}, {0, 1, 3, 4}, {0, 1, 2, 3, 4}, {0, 1, 2, 3, 4, 5}}
+		for index, connects in ipairs(cconnects) do
+			register_one_tube(name, tostring(index), "1", desc, plain, noctrs, ends, short, inv, special, connects, "6d")
+		end
+		if REGISTER_COMPATIBILITY then
+			local cname = name.."_compatibility"
+			minetest.register_node(cname, {
+						       drawtype = "airlike",
+						       style = "6d",
+						       basename = name,
+						       groups = {not_in_creative_inventory = 1, tube_to_update = 1}
+			})
+			table.insert(pipeworks.tubenodes,cname)
+			for xm = 0, 1 do
+			for xp = 0, 1 do
+			for ym = 0, 1 do
+			for yp = 0, 1 do
+			for zm = 0, 1 do
+			for zp = 0, 1 do
+				local tname = xm..xp..ym..yp..zm..zp
+				minetest.register_alias(name.."_"..tname, cname)
+			end
+			end
+			end
+			end
+			end
+			end
 		end
 	end
-end
 end
 
 if REGISTER_COMPATIBILITY then
