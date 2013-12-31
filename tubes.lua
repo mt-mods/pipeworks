@@ -211,24 +211,24 @@ end
 
 -- now let's actually call that function to get the real work done!
 
-local noctr_textures = {"pipeworks_tube_noctr.png","pipeworks_tube_noctr.png","pipeworks_tube_noctr.png",
-			"pipeworks_tube_noctr.png","pipeworks_tube_noctr.png","pipeworks_tube_noctr.png"}
-local plain_textures = {"pipeworks_tube_plain.png","pipeworks_tube_plain.png","pipeworks_tube_plain.png",
-			"pipeworks_tube_plain.png","pipeworks_tube_plain.png","pipeworks_tube_plain.png"}
-local end_textures = {"pipeworks_tube_end.png","pipeworks_tube_end.png","pipeworks_tube_end.png",
-		      "pipeworks_tube_end.png","pipeworks_tube_end.png","pipeworks_tube_end.png"}
+local noctr_textures = {"pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png",
+			"pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png"}
+local plain_textures = {"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png",
+			"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png"}
+local end_textures = {"pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png",
+		      "pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png"}
 local short_texture = "pipeworks_tube_short.png"
 local inv_texture = "pipeworks_tube_inv.png"
 
 pipeworks.register_tube("pipeworks:tube", "Pneumatic tube segment", plain_textures, noctr_textures, end_textures, short_texture, inv_texture)
 
 if pipeworks.enable_mese_tube then
-	local mese_noctr_textures = {"pipeworks_mese_tube_noctr_1.png","pipeworks_mese_tube_noctr_2.png","pipeworks_mese_tube_noctr_3.png",
-				     "pipeworks_mese_tube_noctr_4.png","pipeworks_mese_tube_noctr_5.png","pipeworks_mese_tube_noctr_6.png"}
-	local mese_plain_textures = {"pipeworks_mese_tube_plain_1.png","pipeworks_mese_tube_plain_2.png","pipeworks_mese_tube_plain_3.png",
-				     "pipeworks_mese_tube_plain_4.png","pipeworks_mese_tube_plain_5.png","pipeworks_mese_tube_plain_6.png"}
-	local mese_end_textures = {"pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png",
-				   "pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png","pipeworks_mese_tube_end.png"}
+	local mese_noctr_textures = {"pipeworks_mese_tube_noctr_1.png", "pipeworks_mese_tube_noctr_2.png", "pipeworks_mese_tube_noctr_3.png",
+				     "pipeworks_mese_tube_noctr_4.png", "pipeworks_mese_tube_noctr_5.png", "pipeworks_mese_tube_noctr_6.png"}
+	local mese_plain_textures = {"pipeworks_mese_tube_plain_1.png", "pipeworks_mese_tube_plain_2.png", "pipeworks_mese_tube_plain_3.png",
+				     "pipeworks_mese_tube_plain_4.png", "pipeworks_mese_tube_plain_5.png", "pipeworks_mese_tube_plain_6.png"}
+	local mese_end_textures = {"pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png",
+				   "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png"}
 	local mese_short_texture = "pipeworks_mese_tube_short.png"
 	local mese_inv_texture = "pipeworks_mese_tube_inv.png"
 	pipeworks.register_tube("pipeworks:mese_tube", "Mese pneumatic tube segment", mese_plain_textures, mese_noctr_textures,
@@ -438,11 +438,11 @@ end
 if pipeworks.enable_crossing_tube then
 	-- FIXME: The textures are not the correct ones
 	local crossing_noctr_textures = {"pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png",
-					    "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png"}
+					 "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png"}
 	local crossing_plain_textures = {"pipeworks_accelerator_tube_plain.png" ,"pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png",
-					    "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png"}
+					 "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png"}
 	local crossing_end_textures = {"pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png",
-					  "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png"}
+				       "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png"}
 	local crossing_short_texture = "pipeworks_accelerator_tube_short.png"
 	local crossing_inv_texture = "pipeworks_accelerator_tube_inv.png"
 
@@ -576,7 +576,7 @@ if pipeworks.enable_one_way_tube then
 				       paramtype2 = "facedir",
 				       drawtype = "nodebox",
 				       paramtype = "light",
-				       node_box = {type="fixed",
+				       node_box = {type = "fixed",
 						   fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
 				       groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
 				       legacy_facedir_simple = true,
