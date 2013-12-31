@@ -69,6 +69,9 @@ local function nodeside(node, tubedir)
 	minetest.log("error", "nodeside has been confused by its parameters; see pipeworks autoplace_tubes.lua, line 78")
 end
 
+local vts = {0, 3, 1, 4, 2, 5}
+local tube_table = {[0] = 1, 2, 2, 4, 2, 4, 4, 5, 2, 3, 4, 6, 4, 6, 5, 7, 2, 4, 3, 6, 4, 5, 6, 7, 4, 6, 6, 8, 5, 7, 7, 9, 2, 4, 4, 5, 3, 6, 6, 7, 4, 6, 5, 7, 6, 8, 7, 9, 4, 5, 6, 7, 6, 7, 8, 9, 5, 7, 7, 9, 7, 9, 9, 10}
+local tube_table_facedirs = {[0] = 0, 0, 5, 0, 3, 4, 3, 0, 2, 0, 2, 0, 6, 4, 3, 0, 7, 12, 5, 12, 7, 4, 5, 5, 18, 20, 16, 0, 7, 4, 7, 0, 1, 8, 1, 1, 1, 13, 1, 1, 10, 8, 2, 2, 17, 4, 3, 6, 9, 9, 9, 9, 21, 13, 1, 1, 10, 10, 11, 2, 19, 4, 3, 0}
 local function tube_autoroute(pos)
 	local active = {0, 0, 0, 0, 0, 0}
 	local nctr = minetest.get_node(pos)
@@ -105,13 +108,25 @@ local function tube_autoroute(pos)
 
 	-- all sides checked, now figure which tube to use.
 
-	local nsurround = ""
-	for i,n in ipairs(active) do
-		nsurround = nsurround .. n
+	local nodedef = minetest.registered_nodes[nctr.name]
+	local basename = nodedef.basename
+	local newname
+	if nodedef.style == "old" then
+		local nsurround = ""
+		for i,n in ipairs(active) do
+			nsurround = nsurround .. n
+		end
+		nctr.name = basename.."_"..nsurround
+	elseif nodedef.style == "6d" then
+		local s = 0
+		for i,n in ipairs(active) do
+			if n == 1 then
+				s = s+2^vts[i]
+			end
+		end
+		nctr.name = basename.."_"..tube_table[s]
+		nctr.param2 = tube_table_facedirs[s]
 	end
-	local newname = string.sub(nctr.name, 1, -7)..nsurround
-	if newname == nctr.name then return end
-	nctr.name = newname
 	minetest.swap_node(pos, nctr)
 end
 

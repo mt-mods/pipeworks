@@ -6,105 +6,42 @@ minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
 -- now, a function to define the tubes
 
-local outboxes = {}
-local outsel = {}
-local outimgs = {}
+--local outboxes = {}
+--local outsel = {}
+--local outimgs = {}
 
-pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, special)
+local REGISTER_COMPATIBILITY = true
 
-for xm = 0, 1 do
-for xp = 0, 1 do
-for ym = 0, 1 do
-for yp = 0, 1 do
-for zm = 0, 1 do
-for zp = 0, 1 do
+local stv = {1, 3, 5, 2, 4, 6}
+local vti = {4, 3, 2, 1, 6, 5}
 
-	outboxes = {}
-	outsel = {}
-	outimgs = {}
-
-	if yp==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.tube_topstub)
-		table.insert(outsel, pipeworks.tube_selectboxes[4])
-		table.insert(outimgs, noctrs[4])
-	else
-		table.insert(outimgs, plain[4])
+local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, ends, short, inv, special, connects, style)
+	local outboxes = {}
+	local outsel = {}
+	local outimgs = {}
+	
+	for i = 1, 6 do
+		outimgs[vti[i]] = plain[i]
 	end
-	if ym==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.tube_bottomstub)
-		table.insert(outsel, pipeworks.tube_selectboxes[3])
-		table.insert(outimgs, noctrs[3])
-	else
-		table.insert(outimgs, plain[3])
-	end
-	if xp==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.tube_rightstub)
-		table.insert(outsel, pipeworks.tube_selectboxes[2])
-		table.insert(outimgs, noctrs[2])
-	else
-		table.insert(outimgs, plain[2])
-	end
-	if xm==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.tube_leftstub)
-		table.insert(outsel, pipeworks.tube_selectboxes[1])
-		table.insert(outimgs, noctrs[1])
-	else
-		table.insert(outimgs, plain[1])
-	end
-	if zp==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.tube_backstub)
-		table.insert(outsel, pipeworks.tube_selectboxes[6])
-		table.insert(outimgs, noctrs[6])
-	else
-		table.insert(outimgs, plain[6])
-	end
-	if zm==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.tube_frontstub)
-		table.insert(outsel, pipeworks.tube_selectboxes[5])
-		table.insert(outimgs, noctrs[5])
-	else
-		table.insert(outimgs, plain[5])
+	
+	for _, side in ipairs(connects) do
+		local v = stv[side+1]
+		pipeworks.add_node_box(outboxes, pipeworks.tube_boxes[v])
+		table.insert(outsel, pipeworks.tube_selectboxes[v])
+		outimgs[vti[v]] = noctrs[v]
 	end
 
-	local jx = xp+xm
-	local jy = yp+ym
-	local jz = zp+zm
-
-	if (jx+jy+jz) == 1 then
-		if xm == 1 then 
-			table.remove(outimgs, 3)
-			table.insert(outimgs, 3, ends[3])
-		end
-		if xp == 1 then 
-			table.remove(outimgs, 4)
-			table.insert(outimgs, 4, ends[4])
-		end
-		if ym == 1 then 
-			table.remove(outimgs, 1)
-			table.insert(outimgs, 1, ends[1])
-		end
-		if xp == 1 then 
-			table.remove(outimgs, 2)
-			table.insert(outimgs, 2, ends[2])
-		end
-		if zm == 1 then 
-			table.remove(outimgs, 5)
-			table.insert(outimgs, 5, ends[5])
-		end
-		if zp == 1 then 
-			table.remove(outimgs, 6)
-			table.insert(outimgs, 6, ends[6])
-		end
+	if #connects == 1 then
+		local v = stv[(connects[1]+3)%6+1]
+		outimgs[vti[v]] = ends[v]
 	end
-
-	local tname = xm..xp..ym..yp..zm..zp
 
 	local tgroups = {snappy=3, tube=1, not_in_creative_inventory=1}
-	local tubedesc = desc.." ("..tname..")... You hacker, you."
+	local tubedesc = desc.." "..dump(connects).."... You hacker, you."
 	local iimg=plain[1]
 	local wscale = {x=1,y=1,z=1}
 
-	if tname == "000000" then
+	if #connects == 0 then
 		tgroups = {snappy=3, tube=1}
 		tubedesc = desc
 		iimg=inv
@@ -141,7 +78,9 @@ for zp = 0, 1 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		stack_max = 99,
-		drop = name.."_000000",
+		basename = name,
+		style = style,
+		drop = name.."_"..dropname,
 		tubelike=1,
 		tube = {connect_sides={front=1, back=1, left=1, right=1, top=1, bottom=1}},
 		on_construct = function(pos)
@@ -164,6 +103,9 @@ for zp = 0, 1 do
 			end
 		end
 	}
+	if style == "6d" then
+		nodedef.paramtype2 = "facedir"
+	end
 	
 	if special==nil then special={} end
 
@@ -191,13 +133,85 @@ for zp = 0, 1 do
 	if string.find(name, "pipeworks:") then prefix = "" end
 
 	minetest.register_node(prefix..name.."_"..tname, nodedef)
+end
 
+pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, special, old_registration)
+
+if old_registration then
+	for xm = 0, 1 do
+	for xp = 0, 1 do
+	for ym = 0, 1 do
+	for yp = 0, 1 do
+	for zm = 0, 1 do
+	for zp = 0, 1 do
+		local connects = {}
+		if xm == 1 then
+			connects[#connects+1] = 0
+		end
+		if xp == 1 then
+			connects[#connects+1] = 3
+		end
+		if ym == 1 then
+			connects[#connects+1] = 1
+		end
+		if yp == 1 then
+			connects[#connects+1] = 4
+		end
+		if zm == 1 then
+			connects[#connects+1] = 2
+		end
+		if zp == 1 then
+			connects[#connects+1] = 5
+		end
+		local tname = xm..xp..ym..yp..zm..zp
+		register_one_tube(name, tname, "000000", desc, plain, noctrs, ends, short, inv, special, connects, "old")
+	end
+	end
+	end
+	end
+	end
+	end
+else
+	local cconnects = {{}, {0}, {0, 3}, {0, 1}, {0, 1, 2}, {0, 1, 3}, {0, 1, 2, 3}, {0, 1, 3, 4}, {0, 1, 2, 3, 4}, {0, 1, 2, 3, 4, 5}}
+	for index, connects in ipairs(cconnects) do
+		register_one_tube(name, tostring(index), "1", desc, plain, noctrs, ends, short, inv, special, connects, "6d")
+	end
+	if REGISTER_COMPATIBILITY then
+		local cname = name.."_compatibility"
+		minetest.register_node(cname, {
+			drawtype = "airlike",
+			style = "6d",
+			basename = name,
+			groups = {not_in_creative_inventory = 1, tube_to_update = 1}
+		})
+		table.insert(pipeworks.tubenodes,cname)
+		for xm = 0, 1 do
+		for xp = 0, 1 do
+		for ym = 0, 1 do
+		for yp = 0, 1 do
+		for zm = 0, 1 do
+		for zp = 0, 1 do
+			local tname = xm..xp..ym..yp..zm..zp
+			minetest.register_alias(name.."_"..tname, cname)
+		end
+		end
+		end
+		end
+		end
+		end
+	end
 end
 end
-end
-end
-end
-end
+
+if REGISTER_COMPATIBILITY then
+	minetest.register_abm({
+		nodenames = {"group:tube_to_update"},
+		interval = 1,
+		chance = 1,
+		action = function(pos, node, active_object_count, active_object_count_wider)
+			pipeworks.scan_for_tube_objects(pos)
+		end
+	})
 end
 
 -- now let's actually call that function to get the real work done!
@@ -321,7 +335,7 @@ if pipeworks.enable_mese_tube then
 			return (inv:is_empty("line1") and inv:is_empty("line2") and inv:is_empty("line3") and
 				inv:is_empty("line4") and inv:is_empty("line5") and inv:is_empty("line6"))
 		end
-	})
+	}, true)
 end
 
 if pipeworks.enable_detector_tube then
