@@ -6,10 +6,6 @@ minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
 -- now, a function to define the tubes
 
---local outboxes = {}
---local outsel = {}
---local outimgs = {}
-
 local REGISTER_COMPATIBILITY = true
 
 local vti = {4, 3, 2, 1, 6, 5}
