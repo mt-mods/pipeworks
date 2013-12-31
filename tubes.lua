@@ -170,6 +170,7 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 		end
 		end
 	else
+		-- 6d tubes: uses only 10 nodes instead of 64, but the textures must be rotated
 		local cconnects = {{}, {1}, {1, 2}, {1, 3}, {1, 3, 5}, {1, 2, 3}, {1, 2, 3, 5}, {1, 2, 3, 4}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5, 6}}
 		for index, connects in ipairs(cconnects) do
 			register_one_tube(name, tostring(index), "1", desc, plain, noctrs, ends, short, inv, special, connects, "6d")
@@ -332,7 +333,7 @@ if pipeworks.enable_mese_tube then
 					 return (inv:is_empty("line1") and inv:is_empty("line2") and inv:is_empty("line3") and
 							 inv:is_empty("line4") and inv:is_empty("line5") and inv:is_empty("line6"))
 				 end
-				}, true)
+				}, true) -- Must use old tubes, since the textures are rotated with 6d ones
 end
 
 if pipeworks.enable_detector_tube then
