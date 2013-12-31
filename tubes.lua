@@ -12,7 +12,6 @@ minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
 local REGISTER_COMPATIBILITY = true
 
-local stv = {1, 3, 5, 2, 4, 6}
 local vti = {4, 3, 2, 1, 6, 5}
 
 local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, ends, short, inv, special, connects, style)
@@ -24,47 +23,47 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		outimgs[vti[i]] = plain[i]
 	end
 	
-	for _, side in ipairs(connects) do
-		local v = stv[side+1]
+	for _, v in ipairs(connects) do
 		pipeworks.add_node_box(outboxes, pipeworks.tube_boxes[v])
 		table.insert(outsel, pipeworks.tube_selectboxes[v])
 		outimgs[vti[v]] = noctrs[v]
 	end
 
 	if #connects == 1 then
-		local v = stv[(connects[1]+3)%6+1]
+		local v = connects[1]
+		v = v-1 + 2*(v%2) -- Opposite side
 		outimgs[vti[v]] = ends[v]
 	end
 
-	local tgroups = {snappy=3, tube=1, not_in_creative_inventory=1}
+	local tgroups = {snappy = 3, tube = 1, not_in_creative_inventory = 1}
 	local tubedesc = desc.." "..dump(connects).."... You hacker, you."
-	local iimg=plain[1]
-	local wscale = {x=1,y=1,z=1}
+	local iimg = plain[1]
+	local wscale = {x = 1, y = 1, z = 1}
 
 	if #connects == 0 then
-		tgroups = {snappy=3, tube=1}
+		tgroups = {snappy = 3, tube = 1}
 		tubedesc = desc
 		iimg=inv
 		outimgs = {
-			short,short,
+			short, short,
 			ends[3],ends[4],
-			short,short
+			short, short
 		}
 		outboxes = { -24/64, -9/64, -9/64, 24/64, 9/64, 9/64 }
 		outsel = { -24/64, -10/64, -10/64, 24/64, 10/64, 10/64 }
-		wscale = {x=1,y=1,z=0.01}
+		wscale = {x = 1, y = 1, z = 0.01}
 	end
 	
-	table.insert(pipeworks.tubenodes,name.."_"..tname)
+	table.insert(pipeworks.tubenodes, name.."_"..tname)
 	
-	local nodedef={
+	local nodedef = {
 		description = tubedesc,
 		drawtype = "nodebox",
 		tiles = outimgs,
 		sunlight_propagates = true,
-		inventory_image=iimg,
-		wield_image=iimg,
-		wield_scale=wscale,
+		inventory_image = iimg,
+		wield_image = iimg,
+		wield_scale = wscale,
 		paramtype = "light",
 		selection_box = {
 	             	type = "fixed",
@@ -81,11 +80,11 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		basename = name,
 		style = style,
 		drop = name.."_"..dropname,
-		tubelike=1,
-		tube = {connect_sides={front=1, back=1, left=1, right=1, top=1, bottom=1}},
+		tubelike = 1,
+		tube = {connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1}},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
-			meta:set_int("tubelike",1)
+			meta:set_int("tubelike", 1)
 			if minetest.registered_nodes[name.."_"..tname].on_construct_ then
 				minetest.registered_nodes[name.."_"..tname].on_construct_(pos)
 			end
@@ -107,29 +106,29 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		nodedef.paramtype2 = "facedir"
 	end
 	
-	if special==nil then special={} end
+	if special == nil then special = {} end
 
-	for key,value in pairs(special) do
-		if key=="on_construct" or key=="after_dig_node" or key=="after_place_node" then
-			nodedef[key.."_"]=value
-		elseif key=="groups" then
-			for group,val in pairs(value) do
-				nodedef.groups[group]=val
+	for key, value in pairs(special) do
+		if key == "on_construct" or key == "after_dig_node" or key == "after_place_node" then
+			nodedef[key.."_"] = value
+		elseif key == "groups" then
+			for group, val in pairs(value) do
+				nodedef.groups[group] = val
 			end
-		elseif key=="tube" then
-			for key,val in pairs(value) do
-				nodedef.tube[key]=val
+		elseif key == "tube" then
+			for key, val in pairs(value) do
+				nodedef.tube[key] = val
 			end
-		elseif type(value)=="table" then
-			nodedef[key]=pipeworks.replace_name(value,"#id",tname)
-		elseif type(value)=="string" then
-			nodedef[key]=string.gsub(value,"#id",tname)
+		elseif type(value) == "table" then
+			nodedef[key] = pipeworks.replace_name(value, "#id", tname)
+		elseif type(value) == "string" then
+			nodedef[key] = string.gsub(value, "#id", tname)
 		else
-			nodedef[key]=value
+			nodedef[key] = value
 		end
 	end
 
-	local prefix=":"
+	local prefix = ":"
 	if string.find(name, "pipeworks:") then prefix = "" end
 
 	minetest.register_node(prefix..name.."_"..tname, nodedef)
@@ -145,22 +144,22 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 		for zp = 0, 1 do
 			local connects = {}
 			if xm == 1 then
-				connects[#connects+1] = 0
+				connects[#connects+1] = 1
 			end
 			if xp == 1 then
-				connects[#connects+1] = 3
+				connects[#connects+1] = 2
 			end
 			if ym == 1 then
-				connects[#connects+1] = 1
+				connects[#connects+1] = 3
 			end
 			if yp == 1 then
 				connects[#connects+1] = 4
 			end
 			if zm == 1 then
-				connects[#connects+1] = 2
+				connects[#connects+1] = 5
 			end
 			if zp == 1 then
-				connects[#connects+1] = 5
+				connects[#connects+1] = 6
 			end
 			local tname = xm..xp..ym..yp..zm..zp
 			register_one_tube(name, tname, "000000", desc, plain, noctrs, ends, short, inv, special, connects, "old")
@@ -171,7 +170,7 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 		end
 		end
 	else
-		local cconnects = {{}, {0}, {0, 3}, {0, 1}, {0, 1, 2}, {0, 1, 3}, {0, 1, 2, 3}, {0, 1, 3, 4}, {0, 1, 2, 3, 4}, {0, 1, 2, 3, 4, 5}}
+		local cconnects = {{}, {1}, {1, 2}, {1, 3}, {1, 3, 5}, {1, 2, 3}, {1, 2, 3, 5}, {1, 2, 3, 4}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5, 6}}
 		for index, connects in ipairs(cconnects) do
 			register_one_tube(name, tostring(index), "1", desc, plain, noctrs, ends, short, inv, special, connects, "6d")
 		end
@@ -441,8 +440,17 @@ end
 
 if pipeworks.enable_crossing_tube then
 	-- FIXME: The textures are not the correct ones
-	pipeworks.register_tube("pipeworks:crossing_tube", "Crossing tube segment", accelerator_plain_textures,
-				accelerator_noctr_textures, accelerator_end_textures, accelerator_short_texture, accelerator_inv_texture,
+	local crossing_noctr_textures = {"pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png",
+					    "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png"}
+	local crossing_plain_textures = {"pipeworks_accelerator_tube_plain.png" ,"pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png",
+					    "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png"}
+	local crossing_end_textures = {"pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png",
+					  "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png"}
+	local crossing_short_texture = "pipeworks_accelerator_tube_short.png"
+	local crossing_inv_texture = "pipeworks_accelerator_tube_inv.png"
+
+	pipeworks.register_tube("pipeworks:crossing_tube", "Crossing tube segment", crossing_plain_textures,
+				crossing_noctr_textures, crossing_end_textures, crossing_short_texture, crossing_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 return {velocity}
 					end}
