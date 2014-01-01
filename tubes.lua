@@ -205,7 +205,11 @@ if REGISTER_COMPATIBILITY then
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			pipeworks.scan_for_tube_objects(pos)
+			local minp = {x = pos.x-1, y = pos.y-1, z = pos.z-1}
+			local maxp = {x = pos.x+1, y = pos.y+1, z = pos.z+1}
+			if table.getn(minetest.find_nodes_in_area(minp, maxp, "ignore")) == 0 then
+				pipeworks.scan_for_tube_objects(pos)
+			end
 		end
 	})
 end
