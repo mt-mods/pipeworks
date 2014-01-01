@@ -179,6 +179,7 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 						       basename = name,
 						       groups = {not_in_creative_inventory = 1, tube_to_update = 1},
 						       tube = {connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1}},
+							   drop = name.."_1",
 			})
 			table.insert(pipeworks.tubenodes,cname)
 			for xm = 0, 1 do

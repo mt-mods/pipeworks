@@ -128,10 +128,12 @@ if REGISTER_COMPATIBILITY then
 	minetest.register_node(cempty, {
 		drawtype = "airlike",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
+		drop = "pipeworks:pipe_1_empty",
 	})
 	minetest.register_node(cloaded, {
 		drawtype = "airlike",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
+		drop = "pipeworks:pipe_1_empty",
 	})
 	for xm = 0, 1 do
 	for xp = 0, 1 do
