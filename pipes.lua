@@ -1,5 +1,7 @@
 -- This file supplies the steel pipes
 
+local REGISTER_COMPATIBILITY = true
+
 local pipes_empty_nodenames = {}
 local pipes_full_nodenames = {}
 
@@ -120,8 +122,8 @@ end
 
 
 if REGISTER_COMPATIBILITY then
-	local cempty = "pipeworks:tube_compatibility_empty"
-	local cloaded = "pipeworks:tube_compatibility_loaded"
+	local cempty = "pipeworks:pipe_compatibility_empty"
+	local cloaded = "pipeworks:pipe_compatibility_loaded"
 	minetest.register_node(cempty, {
 		drawtype = "airlike",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
@@ -137,8 +139,8 @@ if REGISTER_COMPATIBILITY then
 	for zm = 0, 1 do
 	for zp = 0, 1 do
 		local pname = xm..xp..ym..yp..zm..zp
-		minetest.register_alias("pipeworks_"..pname.."_empty", cempty)
-		minetest.register_alias("pipeworks_"..pname.."_loaded", cloaded)
+		minetest.register_alias("pipeworks:pipe_"..pname.."_empty", cempty)
+		minetest.register_alias("pipeworks:pipe_"..pname.."_loaded", cloaded)
 	end
 	end
 	end
