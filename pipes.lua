@@ -65,6 +65,7 @@ for index, connects in ipairs(cconnects) do
 		tiles = pipeworks.fix_image_names(outimgs, "_empty"),
 		sunlight_propagates = true,
 		inventory_image = image,
+		wield_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
@@ -127,13 +128,27 @@ if REGISTER_COMPATIBILITY then
 	local cloaded = "pipeworks:pipe_compatibility_loaded"
 	minetest.register_node(cempty, {
 		drawtype = "airlike",
+		sunlight_propagates = true,
+		paramtype = "light",
+		inventory_image = "pipeworks_pipe_inv.png",
+		wield_image = "pipeworks_pipe_inv.png",
+		description = "Pipe Segment (legacy)",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
 		drop = "pipeworks:pipe_1_empty",
+		after_place_node = function(pos)
+			pipeworks.scan_for_pipe_objects(pos)
+		end,
 	})
 	minetest.register_node(cloaded, {
 		drawtype = "airlike",
+		sunlight_propagates = true,
+		paramtype = "light",
+		inventory_image = "pipeworks_pipe_inv.png",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
 		drop = "pipeworks:pipe_1_empty",
+		after_place_node = function(pos)
+			pipeworks.scan_for_pipe_objects(pos)
+		end,
 	})
 	for xm = 0, 1 do
 	for xp = 0, 1 do
