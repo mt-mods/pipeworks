@@ -2,133 +2,69 @@
 
 local pipes_empty_nodenames = {}
 local pipes_full_nodenames = {}
-local outboxes = {}
-local outsel = {}
-local outimgs = {}
 
-for xm = 0, 1 do
-for xp = 0, 1 do
-for ym = 0, 1 do
-for yp = 0, 1 do
-for zm = 0, 1 do
-for zp = 0, 1 do
-
-	outboxes = {}
-	outsel = {}
-	outimgs = {}
-
-	if yp==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.pipe_topstub)
-		table.insert(outsel, pipeworks.pipe_selectboxes[4])
-		table.insert(outimgs, "pipeworks_pipe_end.png")
-	else
-		table.insert(outimgs, "pipeworks_plain.png")
+local vti = {4, 3, 2, 1, 6, 5}
+local cconnects = {{}, {1}, {1, 2}, {1, 3}, {1, 3, 5}, {1, 2, 3}, {1, 2, 3, 5}, {1, 2, 3, 4}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5, 6}}
+for index, connects in ipairs(cconnects) do
+	local outboxes = {}
+	local outsel = {}
+	local outimgs = {}
+	
+	for i = 1, 6 do
+		outimgs[vti[i]] = "pipeworks_plain.png"
 	end
-	if ym==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.pipe_bottomstub)
-		table.insert(outsel, pipeworks.pipe_selectboxes[3])
-		table.insert(outimgs, "pipeworks_pipe_end.png")
-	else
-		table.insert(outimgs, "pipeworks_plain.png")
-	end
-	if xp==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.pipe_rightstub)
-		table.insert(outsel, pipeworks.pipe_selectboxes[2])
-		table.insert(outimgs, "pipeworks_pipe_end.png")
-	else
-		table.insert(outimgs, "pipeworks_plain.png")
-	end
-	if xm==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.pipe_leftstub)
-		table.insert(outsel, pipeworks.pipe_selectboxes[1])
-		table.insert(outimgs, "pipeworks_pipe_end.png")
-	else
-		table.insert(outimgs, "pipeworks_plain.png")
-	end
-	if zp==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.pipe_backstub)
-		table.insert(outsel, pipeworks.pipe_selectboxes[6])
-		table.insert(outimgs, "pipeworks_pipe_end.png")
-	else
-		table.insert(outimgs, "pipeworks_plain.png")
-	end
-	if zm==1 then
-		pipeworks.add_node_box(outboxes, pipeworks.pipe_frontstub)
-		table.insert(outsel, pipeworks.pipe_selectboxes[5])
-		table.insert(outimgs, "pipeworks_pipe_end.png")
-	else
-		table.insert(outimgs, "pipeworks_plain.png")
+	
+	local jx = 0
+	local jy = 0
+	local jz = 0
+	for _, v in ipairs(connects) do
+		if v == 1 or v == 2 then
+			jx = jx + 1
+		elseif v == 3 or v == 4 then
+			jy = jy + 1
+		else
+			jz = jz + 1
+		end
+		pipeworks.add_node_box(outboxes, pipeworks.pipe_boxes[v])
+		table.insert(outsel, pipeworks.pipe_selectboxes[v])
+		outimgs[vti[v]] = "pipeworks_pipe_end.png"
 	end
 
-	local jx = xp+xm
-	local jy = yp+ym
-	local jz = zp+zm
-
-	if (jx+jy+jz) == 1 then
-		if xm == 1 then 
-			table.remove(outimgs, 3)
-			table.insert(outimgs, 3, "^pipeworks_plain.png")
-		end
-		if xp == 1 then 
-			table.remove(outimgs, 4)
-			table.insert(outimgs, 4, "^pipeworks_plain.png")
-		end
-		if ym == 1 then 
-			table.remove(outimgs, 1)
-			table.insert(outimgs, 1, "^pipeworks_plain.png")
-		end
-		if xp == 1 then 
-			table.remove(outimgs, 2)
-			table.insert(outimgs, 2, "^pipeworks_plain.png")
-		end
-		if zm == 1 then 
-			table.remove(outimgs, 5)
-			table.insert(outimgs, 5, "^pipeworks_plain.png")
-		end
-		if zp == 1 then 
-			table.remove(outimgs, 6)
-			table.insert(outimgs, 6, "^pipeworks_plain.png")
-		end
+	if #connects == 1 then
+		local v = connects[1]
+		v = v-1 + 2*(v%2) -- Opposite side
+		outimgs[vti[v]] = "^pipeworks_plain.png"
 	end
 
-	if jx+jy+jz >= 2 then
+	if #connects >= 2 then
 		pipeworks.add_node_box(outboxes, pipeworks.pipe_bendsphere)
 	end
-
-	if (jx==2 and jy~=2 and jz~=2) then
-		table.remove(outimgs, 5)
-		table.remove(outimgs, 5)
-		table.insert(outimgs, 5, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
-		table.insert(outimgs, 5, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
+	
+	if jx == 2 and jy ~= 2 and jz ~= 2 then
+		outimgs[5] = pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png"
+		outimgs[6] = outimgs[5]
 	end
-
-	if (jx~=2 and jy~=2 and jz==2) or (jx~=2 and jy==2 and jz~=2) then
-		table.remove(outimgs, 3)
-		table.remove(outimgs, 3)
-		table.insert(outimgs, 3, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
-		table.insert(outimgs, 3, pipeworks.liquid_texture.."^pipeworks_windowed_XXXXX.png")
-	end
-
-	local pname = xm..xp..ym..yp..zm..zp
-	local pgroups = ""
-
+	
+	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1}
+	local pipedesc = "Pipe segement".." "..dump(connects).."... You hacker, you."
 	local image = nil
-	local pipedesc = "Pipe segment"
-	local pgroups = {snappy=3, pipe=1}
 
-	if pname ~= "110000" then
-		pgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
-		pipedesc = "Pipe segment (empty, "..pname..")... You hacker, you."
+	if #connects == 0 then
+		pgroups = {snappy = 3, tube = 1}
+		pipedesc = "Pipe segment"
 		image = "pipeworks_plain.png"
 	end
-
-	minetest.register_node("pipeworks:pipe_"..pname.."_empty", {
+	
+	--table.insert(pipeworks.tubenodes, name.."_"..tname)
+	
+	minetest.register_node("pipeworks:pipe_"..index.."_empty", {
 		description = pipedesc,
 		drawtype = "nodebox",
 		tiles = pipeworks.fix_image_names(outimgs, "_empty"),
+		sunlight_propagates = true,
 		inventory_image = image,
-		sunlight_propagates=true,
 		paramtype = "light",
+		paramtype2 = "facedir",
 		selection_box = {
 	             	type = "fixed",
 			fixed = outsel
@@ -140,22 +76,23 @@ for zp = 0, 1 do
 		groups = pgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		drop = "pipeworks:pipe_110000_empty",
+		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
-		end,
+		end
 	})
-
-	minetest.register_node("pipeworks:pipe_"..pname.."_loaded", {
-		description = "Pipe segment (loaded, "..pname..")... You hacker, you.",
+	
+	minetest.register_node("pipeworks:pipe_"..index.."_loaded", {
+		description = pipedesc,
 		drawtype = "nodebox",
 		tiles = pipeworks.fix_image_names(outimgs, "_loaded"),
-		inventory_image = image,
 		sunlight_propagates = true,
+		inventory_image = image,
 		paramtype = "light",
+		paramtype2 = "facedir",
 		selection_box = {
 	             	type = "fixed",
 			fixed = outsel
@@ -164,10 +101,10 @@ for zp = 0, 1 do
 			type = "fixed",
 			fixed = outboxes
 		},
-		groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+		groups = pgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		drop = "pipeworks:pipe_110000_empty",
+		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
@@ -175,13 +112,47 @@ for zp = 0, 1 do
 			pipeworks.scan_for_pipe_objects(pos)
 		end
 	})
-	table.insert(pipes_empty_nodenames,"pipeworks:pipe_"..pname.."_empty") -- for the abms
-	table.insert(pipes_full_nodenames,"pipeworks:pipe_"..pname.."_loaded") -- for bacon
+	
+	table.insert(pipes_empty_nodenames, "pipeworks:pipe_"..index.."_empty")
+	table.insert(pipes_empty_nodenames, "pipeworks:pipe_"..index.."_loaded")
 end
-end
-end
-end
-end
+
+
+
+if REGISTER_COMPATIBILITY then
+	local cempty = "pipeworks:tube_compatibility_empty"
+	local cloaded = "pipeworks:tube_compatibility_loaded"
+	minetest.register_node(cempty, {
+		drawtype = "airlike",
+		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
+	})
+	minetest.register_node(cloaded, {
+		drawtype = "airlike",
+		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
+	})
+	for xm = 0, 1 do
+	for xp = 0, 1 do
+	for ym = 0, 1 do
+	for yp = 0, 1 do
+	for zm = 0, 1 do
+	for zp = 0, 1 do
+		local pname = xm..xp..ym..yp..zm..zp
+		minetest.register_alias("pipeworks_"..pname.."_empty", cempty)
+		minetest.register_alias("pipeworks_"..pname.."_loaded", cloaded)
+	end
+	end
+	end
+	end
+	end
+	end
+	minetest.register_abm({
+		nodenames = {"group:pipe_to_update"},
+		interval = 1,
+		chance = 1,
+		action = function(pos, node, active_object_count, active_object_count_wider)
+			pipeworks.scan_for_pipe_objects(pos)
+		end
+	})
 end
 
 table.insert(pipes_empty_nodenames,"pipeworks:valve_on_empty")

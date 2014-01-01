@@ -81,6 +81,8 @@ pipeworks.pipe_backstub = {
 	{ -3/64, -8/64, 30/64, 3/64, 8/64, 32/64 }
 } 
 
+pipeworks.pipe_boxes = {pipeworks.pipe_leftstub, pipeworks.pipe_rightstub, pipeworks.pipe_bottomstub, pipeworks.pipe_topstub, pipeworks.pipe_frontstub, pipeworks.pipe_backstub}
+
 pipeworks.pipe_selectboxes = {
 	{ -32/64,  -8/64,  -8/64,  8/64,  8/64,  8/64 },
 	{ -8/64 ,  -8/64,  -8/64, 32/64,  8/64,  8/64 },
