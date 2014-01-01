@@ -118,7 +118,7 @@ for index, connects in ipairs(cconnects) do
 	})
 	
 	table.insert(pipes_empty_nodenames, "pipeworks:pipe_"..index.."_empty")
-	table.insert(pipes_empty_nodenames, "pipeworks:pipe_"..index.."_loaded")
+	table.insert(pipes_full_nodenames,  "pipeworks:pipe_"..index.."_loaded")
 end
 
 
