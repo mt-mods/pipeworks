@@ -54,7 +54,7 @@ for index, connects in ipairs(cconnects) do
 	if #connects == 0 then
 		pgroups = {snappy = 3, tube = 1}
 		pipedesc = "Pipe segment"
-		image = "pipeworks_plain.png"
+		image = "pipeworks_pipe_inv.png"
 	end
 	
 	--table.insert(pipeworks.tubenodes, name.."_"..tname)
@@ -87,12 +87,13 @@ for index, connects in ipairs(cconnects) do
 		end
 	})
 	
+	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1}
+
 	minetest.register_node("pipeworks:pipe_"..index.."_loaded", {
 		description = pipedesc,
 		drawtype = "nodebox",
 		tiles = pipeworks.fix_image_names(outimgs, "_loaded"),
 		sunlight_propagates = true,
-		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
