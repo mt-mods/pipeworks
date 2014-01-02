@@ -357,15 +357,17 @@ if pipeworks.enable_detector_tube then
 				 mesecons = {receptor = {state = "on",
 							 rules = pipeworks.mesecons_rules}},
 				 item_exit = function(pos)
-					 local meta = minetest.get_meta(pos)
-					 local nitems = meta:get_int("nitems")-1
-					 local name = minetest.get_node(pos).name
-					 if nitems == 0 then
-						 minetest.set_node(pos,{name = string.gsub(name, "on", "off")})
+					local meta = minetest.get_meta(pos)
+					local nitems = meta:get_int("nitems")-1
+					local node = minetest.get_node(pos)
+					local name = node.name
+					local fdir = node.param2
+					if nitems == 0 then
+						 minetest.set_node(pos, {name = string.gsub(name, "on", "off"), param2 = fdir})
 						 mesecon:receptor_off(pos, pipeworks.mesecons_rules)
-					 else
+					else
 						 meta:set_int("nitems", nitems)
-					 end
+					end
 				 end,
 				 on_construct = function(pos)
 					 local meta = minetest.get_meta(pos)
@@ -376,10 +378,12 @@ if pipeworks.enable_detector_tube then
 	pipeworks.register_tube("pipeworks:detector_tube_off", "Detector tube segment", detector_plain_textures, noctr_textures,
 				end_textures, short_texture, detector_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
-						 local name = minetest.get_node(pos).name
-						 minetest.set_node(pos,{name = string.gsub(name, "off", "on")})
-						 mesecon:receptor_on(pos, pipeworks.mesecons_rules)
-						 return pipeworks.notvel(pipeworks.meseadjlist, velocity)
+						local node = minetest.get_node(pos)
+						local name = node.name
+						local fdir = node.param2
+						minetest.set_node(pos,{name = string.gsub(name, "off", "on"), param2 = fdir})
+						mesecon:receptor_on(pos, pipeworks.mesecons_rules)
+						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
 				 groups = {mesecon = 2},
 				 mesecons = {receptor = {state = "off",
