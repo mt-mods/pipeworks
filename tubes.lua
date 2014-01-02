@@ -179,13 +179,13 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 				basename = name,
 				inventory_image = inv,
 				wield_image = inv,
-				paramtype = light,
+				paramtype = "light",
 				sunlight_propagates = true,
 				description = "Pneumatic tube segment (legacy)",
 				after_place_node = function(pos)
 					pipeworks.scan_for_tube_objects(pos)
-					if minetest.registered_nodes[name.."_compatibility"].after_place_node_ then
-						minetest.registered_nodes[name.."_compatibility"].after_place_node_(pos)
+					if minetest.registered_nodes[name.."_1"].after_place_node_ then
+						minetest.registered_nodes[name.."_1"].after_place_node_(pos)
 					end
 				end,
 				groups = {not_in_creative_inventory = 1, tube_to_update = 1},
