@@ -1,7 +1,7 @@
 -- Crafting recipes for pipes
 
 minetest.register_craft( {
-        output = "pipeworks:pipe_110000_empty 12",
+        output = "pipeworks:pipe_1_empty 12",
         recipe = {
                 { "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
                 { "", "", "" },
@@ -12,16 +12,16 @@ minetest.register_craft( {
 minetest.register_craft( {
         output = "pipeworks:spigot 3",
         recipe = {
-                { "pipeworks:pipe_110000_empty", "" },
-                { "", "pipeworks:pipe_110000_empty" },
+                { "pipeworks:pipe_1_empty", "" },
+                { "", "pipeworks:pipe_1_empty" },
         },
 })
 
 minetest.register_craft( {
-	output = "pipeworks:entry_panel 2",
+	output = "pipeworks:entry_panel_empty 2",
 	recipe = {
 		{ "", "default:steel_ingot", "" },
-	        { "", "pipeworks:pipe_110000_empty", "" },
+		{ "", "pipeworks:pipe_1_empty", "" },
 		{ "", "default:steel_ingot", "" },
 	},
 })
@@ -67,15 +67,15 @@ minetest.register_craft( {
 minetest.register_craft( {
         output = "pipeworks:flow_sensor_empty 2",
         recipe = {
-                { "pipeworks:pipe_110000_empty", "mesecons:mesecon", "pipeworks:pipe_110000_empty" },
+                { "pipeworks:pipe_1_empty", "mesecons:mesecon", "pipeworks:pipe_1_empty" },
         },
 })
 
 minetest.register_craft( {
         output = "pipeworks:fountainhead 2",
         recipe = {
-                { "pipeworks:pipe_110000_empty" },
-				{ "pipeworks:pipe_110000_empty" }
+                { "pipeworks:pipe_1_empty" },
+				{ "pipeworks:pipe_1_empty" }
         },
 })
 
@@ -189,7 +189,7 @@ minetest.register_craft( {
 
 
 minetest.register_craft( {
-	output = "pipeworks:tube 6",
+	output = "pipeworks:tube_1 6",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "", "", "" },
@@ -198,7 +198,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:mese_tube_000000 2",
+	output = "pipeworks:mese_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "", "default:mese_crystal", "" },
@@ -210,7 +210,7 @@ minetest.register_craft( {
 	type = "shapeless",
 	output = "pipeworks:mese_tube_000000",
 	recipe = {
-	    "pipeworks:tube_000000",
+	    "pipeworks:tube_1",
 		"default:mese_crystal_fragment",
 		"default:mese_crystal_fragment",
 		"default:mese_crystal_fragment",
@@ -219,7 +219,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:conductor_tube_off_000000 6",
+	output = "pipeworks:conductor_tube_off_1 6",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
@@ -228,7 +228,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:detector_tube_off_000000 2",
+	output = "pipeworks:detector_tube_off_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
@@ -237,7 +237,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:accelerator_tube_000000 2",
+	output = "pipeworks:accelerator_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
@@ -246,7 +246,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:teleport_tube_000000 2",
+	output = "pipeworks:teleport_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "default:desert_stone", "default:mese_block", "default:desert_stone" },
@@ -255,7 +255,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:sand_tube_000000 2",
+	output = "pipeworks:sand_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "default:sand", "default:sand", "default:sand" },
@@ -264,7 +264,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:mese_sand_tube_000000 2",
+	output = "pipeworks:mese_sand_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
 	        { "default:sand", "default:mese_crystal", "default:sand" },
@@ -274,9 +274,9 @@ minetest.register_craft( {
 
 minetest.register_craft( {
 	type = "shapeless",
-	output = "pipeworks:mese_sand_tube_000000",
+	output = "pipeworks:mese_sand_tube_1",
 	recipe = {
-  "pipeworks:sand_tube_000000",
+  "pipeworks:sand_tube_1",
 		"default:mese_crystal_fragment",
 		"default:mese_crystal_fragment",
 		"default:mese_crystal_fragment",
