@@ -467,3 +467,26 @@ minetest.register_entity("pipeworks:tubed_item", {
 end
 })
 
+if minetest.get_modpath("mesecons_mvps") ~= nil then
+	mesecon:register_mvps_unmov("pipeworks:tubed_item")
+	mesecon:register_on_mvps_move(function(moved_nodes)
+		local objects_to_move = {}
+		for _, n in ipairs(moved_nodes) do
+			local objects = minetest.get_objects_inside_radius(n.oldpos, 1)
+			for _, obj in ipairs(objects) do
+				local entity = obj:get_luaentity()
+				if entity and entity.name == "pipeworks:tubed_item" then
+					objects_to_move[#objects_to_move+1] = obj
+				end
+			end
+		end
+		if #objects_to_move > 0 then
+			local dir = vector.subtract(moved_nodes[1].pos, moved_nodes[1].oldpos)
+			for _, obj in ipairs(objects_to_move) do
+				local entity = obj:get_luaentity()
+				obj:setpos(vector.add(obj:getpos(), dir))
+				entity.start_pos = vector.add(entity.start_pos, dir)
+			end
+		end
+	end)
+end
