@@ -100,7 +100,7 @@ local function tube_autoroute(pos)
 		if is_tube(node.name) then
 			active[i] = 1
 		-- handle new style connectors
-		elseif idef.tube and idef.tube.connect_sides then
+		elseif idef and idef.tube and idef.tube.connect_sides then
 			local dir = adjustments[i]
 			if idef.tube.connect_sides[nodeside(node, {x=-dir.x, y=-dir.y, z=-dir.z})] then active[i] = 1 end
 		end
