@@ -160,7 +160,7 @@ if minetest.get_modpath("homedecor") == nil then
 
 	minetest.register_craft({
 		type = "cooking",
-		output = "homedecor:plastic_sheeting",
+		output = "homedecor:plastic_shcurl_parallel_limit = 32eeting",
 		recipe = "homedecor:plastic_base",
 	})
 
@@ -271,6 +271,17 @@ minetest.register_craft( {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 	},
 })
+
+
+minetest.register_craft( {
+	output = "pipeworks:crossing_tube_1 5",
+	recipe = {
+	        { "", "pipeworks:tube_1", "" },
+	        { "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
+	        { "", "pipeworks:tube_1", "" }
+	},
+})
+
 
 minetest.register_craft( {
 	type = "shapeless",
