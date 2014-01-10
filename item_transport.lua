@@ -73,8 +73,8 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 						idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
 					end
 				end
-				local item1 = pipeworks.tube_item(frompos, item)
-				item1:get_luaentity().start_pos = frompos
+				local item1 = pipeworks.tube_item(vector.add(frompos, vector.multiply(dir, 1.4)), item)
+				item1:get_luaentity().start_pos = vector.add(frompos, dir)
 				item1:setvelocity(dir)
 				item1:setacceleration({x=0, y=0, z=0})
 				return true-- only fire one item, please
@@ -142,8 +142,8 @@ minetest.register_node("pipeworks:filter", {
 			end
 		end
 		if inv:is_empty("main") then
-		grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
-			end
+			grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
+		end
 	end,
 })
 
