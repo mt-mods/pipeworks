@@ -160,7 +160,7 @@ if minetest.get_modpath("homedecor") == nil then
 
 	minetest.register_craft({
 		type = "cooking",
-		output = "homedecor:plastic_shcurl_parallel_limit = 32eeting",
+		output = "homedecor:plastic_sheeting",
 		recipe = "homedecor:plastic_base",
 	})
 
