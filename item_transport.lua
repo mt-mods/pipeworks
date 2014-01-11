@@ -38,7 +38,7 @@ function pipeworks.tube_item(pos, item)
 end
 
 -- adding two tube functions
--- can_remove(pos,node,stack,dir) returns true if an item can be removed from that stack on that node
+-- can_remove(pos,node,stack,dir) returns the maximum number of items of that stack that can be removed
 -- remove_items(pos,node,stack,dir,count) removes count items and returns them
 -- both optional w/ sensible defaults and fallback to normal allow_* function
 -- XXX: possibly change insert_object to insert_item
@@ -48,18 +48,18 @@ end
 local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,all)
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
 		if (sname == nil and stack:get_name() ~= "") or stack:get_name() == sname then
-			local doRemove = true
+			local doRemove = stack:get_count()
 			if tube.can_remove then
 				doRemove = tube.can_remove(frompos, fromnode, stack, dir)
 			elseif idef.allow_metadata_inventory_take then
 				doRemove = idef.allow_metadata_inventory_take(frompos,"main",spos, stack, fakePlayer)
 			end
 			-- stupid lack of continue statements grumble
-			if doRemove then
+			if doRemove > 0 then
 				local item
 				local count
 				if all then
-					count = stack:get_count()
+					count = math.min(stack:get_count(), doRemove)
 				else
 					count = 1
 				end
