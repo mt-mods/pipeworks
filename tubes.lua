@@ -182,6 +182,10 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 				paramtype = "light",
 				sunlight_propagates = true,
 				description = "Pneumatic tube segment (legacy)",
+				on_construct = function(pos)
+					local meta = minetest.get_meta(pos)
+					meta:set_int("tubelike", 1)
+				end,
 				after_place_node = function(pos)
 					pipeworks.scan_for_tube_objects(pos)
 					if minetest.registered_nodes[name.."_1"].after_place_node_ then
