@@ -79,38 +79,8 @@ minetest.register_craft( {
         },
 })
 
--- Various ancillary tube devices
 
-minetest.register_craft( {
-	output = "pipeworks:filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "default:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:mese_filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "default:stick", "default:mese", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:autocrafter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
-	        { "homedecor:plastic_sheeting", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
-	},
-})
-
-
--- The tubes themselves
-
+-- Crafting recipes for pneumatic tubes
 
 -- If homedecor is not installed, we need to register its crafting chain for
 -- plastic sheeting so that pipeworks remains compatible with it.
@@ -130,31 +100,13 @@ if minetest.get_modpath("homedecor") == nil then
 
 	minetest.register_craft({
 		type = "shapeless",
-		output = 'homedecor:plastic_base 6',
-		recipe = { "default:junglegrass",
-			   "default:junglegrass",
-			   "default:junglegrass"
-		}
-	})
-
-	minetest.register_craft({
-		type = "shapeless",
-		output = 'homedecor:plastic_base 3',
-		recipe = { "default:dry_shrub",
-			   "default:dry_shrub",
-			   "default:dry_shrub"
-		},
-	})
-
-	minetest.register_craft({
-		type = "shapeless",
 		output = 'homedecor:plastic_base 4',
 		recipe = { "default:leaves",
-			   "default:leaves",
-			   "default:leaves",
-			   "default:leaves",
-			   "default:leaves",
-			   "default:leaves"
+			   "group:leaves",
+			   "group:leaves",
+			   "group:leaves",
+			   "group:leaves",
+			   "group:leaves"
 		}
 	})
 
@@ -294,4 +246,34 @@ minetest.register_craft( {
 		"default:mese_crystal_fragment"
 	},
 })
+
+-- Various ancillary tube devices
+
+minetest.register_craft( {
+	output = "pipeworks:filter 2",
+	recipe = {
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
+	        { "default:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:mese_filter 2",
+	recipe = {
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
+	        { "default:stick", "default:mese", "homedecor:plastic_sheeting" },
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:autocrafter 2",
+	recipe = {
+	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
+	        { "homedecor:plastic_sheeting", "default:steel_ingot", "homedecor:plastic_sheeting" },
+	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
+	},
+})
+
 
