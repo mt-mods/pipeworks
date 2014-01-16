@@ -216,6 +216,22 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
+	output = "pipeworks:sand_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:desert_sand", "default:desert_sand", "default:desert_sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:sand_tube_1",
+	recipe = {
+	        { "default:desert_sand", "pipeworks:tube_1", "default:desert_sand" },
+	},
+})
+
+minetest.register_craft( {
 	output = "pipeworks:mese_sand_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
@@ -224,6 +240,14 @@ minetest.register_craft( {
 	},
 })
 
+minetest.register_craft( {
+	output = "pipeworks:mese_sand_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:desert_sand", "default:mese_crystal", "default:desert_sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
 
 minetest.register_craft( {
 	output = "pipeworks:crossing_tube_1 5",
