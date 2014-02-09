@@ -131,7 +131,7 @@ local function tube_autoroute(pos)
 end
 
 function pipeworks.scan_for_tube_objects(pos)
-	if pos == nil then return end
+	if not pos or not pos.x or not pos.y or not pos.z then return end
 	tube_autoroute({ x=pos.x-1, y=pos.y  , z=pos.z   })
 	tube_autoroute({ x=pos.x+1, y=pos.y  , z=pos.z   })
 	tube_autoroute({ x=pos.x  , y=pos.y-1, z=pos.z   })
