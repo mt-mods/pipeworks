@@ -130,19 +130,29 @@ minetest.register_node("pipeworks:filter", {
 		if not (tube and tube.input_inventory) then
 			return
 		end
+		if tube.before_filter then
+			tube.before_filter(frompos)
+		end
 		local frommeta = minetest.get_meta(frompos)
 		local frominvname = tube.input_inventory
 		local frominv = frommeta:get_inventory()
 		local sname
+		local fired = false
 		for _,filter in ipairs(inv:get_list("main")) do
 			sname = filter:get_name()
 			if sname ~= "" then
 				-- XXX: that's a lot of parameters
-				if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir) then return end
+				if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir) then
+					fired = true
+					break
+				end
 			end
 		end
-		if inv:is_empty("main") then
+		if not fired and inv:is_empty("main") then
 			grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
+		end
+		if tube.after_filter then
+			tube.after_filter(frompos)
 		end
 	end,
 })
@@ -208,7 +218,7 @@ minetest.register_node("pipeworks:mese_filter", {
 			end
 		end
 		if inv:is_empty("main") then
-		        grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true)
+			grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true)
 		end
 	end,
 })
