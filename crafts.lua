@@ -59,7 +59,7 @@ minetest.register_craft( {
         output = "pipeworks:grating 2",
         recipe = {
                 { "default:steel_ingot", "", "default:steel_ingot" },
-                { "", "default:steel_ingot", "" },
+                { "", "pipeworks:pipe_1_empty", "" },
                 { "default:steel_ingot", "", "default:steel_ingot" }
         },
 })
