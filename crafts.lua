@@ -38,7 +38,7 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-        output = "pipeworks:valve_off 2",
+        output = "pipeworks:valve_off_empty 2",
         recipe = {
                 { "", "default:stick", "" },
                 { "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
