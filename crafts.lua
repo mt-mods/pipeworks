@@ -101,7 +101,7 @@ if minetest.get_modpath("homedecor") == nil then
 	minetest.register_craft({
 		type = "shapeless",
 		output = 'homedecor:plastic_base 4',
-		recipe = { "default:leaves",
+		recipe = { "group:leaves",
 			   "group:leaves",
 			   "group:leaves",
 			   "group:leaves",
