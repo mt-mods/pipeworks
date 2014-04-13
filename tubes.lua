@@ -595,40 +595,43 @@ end
 
 if pipeworks.enable_one_way_tube then
 	minetest.register_node("pipeworks:one_way_tube", {
-				       description = "One way tube",
-				       tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
-						"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
-				       paramtype2 = "facedir",
-				       drawtype = "nodebox",
-				       paramtype = "light",
-				       node_box = {type = "fixed",
-						   fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
-				       groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
-				       legacy_facedir_simple = true,
-				       sounds = default.node_sound_wood_defaults(),
-				       after_place_node = function(pos)
-					       pipeworks.scan_for_tube_objects(pos)
-				       end,
-				       after_dig_node = function(pos)
-					       pipeworks.scan_for_tube_objects(pos)
-				       end,
-				       tube = {connect_sides = {left = 1, right = 1},
-					       can_go = function(pos, node, velocity, stack)
-						       return velocity
-					       end,
-					       insert_object = function(pos, node, stack, direction)
-						       item1 = pipeworks.tube_item(pos, stack)
-						       item1:get_luaentity().start_pos = pos
-						       item1:setvelocity({x = direction.x*direction.speed, y = direction.y*direction.speed, z = direction.z*direction.speed})
-						       item1:setacceleration({x = 0, y = 0, z = 0})
-						       return ItemStack("")
-					       end,
-					       can_insert = function(pos, node, stack, direction)
-						       local dir = facedir_to_right_dir(node.param2)
-						       if dir.x == direction.x and dir.y == direction.y and dir.z == direction.z then
-							       return true
-						       end
-						       return false
-					      end},
+		description = "One way tube",
+		tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
+			"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
+		paramtype2 = "facedir",
+		drawtype = "nodebox",
+		paramtype = "light",
+		node_box = {type = "fixed",
+			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
+		legacy_facedir_simple = true,
+		sounds = default.node_sound_wood_defaults(),
+		on_construct = function(pos)
+			minetest.get_meta(pos):set_int("tubelike", 1)
+		end,
+		after_place_node = function(pos)
+			pipeworks.scan_for_tube_objects(pos)
+		end,
+		after_dig_node = function(pos)
+			pipeworks.scan_for_tube_objects(pos)
+		end,
+		tube = {connect_sides = {left = 1, right = 1},
+			can_go = function(pos, node, velocity, stack)
+				return velocity
+			end,
+			insert_object = function(pos, node, stack, direction)
+				item1 = pipeworks.tube_item(pos, stack)
+				item1:get_luaentity().start_pos = pos
+				item1:setvelocity({x = direction.x*direction.speed, y = direction.y*direction.speed, z = direction.z*direction.speed})
+				item1:setacceleration({x = 0, y = 0, z = 0})
+				return ItemStack("")
+			end,
+			can_insert = function(pos, node, stack, direction)
+				local dir = facedir_to_right_dir(node.param2)
+				if dir.x == direction.x and dir.y == direction.y and dir.z == direction.z then
+					return true
+				end
+				return false
+			end},
 	})
 end

@@ -257,7 +257,7 @@ local function go_next(pos, velocity, stack)
 	else
 		speed = 1
 	end
-	vel.speed=speed
+	vel.speed = speed
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
 	else
@@ -361,15 +361,14 @@ minetest.register_entity("pipeworks:tubed_item", {
 	end,
 
 	get_staticdata = function(self)
-			if self.start_pos==nil then return end
-			local velocity=self.object:getvelocity()
-			--self.object:setvelocity({x=0,y=0,z=0})
-			self.object:setpos(self.start_pos)
-			return	minetest.serialize({
-				itemstring=self.itemstring,
-				velocity=velocity,
-				start_pos=self.start_pos
-				})
+		if self.start_pos==nil then return end
+		local velocity=self.object:getvelocity()
+		self.object:setpos(self.start_pos)
+		return	minetest.serialize({
+			itemstring=self.itemstring,
+			velocity=velocity,
+			start_pos=self.start_pos
+		})
 	end,
 
 	on_activate = function(self, staticdata)
@@ -392,89 +391,85 @@ minetest.register_entity("pipeworks:tubed_item", {
 	end,
 
 	on_step = function(self, dtime)
-	if self.start_pos==nil then
+		if self.start_pos==nil then
+			local pos = self.object:getpos()
+			self.start_pos=roundpos(pos)
+		end
 		local pos = self.object:getpos()
-		self.start_pos=roundpos(pos)
-	end
-	local pos = self.object:getpos()
-	local node = minetest.get_node(pos)
-	local meta = minetest.get_meta(pos)
-	tubelike=meta:get_int("tubelike")
-	local stack = ItemStack(self.itemstring)
-	local drop_pos=nil
+		local node = minetest.get_node(pos)
+		local meta = minetest.get_meta(pos)
+		local tubelike = meta:get_int("tubelike")
+		local stack = ItemStack(self.itemstring)
+		local drop_pos = nil
 		
-	local velocity=self.object:getvelocity()
+		local velocity=self.object:getvelocity()
 	
-	if velocity==nil then return end
+		if velocity == nil then return end
 	
-	local velocitycopy={x=velocity.x,y=velocity.y,z=velocity.z}
-	
-	local moved=false
-	local speed=math.abs(velocity.x+velocity.y+velocity.z)
-	local vel={x=velocity.x/speed,y=velocity.y/speed,z=velocity.z/speed, speed=speed}
-	
-	if math.abs(vel.x)==1 then
-		local next_node=math.abs(pos.x-self.start_pos.x)
+		local velocitycopy = {x = velocity.x, y = velocity.y, z = velocity.z}
+		
+		local moved = false
+		local speed = math.abs(velocity.x+velocity.y+velocity.z)
+		local vel = {x = velocity.x/speed, y = velocity.y/speed, z = velocity.z/speed, speed = speed}
+		
+		if math.abs(vel.x) == 1 then
+			local next_node = math.abs(pos.x-self.start_pos.x)
+			if next_node >= 1 then 
+				self.start_pos.x = self.start_pos.x+vel.x
+				moved = true
+			end
+		elseif math.abs(vel.y) == 1 then
+		local next_node = math.abs(pos.y-self.start_pos.y)
 		if next_node >= 1 then 
-			self.start_pos.x=self.start_pos.x+vel.x
-			moved=true
-		end
-	elseif math.abs(vel.y)==1 then
-		local next_node=math.abs(pos.y-self.start_pos.y)
-		if next_node >= 1 then 
-			self.start_pos.y=self.start_pos.y+vel.y
-			moved=true
+			self.start_pos.y = self.start_pos.y+vel.y
+			moved = true
 		end	
-	elseif math.abs(vel.z)==1 then
-		local next_node=math.abs(pos.z-self.start_pos.z)
-		if next_node >= 1 then 
-			self.start_pos.z=self.start_pos.z+vel.z
-			moved=true
-		end
-	end
-	
-	local sposcopy={x=self.start_pos.x,y=self.start_pos.y,z=self.start_pos.z}
-	
-	node = minetest.get_node(self.start_pos)
-	if moved and minetest.get_item_group(node.name,"tubedevice_receiver")==1 then
-		local leftover = nil
-		if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
-			leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos,node,stack,vel)
-		else
-			leftover = stack
-		end
-		--drop_pos=minetest.find_node_near(self.start_pos,1,"air")
-		--if drop_pos and not leftover:is_empty() then minetest.item_drop(leftover,"",drop_pos) end
-		--self.object:remove()
-		if leftover:is_empty() then
-			self.object:remove()
-			return
-		end
-		velocity.x=-velocity.x
-		velocity.y=-velocity.y
-		velocity.z=-velocity.z
-		self.object:setvelocity(velocity)
-		self:set_item(leftover:to_string())
-		return
-	end
-	
-	if moved then
-		if go_next (self.start_pos, velocity, stack) == 0 then
-			drop_pos=minetest.find_node_near({x=self.start_pos.x+velocity.x,y=self.start_pos.y+velocity.y,z=self.start_pos.z+velocity.z}, 1, "air")
-			if drop_pos then 
-				minetest.item_drop(stack, "", drop_pos)
-				self.object:remove()
+		elseif math.abs(vel.z) == 1 then
+			local next_node = math.abs(pos.z-self.start_pos.z)
+			if next_node >= 1 then 
+				self.start_pos.z = self.start_pos.z+vel.z
+				moved = true
 			end
 		end
+		
+		local sposcopy = {x = self.start_pos.x, y = self.start_pos.y, z = self.start_pos.z}
+		
+		node = minetest.get_node(self.start_pos)
+		if moved and minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
+			local leftover = nil
+			if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
+				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel)
+			else
+				leftover = stack
+			end
+			if leftover:is_empty() then
+				self.object:remove()
+				return
+			end
+			velocity.x = -velocity.x
+			velocity.y = -velocity.y
+			velocity.z = -velocity.z
+			self.object:setvelocity(velocity)
+			self:set_item(leftover:to_string())
+			return
+		end
+		
+		if moved then
+			if go_next (self.start_pos, velocity, stack) == 0 then
+				drop_pos = minetest.find_node_near(vector.add(self.start_pos, velocity), 1, "air")
+				if drop_pos then 
+					minetest.item_drop(stack, "", drop_pos)
+					self.object:remove()
+				end
+			end
+		end
+		
+		if velocity.x~=velocitycopy.x or velocity.y~=velocitycopy.y or velocity.z~=velocitycopy.z or 
+				self.start_pos.x~=sposcopy.x or self.start_pos.y~=sposcopy.y or self.start_pos.z~=sposcopy.z then
+			self.object:setpos(self.start_pos)
+			self.object:setvelocity(velocity)
+		end
 	end
-	
-	if velocity.x~=velocitycopy.x or velocity.y~=velocitycopy.y or velocity.z~=velocitycopy.z or 
-		self.start_pos.x~=sposcopy.x or self.start_pos.y~=sposcopy.y or self.start_pos.z~=sposcopy.z then
-		self.object:setpos(self.start_pos)
-		self.object:setvelocity(velocity)
-	end
-
-end
 })
 
 if minetest.get_modpath("mesecons_mvps") ~= nil then

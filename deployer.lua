@@ -3,60 +3,6 @@
 minetest.register_alias("technic:deployer_off", "pipeworks:deployer_off")
 minetest.register_alias("technic:deployer_on", "pipeworks:deployer_on")
 
---define the functions from https://github.com/minetest/minetest/pull/834 while waiting for the devs to notice it
-local function dir_to_facedir(dir, is6d)
-	--account for y if requested
-	if is6d and math.abs(dir.y) > math.abs(dir.x) and math.abs(dir.y) > math.abs(dir.z) then
-		
-		--from above
-		if dir.y < 0 then
-			if math.abs(dir.x) > math.abs(dir.z) then
-				if dir.x < 0 then
-					return 19
-				else
-					return 13
-				end
-			else
-				if dir.z < 0 then
-					return 10
-				else
-					return 4
-				end
-			end
-		
-		--from below
-		else
-			if math.abs(dir.x) > math.abs(dir.z) then
-				if dir.x < 0 then
-					return 15
-				else
-					return 17
-				end
-			else
-				if dir.z < 0 then
-					return 6
-				else
-					return 8
-				end
-			end
-		end
-	
-	--otherwise, place horizontally
-	elseif math.abs(dir.x) > math.abs(dir.z) then
-		if dir.x < 0 then
-			return 3
-		else
-			return 1
-		end
-	else
-		if dir.z < 0 then
-			return 2
-		else
-			return 0
-		end
-	end
-end
-
 minetest.register_craft({
 	output = 'pipeworks:deployer_off 1',
 	recipe = {
@@ -87,15 +33,16 @@ local function deployer_on(pos, node)
 	--locate the above and under positions
 	local dir = minetest.facedir_to_dir(node.param2)
 	local pos_under, pos_above = {x = pos.x - dir.x, y = pos.y - dir.y, z = pos.z - dir.z}, {x = pos.x - 2*dir.x, y = pos.y - 2*dir.y, z = pos.z - 2*dir.z}
-
+	
 	swap_node(pos, "pipeworks:deployer_on")
 	nodeupdate(pos)
 	
 	local meta = minetest.get_meta(pos)
+	print(dump(meta:to_table()))
 	local inv = meta:get_inventory()
 	local invlist = inv:get_list("main")
 	for i, stack in ipairs(invlist) do
-		if stack:get_name() ~= nil and stack:get_name() ~= "" and minetest.get_node(pos_under).name == "air" then --obtain the first non-empty item slot
+		if stack:get_name() ~= nil and stack:get_name() ~= "" then--and minetest.get_node(pos_under).name == "air" then --obtain the first non-empty item slot
 			local pitch
 			local yaw
 			if dir.z < 0 then
@@ -117,6 +64,7 @@ local function deployer_on(pos, node)
 				yaw = 0
 				pitch = math.pi/2
 			end
+			print(meta:get_string("owner"))
 			local placer = {
 				get_inventory_formspec = delay(meta:get_string("formspec")),
 				get_look_dir = delay({x = -dir.x, y = -dir.y, z = -dir.z}),
@@ -124,7 +72,7 @@ local function deployer_on(pos, node)
 				get_look_yaw = delay(yaw),
 				get_player_control = delay({jump=false, right=false, left=false, LMB=false, RMB=false, sneak=false, aux1=false, down=false, up=false}),
 				get_player_control_bits = delay(0),
-				get_player_name = delay("deployer"),
+				get_player_name = delay(meta:get_string("owner")),
 				is_player = delay(true),
 				set_inventory_formspec = delay(),
 				getpos = delay({x = pos.x, y = pos.y - 1.5, z = pos.z}), -- Player height
@@ -216,10 +164,12 @@ minetest.register_node("pipeworks:deployer_off", {
 				z = pos.z - placer_pos.z
 			}
 			local node = minetest.get_node(pos)
-			node.param2 = dir_to_facedir(dir, true)
+			node.param2 = minetest.dir_to_facedir(dir, true)
 			minetest.set_node(pos, node)
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
+		
+		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 	end,
 	after_dig_node = pipeworks.scan_for_tube_objects,
 })
@@ -244,6 +194,7 @@ minetest.register_node("pipeworks:deployer_on", {
 	is_ground_content = true,
 	paramtype2 = "facedir",
 	tubelike=1,
+	drop = "pipeworks:deployer_off",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, tubedevice_receiver=1,not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	on_construct = function(pos)
@@ -277,10 +228,12 @@ minetest.register_node("pipeworks:deployer_on", {
 				z = pos.z - placer_pos.z
 			}
 			local node = minetest.get_node(pos)
-			node.param2 = dir_to_facedir(dir, true)
+			node.param2 = minetest.dir_to_facedir(dir, true)
 			minetest.set_node(pos, node)
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
+		
+		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 	end,
 	after_dig_node = pipeworks.scan_for_tube_objects,
 })
