@@ -38,7 +38,6 @@ local function deployer_on(pos, node)
 	nodeupdate(pos)
 	
 	local meta = minetest.get_meta(pos)
-	print(dump(meta:to_table()))
 	local inv = meta:get_inventory()
 	local invlist = inv:get_list("main")
 	for i, stack in ipairs(invlist) do
@@ -64,7 +63,6 @@ local function deployer_on(pos, node)
 				yaw = 0
 				pitch = math.pi/2
 			end
-			print(meta:get_string("owner"))
 			local placer = {
 				get_inventory_formspec = delay(meta:get_string("formspec")),
 				get_look_dir = delay({x = -dir.x, y = -dir.y, z = -dir.z}),
