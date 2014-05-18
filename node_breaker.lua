@@ -85,18 +85,24 @@ local function break_node (pos, facedir)
 	--locate the outgoing velocity, front, and back of the node via facedir_to_dir
 	if type(facedir) ~= "number" or facedir < 0 or facedir > 23 then return end
 
-	local vel = minetest.facedir_to_dir(facedir);
+	local vel = minetest.facedir_to_dir(facedir)
 	local front = {x=pos.x - vel.x, y=pos.y - vel.y, z=pos.z - vel.z}
 	
 	local node = minetest.get_node(front)
-	if node.name == "air" or node.name == "ignore" then
-		return nil
-	elseif minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].liquidtype ~= "none" then
-		return nil
-	end
+	--if node.name == "air" or node.name == "ignore" then
+	--	return nil
+	--elseif minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].liquidtype ~= "none" then
+	--	return nil
+	--end
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+	local pick_inv = "pick"
+	local pick = inv:get_stack("pick", 1)
+	if pick:is_empty() then
+		pick = ItemStack("default:pick_mese")
+		inv:set_stack("ghost_pick", 1, pick)
+		pick_inv = "ghost_pick"
+	end
 	local pitch
 	local yaw
 	if vel.z < 0 then
@@ -125,15 +131,15 @@ local function break_node (pos, facedir)
 		get_look_yaw = delay(yaw),
 		get_player_control = delay({jump=false, right=false, left=false, LMB=false, RMB=false, sneak=false, aux1=false, down=false, up=false}),
 		get_player_control_bits = delay(0),
-		get_player_name = delay("node_breaker"),
+		get_player_name = delay(meta:get_string("owner")),
 		is_player = delay(true),
 		set_inventory_formspec = delay(),
 		getpos = delay({x = pos.x, y = pos.y - 1.5, z = pos.z}), -- Player height
 		get_hp = delay(20),
 		get_inventory = delay(inv),
-		get_wielded_item = delay(ItemStack("default:pick_mese")),
+		get_wielded_item = delay(pick),
 		get_wield_index = delay(1),
-		get_wield_list = delay("pick"),
+		get_wield_list = delay(pick_inv),
 		moveto = delay(),
 		punch = delay(),
 		remove = delay(),
@@ -141,49 +147,34 @@ local function break_node (pos, facedir)
 		setpos = delay(),
 		set_hp = delay(),
 		set_properties = delay(),
-		set_wielded_item = delay(),
+		set_wielded_item = function(stack)
+			inv:add_item("main", stack)
+			inv:set_stack(pick_inv, 1, ItemStack(""))
+		end,
 		set_animation = delay(),
 		set_attach = delay(),
 		set_detach = delay(),
 		set_bone_position = delay(),
 	}
-
-	--check node to make sure it is diggable
-	local def = ItemStack({name=node.name}):get_definition()
-	if #def ~= 0 and not def.diggable or (def.can_dig and not def.can_dig(front, digger)) then --node is not diggable
-		return
-	end
-
-	--handle node drops
-	local drops = minetest.get_node_drops(node.name, "default:pick_mese")
-	for _, dropped_item in ipairs(drops) do
-		local item1 = pipeworks.tube_item({x=pos.x, y=pos.y, z=pos.z}, dropped_item)
-		item1:get_luaentity().start_pos = {x=pos.x, y=pos.y, z=pos.z}
-		item1:setvelocity(vel)
-		item1:setacceleration({x=0, y=0, z=0})
-	end
-
-	local oldmetadata = nil
-	if def.after_dig_node then
-		oldmetadata = minetest.get_meta(front):to_table()
+	
+	if pick_inv == "pick" and minetest.registered_items[pick:get_name()] and minetest.registered_items[pick:get_name()].on_use then
+		local pos_under, pos_above = {x = pos.x - vel.x, y = pos.y - vel.y, z = pos.z - vel.z}, {x = pos.x - 2*vel.x, y = pos.y - 2*vel.y, z = pos.z - 2*vel.z}
+		local pointed_thing = {type="node", under=pos_under, above=pos_above}
+		--print(dump(minetest.get_node(pos_under)))
+		inv:set_stack(pick_inv, 1, minetest.registered_items[pick:get_name()].on_use(pick, digger, pointed_thing) or pick)
+	else
+		minetest.node_dig(front, node, digger)
 	end
 	
-	minetest.remove_node(front)
-
-	--handle post-digging callback
-	if def.after_dig_node then
-		-- Copy pos and node because callback can modify them
-		local pos_copy = {x=front.x, y=front.y, z=front.z}
-		local node_copy = {name=node.name, param1=node.param1, param2=node.param2}
-		def.after_dig_node(pos_copy, node_copy, oldmetadata, digger)
-	end
-
-	--run digging event callbacks
-	for _, callback in ipairs(minetest.registered_on_dignodes) do
-		-- Copy pos and node because callback can modify them
-		local pos_copy = {x=front.x, y=front.y, z=front.z}
-		local node_copy = {name=node.name, param1=node.param1, param2=node.param2}
-		callback(pos_copy, node_copy, digger)
+	for i = 1, 100 do
+		local dropped_item = inv:get_stack("main", i)
+		if not dropped_item:is_empty() then
+			local item1 = pipeworks.tube_item({x=pos.x, y=pos.y, z=pos.z}, dropped_item)
+			item1:get_luaentity().start_pos = {x=pos.x, y=pos.y, z=pos.z}
+			item1:setvelocity(vel)
+			item1:setacceleration({x=0, y=0, z=0})
+			inv:set_stack("main", i, ItemStack(""))
+		end
 	end
 end
 
@@ -208,15 +199,41 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 			"pipeworks_nodebreaker_back.png","pipeworks_nodebreaker_front_off.png"},
 	is_ground_content = true,
 	paramtype2 = "facedir",
-	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1},
+	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, tubedevice_receiver=1},
 	mesecons= {effector={rules=pipeworks.rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
 	sounds = default.node_sound_stone_defaults(),
-	tube = {connect_sides={back=1}},
+	tube = {connect_sides = {left = 1, right = 1, back = 1, top = 1, bottom = 1},
+		input_inventory = "pick",
+		insert_object = function(pos, node, stack, direction)
+			local vel = minetest.facedir_to_dir(node.param2)
+			if math.abs(vel.x) == math.abs(direction.x) and math.abs(vel.y) == math.abs(direction.y) and math.abs(vel.z) == math.abs(direction.z) then
+				return stack
+			end
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:add_item("pick", stack)
+		end,
+		can_insert = function(pos, node, stack, direction)
+			local vel = minetest.facedir_to_dir(node.param2)
+			if math.abs(vel.x) == math.abs(direction.x) and math.abs(vel.y) == math.abs(direction.y) and math.abs(vel.z) == math.abs(direction.z) then
+				return false
+			end
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:room_for_item("pick", stack)
+		end},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		inv:set_size("pick", 1)
-		inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+		inv:set_size("ghost_pick", 1)
+		inv:set_size("main", 100)
+		--inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+		meta:set_string("formspec",
+				"invsize[8,6;]"..
+				"label[0,0;Node breaker]"..
+				"list[current_name;pick;3.5,0;1,1;]"..
+				"list[current_player;main;0,2;8,4;]")
 	end,
 	after_place_node = function (pos, placer)
 		pipeworks.scan_for_tube_objects(pos, placer)
@@ -237,8 +254,37 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 			minetest.set_node(pos, node)
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
+		
+		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 	end,
-	after_dig_node = pipeworks.scan_for_tube_objects,
+	after_dig_node = function(pos, oldnode, oldmetadata, digger)
+		local stack = oldmetadata.inventory.pick[1]
+		if not stack:is_empty() then
+			minetest.add_item(pos, stack)
+		end
+		pipeworks.scan_for_tube_objects(pos, oldnode, oldmetadata, digger)
+	end,
+	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+		local meta = minetest.get_meta(pos)
+		if player:get_player_name() ~= meta:get_string("owner") and meta:get_string("owner") ~= "" then
+			return 0
+		end
+		return count
+	end,
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		local meta = minetest.get_meta(pos)
+		if player:get_player_name() ~= meta:get_string("owner") and meta:get_string("owner") ~= "" then
+			return 0
+		end
+		return stack:get_count()
+	end,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		local meta = minetest.get_meta(pos)
+		if player:get_player_name() ~= meta:get_string("owner") and meta:get_string("owner") ~= "" then
+			return 0
+		end
+		return stack:get_count()
+	end
 })
 
 minetest.register_node("pipeworks:nodebreaker_on", {
@@ -248,14 +294,41 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 	mesecons= {effector={rules=pipeworks.rules_all,action_on=node_breaker_on, action_off=node_breaker_off}},
 	is_ground_content = true,
 	paramtype2 = "facedir",
-	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1,not_in_creative_inventory=1},
+	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1,not_in_creative_inventory=1, tubedevice_receiver=1},
 	sounds = default.node_sound_stone_defaults(),
-	tube = {connect_sides={back=1}},
+	drop = "pipeworks:nodebreaker_off",
+	tube = {connect_sides = {left = 1, right = 1, back = 1, top = 1, bottom = 1},
+		input_inventory = "pick",
+		insert_object = function(pos, node, stack, direction)
+			local vel = minetest.facedir_to_dir(node.param2)
+			if math.abs(vel.x) == math.abs(direction.x) and math.abs(vel.y) == math.abs(direction.y) and math.abs(vel.z) == math.abs(direction.z) then
+				return stack
+			end
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:add_item("pick", stack)
+		end,
+		can_insert = function(pos, node, stack, direction)
+			local vel = minetest.facedir_to_dir(node.param2)
+			if math.abs(vel.x) == math.abs(direction.x) and math.abs(vel.y) == math.abs(direction.y) and math.abs(vel.z) == math.abs(direction.z) then
+				return false
+			end
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:room_for_item("pick", stack)
+		end},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		inv:set_size("pick", 1)
-		inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+		inv:set_size("ghost_pick", 1)
+		inv:set_size("main", 100)
+		meta:set_string("formspec",
+				"invsize[8,6;]"..
+				"label[0,0;Node breaker]"..
+				"list[current_name;pick;3.5,0;1,1;]"..
+				"list[current_player;main;0,2;8,4;]")
+		--inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
 	end,
 	after_place_node = function (pos, placer)
 		pipeworks.scan_for_tube_objects(pos, placer)
@@ -276,6 +349,35 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 			minetest.set_node(pos, node)
 			minetest.log("action", "real (6d) facedir: " .. node.param2)
 		end
+		
+		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 	end,
-	after_dig_node = pipeworks.scan_for_tube_objects,
+	after_dig_node = function(pos, oldnode, oldmetadata, digger)
+		local stack = oldmetadata.inventory.pick[1]
+		if not stack:is_empty() then
+			minetest.add_item(pos, stack)
+		end
+		pipeworks.scan_for_tube_objects(pos, oldnode, oldmetadata, digger)
+	end,
+	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+		local meta = minetest.get_meta(pos)
+		if player:get_player_name() ~= meta:get_string("owner") and meta:get_string("owner") ~= "" then
+			return 0
+		end
+		return count
+	end,
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		local meta = minetest.get_meta(pos)
+		if player:get_player_name() ~= meta:get_string("owner") and meta:get_string("owner") ~= "" then
+			return 0
+		end
+		return stack:get_count()
+	end,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		local meta = minetest.get_meta(pos)
+		if player:get_player_name() ~= meta:get_string("owner") and meta:get_string("owner") ~= "" then
+			return 0
+		end
+		return stack:get_count()
+	end
 })
