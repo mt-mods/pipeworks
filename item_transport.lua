@@ -52,7 +52,7 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 			if tube.can_remove then
 				doRemove = tube.can_remove(frompos, fromnode, stack, dir)
 			elseif idef.allow_metadata_inventory_take then
-				doRemove = idef.allow_metadata_inventory_take(frompos,"main",spos, stack, fakePlayer)
+				doRemove = idef.allow_metadata_inventory_take(frompos, frominvname,spos, stack, fakePlayer)
 			end
 			-- stupid lack of continue statements grumble
 			if doRemove > 0 then
@@ -70,7 +70,7 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 					item = stack:take_item(count)
 					frominv:set_stack(frominvname, spos, stack)
 					if idef.on_metadata_inventory_take then
-						idef.on_metadata_inventory_take(frompos, "main", spos, item, fakePlayer)
+						idef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakePlayer)
 					end
 				end
 				local item1 = pipeworks.tube_item(vector.add(frompos, vector.multiply(dir, 1.4)), item)

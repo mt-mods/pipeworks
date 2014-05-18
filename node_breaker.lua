@@ -221,6 +221,9 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			return inv:room_for_item("pick", stack)
+		end,
+		can_remove = function(pos, node, stack, dir)
+			return stack:get_count()
 		end},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
@@ -316,6 +319,9 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			return inv:room_for_item("pick", stack)
+		end,
+		can_remove = function(pos, node, stack, dir)
+			return stack:get_count()
 		end},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)

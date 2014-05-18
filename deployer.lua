@@ -129,7 +129,10 @@ minetest.register_node("pipeworks:deployer_off", {
 			return inv:room_for_item("main",stack)
 		end,
 		input_inventory="main",
-		connect_sides={back=1}},
+		connect_sides={back=1},
+		can_remove = function(pos, node, stack, dir)
+			return stack:get_count()
+		end},
 	is_ground_content = true,
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, tubedevice_receiver=1},
@@ -212,7 +215,10 @@ minetest.register_node("pipeworks:deployer_on", {
 			return inv:room_for_item("main",stack)
 		end,
 		input_inventory="main",
-		connect_sides={back=1}},
+		connect_sides={back=1},
+		can_remove = function(pos, node, stack, dir)
+			return stack:get_count()
+		end},
 	is_ground_content = true,
 	paramtype2 = "facedir",
 	tubelike=1,
