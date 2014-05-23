@@ -134,23 +134,36 @@ minetest.register_node("pipeworks:filter", {
 			tube.before_filter(frompos)
 		end
 		local frommeta = minetest.get_meta(frompos)
-		local frominvname = tube.input_inventory
 		local frominv = frommeta:get_inventory()
-		local sname
-		local fired = false
-		for _,filter in ipairs(inv:get_list("main")) do
-			sname = filter:get_name()
-			if sname ~= "" then
-				-- XXX: that's a lot of parameters
-				if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir) then
-					fired = true
+		
+		local function from_inventory(frominvname)
+			local sname
+			for _,filter in ipairs(inv:get_list("main")) do
+				sname = filter:get_name()
+				if sname ~= "" then
+					-- XXX: that's a lot of parameters
+					if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir) then
+						return true
+					end
+				end
+			end
+			if inv:is_empty("main") then
+				grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir)
+				return true
+			end
+			return false
+		end
+		
+		if type(tube.input_inventory) == "table" then
+			for _, i in ipairs(tube.input_inventory) do
+				if from_inventory(i) then -- fired an item
 					break
 				end
 			end
+		else
+			from_inventory(tube.input_inventory)
 		end
-		if not fired and inv:is_empty("main") then
-			grabAndFire(frominv,frominvname,frompos,fromnode,nil,tube,idef,dir)
-		end
+		
 		if tube.after_filter then
 			tube.after_filter(frompos)
 		end
@@ -207,18 +220,43 @@ minetest.register_node("pipeworks:mese_filter", {
 		if not (tube and tube.input_inventory) then
 			return
 		end
-		local frommeta = minetest.get_meta(frompos)
-		local frominvname = minetest.registered_nodes[fromnode.name].tube.input_inventory
-		local frominv = frommeta:get_inventory()
-		local sname
-		for _,filter in ipairs(inv:get_list("main")) do
-			sname = filter:get_name()
-			if sname ~= "" then
-				if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true) then return end
-			end
+		
+		if tube.before_filter then
+			tube.before_filter(frompos)
 		end
-		if inv:is_empty("main") then
-			grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true)
+		local frommeta = minetest.get_meta(frompos)
+		local frominv = frommeta:get_inventory()
+		
+		local function from_inventory(frominvname)
+			local sname
+			for _,filter in ipairs(inv:get_list("main")) do
+				sname = filter:get_name()
+				if sname ~= "" then
+					-- XXX: that's a lot of parameters
+					if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true) then
+						return true
+					end
+				end
+			end
+			if inv:is_empty("main") then
+				grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true)
+				return true
+			end
+			return false
+		end
+		
+		if type(tube.input_inventory) == "table" then
+			for _, i in ipairs(tube.input_inventory) do
+				if from_inventory(i) then -- fired an item
+					break
+				end
+			end
+		else
+			from_inventory(tube.input_inventory)
+		end
+		
+		if tube.after_filter then
+			tube.after_filter(frompos)
 		end
 	end,
 })
@@ -473,6 +511,16 @@ minetest.register_entity("pipeworks:tubed_item", {
 })
 
 if minetest.get_modpath("mesecons_mvps") ~= nil then
+	local function add_table(table,toadd)
+		local i = 1
+		while true do
+			o = table[i]
+			if o == toadd then return end
+			if o == nil then break end
+			i = i+1
+		end
+		table[i] = toadd
+	end
 	mesecon:register_mvps_unmov("pipeworks:tubed_item")
 	mesecon:register_on_mvps_move(function(moved_nodes)
 		local objects_to_move = {}
@@ -481,7 +529,8 @@ if minetest.get_modpath("mesecons_mvps") ~= nil then
 			for _, obj in ipairs(objects) do
 				local entity = obj:get_luaentity()
 				if entity and entity.name == "pipeworks:tubed_item" then
-					objects_to_move[#objects_to_move+1] = obj
+					--objects_to_move[#objects_to_move+1] = obj
+					add_table(objects_to_move, obj)
 				end
 			end
 		end
