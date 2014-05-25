@@ -94,7 +94,7 @@ local function deployer_on(pos, node)
 			}
 			local pointed_thing = {type="node", under=pos_under, above=pos_above}
 			local stack2
-			if minetest.registered_items[stack:get_name()] and minetest.registered_items[stack:get_name()] then
+			if minetest.registered_items[stack:get_name()] then
 				stack2 = minetest.registered_items[stack:get_name()].on_place(stack, placer, pointed_thing)
 			end
 			--if minetest.setting_getbool("creative_mode") and not minetest.get_modpath("unified_inventory") then --infinite stacks ahoy!
