@@ -147,9 +147,13 @@ local function break_node (pos, facedir)
 		setpos = delay(),
 		set_hp = delay(),
 		set_properties = delay(),
-		set_wielded_item = function(stack)
-			inv:add_item("main", stack)
-			inv:set_stack(pick_inv, 1, ItemStack(""))
+		set_wielded_item = function(self, stack)
+			if stack:get_name() == pick:get_name() then
+				inv:set_stack(pick_inv, 1, stack)
+			else
+				inv:add_item("main", stack)
+				inv:set_stack(pick_inv, 1, ItemStack(""))
+			end
 		end,
 		set_animation = delay(),
 		set_attach = delay(),
@@ -160,7 +164,6 @@ local function break_node (pos, facedir)
 	if pick_inv == "pick" and minetest.registered_items[pick:get_name()] and minetest.registered_items[pick:get_name()].on_use then
 		local pos_under, pos_above = {x = pos.x - vel.x, y = pos.y - vel.y, z = pos.z - vel.z}, {x = pos.x - 2*vel.x, y = pos.y - 2*vel.y, z = pos.z - 2*vel.z}
 		local pointed_thing = {type="node", under=pos_under, above=pos_above}
-		--print(dump(minetest.get_node(pos_under)))
 		inv:set_stack(pick_inv, 1, minetest.registered_items[pick:get_name()].on_use(pick, digger, pointed_thing) or pick)
 	else
 		minetest.node_dig(front, node, digger)
