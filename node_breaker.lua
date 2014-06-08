@@ -133,6 +133,7 @@ local function break_node (pos, facedir)
 		get_player_control_bits = delay(0),
 		get_player_name = delay(meta:get_string("owner")),
 		is_player = delay(true),
+		is_fake_player = true,
 		set_inventory_formspec = delay(),
 		getpos = delay({x = pos.x, y = pos.y - 1.5, z = pos.z}), -- Player height
 		get_hp = delay(20),
