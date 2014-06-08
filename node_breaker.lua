@@ -96,6 +96,12 @@ local function break_node (pos, facedir)
 	--end
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
+	
+	if inv:get_size("ghost_pick") ~= 1 then -- Legacy code
+		inv:set_size("ghost_pick", 1)
+		inv:set_size("main", 100)
+	end
+
 	local pick_inv = "pick"
 	local pick = inv:get_stack("pick", 1)
 	if pick:is_empty() then
