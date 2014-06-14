@@ -389,7 +389,11 @@ if pipeworks.enable_detector_tube then
 					 local meta = minetest.get_meta(pos)
 					 meta:set_int("nitems", 1)
 					 local name = minetest.get_node(pos).name
-					 minetest.after(detector_tube_step, minetest.registered_nodes[name].item_exit,pos)
+					 minetest.after(0, function ()
+					 minetest.after(0, function ()
+						minetest.after(0, minetest.registered_nodes[name].item_exit, pos)
+					 end)
+					 end)
 	end})
 	pipeworks.register_tube("pipeworks:detector_tube_off", "Detector tube segment", detector_plain_textures, noctr_textures,
 				end_textures, short_texture, detector_inv_texture,
