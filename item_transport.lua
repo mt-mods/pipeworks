@@ -100,7 +100,7 @@ minetest.register_node("pipeworks:filter", {
 				"list[current_player;main;0,2.5;8,4;]")
 		meta:set_string("infotext", "Filter")
 		local inv = meta:get_inventory()
-		inv:set_size("main", 8*4)
+		inv:set_size("main", 8*2)
 	end,
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
@@ -191,7 +191,7 @@ minetest.register_node("pipeworks:mese_filter", {
 				"list[current_player;main;0,2.5;8,4;]")
 		meta:set_string("infotext", "Mese filter")
 		local inv = meta:get_inventory()
-		inv:set_size("main", 8*4)
+		inv:set_size("main", 8*2)
 	end,
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
