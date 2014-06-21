@@ -271,9 +271,11 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		local stack = oldmetadata.inventory.pick[1]
-		if not stack:is_empty() then
-			minetest.add_item(pos, stack)
+		if oldmetadata.inventory.pick then
+			local stack = oldmetadata.inventory.pick[1]
+			if not stack:is_empty() then
+				minetest.add_item(pos, stack)
+			end
 		end
 		pipeworks.scan_for_tube_objects(pos, oldnode, oldmetadata, digger)
 	end,
@@ -369,9 +371,11 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 	end,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
-		local stack = oldmetadata.inventory.pick[1]
-		if not stack:is_empty() then
-			minetest.add_item(pos, stack)
+		if oldmetadata.inventory.pick then
+			local stack = oldmetadata.inventory.pick[1]
+			if not stack:is_empty() then
+				minetest.add_item(pos, stack)
+			end
 		end
 		pipeworks.scan_for_tube_objects(pos, oldnode, oldmetadata, digger)
 	end,
