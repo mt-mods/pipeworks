@@ -353,15 +353,16 @@ minetest.register_entity("pipeworks:tubed_item", {
 		hp_max = 1,
 		physical = false,
 --		collisionbox = {0,0,0,0,0,0},
-		collisionbox = {0.1,0.1,0.1,0.1,0.1,0.1},
+		collisionbox = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1},
 		visual = "sprite",
-		visual_size = {x=0.5, y=0.5},
+		visual_size = {x = 0.5, y = 0.5},
 		textures = {""},
-		spritediv = {x=1, y=1},
-		initial_sprite_basepos = {x=0, y=0},
+		spritediv = {x = 1, y = 1},
+		initial_sprite_basepos = {x = 0, y = 0},
 		is_visible = false,
-		start_pos={},
-		route={}
+		start_pos = {},
+		route = {},
+		removed = false
 	},
 	
 	itemstring = '',
@@ -389,23 +390,25 @@ minetest.register_entity("pipeworks:tubed_item", {
 		if item_texture and item_texture ~= "" then
 			prop.visual = "sprite"
 			prop.textures = {item_texture}
-			prop.visual_size = {x=0.3, y=0.3}
+			prop.visual_size = {x = 0.3, y = 0.3}
 		else
 			prop.visual = "wielditem"
 			prop.textures = {itemname}
-			prop.visual_size = {x=0.15, y=0.15}
+			prop.visual_size = {x = 0.15, y = 0.15}
 		end
 		self.object:set_properties(prop)
 	end,
 
 	get_staticdata = function(self)
-		if self.start_pos==nil then return end
-		local velocity=self.object:getvelocity()
+		if self.start_pos == nil or self.removed then
+			return
+		end
+		local velocity = self.object:getvelocity()
 		self.object:setpos(self.start_pos)
 		return	minetest.serialize({
-			itemstring=self.itemstring,
-			velocity=velocity,
-			start_pos=self.start_pos
+			itemstring = self.itemstring,
+			velocity = velocity,
+			start_pos = self.start_pos
 		})
 	end,
 
@@ -427,11 +430,20 @@ minetest.register_entity("pipeworks:tubed_item", {
 		end
 		self:set_item(item.itemstring)
 	end,
+	
+	remove = function(self)
+		self.object:remove()
+		self.removed = true
+		self.itemstring = ''
+	end,
 
 	on_step = function(self, dtime)
-		if self.start_pos==nil then
+		if self.removed then
+			return
+		end
+		if self.start_pos == nil then
 			local pos = self.object:getpos()
-			self.start_pos=roundpos(pos)
+			self.start_pos = roundpos(pos)
 		end
 		local pos = self.object:getpos()
 		local node = minetest.get_node(pos)
@@ -440,32 +452,32 @@ minetest.register_entity("pipeworks:tubed_item", {
 		local stack = ItemStack(self.itemstring)
 		local drop_pos = nil
 		
-		local velocity=self.object:getvelocity()
+		local velocity = self.object:getvelocity()
 	
 		if velocity == nil then return end
 	
 		local velocitycopy = {x = velocity.x, y = velocity.y, z = velocity.z}
 		
 		local moved = false
-		local speed = math.abs(velocity.x+velocity.y+velocity.z)
-		local vel = {x = velocity.x/speed, y = velocity.y/speed, z = velocity.z/speed, speed = speed}
+		local speed = math.abs(velocity.x + velocity.y + velocity.z)
+		local vel = {x = velocity.x / speed, y = velocity.y / speed, z = velocity.z / speed, speed = speed}
 		
 		if math.abs(vel.x) == 1 then
-			local next_node = math.abs(pos.x-self.start_pos.x)
+			local next_node = math.abs(pos.x - self.start_pos.x)
 			if next_node >= 1 then 
-				self.start_pos.x = self.start_pos.x+vel.x
+				self.start_pos.x = self.start_pos.x + vel.x
 				moved = true
 			end
 		elseif math.abs(vel.y) == 1 then
-		local next_node = math.abs(pos.y-self.start_pos.y)
-		if next_node >= 1 then 
-			self.start_pos.y = self.start_pos.y+vel.y
-			moved = true
-		end	
-		elseif math.abs(vel.z) == 1 then
-			local next_node = math.abs(pos.z-self.start_pos.z)
+		local next_node = math.abs(pos.y - self.start_pos.y)
 			if next_node >= 1 then 
-				self.start_pos.z = self.start_pos.z+vel.z
+				self.start_pos.y = self.start_pos.y + vel.y
+				moved = true
+			end	
+		elseif math.abs(vel.z) == 1 then
+			local next_node = math.abs(pos.z - self.start_pos.z)
+			if next_node >= 1 then 
+				self.start_pos.z = self.start_pos.z + vel.z
 				moved = true
 			end
 		end
@@ -481,7 +493,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 				leftover = stack
 			end
 			if leftover:is_empty() then
-				self.object:remove()
+				self:remove()
 				return
 			end
 			velocity.x = -velocity.x
@@ -497,7 +509,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 				drop_pos = minetest.find_node_near(vector.add(self.start_pos, velocity), 1, "air")
 				if drop_pos then 
 					minetest.item_drop(stack, "", drop_pos)
-					self.object:remove()
+					self:remove()
 				end
 			end
 		end
