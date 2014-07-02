@@ -148,8 +148,9 @@ minetest.register_node("pipeworks:filter", {
 				end
 			end
 			if inv:is_empty("main") then
-				grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir)
-				return true
+				if grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir) then
+					return true
+				end
 			end
 			return false
 		end
@@ -239,8 +240,9 @@ minetest.register_node("pipeworks:mese_filter", {
 				end
 			end
 			if inv:is_empty("main") then
-				grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true)
-				return true
+				if grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true) then
+					return true
+				end
 			end
 			return false
 		end
