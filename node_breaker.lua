@@ -168,14 +168,21 @@ local function break_node (pos, facedir)
 		set_bone_position = delay(),
 	}
 	
-	if pick_inv == "pick" and minetest.registered_items[pick:get_name()] and minetest.registered_items[pick:get_name()].on_use then
+	local pickdef = minetest.registered_items[pick:get_name()]
+	local pickcopy = ItemStack(pick)
+	if pick_inv == "pick" and pickdef and pickdef.on_use then
 		local pos_under, pos_above = {x = pos.x - vel.x, y = pos.y - vel.y, z = pos.z - vel.z}, {x = pos.x - 2*vel.x, y = pos.y - 2*vel.y, z = pos.z - 2*vel.z}
 		local pointed_thing = {type="node", under=pos_under, above=pos_above}
-		inv:set_stack(pick_inv, 1, minetest.registered_items[pick:get_name()].on_use(pick, digger, pointed_thing) or pick)
+		inv:set_stack(pick_inv, 1, pickdef.on_use(pick, digger, pointed_thing) or pick)
 	else
 		minetest.node_dig(front, node, digger)
 	end
 	
+	
+	if pickdef and (not pickdef.wear_represents or pickdef.wear_represents == "mechanical_wear") then
+		inv:set_stack(pick_inv, 1, pickcopy) -- Do not wear pick out
+	end
+
 	for i = 1, 100 do
 		local dropped_item = inv:get_stack("main", i)
 		if not dropped_item:is_empty() then
