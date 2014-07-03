@@ -590,7 +590,7 @@ for fill = 0, 10 do
 		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1},
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		drop = "pipeworks:storage_tank_"..fill,
+		drop = "pipeworks:storage_tank_0",
 		after_place_node = function(pos)
 			pipeworks.look_for_stackable_tanks(pos)
 			pipeworks.scan_for_pipe_objects(pos)
@@ -616,6 +616,7 @@ for fill = 0, 10 do
 		groups = sgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
+		drop = "pipeworks:storage_tank_0",
 		after_place_node = function(pos)
 			pipeworks.look_for_stackable_tanks(pos)
 			pipeworks.scan_for_pipe_objects(pos)
