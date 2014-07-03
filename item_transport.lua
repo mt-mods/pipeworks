@@ -356,8 +356,8 @@ minetest.register_entity("pipeworks:tubed_item", {
 		physical = false,
 --		collisionbox = {0,0,0,0,0,0},
 		collisionbox = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1},
-		visual = "sprite",
-		visual_size = {x = 0.5, y = 0.5},
+		visual = "wielditem",
+		visual_size = {x = 0.15, y = 0.15},
 		textures = {""},
 		spritediv = {x = 1, y = 1},
 		initial_sprite_basepos = {x = 0, y = 0},
@@ -373,32 +373,12 @@ minetest.register_entity("pipeworks:tubed_item", {
 	set_item = function(self, itemstring)
 		self.itemstring = itemstring
 		local stack = ItemStack(itemstring)
-		local itemtable = stack:to_table()
-		local itemname = nil
-		if itemtable then
-			itemname = stack:to_table().name
-		end
-		local item_texture = nil
-		local item_type = ""
-		if minetest.registered_items[itemname] then
-			item_texture = minetest.registered_items[itemname].inventory_image
-			item_type = minetest.registered_items[itemname].type
-		end
-		prop = {
+		self.object:set_properties({
 			is_visible = true,
-			visual = "sprite",
-			textures = {"unknown_item.png"}
-		}
-		if item_texture and item_texture ~= "" then
-			prop.visual = "sprite"
-			prop.textures = {item_texture}
-			prop.visual_size = {x = 0.3, y = 0.3}
-		else
-			prop.visual = "wielditem"
-			prop.textures = {itemname}
-			prop.visual_size = {x = 0.15, y = 0.15}
-		end
-		self.object:set_properties(prop)
+			textures = { stack:get_name() },
+		})
+		local def = stack:get_definition()
+		self.object:setyaw((def and def.type == "node") and 0 or math.pi * 0.25)
 	end,
 
 	get_staticdata = function(self)
