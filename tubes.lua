@@ -181,7 +181,7 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 				wield_image = inv,
 				paramtype = "light",
 				sunlight_propagates = true,
-				description = "Pneumatic tube segment (legacy)",
+				description = desc.." (legacy)",
 				on_construct = function(pos)
 					local meta = minetest.get_meta(pos)
 					meta:set_int("tubelike", 1)
@@ -241,7 +241,7 @@ local end_textures = {"pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipew
 local short_texture = "pipeworks_tube_short.png"
 local inv_texture = "pipeworks_tube_inv.png"
 
-pipeworks.register_tube("pipeworks:tube", "Pneumatic tube segment", plain_textures, noctr_textures, end_textures, short_texture, inv_texture)
+pipeworks.register_tube("pipeworks:tube", "Pneumatic Tube Segment", plain_textures, noctr_textures, end_textures, short_texture, inv_texture)
 
 if pipeworks.enable_mese_tube then
 	local mese_noctr_textures = {"pipeworks_mese_tube_noctr_1.png", "pipeworks_mese_tube_noctr_2.png", "pipeworks_mese_tube_noctr_3.png",
@@ -252,7 +252,7 @@ if pipeworks.enable_mese_tube then
 				   "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png"}
 	local mese_short_texture = "pipeworks_mese_tube_short.png"
 	local mese_inv_texture = "pipeworks_mese_tube_inv.png"
-	pipeworks.register_tube("pipeworks:mese_tube", "Mese pneumatic tube segment", mese_plain_textures, mese_noctr_textures,
+	pipeworks.register_tube("pipeworks:mese_tube", "Sorting Pneumatic Tube Segment", mese_plain_textures, mese_noctr_textures,
 				mese_end_textures, mese_short_texture, mese_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 local tbl = {}
@@ -309,7 +309,7 @@ if pipeworks.enable_mese_tube then
 							 "button[7,4;1,1;button5;On]"..
 							 "button[7,5;1,1;button6;On]"..
 							 "list[current_player;main;0,7;8,4;]")
-					 meta:set_string("infotext", "Mese pneumatic tube")
+					 meta:set_string("infotext", "Sorting Pneumatic Tube Segment")
 				 end,
 				 on_receive_fields = function(pos, formname, fields, sender)
 					 local meta = minetest.get_meta(pos)
@@ -358,7 +358,7 @@ if pipeworks.enable_detector_tube then
 					 "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png"}
 	local detector_inv_texture = "pipeworks_detector_tube_inv.png"
 	local detector_tube_step = 2 * tonumber(minetest.setting_get("dedicated_server_step"))
-	pipeworks.register_tube("pipeworks:detector_tube_on", "Detector tube segment on (you hacker you)", detector_plain_textures, noctr_textures,
+	pipeworks.register_tube("pipeworks:detector_tube_on", "Detecting Pneumatic Tube Segment on (you hacker you)", detector_plain_textures, noctr_textures,
 				end_textures, short_texture, detector_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 local meta = minetest.get_meta(pos)
@@ -395,7 +395,7 @@ if pipeworks.enable_detector_tube then
 					 end)
 					 end)
 	end})
-	pipeworks.register_tube("pipeworks:detector_tube_off", "Detector tube segment", detector_plain_textures, noctr_textures,
+	pipeworks.register_tube("pipeworks:detector_tube_off", "Detecting Pneumatic Tube Segment", detector_plain_textures, noctr_textures,
 				end_textures, short_texture, detector_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						local node = minetest.get_node(pos)
@@ -428,7 +428,7 @@ if pipeworks.enable_conductor_tube then
 	local conductor_on_end_textures = {"pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png",
 					   "pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png"}
 
-	pipeworks.register_tube("pipeworks:conductor_tube_off", "Conductor tube segment", conductor_plain_textures, conductor_noctr_textures,
+	pipeworks.register_tube("pipeworks:conductor_tube_off", "Conducting Pneumatic Tube Segment", conductor_plain_textures, conductor_noctr_textures,
 				conductor_end_textures, conductor_short_texture, conductor_inv_texture,
 				{groups = {mesecon = 2},
 				 mesecons = {conductor = {state = "off",
@@ -436,7 +436,7 @@ if pipeworks.enable_conductor_tube then
 							  onstate = "pipeworks:conductor_tube_on_#id"}}
 	})
 
-	pipeworks.register_tube("pipeworks:conductor_tube_on", "Conductor tube segment on (you hacker you)", conductor_on_plain_textures, conductor_on_noctr_textures,
+	pipeworks.register_tube("pipeworks:conductor_tube_on", "Conducting Pneumatic Tube Segment on (you hacker you)", conductor_on_plain_textures, conductor_on_noctr_textures,
 				conductor_on_end_textures, conductor_short_texture, conductor_inv_texture,
 				{groups = {mesecon = 2, not_in_creative_inventory = 1},
 				 drop = "pipeworks:conductor_tube_off_1",
@@ -456,7 +456,7 @@ if pipeworks.enable_accelerator_tube then
 	local accelerator_short_texture = "pipeworks_accelerator_tube_short.png"
 	local accelerator_inv_texture = "pipeworks_accelerator_tube_inv.png"
 
-	pipeworks.register_tube("pipeworks:accelerator_tube", "Accelerator pneumatic tube segment", accelerator_plain_textures,
+	pipeworks.register_tube("pipeworks:accelerator_tube", "Accelerating Pneumatic Tube Segment", accelerator_plain_textures,
 				accelerator_noctr_textures, accelerator_end_textures, accelerator_short_texture, accelerator_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 velocity.speed = velocity.speed+1
@@ -476,7 +476,7 @@ if pipeworks.enable_crossing_tube then
 	local crossing_short_texture = "pipeworks_crossing_tube_short.png"
 	local crossing_inv_texture = "pipeworks_crossing_tube_inv.png"
 
-	pipeworks.register_tube("pipeworks:crossing_tube", "Crossing tube segment", crossing_plain_textures,
+	pipeworks.register_tube("pipeworks:crossing_tube", "Crossing Pneumatic Tube Segment", crossing_plain_textures,
 				crossing_noctr_textures, crossing_end_textures, crossing_short_texture, crossing_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 return {velocity}
@@ -494,7 +494,7 @@ if pipeworks.enable_sand_tube then
 	local sand_short_texture = "pipeworks_sand_tube_short.png"
 	local sand_inv_texture = "pipeworks_sand_tube_inv.png"
 
-	pipeworks.register_tube("pipeworks:sand_tube", "Sand pneumatic tube segment", sand_plain_textures, sand_noctr_textures, sand_end_textures,
+	pipeworks.register_tube("pipeworks:sand_tube", "Vacuuming Pneumatic Tube Segment", sand_plain_textures, sand_noctr_textures, sand_end_textures,
 				sand_short_texture, sand_inv_texture,
 				{groups = {sand_tube = 1}})
 
@@ -528,7 +528,7 @@ if pipeworks.enable_mese_sand_tube then
 	local mese_sand_short_texture = "pipeworks_mese_sand_tube_short.png"
 	local mese_sand_inv_texture = "pipeworks_mese_sand_tube_inv.png"
 
-	pipeworks.register_tube("pipeworks:mese_sand_tube", "Mese sand pneumatic tube segment", mese_sand_plain_textures, mese_sand_noctr_textures,
+	pipeworks.register_tube("pipeworks:mese_sand_tube", "Adjustable Vacuuming Pneumatic Tube Segment", mese_sand_plain_textures, mese_sand_noctr_textures,
 				mese_sand_end_textures, mese_sand_short_texture,mese_sand_inv_texture,
 				{groups = {mese_sand_tube = 1},
 				 on_construct = function(pos)
@@ -537,7 +537,7 @@ if pipeworks.enable_mese_sand_tube then
 					 meta:set_string("formspec",
 							 "size[2,1]"..
 								 "field[.5,.5;1.5,1;dist;distance;${dist}]")
-					 meta:set_string("infotext", "Mese sand pneumatic tube")
+					 meta:set_string("infotext", "Adjustable Vacuuming Pneumatic Tube Segment")
 				 end,
 				 on_receive_fields = function(pos,formname,fields,sender)
 					 local meta = minetest.env:get_meta(pos)
@@ -600,7 +600,7 @@ end
 
 if pipeworks.enable_one_way_tube then
 	minetest.register_node("pipeworks:one_way_tube", {
-		description = "One way tube",
+		description = "One-way Pneumatic Tube Segment",
 		tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
 			"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
 		paramtype2 = "facedir",
