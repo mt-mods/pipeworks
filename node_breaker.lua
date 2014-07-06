@@ -254,6 +254,7 @@ minetest.register_node("pipeworks:nodebreaker_off", {
 				"label[0,0;Node breaker]"..
 				"list[current_name;pick;3.5,0;1,1;]"..
 				"list[current_player;main;0,2;8,4;]")
+		meta:set_string("infotext", "Node Breaker")
 	end,
 	after_place_node = function (pos, placer)
 		pipeworks.scan_for_tube_objects(pos, placer)
@@ -354,6 +355,7 @@ minetest.register_node("pipeworks:nodebreaker_on", {
 				"list[current_name;pick;3.5,0;1,1;]"..
 				"list[current_player;main;0,2;8,4;]")
 		--inv:set_stack("pick", 1, ItemStack("default:pick_mese"))
+		meta:set_string("infotext", "Node Breaker")
 	end,
 	after_place_node = function (pos, placer)
 		pipeworks.scan_for_tube_objects(pos, placer)
