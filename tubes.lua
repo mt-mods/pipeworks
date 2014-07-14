@@ -357,7 +357,6 @@ if pipeworks.enable_detector_tube then
 	local detector_plain_textures = {"pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png",
 					 "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png"}
 	local detector_inv_texture = "pipeworks_detector_tube_inv.png"
-	local detector_tube_step = 2 * tonumber(minetest.setting_get("dedicated_server_step"))
 	pipeworks.register_tube("pipeworks:detector_tube_on", "Detecting Pneumatic Tube Segment on (you hacker you)", detector_plain_textures, noctr_textures,
 				end_textures, short_texture, detector_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
@@ -365,7 +364,12 @@ if pipeworks.enable_detector_tube then
 						 local name = minetest.get_node(pos).name
 						 local nitems = meta:get_int("nitems")+1
 						 meta:set_int("nitems", nitems)
-						 minetest.after(detector_tube_step, minetest.registered_nodes[name].item_exit, pos)
+						 local saved_pos = { x = pos.x, y = pos.y, z = pos.z }
+						 minetest.after(0, function ()
+						 minetest.after(0, function ()
+							minetest.after(0, minetest.registered_nodes[name].item_exit, saved_pos)
+						 end)
+						 end)
 						 return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 					end},
 				 groups = {mesecon = 2, not_in_creative_inventory = 1},
@@ -389,9 +393,10 @@ if pipeworks.enable_detector_tube then
 					 local meta = minetest.get_meta(pos)
 					 meta:set_int("nitems", 1)
 					 local name = minetest.get_node(pos).name
+					 local saved_pos = { x = pos.x, y = pos.y, z = pos.z }
 					 minetest.after(0, function ()
 					 minetest.after(0, function ()
-						minetest.after(0, minetest.registered_nodes[name].item_exit, pos)
+						minetest.after(0, minetest.registered_nodes[name].item_exit, saved_pos)
 					 end)
 					 end)
 	end})
