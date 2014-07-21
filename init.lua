@@ -121,6 +121,7 @@ if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") 
 if pipeworks.enable_redefines then dofile(pipeworks.modpath.."/compat.lua") end
 if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
 if pipeworks.enable_deployer then dofile(pipeworks.modpath.."/deployer.lua") end
+if pipeworks.enable_dispenser then dofile(pipeworks.modpath.."/dispenser.lua") end
 
 if pipeworks.enable_node_breaker then
 	dofile(pipeworks.modpath.."/node_breaker.lua")

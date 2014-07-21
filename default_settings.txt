@@ -3,6 +3,7 @@
 pipeworks.enable_pipes = true
 pipeworks.enable_autocrafter = true
 pipeworks.enable_deployer = true
+pipeworks.enable_dispenser = true
 pipeworks.enable_node_breaker = true
 pipeworks.enable_teleport_tube = true
 pipeworks.enable_pipe_devices = true
