@@ -302,12 +302,12 @@ if pipeworks.enable_mese_tube then
 							 "image[0,3;1,1;pipeworks_yellow.png]"..
 							 "image[0,4;1,1;pipeworks_blue.png]"..
 							 "image[0,5;1,1;pipeworks_red.png]"..
-							 "button[7,0;1,1;button1;On]"..
-							 "button[7,1;1,1;button2;On]"..
-							 "button[7,2;1,1;button3;On]"..
-							 "button[7,3;1,1;button4;On]"..
-							 "button[7,4;1,1;button5;On]"..
-							 "button[7,5;1,1;button6;On]"..
+							 "button[7,0;1,1;button10;On]"..
+							 "button[7,1;1,1;button20;On]"..
+							 "button[7,2;1,1;button30;On]"..
+							 "button[7,3;1,1;button40;On]"..
+							 "button[7,4;1,1;button50;On]"..
+							 "button[7,5;1,1;button60;On]"..
 							 "list[current_player;main;0,7;8,4;]")
 					 meta:set_string("infotext", "Sorting Pneumatic Tube Segment")
 				 end,
@@ -315,11 +315,14 @@ if pipeworks.enable_mese_tube then
 					 local meta = minetest.get_meta(pos)
 					 local i
 					 if fields.quit then return end
-					 for key, _ in pairs(fields) do i = key end
-					 if i == nil then return end
-					 i = string.sub(i,-1)
-					 newstate = 1 - meta:get_int("l"..i.."s")
-					 meta:set_int("l"..i.."s",newstate)
+					 for key, _ in pairs(fields) do
+						if key:sub(1, 6) == "button" then
+							local i = key:sub(7, 7)
+							local s = key:sub(8, 8)
+							if s == "" then s = 1 - meta:get_int("l"..i.."s") end
+							meta:set_int("l"..i.."s", s)
+						end
+					 end
 					 local frm = "size[8,11]"..
 						 "list[current_name;line1;1,0;6,1;]"..
 						 "list[current_name;line2;1,1;6,1;]"..
@@ -336,9 +339,9 @@ if pipeworks.enable_mese_tube then
 					 for i = 1, 6 do
 						 local st = meta:get_int("l"..tostring(i).."s")
 						 if st == 0 then
-							 frm = frm.."button[7,"..tostring(i-1)..";1,1;button"..tostring(i)..";Off]"
+							 frm = frm.."button[7,"..tostring(i-1)..";1,1;button"..tostring(i).."1;Off]"
 						 else
-							 frm = frm.."button[7,"..tostring(i-1)..";1,1;button"..tostring(i)..";On]"
+							 frm = frm.."button[7,"..tostring(i-1)..";1,1;button"..tostring(i).."0;On]"
 						 end
 					 end
 					 frm = frm.."list[current_player;main;0,7;8,4;]"
