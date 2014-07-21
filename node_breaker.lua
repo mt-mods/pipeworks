@@ -179,7 +179,8 @@ local function break_node (pos, facedir)
 	end
 	
 	
-	if pickdef and (not pickdef.wear_represents or pickdef.wear_represents == "mechanical_wear") then
+	local newpick = inv:get_stack(pick_inv, 1)
+	if newpick:get_name() == pickcopy:get_name() and newpick:get_count() == pickcopy:get_count() and newpick:get_metadata() == pickcopy:get_metadata() and pickdef and (not pickdef.wear_represents or pickdef.wear_represents == "mechanical_wear") then
 		inv:set_stack(pick_inv, 1, pickcopy) -- Do not wear pick out
 	end
 
