@@ -38,19 +38,81 @@ end
 -- both optional w/ sensible defaults and fallback to normal allow_* function
 -- XXX: possibly change insert_object to insert_item
 
--- sname = the current name to allow for, or nil if it allows anything
+local function set_filter_infotext(data, meta)
+	local infotext = data.wise_desc.." Filter-Injector"
+	if meta:get_int("slotseq_mode") == 2 then
+		infotext = infotext .. " (slot #"..meta:get_int("slotseq_index").." next)"
+	end
+	meta:set_string("infotext", infotext)
+end
 
-local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,dir,all)
+local function set_filter_formspec(data, meta)
+	local itemname = data.wise_desc.." Filter-Injector"
+	local formspec = "size[8,8.5]"..
+			"item_image[0,0;1,1;pipeworks:"..data.name.."]"..
+			"label[1,0;"..minetest.formspec_escape(itemname).."]"..
+			"label[0,1;Prefer item types:]"..
+			"list[current_name;main;0,1.5;8,2;]"
+	local slotseq_mode = meta:get_int("slotseq_mode")
+	if slotseq_mode == 1 then
+		formspec = formspec .. "button[0,3.5;4,1;slotseq_mode2;Sequence slots Randomly]"
+	elseif slotseq_mode == 2 then
+		formspec = formspec .. "button[0,3.5;4,1;slotseq_mode0;Sequence slots by Rotation]"
+	else
+		formspec = formspec .. "button[0,3.5;4,1;slotseq_mode1;Sequence slots by Priority]"
+	end
+	formspec = formspec .. "list[current_player;main;0,4.5;8,4;]"
+	meta:set_string("formspec", formspec)
+end
+
+local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompos,fromnode,filtername,fromtube,fromdef,dir,all)
+	local sposes = {}
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
-		if (sname == nil and stack:get_name() ~= "") or stack:get_name() == sname then
+		local matches
+		if filtername == "" then
+			matches = stack:get_name() ~= ""
+		else
+			matches = stack:get_name() == filtername
+		end
+		if matches then table.insert(sposes, spos) end
+	end
+	if #sposes == 0 then return false end
+	if slotseq_mode == 1 then
+		for i = #sposes, 2, -1 do
+			local j = math.random(i)
+			local t = sposes[j]
+			sposes[j] = sposes[i]
+			sposes[i] = t
+		end
+	elseif slotseq_mode == 2 then
+		local headpos = filtmeta:get_int("slotseq_index")
+		table.sort(sposes, function (a, b)
+			if a >= headpos then
+				if b < headpos then return true end
+			else
+				if b >= headpos then return false end
+			end
+			return a < b
+		end)
+	end
+	for _, spos in ipairs(sposes) do
+			local stack = frominv:get_stack(frominvname, spos)
 			local doRemove = stack:get_count()
-			if tube.can_remove then
-				doRemove = tube.can_remove(frompos, fromnode, stack, dir)
-			elseif idef.allow_metadata_inventory_take then
-				doRemove = idef.allow_metadata_inventory_take(frompos, frominvname,spos, stack, fakePlayer)
+			if fromtube.can_remove then
+				doRemove = fromtube.can_remove(frompos, fromnode, stack, dir)
+			elseif fromdef.allow_metadata_inventory_take then
+				doRemove = fromdef.allow_metadata_inventory_take(frompos, frominvname,spos, stack, fakePlayer)
 			end
 			-- stupid lack of continue statements grumble
 			if doRemove > 0 then
+				if slotseq_mode == 2 then
+					local nextpos = spos + 1
+					if nextpos > frominv:get_size(frominvname) then
+						nextpos = 1
+					end
+					filtmeta:set_int("slotseq_index", nextpos)
+					set_filter_infotext(data, filtmeta)
+				end
 				local item
 				local count
 				if all then
@@ -58,14 +120,14 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 				else
 					count = 1
 				end
-				if tube.remove_items then
+				if fromtube.remove_items then
 					-- it could be the entire stack...
-					item = tube.remove_items(frompos, fromnode, stack, dir, count)
+					item = fromtube.remove_items(frompos, fromnode, stack, dir, count)
 				else
 					item = stack:take_item(count)
 					frominv:set_stack(frominvname, spos, stack)
-					if idef.on_metadata_inventory_take then
-						idef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakePlayer)
+					if fromdef.on_metadata_inventory_take then
+						fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakePlayer)
 					end
 				end
 				local item1 = pipeworks.tube_item(vector.add(frompos, vector.multiply(dir, 1.4)), item)
@@ -74,184 +136,113 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 				item1:setacceleration({x=0, y=0, z=0})
 				return true-- only fire one item, please
 			end
-		end
 	end
 	return false
 end
 
-minetest.register_node("pipeworks:filter", {
-	description = "Itemwise Filter-Injector",
-	tiles = {"pipeworks_filter_top.png", "pipeworks_filter_top.png", "pipeworks_filter_output.png",
-		"pipeworks_filter_input.png", "pipeworks_filter_side.png", "pipeworks_filter_top.png"},
-	paramtype2 = "facedir",
-	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2,tubedevice=1,mesecon=2},
-	legacy_facedir_simple = true,
-	sounds = default.node_sound_wood_defaults(),
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-				"invsize[8,6.5;]"..
-				"list[current_name;main;0,0;8,2;]"..
-				"list[current_player;main;0,2.5;8,4;]")
-		meta:set_string("infotext", "Itemwise Filter-Injector")
-		local inv = meta:get_inventory()
-		inv:set_size("main", 8*2)
-	end,
-	can_dig = function(pos,player)
-		local meta = minetest.get_meta(pos);
-		local inv = meta:get_inventory()
-		return inv:is_empty("main")
-	end,
-	after_place_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	mesecons={effector={action_on=function(pos,node)
-					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
-				end}},
-	tube={connect_sides={right=1}},
-	on_punch = function (pos, node, puncher)
-		local meta = minetest.get_meta(pos);
-		local inv = meta:get_inventory()
-		local dir = facedir_to_right_dir(node.param2)
-		local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
-		local fromnode=minetest.get_node(frompos)
-		if not fromnode then return end
-		local idef = minetest.registered_nodes[fromnode.name]
-		-- assert(idef)
-		local tube = idef.tube
-		if not (tube and tube.input_inventory) then
-			return
-		end
-		if tube.before_filter then
-			tube.before_filter(frompos)
-		end
-		local frommeta = minetest.get_meta(frompos)
-		local frominv = frommeta:get_inventory()
-		
-		local function from_inventory(frominvname)
-			local sname
-			for _,filter in ipairs(inv:get_list("main")) do
-				sname = filter:get_name()
-				if sname ~= "" then
-					-- XXX: that's a lot of parameters
-					if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir) then
-						return true
-					end
-				end
+local function punch_filter(data, filtpos, filtnode)
+	local filtmeta = minetest.get_meta(filtpos)
+	local filtinv = filtmeta:get_inventory()
+	local dir = facedir_to_right_dir(filtnode.param2)
+	local frompos = {x=filtpos.x - dir.x, y=filtpos.y - dir.y, z=filtpos.z - dir.z}
+	local fromnode = minetest.get_node(frompos)
+	if not fromnode then return end
+	local fromdef = minetest.registered_nodes[fromnode.name]
+	if not fromdef then return end
+	local fromtube = fromdef.tube
+	if not (fromtube and fromtube.input_inventory) then return end
+	local filters = {}
+	for _, filterstack in ipairs(filtinv:get_list("main")) do
+		local filtername = filterstack:get_name()
+		if filtername ~= "" then table.insert(filters, filtername) end
+	end
+	if #filters == 0 then table.insert(filters, "") end
+	local slotseq_mode = filtmeta:get_int("slotseq_mode")
+	local frommeta = minetest.get_meta(frompos)
+	local frominv = frommeta:get_inventory()
+	if fromtube.before_filter then fromtube.before_filter(frompos) end
+	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
+		local done = false
+		for _, filtername in ipairs(filters) do
+			if grabAndFire(data, slotseq_mode, filtmeta, frominv, frominvname, frompos, fromnode, filtername, fromtube, fromdef, dir, data.stackwise) then
+				done = true
+				break
 			end
-			if inv:is_empty("main") then
-				if grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir) then
-					return true
-				end
-			end
-			return false
 		end
-		
-		if type(tube.input_inventory) == "table" then
-			for _, i in ipairs(tube.input_inventory) do
-				if from_inventory(i) then -- fired an item
-					break
-				end
-			end
-		else
-			from_inventory(tube.input_inventory)
-		end
-		
-		if tube.after_filter then
-			tube.after_filter(frompos)
-		end
-	end,
-})
+		if done then break end
+	end
+	if fromtube.after_filter then fromtube.after_filter(frompos) end
+end
 
-minetest.register_node("pipeworks:mese_filter", {
-	description = "Stackwise Filter-Injector",
-	tiles = {"pipeworks_mese_filter_top.png", "pipeworks_mese_filter_top.png", "pipeworks_mese_filter_output.png",
-		"pipeworks_mese_filter_input.png", "pipeworks_mese_filter_side.png", "pipeworks_mese_filter_top.png"},
-	paramtype2 = "facedir",
-	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2,tubedevice=1,mesecon=2},
-	legacy_facedir_simple = true,
-	sounds = default.node_sound_wood_defaults(),
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-				"invsize[8,6.5;]"..
-				"list[current_name;main;0,0;8,2;]"..
-				"list[current_player;main;0,2.5;8,4;]")
-		meta:set_string("infotext", "Stackwise Filter-Injector")
-		local inv = meta:get_inventory()
-		inv:set_size("main", 8*2)
-	end,
-	can_dig = function(pos,player)
-		local meta = minetest.get_meta(pos);
-		local inv = meta:get_inventory()
-		return inv:is_empty("main")
-	end,
-	after_place_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	mesecons={effector={action_on=function(pos,node)
-					minetest.registered_nodes[node.name].on_punch(pos,node,nil)
-				end}},
-	tube={connect_sides={right=1}},
-	on_punch = function (pos, node, puncher)
-		local meta = minetest.get_meta(pos);
-		local inv = meta:get_inventory()
-		local dir = facedir_to_right_dir(node.param2)
-		local frompos = {x=pos.x - dir.x, y=pos.y - dir.y, z=pos.z - dir.z}
-		local fromnode=minetest.get_node(frompos)
-		local idef = minetest.registered_nodes[fromnode.name]
-		-- assert(idef)
-		local tube = idef.tube
-		if not (tube and tube.input_inventory) then
-			return
-		end
-		
-		if tube.before_filter then
-			tube.before_filter(frompos)
-		end
-		local frommeta = minetest.get_meta(frompos)
-		local frominv = frommeta:get_inventory()
-		
-		local function from_inventory(frominvname)
-			local sname
-			for _,filter in ipairs(inv:get_list("main")) do
-				sname = filter:get_name()
-				if sname ~= "" then
-					-- XXX: that's a lot of parameters
-					if grabAndFire(frominv, frominvname, frompos, fromnode, sname, tube, idef, dir, true) then
-						return true
-					end
+for _, data in ipairs({
+	{
+		name = "filter",
+		wise_desc = "Itemwise",
+		stackwise = false,
+	},
+	{
+		name = "mese_filter",
+		wise_desc = "Stackwise",
+		stackwise = true,
+	},
+}) do
+	minetest.register_node("pipeworks:"..data.name, {
+		description = data.wise_desc.." Filter-Injector",
+		tiles = {
+			"pipeworks_"..data.name.."_top.png",
+			"pipeworks_"..data.name.."_top.png",
+			"pipeworks_"..data.name.."_output.png",
+			"pipeworks_"..data.name.."_input.png",
+			"pipeworks_"..data.name.."_side.png",
+			"pipeworks_"..data.name.."_top.png",
+		},
+		paramtype2 = "facedir",
+		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2,tubedevice=1,mesecon=2},
+		legacy_facedir_simple = true,
+		sounds = default.node_sound_wood_defaults(),
+		on_construct = function(pos)
+			local meta = minetest.get_meta(pos)
+			set_filter_formspec(data, meta)
+			set_filter_infotext(data, meta)
+			local inv = meta:get_inventory()
+			inv:set_size("main", 8*2)
+		end,
+		on_receive_fields = function(pos, formname, fields, sender)
+			local meta = minetest.get_meta(pos)
+			for k, _ in pairs(fields) do
+				if k:sub(1, 12) == "slotseq_mode" then
+					local mode = tonumber(k:sub(13, 13))
+					meta:set_int("slotseq_mode", mode)
+					meta:set_int("slotseq_index", mode == 2 and 1 or 0)
 				end
 			end
-			if inv:is_empty("main") then
-				if grabAndFire(frominv, frominvname, frompos, fromnode, nil, tube, idef, dir, true) then
-					return true
-				end
-			end
-			return false
-		end
-		
-		if type(tube.input_inventory) == "table" then
-			for _, i in ipairs(tube.input_inventory) do
-				if from_inventory(i) then -- fired an item
-					break
-				end
-			end
-		else
-			from_inventory(tube.input_inventory)
-		end
-		
-		if tube.after_filter then
-			tube.after_filter(frompos)
-		end
-	end,
-})
+			set_filter_formspec(data, meta)
+			set_filter_infotext(data, meta)
+		end,
+		can_dig = function(pos,player)
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:is_empty("main")
+		end,
+		after_place_node = function(pos)
+			pipeworks.scan_for_tube_objects(pos)
+		end,
+		after_dig_node = function(pos)
+			pipeworks.scan_for_tube_objects(pos)
+		end,
+		mesecons = {
+			effector = {
+				action_on = function(pos, node)
+					punch_filter(data, pos, node)
+				end,
+			},
+		},
+		tube={connect_sides={right=1}},
+		on_punch = function (pos, node, puncher)
+			punch_filter(data, pos, node)
+		end,
+	})
+end
 
 local function roundpos(pos)
 	return {x=math.floor(pos.x+0.5),y=math.floor(pos.y+0.5),z=math.floor(pos.z+0.5)}
