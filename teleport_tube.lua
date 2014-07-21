@@ -102,6 +102,14 @@ local teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_telepo
 local teleport_short_texture="pipeworks_teleport_tube_short.png"
 local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 
+local function set_teleport_tube_formspec(meta)
+	local cr = meta:get_int("can_receive") ~= 0
+	meta:set_string("formspec","size[10.5,1;]"..
+		"field[0,0.5;7,1;channel;Channel:;${channel}]"..
+		"button[8,0;2.5,1;"..(cr and "cr0" or "cr1")..";"..
+			(cr and "Send and Receive" or "Send only").."]")
+end
+
 pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Segment",teleport_plain_textures,
 	teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture, {
 	is_teleport_tube = true,
@@ -125,10 +133,8 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 		local meta = minetest.get_meta(pos)
 		meta:set_string("channel","")
 		meta:set_int("can_receive",1)
-		meta:set_string("formspec","size[9,1;]"..
-				"field[0,0.5;7,1;channel;Channel:;${channel}]"..
-				"button[8,0;1,1;bt;On]")
 		add_tube_in_file(pos,"")
+		set_teleport_tube_formspec(meta)
 	end,
 	on_receive_fields = function(pos,formname,fields,sender)
 		local meta = minetest.get_meta(pos)
@@ -144,7 +150,7 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 					return
 				
 				--channels starting with '[name];' can be used by other players, but cannot be received from
-				elseif mode == ";" and (meta:get_int("can_receive") ~= 0) == (fields["bt"] == nil) then
+				elseif mode == ";" and (fields.cr1 or (meta:get_int("can_receive") ~= 0 and not fields.cr0)) then
 					minetest.chat_send_player(sender:get_player_name(), "Sorry, receiving from channel '"..fields.channel.."' is reserved for "..name)
 					return
 				end
@@ -154,21 +160,11 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 		if fields.channel==nil then fields.channel=meta:get_string("channel") end
 		meta:set_string("channel",fields.channel)
 		remove_tube_in_file(pos)
+		if fields.cr0 then meta:set_int("can_receive", 0) end
+		if fields.cr1 then meta:set_int("can_receive", 1) end
 		local cr = meta:get_int("can_receive")
-		if fields["bt"] then
-			cr=1-cr
-			meta:set_int("can_receive",cr)
-			if cr==1 then
-				meta:set_string("formspec","size[9,1;]"..
-					"field[0,0.5;7,1;channel;Channel:;${channel}]"..
-					"button[8,0;1,1;bt;On]")
-			else
-				meta:set_string("formspec","size[9,1;]"..
-					"field[0,0.5;7,1;channel;Channel:;${channel}]"..
-					"button[8,0;1,1;bt;Off]")
-			end
-		end
-		add_tube_in_file(pos,fields.channel, cr)
+		add_tube_in_file(pos, fields.channel, meta:get_int("can_receive"))
+		set_teleport_tube_formspec(meta)
 	end,
 	on_destruct = function(pos)
 		remove_tube_in_file(pos)
