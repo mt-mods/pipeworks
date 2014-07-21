@@ -80,7 +80,7 @@ local function grabAndFire(frominv,frominvname,frompos,fromnode,sname,tube,idef,
 end
 
 minetest.register_node("pipeworks:filter", {
-	description = "Itemwise Filter",
+	description = "Itemwise Filter-Injector",
 	tiles = {"pipeworks_filter_top.png", "pipeworks_filter_top.png", "pipeworks_filter_output.png",
 		"pipeworks_filter_input.png", "pipeworks_filter_side.png", "pipeworks_filter_top.png"},
 	paramtype2 = "facedir",
@@ -93,7 +93,7 @@ minetest.register_node("pipeworks:filter", {
 				"invsize[8,6.5;]"..
 				"list[current_name;main;0,0;8,2;]"..
 				"list[current_player;main;0,2.5;8,4;]")
-		meta:set_string("infotext", "Itemwise Filter")
+		meta:set_string("infotext", "Itemwise Filter-Injector")
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8*2)
 	end,
@@ -167,7 +167,7 @@ minetest.register_node("pipeworks:filter", {
 })
 
 minetest.register_node("pipeworks:mese_filter", {
-	description = "Stackwise Filter",
+	description = "Stackwise Filter-Injector",
 	tiles = {"pipeworks_mese_filter_top.png", "pipeworks_mese_filter_top.png", "pipeworks_mese_filter_output.png",
 		"pipeworks_mese_filter_input.png", "pipeworks_mese_filter_side.png", "pipeworks_mese_filter_top.png"},
 	paramtype2 = "facedir",
@@ -180,7 +180,7 @@ minetest.register_node("pipeworks:mese_filter", {
 				"invsize[8,6.5;]"..
 				"list[current_name;main;0,0;8,2;]"..
 				"list[current_player;main;0,2.5;8,4;]")
-		meta:set_string("infotext", "Stackwise Filter")
+		meta:set_string("infotext", "Stackwise Filter-Injector")
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8*2)
 	end,
