@@ -14,6 +14,7 @@ if not minetest.get_modpath("auto_tree_tap") and
 			inv:set_size("ghost_pick", 1)
 			inv:set_size("main", 100)
 			minetest.set_node(pos, {name = "pipeworks:nodebreaker_off", param2 = fdir})
+			minetest.registered_nodes["pipeworks:nodebreaker_off"].on_punch(pos, node)
 			inv:set_stack("pick", 1, ItemStack("technic:treetap"))
 		end
 	})
