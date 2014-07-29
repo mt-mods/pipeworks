@@ -87,47 +87,65 @@ minetest.register_craft( {
 
 if minetest.get_modpath("homedecor") == nil then
 
-	minetest.register_craftitem(":homedecor:plastic_sheeting", {
-		description = "Plastic sheet",
-		inventory_image = "homedecor_plastic_sheeting.png",
+	minetest.register_craftitem(":homedecor:oil_extract", {
+		    description = "Oil extract",
+		    inventory_image = "homedecor_oil_extract.png",
 	})
 
-	minetest.register_craftitem(":homedecor:plastic_base", {
-		description = "Unprocessed Plastic base",
-		wield_image = "homedecor_plastic_base.png",
-		inventory_image = "homedecor_plastic_base_inv.png",
+	minetest.register_craftitem(":homedecor:paraffin", {
+		    description = "Unprocessed paraffin",
+		    inventory_image = "homedecor_paraffin.png",
+	})
+
+	minetest.register_alias("homedecor:plastic_base", "homedecor:paraffin")
+
+	minetest.register_craftitem(":homedecor:plastic_sheeting", {
+		    description = "Plastic sheet",
+		    inventory_image = "homedecor_plastic_sheeting.png",
 	})
 
 	minetest.register_craft({
 		type = "shapeless",
-		output = 'homedecor:plastic_base 4',
-		recipe = { "group:leaves",
-			   "group:leaves",
-			   "group:leaves",
-			   "group:leaves",
-			   "group:leaves",
-			   "group:leaves"
+		output = "homedecor:oil_extract 4",
+		recipe = {
+			"group:leaves",
+			"group:leaves",
+			"group:leaves",
+			"group:leaves",
+			"group:leaves",
+			"group:leaves"
 		}
 	})
 
 	minetest.register_craft({
-		type = "cooking",
-		output = "homedecor:plastic_sheeting",
-		recipe = "homedecor:plastic_base",
+		    type = "cooking",
+		    output = "homedecor:paraffin",
+		    recipe = "homedecor:oil_extract",
 	})
 
 	minetest.register_craft({
-		type = 'fuel',
-		recipe = 'homedecor:plastic_base',
-		burntime = 30,
+		    type = "cooking",
+		    output = "homedecor:plastic_sheeting",
+		    recipe = "homedecor:paraffin",
 	})
 
 	minetest.register_craft({
-		type = 'fuel',
-		recipe = 'homedecor:plastic_sheeting',
-		burntime = 30,
+		    type = "fuel",
+		    recipe = "homedecor:oil_extract",
+		    burntime = 30,
 	})
 
+	minetest.register_craft({
+		    type = "fuel",
+		    recipe = "homedecor:paraffin",
+		    burntime = 30,
+	})
+
+	minetest.register_craft({
+		    type = "fuel",
+		    recipe = "homedecor:plastic_sheeting",
+		    burntime = 30,
+	})
 end
 
 minetest.register_craft( {
