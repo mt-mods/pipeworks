@@ -59,7 +59,7 @@ minetest.override_item("default:furnace_active", {
 			},
 		}
 	},
-	groups = {cracky=2, tubedevice = 1, tubedevice_receiver = 1 },
+	groups = {cracky=2, tubedevice = 1, tubedevice_receiver = 1, not_in_creative_inventory = 1 },
 	tube = {
 		insert_object = function(pos,node,stack,direction)
 			local meta = minetest.get_meta(pos)
