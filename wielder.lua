@@ -269,14 +269,18 @@ if pipeworks.enable_node_breaker then
 			local inv = meta:get_inventory()
 			-- Node breakers predating the visible pick slot
 			-- may have been partially updated.  This code
-			-- fully updates them.	Originally, they had a
-			-- ghost pick in a "pick" inventory, no other
-			-- inventory, and no form.  The partial update of
-			-- early with-form node breaker code gives them
-			-- "ghost_pick" and "main" inventories, but leaves
-			-- the old ghost pick in the "pick" inventory,
-			-- and doesn't add a form.  First perform that
-			-- partial update.
+			-- fully updates them.	Some have been observed
+			-- to have no pick slot at all; first add one.
+			if inv:get_size("pick") ~= 1 then
+				inv:set_size("pick", 1)
+			end
+			-- Originally, they had a ghost pick in a "pick"
+			-- inventory, no other inventory, and no form.
+			-- The partial update of early with-form node
+			-- breaker code gives them "ghost_pick" and "main"
+			-- inventories, but leaves the old ghost pick in
+			-- the "pick" inventory, and doesn't add a form.
+			-- First perform that partial update.
 			if inv:get_size("ghost_pick") ~= 1 then
 				inv:set_size("ghost_pick", 1)
 				inv:set_size("main", 100)
