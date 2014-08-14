@@ -101,7 +101,7 @@ local function wielder_on(data, wielder_pos, wielder_node)
 	if data.eject_drops then
 		for i, stack in ipairs(inv:get_list("main")) do
 			if not stack:is_empty() then
-				pipeworks.tube_item(wielder_pos, wielder_pos, dir, stack)
+				pipeworks.tube_inject_item(wielder_pos, wielder_pos, dir, stack)
 				inv:set_stack("main", i, ItemStack(""))
 			end
 		end

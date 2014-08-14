@@ -4,7 +4,11 @@ local fakePlayer = {
     -- perhaps a custom metaclass that errors specially when fakePlayer.<property> is not found?
 }
 
-function pipeworks.tube_item(pos, start_pos, velocity, item)
+function pipeworks.tube_item(pos, item)
+	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
+end
+
+function pipeworks.tube_inject_item(pos, start_pos, velocity, item)
 	-- Take item in any format
 	local stack = ItemStack(item)
 	local obj = luaentity.add_entity(pos, "pipeworks:tubed_item")
@@ -112,7 +116,7 @@ local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompo
 				end
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
-				local item1 = pipeworks.tube_item(pos, start_pos, dir, item)
+				local item1 = pipeworks.tube_inject_item(pos, start_pos, dir, item)
 				return true-- only fire one item, please
 			end
 	end
@@ -322,7 +326,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 			return
 		end
 		local item = minetest.deserialize(staticdata)
-		pipeworks.tube_item(self.object:getpos(), item.start_pos, item.velocity, item.itemstring)
+		pipeworks.tube_inject_item(self.object:getpos(), item.start_pos, item.velocity, item.itemstring)
 		self.object:remove()
 	end,
 })
