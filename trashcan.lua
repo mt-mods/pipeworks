@@ -9,15 +9,13 @@ minetest.register_node("pipeworks:trashcan", {
 		"pipeworks_trashcan_side.png",
 		"pipeworks_trashcan_side.png",
 	}, 
-	groups = { snappy = 3, tubedevice = 1, tubedevice_receiver = 1 }, 
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1}, 
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			return ItemStack("")
-		end, 
-		can_insert = function(pos, node, stack, direction)
-			return true
-		end, 
-		connect_sides = { left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1 },
+		end,
+		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1},
+		priority = 1, -- Lower than anything else
 	}, 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
