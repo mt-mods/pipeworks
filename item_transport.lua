@@ -254,7 +254,7 @@ local function go_next(pos, velocity, stack)
 		local tube_priority = (tube_def and tube_def.priority) or 100
 		if tubedevice > 0 and tube_priority >= max_priority then
 			if not tube_def or not tube_def.can_insert or
-					tubedef.can_insert(npos, node, stack, vect) then
+					tube_def.can_insert(npos, node, stack, vect) then
 				if tube_priority > max_priority then
 					max_priority = tube_priority
 					next_positions = {}
