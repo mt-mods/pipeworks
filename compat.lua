@@ -10,7 +10,7 @@ minetest.override_item("default:furnace", {
 		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
 		"default_furnace_front.png"
 	},
-	groups = {cracky=2, tubedevice = 1, tubedevice_receiver = 1 },
+	groups = {cracky = 2, tubedevice = 1, tubedevice_receiver = 1},
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
@@ -31,14 +31,8 @@ minetest.override_item("default:furnace", {
 			end
 		end,
 		input_inventory = "dst",
-		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
-	after_place_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end
 })
 
 minetest.override_item("default:furnace_active", {
@@ -59,7 +53,7 @@ minetest.override_item("default:furnace_active", {
 			},
 		}
 	},
-	groups = {cracky=2, tubedevice = 1, tubedevice_receiver = 1, not_in_creative_inventory = 1 },
+	groups = {cracky = 2, tubedevice = 1, tubedevice_receiver = 1, not_in_creative_inventory = 1},
 	tube = {
 		insert_object = function(pos,node,stack,direction)
 			local meta = minetest.get_meta(pos)
@@ -80,14 +74,8 @@ minetest.override_item("default:furnace_active", {
 			end
 		end,
 		input_inventory = "dst",
-		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
-	after_place_node= function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end
 })
 
 minetest.override_item("default:chest", {
@@ -99,7 +87,7 @@ minetest.override_item("default:chest", {
 		"default_chest_side.png^pipeworks_tube_connection_wooden.png",
 		"default_chest_front.png"
 	},
-	groups = { choppy=2, oddly_breakable_by_hand=2, tubedevice = 1, tubedevice_receiver = 1 },
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
@@ -112,17 +100,9 @@ minetest.override_item("default:chest", {
 			return inv:room_for_item("main", stack)
 		end,
 		input_inventory = "main",
-		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
-	after_place_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end,
-	after_dig_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end
 })
-
-local old_locked_chest_after_place = minetest.registered_nodes["default:chest_locked"].after_place_node
 
 minetest.override_item("default:chest_locked", {
 	tiles = {
@@ -133,7 +113,7 @@ minetest.override_item("default:chest_locked", {
 		"default_chest_side.png^pipeworks_tube_connection_wooden.png",
 		"default_chest_lock.png"
 	},
-	groups = { choppy=2, oddly_breakable_by_hand=2, tubedevice = 1, tubedevice_receiver = 1 },
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			local meta = minetest.env:get_meta(pos)
@@ -145,13 +125,6 @@ minetest.override_item("default:chest_locked", {
 			local inv = meta:get_inventory()
 			return inv:room_for_item("main", stack)
 		end,
-		connect_sides = {left=1, right=1, back=1, front=1, bottom=1, top=1}
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
-	after_place_node = function(pos, placer)
-		pipeworks.scan_for_tube_objects(pos)
-		old_locked_chest_after_place(pos, placer)
-	end,
-	after_dig_node = function(pos)
-		pipeworks.scan_for_tube_objects(pos)
-	end
 })
