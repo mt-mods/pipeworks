@@ -101,10 +101,7 @@ local function wielder_on(data, wielder_pos, wielder_node)
 	if data.eject_drops then
 		for i, stack in ipairs(inv:get_list("main")) do
 			if not stack:is_empty() then
-				local tubeitem = pipeworks.tube_item(vector_copy(wielder_pos), stack)
-				tubeitem:get_luaentity().start_pos = vector_copy(wielder_pos)
-				tubeitem:setvelocity(vector_copy(dir))
-				tubeitem:setacceleration(vector.new(0,0,0))
+				pipeworks.tube_item(wielder_pos, wielder_pos, dir, stack)
 				inv:set_stack("main", i, ItemStack(""))
 			end
 		end
