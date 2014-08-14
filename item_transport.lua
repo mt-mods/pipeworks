@@ -313,7 +313,18 @@ minetest.register_entity("pipeworks:tubed_item", {
 	end,
 
 	get_staticdata = luaentity.get_staticdata,
-	on_activate = luaentity.on_activate,
+	on_activate = function(self, staticdata) -- Legacy code, should be replaced later by luaentity.on_activate
+		if staticdata == "" or staticdata == nil then
+			return
+		end
+		if staticdata == "toremove" then
+			self.object:remove()
+			return
+		end
+		local item = minetest.deserialize(staticdata)
+		pipeworks.tube_item(self.object:getpos(), item.start_pos, item.velocity, item.itemstring)
+		self.object:remove()
+	end,
 })
 
 minetest.register_entity("pipeworks:color_entity", {
