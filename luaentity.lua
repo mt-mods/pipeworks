@@ -42,11 +42,7 @@ local function write_entities()
 	write_file(luaentity.entities)
 end
 
-minetest.after(0, function()
-	luaentity.entities = read_entities()
-end)
 minetest.register_on_shutdown(write_entities)
- -- todo: load that from file (datastorage?) -> don't forget about metatables (are those serialized?) / do not blindly save -> the attached_entities have to be removed
 luaentity.entities_index = 0
 
 local function get_blockpos(pos)
@@ -310,6 +306,9 @@ function luaentity.get_objects_inside_radius(pos, radius)
 end
 
 minetest.register_globalstep(function(dtime)
+	if not luaentity.entities then
+		luaentity.entities = read_entities()
+	end
 	for id, entity in pairs(luaentity.entities) do
 		local master = entity._attached_entities_master
 		if master then
