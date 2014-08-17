@@ -128,7 +128,7 @@ function fs_helpers.cycling_button(meta, base, meta_name, values)
 	local new_value = (current_value + 1) % (#values)
 	local text = values[current_value + 1]
 	local field = "fs_helpers_cycling:"..new_value..":"..meta_name
-	return base..";"..field..";"..text.."]"
+	return base..";"..field..";"..minetest.formspec_escape(text).."]"
 end
 
 ---------
