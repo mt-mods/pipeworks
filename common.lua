@@ -136,6 +136,8 @@ end
 ---------
 
 function minetest.load_position(pos)
+	if pos.x < -30912 or pos.y < -30912 or pos.z < -30912 or
+	   pos.x >  30927 or pos.y >  30927 or pos.z >  30927 then return end
 	if minetest.get_node_or_nil(pos) then
 		return
 	end
