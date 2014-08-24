@@ -253,17 +253,20 @@ local function go_next(pos, velocity, stack)
 	for _, vect in ipairs(can_go) do
 		local npos = vector.add(pos, vect)
 		local node = minetest.get_node(npos)
-		local tubedevice = minetest.get_item_group(node.name, "tubedevice")
-		local tube_def = minetest.registered_nodes[node.name].tube
-		local tube_priority = (tube_def and tube_def.priority) or 100
-		if tubedevice > 0 and tube_priority >= max_priority then
-			if not tube_def or not tube_def.can_insert or
-					tube_def.can_insert(npos, node, stack, vect) then
-				if tube_priority > max_priority then
-					max_priority = tube_priority
-					next_positions = {}
+		local reg_node = minetest.registered_nodes[node.name]
+		if reg_node then
+			local tube_def = reg_node.tube
+			local tubedevice = minetest.get_item_group(node.name, "tubedevice")
+			local tube_priority = (tube_def and tube_def.priority) or 100
+			if tubedevice > 0 and tube_priority >= max_priority then
+				if not tube_def or not tube_def.can_insert or
+						tube_def.can_insert(npos, node, stack, vect) then
+					if tube_priority > max_priority then
+						max_priority = tube_priority
+						next_positions = {}
+					end
+					next_positions[#next_positions + 1] = {pos = npos, vect = vect}
 				end
-				next_positions[#next_positions + 1] = {pos = npos, vect = vect}
 			end
 		end
 	end
