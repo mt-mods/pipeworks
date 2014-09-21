@@ -32,7 +32,7 @@ minetest.register_craft( {
         output = "pipeworks:pump_off 2",
         recipe = {
                 { "default:stone", "default:steel_ingot", "default:stone" },
-                { "moreores:copper_ingot", "default:mese_crystal_fragment", "moreores:copper_ingot" },
+                { "default:copper_ingot", "default:mese_crystal_fragment", "default:copper_ingot" },
                 { "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" }
         },
 })
