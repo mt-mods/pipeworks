@@ -1,8 +1,6 @@
-local fakePlayer = {
-    get_player_name = function() return ":pipeworks" end,
-    -- any other player functions called by allow_metadata_inventory_take anywhere...
-    -- perhaps a custom metaclass that errors specially when fakePlayer.<property> is not found?
-}
+local function delay(x)
+	return (function() return x end)
+end
 
 function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
@@ -49,7 +47,7 @@ local function set_filter_formspec(data, meta)
 end
 
 -- todo SOON: this function has *way too many* parameters
-local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompos,fromnode,filtername,fromtube,fromdef,dir,all)
+local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompos,fromnode,filtername,fromtube,fromdef,dir,fakePlayer,all)
 	local sposes = {}
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
 		local matches
@@ -126,6 +124,10 @@ end
 local function punch_filter(data, filtpos, filtnode)
 	local filtmeta = minetest.get_meta(filtpos)
 	local filtinv = filtmeta:get_inventory()
+	local owner = filtmeta:get_string("owner")
+	local fakePlayer = {
+		get_player_name = delay(owner),
+	} -- TODO: use a mechanism as the wielder one
 	local dir = minetest.facedir_to_right_dir(filtnode.param2)
 	local frompos = vector.subtract(filtpos, dir)
 	local fromnode = minetest.get_node(frompos)
@@ -147,7 +149,7 @@ local function punch_filter(data, filtpos, filtnode)
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
 		local done = false
 		for _, filtername in ipairs(filters) do
-			if grabAndFire(data, slotseq_mode, filtmeta, frominv, frominvname, frompos, fromnode, filtername, fromtube, fromdef, dir, data.stackwise) then
+			if grabAndFire(data, slotseq_mode, filtmeta, frominv, frominvname, frompos, fromnode, filtername, fromtube, fromdef, dir, fakePlayer, data.stackwise) then
 				done = true
 				break
 			end
@@ -189,6 +191,9 @@ for _, data in ipairs({
 			set_filter_infotext(data, meta)
 			local inv = meta:get_inventory()
 			inv:set_size("main", 8*2)
+		end,
+		after_place_node = function (pos, placer)
+			minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 		end,
 		on_receive_fields = function(pos, formname, fields, sender)
 			fs_helpers.on_receive_fields(pos, fields)
