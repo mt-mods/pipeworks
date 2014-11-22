@@ -503,7 +503,7 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon:receptor_off(pos, rules) 
+			mesecon.receptor_off(pos, rules) 
 		end
 	end,
 	node_box = {
@@ -544,7 +544,7 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon:receptor_on(pos, rules) 
+			mesecon.receptor_on(pos, rules) 
 		end
 	end,
 	node_box = {
@@ -650,7 +650,7 @@ minetest.register_node("pipeworks:fountainhead", {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon:receptor_on(pos, rules) 
+			mesecon.receptor_on(pos, rules) 
 		end
 	end,
 	node_box = {
@@ -684,7 +684,7 @@ minetest.register_node("pipeworks:fountainhead_pouring", {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon:receptor_on(pos, rules) 
+			mesecon.receptor_on(pos, rules) 
 		end
 	end,
 	node_box = {

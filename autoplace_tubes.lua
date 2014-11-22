@@ -120,7 +120,7 @@ minetest.register_on_dignode(function(pos, oldnode, digger)
 end)
 
 if minetest.get_modpath("mesecons_mvps") then
-	mesecon:register_on_mvps_move(function(moved_nodes)
+	mesecon.register_on_mvps_move(function(moved_nodes)
 		for _, n in ipairs(moved_nodes) do
 			pipeworks.scan_for_tube_objects(n.pos)
 			pipeworks.scan_for_tube_objects(n.oldpos)

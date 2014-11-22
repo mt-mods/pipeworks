@@ -373,7 +373,7 @@ if pipeworks.enable_detector_tube then
 					local fdir = node.param2
 					if nitems == 0 then
 						 minetest.set_node(pos, {name = string.gsub(name, "on", "off"), param2 = fdir})
-						 mesecon:receptor_off(pos, pipeworks.mesecons_rules)
+						 mesecon.receptor_off(pos, pipeworks.mesecons_rules)
 					else
 						 meta:set_int("nitems", nitems)
 					end
@@ -394,7 +394,7 @@ if pipeworks.enable_detector_tube then
 						local name = node.name
 						local fdir = node.param2
 						minetest.set_node(pos,{name = string.gsub(name, "off", "on"), param2 = fdir})
-						mesecon:receptor_on(pos, pipeworks.mesecons_rules)
+						mesecon.receptor_on(pos, pipeworks.mesecons_rules)
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
 				 groups = {mesecon = 2},

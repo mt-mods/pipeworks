@@ -465,9 +465,9 @@ luaentity.register_entity("pipeworks:tubed_item", {
 })
 
 if minetest.get_modpath("mesecons_mvps") then
-	mesecon:register_mvps_unmov("pipeworks:tubed_item")
-	mesecon:register_mvps_unmov("pipeworks:color_entity")
-	mesecon:register_on_mvps_move(function(moved_nodes)
+	mesecon.register_mvps_unmov("pipeworks:tubed_item")
+	mesecon.register_mvps_unmov("pipeworks:color_entity")
+	mesecon.register_on_mvps_move(function(moved_nodes)
 		local moved = {}
 		for _, n in ipairs(moved_nodes) do
 			moved[minetest.hash_node_position(n.oldpos)] = vector.subtract(n.pos, n.oldpos)
