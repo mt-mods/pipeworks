@@ -317,10 +317,8 @@ if pipeworks.enable_mese_tube then
 					 update_formspec(pos)
 				 end,
 				 can_dig = function(pos, player)
-					 local meta = minetest.get_meta(pos)
-					 local inv = meta:get_inventory()
-					 return (inv:is_empty("line1") and inv:is_empty("line2") and inv:is_empty("line3") and
-							 inv:is_empty("line4") and inv:is_empty("line5") and inv:is_empty("line6"))
+					update_formspec(pos) -- so non-virtual items would be dropped for old tubes
+					return true
 				 end,
 				 allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 				 	update_formspec(pos) -- For old tubes
