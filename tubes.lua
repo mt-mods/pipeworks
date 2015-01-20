@@ -271,31 +271,29 @@ if pipeworks.enable_mese_tube then
 			fs_helpers.cycling_button(meta, "button[7,5;1,1", "l6s", {"Off", "On"})..
 			"list[current_player;main;0,7;8,4;]")
 	end
+	local os_clock = os.clock
 	pipeworks.register_tube("pipeworks:mese_tube", "Sorting Pneumatic Tube Segment", mese_plain_textures, mese_noctr_textures,
 				mese_end_textures, mese_short_texture, mese_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
-						 local tbl = {}
+						 local tbl, tbln = {}, 0
 						 local meta = minetest.get_meta(pos)
 						 local inv = meta:get_inventory()
-						 local found = false
 						 local name = stack:get_name()
 						 for i, vect in ipairs(pipeworks.meseadjlist) do
-							 if meta:get_int("l"..tostring(i).."s") == 1 then
-								 for _, st in ipairs(inv:get_list("line"..tostring(i))) do
-									 if st:get_name() == name then
-										 found = true
-										 table.insert(tbl, vect)
-										 break
+							 if meta:get_int("l"..i.."s") == 1 then
+								 local invname = "line"..i
+								 local is_empty = true
+								 for _, st in ipairs(inv:get_list(invname)) do
+									 if not st:is_empty() then
+										 is_empty = false
+										 if st:get_name() == name then
+											 return { vect }
+										 end
 									 end
 								 end
-							 end
-						 end
-						 if found == false then
-							 for i, vect in ipairs(pipeworks.meseadjlist) do
-								 if meta:get_int("l"..tostring(i).."s") == 1 then
-									 if inv:is_empty("line"..tostring(i)) then
-										 table.insert(tbl, vect)
-									 end
+								 if is_empty then
+									 tbln = tbln + 1
+									 tbl[tbln] = vect
 								 end
 							 end
 						 end
