@@ -271,11 +271,11 @@ if pipeworks.enable_mese_tube then
 			fs_helpers.cycling_button(meta, "button[7,5;1,1", "l6s", {"Off", "On"})..
 			"list[current_player;main;0,7;8,4;]")
 	end
-	local os_clock = os.clock
 	pipeworks.register_tube("pipeworks:mese_tube", "Sorting Pneumatic Tube Segment", mese_plain_textures, mese_noctr_textures,
 				mese_end_textures, mese_short_texture, mese_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 local tbl, tbln = {}, 0
+						 local found, foundn = {}, 0
 						 local meta = minetest.get_meta(pos)
 						 local inv = meta:get_inventory()
 						 local name = stack:get_name()
@@ -287,7 +287,8 @@ if pipeworks.enable_mese_tube then
 									 if not st:is_empty() then
 										 is_empty = false
 										 if st:get_name() == name then
-											 return { vect }
+											 foundn = foundn + 1
+											 found[foundn] = vect
 										 end
 									 end
 								 end
@@ -297,7 +298,7 @@ if pipeworks.enable_mese_tube then
 								 end
 							 end
 						 end
-						 return tbl
+						 return (foundn > 0) and found or tbl
 					end},
 				 on_construct = function(pos)
 					 local meta = minetest.get_meta(pos)
