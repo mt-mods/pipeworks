@@ -40,7 +40,7 @@ local function set_tube(pos, channel, can_receive)
 	end
 
 	-- we haven't found any tp tube to update, so lets add it
-	table.insert(tp_tube_db,{x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=cr})
+	table.insert(tp_tube_db,{x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive})
 	save_tube_db()
 end
 
@@ -48,7 +48,8 @@ local function remove_tube(pos)
 	local tubes = tp_tube_db or read_tube_db()
 	local newtbl = {}
 	for _, val in ipairs(tubes) do
-		if val.x ~= pos.x or val.y ~= pos.y or val.z ~= pos.z then
+		if val.channel ~= "" -- remove also any empty channels when we stumble over them
+		  and (val.x ~= pos.x or val.y ~= pos.y or val.z ~= pos.z) then
 			table.insert(newtbl, val)
 		end
 	end
@@ -122,6 +123,7 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 			velocity.z = 0
 			local meta = minetest.get_meta(pos)
 			local channel = meta:get_string("channel")
+			if channel == "" then return {} end
 			local target = get_receivers(pos, channel)
 			if target[1] == nil then return {} end
 			local d = math.random(1,#target)
@@ -133,17 +135,20 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 	},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("channel","")
-		meta:set_int("can_receive",1)
-		set_tube(pos, "", 1)
+		meta:set_int("can_receive", 1)
 		set_teleport_tube_formspec(meta, 1)
 	end,
 	on_receive_fields = function(pos,formname,fields,sender)
+		if not fields.channel then
+			return -- ignore escaping or clientside manipulation of the form
+		end
+
 		local meta = minetest.get_meta(pos)
 		local can_receive = meta:get_int("can_receive")
 
-		if fields.channel then
-			-- check for private channels
+		-- check for private channels each time before actually changing anything
+		-- to not even allow switching between can_receive states of private channels
+		if fields.channel ~= "" then
 			local sender_name = sender:get_player_name()
 			local name, mode = fields.channel:match("^([^:;]+)([:;])")
 			if name and mode and name ~= sender_name then
@@ -158,22 +163,39 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 					return
 				end
 			end
-			-- save channel if we set one
-			meta:set_string("channel", fields.channel)
 		end
-		-- make sure we have a channel, either the newly set one or the one from metadata
-		local channel = fields.channel or meta:get_string("channel")
 
+		local dirty = false
+
+		-- test if a can_receive button was pressed
 		if fields.cr0 and can_receive ~= 0 then
 			can_receive = 0
 			meta:set_int("can_receive", can_receive)
+			dirty = true
 		elseif fields.cr1 and can_receive ~= 1 then
 			can_receive = 1
 			meta:set_int("can_receive", can_receive)
+			dirty = true
 		end
 
-		set_tube(pos, fields.channel, can_receive)
-		set_teleport_tube_formspec(meta, can_receive)
+		-- was the channel changed?
+		local channel = meta:get_string("channel")
+		if fields.channel ~= channel then
+			channel = fields.channel
+			meta:set_string("channel", channel)
+			dirty = true
+		end
+
+		-- save if we changed something, handle the empty channel while we're at it
+		if dirty then
+			if channel ~= "" then
+				set_tube(pos, channel, can_receive)
+			else
+				-- remove empty channel tubes, to not have to search through them
+				remove_tube(pos)
+			end
+			set_teleport_tube_formspec(meta, can_receive)
+		end
 	end,
 	on_destruct = function(pos)
 		remove_tube(pos)
