@@ -1,6 +1,35 @@
 local filename=minetest.get_worldpath() .. "/teleport_tubes"
 
 local tp_tube_db = nil -- nil forces a read
+local tp_tube_db_version = 2.0
+
+local function hash(pos)
+	return string.format("%d", minetest.hash_node_position(pos))
+end
+
+local function save_tube_db()
+	local file, err = io.open(filename, "w")
+	if file then
+		tp_tube_db.version = tp_tube_db_version
+		file:write(minetest.serialize(tp_tube_db))
+		tp_tube_db.version = nil
+		io.close(file)
+	else
+		error(err)
+	end
+end
+
+local function migrate_tube_db()
+		local tmp_db = {}
+		tp_tube_db.version = nil
+		for key, val in pairs(tp_tube_db) do
+			if(val.channel ~= "") then -- skip unconfigured tubes
+				tmp_db[hash(val)] = val
+			end
+		end
+		tp_tube_db = tmp_db
+		save_tube_db()
+end
 
 local function read_tube_db()
 	local file = io.open(filename, "r")
@@ -10,50 +39,37 @@ local function read_tube_db()
 
 		if file_content and file_content ~= "" then
 			tp_tube_db = minetest.deserialize(file_content)
-			return tp_tube_db-- we read sucessfully
+			if(not tp_tube_db.version or tonumber(tp_tube_db.version) < tp_tube_db_version) then
+				migrate_tube_db()
+			end
+			tp_tube_db.version = nil -- we add it back when saving
+			return tp_tube_db -- we read sucessfully
 		end
 	end
 	tp_tube_db = {}
 	return tp_tube_db
 end
 
-local function save_tube_db()
-	local file, err = io.open(filename, "w")
-	if file then
-		file:write(minetest.serialize(tp_tube_db))
-		io.close(file)
-	else
-		error(err)
-	end
-end
-
 -- updates or adds a tube
 local function set_tube(pos, channel, can_receive)
 	local tubes = tp_tube_db or read_tube_db()
-	for _, val in ipairs(tubes) do
-		if val.x == pos.x and val.y == pos.y and val.z == pos.z then
-			val.channel = channel
-			val.cr = can_receive
-			save_tube_db()
-			return
-		end
+	local hash = hash(pos)
+	local tube = tubes[hash]
+	if tube then
+		tube.channel = channel
+		tube.cr = can_receive
+		save_tube_db()
+		return
 	end
 
 	-- we haven't found any tp tube to update, so lets add it
-	table.insert(tp_tube_db,{x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive})
+	tp_tube_db[hash] = {x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive}
 	save_tube_db()
 end
 
 local function remove_tube(pos)
 	local tubes = tp_tube_db or read_tube_db()
-	local newtbl = {}
-	for _, val in ipairs(tubes) do
-		if val.channel ~= "" -- remove also any empty channels when we stumble over them
-		  and (val.x ~= pos.x or val.y ~= pos.y or val.z ~= pos.z) then
-			table.insert(newtbl, val)
-		end
-	end
-	tp_tube_db = newtbl
+	tubes[hash(pos)] = nil
 	save_tube_db()
 end
 
@@ -65,11 +81,11 @@ local function read_node_with_vm(pos)
 	return minetest.get_name_from_content_id(data[area:index(pos.x, pos.y, pos.z)])
 end
 
-local function get_receivers(pos,channel)
+local function get_receivers(pos, channel)
 	local tubes = tp_tube_db or read_tube_db()
 	local receivers = {}
-	local changed = false
-	for _, val in ipairs(tubes) do
+	local dirty = false
+	for key, val in pairs(tubes) do
 		-- skip all non-receivers and the tube that it came from as early as possible, as this is called often
 		if (val.cr == 1 and val.channel == channel and (val.x ~= pos.x or val.y ~= pos.y or val.z ~= pos.z)) then
 			local is_loaded = (minetest.get_node_or_nil(val) ~= nil)
@@ -78,19 +94,12 @@ local function get_receivers(pos,channel)
 			if minetest.registered_nodes[node_name] and minetest.registered_nodes[node_name].is_teleport_tube then
 				table.insert(receivers, val)
 			else
-				val.to_remove = true
-				changed = true
+				tp_tube_db[key] = nil
+				dirty = true
 			end
 		end
 	end
-	if changed then
-		local updated = {}
-		for _, val in ipairs(tubes) do
-			if not val.to_remove then
-				table.insert(updated, val)
-			end
-		end
-		tp_tube_db = updated
+	if dirty then
 		save_tube_db()
 	end
 	return receivers
@@ -121,11 +130,13 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 			velocity.x = 0
 			velocity.y = 0
 			velocity.z = 0
-			local meta = minetest.get_meta(pos)
-			local channel = meta:get_string("channel")
+
+			local channel = minetest.get_meta(pos):get_string("channel")
 			if channel == "" then return {} end
+
 			local target = get_receivers(pos, channel)
 			if target[1] == nil then return {} end
+
 			local d = math.random(1,#target)
 			pos.x = target[d].x
 			pos.y = target[d].y
