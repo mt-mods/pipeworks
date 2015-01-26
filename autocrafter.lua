@@ -8,6 +8,11 @@ local function make_inventory_cache(invlist)
 	return l
 end
 
+local function get_cached_craft(pos)
+	local hash = minetest.hash_node_position(pos)
+	return hash, autocrafterCache[hash]
+end
+
 local function autocraft(inventory, pos)
 	if not inventory then return end
 	local recipe = inventory:get_list("recipe")
@@ -16,38 +21,33 @@ local function autocraft(inventory, pos)
 	local result
 	local new
 
-	if autocrafterCache[minetest.hash_node_position(pos)] == nil then
+	local hash, craft = get_cached_craft(pos)
+	if craft == nil then
 		recipe_last = {}
 		for i = 1, 9 do
 			recipe_last[i] = recipe[i]
 			recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 		end
 		result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-		autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+		autocrafterCache[hash] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
 	else
-		local autocrafterCacheEntry = autocrafterCache[minetest.hash_node_position(pos)]
-		recipe_last = autocrafterCacheEntry["recipe"]
-		result = autocrafterCacheEntry["result"]
-		new = autocrafterCacheEntry["new"]
-		local recipeUnchanged = true
+		recipe_last, result, new = craft.recipe, craft.result, craft.new
+		local recipe_changed = false
 		for i = 1, 9 do
-			if recipe[i]:get_name() ~= recipe_last[i]:get_name() then
-				recipeUnchanged = false
-				break
-			end
-			if recipe[i]:get_count() ~= recipe_last[i]:get_count() then
-				recipeUnchanged = false
+			local recipe_entry, recipe_last_entry = recipe[i], recipe_last[i]
+			if recipe_entry:get_name() ~= recipe_last_entry:get_name()
+			  or recipe_entry:get_count() ~= recipe_last_entry:get_count() then
+				recipe_changed = true
 				break
 			end
 		end
-		if recipeUnchanged then
-		else
+		if recipe_changed then
 			for i = 1, 9 do
 					recipe_last[i] = recipe[i]
 					recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 			end
 			result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-			autocrafterCache[minetest.hash_node_position(pos)] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+			autocrafterCache[hash] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
 		end
 	end
 
@@ -57,10 +57,11 @@ local function autocraft(inventory, pos)
 	local to_use = {}
 	for _, item in ipairs(recipe) do
 		if item~= nil and not item:is_empty() then
-			if to_use[item:get_name()] == nil then
-				to_use[item:get_name()] = 1
+			local item_name = item:get_name()
+			if to_use[item_name] == nil then
+				to_use[item_name] = 1
 			else
-				to_use[item:get_name()] = to_use[item:get_name()]+1
+				to_use[item_name] = to_use[item_name]+1
 			end
 		end
 	end
