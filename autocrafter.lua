@@ -85,8 +85,11 @@ local function update_autocrafter(pos)
 	if meta:get_string("virtual_items") == "" then
 		meta:set_string("virtual_items", "1")
 		local inv = meta:get_inventory()
-		for _, stack in ipairs(inv:get_list("recipe")) do
+		for idx, stack in ipairs(inv:get_list("recipe")) do
 			minetest.item_drop(stack, "", pos)
+			stack:set_count(1)
+			stack:set_wear(0)
+			inv:set_stack("recipe", idx, stack)
 		end
 	end
 end
