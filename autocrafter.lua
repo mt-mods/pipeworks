@@ -39,7 +39,7 @@ local function on_recipe_change(pos, inventory)
 
 	if recipe_changed then
 		local output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-		craft = {recipe = recipe, output = output, decremented_input = decremented_input}
+		craft = {recipe = recipe, consumption=count_index(recipe), output = output, decremented_input = decremented_input}
 		autocrafterCache[hash] = craft
 	end
 
@@ -75,15 +75,7 @@ local function autocraft(inventory, pos)
 	local output_item = craft.output.item
 	if output_item:is_empty() or not inventory:room_for_item("dst", output_item) then return end
 
-	-- determine how much we have to consume each craft
-	local consumption = {}
-	for _, item in ipairs(recipe) do
-		if item and not item:is_empty() then
-			local item_name = item:get_name()
-			consumption[item_name] = (consumption[item_name] or 0) + 1
-		end
-	end
-
+	local consumption = craft.consumption
 	local inv_index = count_index(inventory:get_list("src"))
 	-- check if we have enough materials available
 	for itemname, number in pairs(consumption) do
