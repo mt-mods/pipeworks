@@ -17,43 +17,43 @@ local function autocraft(inventory, pos)
 	if not inventory then return end
 	local recipe = inventory:get_list("recipe")
 	if not recipe then return end
-	local recipe_last
-	local result
-	local new
+	local cached_recipe
+	local output
+	local decremented_input
 
 	local hash, craft = get_cached_craft(pos)
 	if craft == nil then
-		recipe_last = {}
+		cached_recipe = {}
 		for i = 1, 9 do
-			recipe_last[i] = recipe[i]
+			cached_recipe[i] = recipe[i]
 			recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 		end
-		result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-		autocrafterCache[hash] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+		output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
+		autocrafterCache[hash] = {recipe = recipe, output = output, decremented_input = decremented_input}
 	else
-		recipe_last, result, new = craft.recipe, craft.result, craft.new
+		cached_recipe, output, decremented_input = craft.recipe, craft.output, craft.decremented_input
 		local recipe_changed = false
 		for i = 1, 9 do
-			local recipe_entry, recipe_last_entry = recipe[i], recipe_last[i]
-			if recipe_entry:get_name() ~= recipe_last_entry:get_name()
-			  or recipe_entry:get_count() ~= recipe_last_entry:get_count() then
+			local recipe_entry, cached_recipe_entry = recipe[i], cached_recipe[i]
+			if recipe_entry:get_name() ~= cached_recipe_entry:get_name()
+			  or recipe_entry:get_count() ~= cached_recipe_entry:get_count() then
 				recipe_changed = true
 				break
 			end
 		end
 		if recipe_changed then
 			for i = 1, 9 do
-					recipe_last[i] = recipe[i]
+					cached_recipe[i] = recipe[i]
 					recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
 			end
-			result, new = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-			autocrafterCache[hash] = {["recipe"] = recipe, ["result"] = result, ["new"] = new}
+			output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
+			autocrafterCache[hash] = {recipe = recipe, output = output, decremented_input = decremented_input}
 		end
 	end
 
-	if result.item:is_empty() then return end
-	result = result.item
-	if not inventory:room_for_item("dst", result) then return end
+	if output.item:is_empty() then return end
+	output = output.item
+	if not inventory:room_for_item("dst", output) then return end
 	local to_use = {}
 	for _, item in ipairs(recipe) do
 		if item~= nil and not item:is_empty() then
@@ -74,9 +74,9 @@ local function autocraft(inventory, pos)
 			inventory:remove_item("src", ItemStack(itemname))
 		end
 	end
-	inventory:add_item("dst", result)
+	inventory:add_item("dst", output)
 	for i = 1, 9 do
-		inventory:add_item("dst", new.items[i])
+		inventory:add_item("dst", decremented_input.items[i])
 	end
 end
 
