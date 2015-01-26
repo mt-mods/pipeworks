@@ -1,11 +1,12 @@
 local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
 
-local function make_inventory_cache(invlist)
-	local l = {}
+local function count_index(invlist)
+	local index = {}
 	for _, stack in ipairs(invlist) do
-		l[stack:get_name()] = (l[stack:get_name()] or 0) + stack:get_count()
+		local stack_name = stack:get_name()
+		index[stack_name] = (index[stack_name] or 0) + stack:get_count()
 	end
-	return l
+	return index
 end
 
 local function get_cached_craft(pos)
@@ -13,71 +14,36 @@ local function get_cached_craft(pos)
 	return hash, autocrafterCache[hash]
 end
 
-local function autocraft(inventory, pos)
+-- note, that this function assumes allready being updated to virtual items
+-- and doesn't handle recipes with stacksizes > 1
+local function on_recipe_change(pos, inventory)
 	if not inventory then return end
 	local recipe = inventory:get_list("recipe")
 	if not recipe then return end
-	local cached_recipe
-	local output
-	local decremented_input
 
+	local recipe_changed = false
 	local hash, craft = get_cached_craft(pos)
-	if craft == nil then
-		cached_recipe = {}
-		for i = 1, 9 do
-			cached_recipe[i] = recipe[i]
-			recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
-		end
-		output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-		autocrafterCache[hash] = {recipe = recipe, output = output, decremented_input = decremented_input}
+
+	if not craft then
+		recipe_changed = true
 	else
-		cached_recipe, output, decremented_input = craft.recipe, craft.output, craft.decremented_input
-		local recipe_changed = false
+		-- check if it changed
+		local cached_recipe =  craft.recipe
 		for i = 1, 9 do
-			local recipe_entry, cached_recipe_entry = recipe[i], cached_recipe[i]
-			if recipe_entry:get_name() ~= cached_recipe_entry:get_name()
-			  or recipe_entry:get_count() ~= cached_recipe_entry:get_count() then
+			if recipe[i]:get_name() ~= cached_recipe[i]:get_name() then
 				recipe_changed = true
 				break
 			end
 		end
-		if recipe_changed then
-			for i = 1, 9 do
-					cached_recipe[i] = recipe[i]
-					recipe[i] = ItemStack({name = recipe[i]:get_name(), count = 1})
-			end
-			output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
-			autocrafterCache[hash] = {recipe = recipe, output = output, decremented_input = decremented_input}
-		end
 	end
 
-	if output.item:is_empty() then return end
-	output = output.item
-	if not inventory:room_for_item("dst", output) then return end
-	local to_use = {}
-	for _, item in ipairs(recipe) do
-		if item~= nil and not item:is_empty() then
-			local item_name = item:get_name()
-			if to_use[item_name] == nil then
-				to_use[item_name] = 1
-			else
-				to_use[item_name] = to_use[item_name]+1
-			end
-		end
+	if recipe_changed then
+		local output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
+		craft = {recipe = recipe, output = output, decremented_input = decremented_input}
+		autocrafterCache[hash] = craft
 	end
-	local invcache = make_inventory_cache(inventory:get_list("src"))
-	for itemname, number in pairs(to_use) do
-		if (not invcache[itemname]) or invcache[itemname] < number then return end
-	end
-	for itemname, number in pairs(to_use) do
-		for i = 1, number do -- We have to do that since remove_item does not work if count > stack_max
-			inventory:remove_item("src", ItemStack(itemname))
-		end
-	end
-	inventory:add_item("dst", output)
-	for i = 1, 9 do
-		inventory:add_item("dst", decremented_input.items[i])
-	end
+
+	return craft
 end
 
 local function update_autocrafter(pos)
@@ -91,6 +57,50 @@ local function update_autocrafter(pos)
 			stack:set_wear(0)
 			inv:set_stack("recipe", idx, stack)
 		end
+		on_recipe_change(pos, inv)
+	end
+end
+
+local function autocraft(inventory, pos)
+	if not inventory then return end
+	local recipe = inventory:get_list("recipe")
+	if not recipe then return end
+
+	local hash, craft = get_cached_craft(pos)
+	if craft == nil then
+		update_autocrafter(pos) -- only does some unnecessary calls for "old" autocrafters
+		craft = on_recipe_change(pos, inventory)
+	end
+
+	local output_item = craft.output.item
+	if output_item:is_empty() or not inventory:room_for_item("dst", output_item) then return end
+
+	-- determine how much we have to consume each craft
+	local consumption = {}
+	for _, item in ipairs(recipe) do
+		if item and not item:is_empty() then
+			local item_name = item:get_name()
+			consumption[item_name] = (consumption[item_name] or 0) + 1
+		end
+	end
+
+	local inv_index = count_index(inventory:get_list("src"))
+	-- check if we have enough materials available
+	for itemname, number in pairs(consumption) do
+		if (not inv_index[itemname]) or inv_index[itemname] < number then return end
+	end
+
+	-- consume materials
+	for itemname, number in pairs(consumption) do
+		for i = 1, number do -- We have to do that since remove_item does not work if count > stack_max
+			inventory:remove_item("src", ItemStack(itemname))
+		end
+	end
+
+	-- craft the result into the dst inventory and add any "replacements" as well
+	inventory:add_item("dst", output_item)
+	for i = 1, 9 do
+		inventory:add_item("dst", craft.decremented_input.items[i])
 	end
 end
 
@@ -147,6 +157,7 @@ minetest.register_node("pipeworks:autocrafter", {
 			local stack_copy = ItemStack(stack)
 			stack_copy:set_count(1)
 			inv:set_stack(listname, index, stack_copy)
+			on_recipe_change(pos, inv)
 			return 0
 		else
 			return stack:get_count()
@@ -157,6 +168,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		local inv = minetest.get_meta(pos):get_inventory()
 		if listname == "recipe" then
 			inv:set_stack(listname, index, ItemStack(""))
+			on_recipe_change(pos, inv)
 			return 0
 		else
 			return stack:get_count()
@@ -169,11 +181,13 @@ minetest.register_node("pipeworks:autocrafter", {
 		stack:set_count(count)
 		if from_list == "recipe" then
 			inv:set_stack(from_list, from_index, ItemStack(""))
+			on_recipe_change(pos, inv)
 			return 0
 		elseif to_list == "recipe" then
 			local stack_copy = ItemStack(stack)
 			stack_copy:set_count(1)
 			inv:set_stack(to_list, to_index, stack_copy)
+			on_recipe_change(pos, inv)
 			return 0
 		else
 			return stack:get_count()
