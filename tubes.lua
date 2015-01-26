@@ -249,6 +249,12 @@ if pipeworks.enable_mese_tube then
 				end
 			end
 		end
+		local buttons_formspec = ""
+		for i = 0, 5 do
+			buttons_formspec = buttons_formspec .. fs_helpers.cycling_button(meta,
+				"image_button[7,"..(i)..";1,1", "l"..(i+1).."s",
+				{{text="",texture="pipeworks_button_off.png"}, {text="",texture="pipeworks_button_on.png"}})
+		end
 		meta:set_string("formspec",
 			"size[8,11]"..
 			"list[current_name;line1;1,0;6,1;]"..
@@ -263,12 +269,7 @@ if pipeworks.enable_mese_tube then
 			"image[0,3;1,1;pipeworks_yellow.png]"..
 			"image[0,4;1,1;pipeworks_blue.png]"..
 			"image[0,5;1,1;pipeworks_red.png]"..
-			fs_helpers.cycling_button(meta, "button[7,0;1,1", "l1s", {"Off", "On"})..
-			fs_helpers.cycling_button(meta, "button[7,1;1,1", "l2s", {"Off", "On"})..
-			fs_helpers.cycling_button(meta, "button[7,2;1,1", "l3s", {"Off", "On"})..
-			fs_helpers.cycling_button(meta, "button[7,3;1,1", "l4s", {"Off", "On"})..
-			fs_helpers.cycling_button(meta, "button[7,4;1,1", "l5s", {"Off", "On"})..
-			fs_helpers.cycling_button(meta, "button[7,5;1,1", "l6s", {"Off", "On"})..
+			buttons_formspec..
 			"list[current_player;main;0,7;8,4;]")
 	end
 	pipeworks.register_tube("pipeworks:mese_tube", "Sorting Pneumatic Tube Segment", mese_plain_textures, mese_noctr_textures,
