@@ -61,25 +61,16 @@ local function update_autocrafter(pos)
 	end
 end
 
-local function autocraft(inventory, pos)
-	if not inventory then return end
-	local recipe = inventory:get_list("recipe")
-	if not recipe then return end
-
-	local hash, craft = get_cached_craft(pos)
-	if craft == nil then
-		update_autocrafter(pos) -- only does some unnecessary calls for "old" autocrafters
-		craft = on_recipe_change(pos, inventory)
-	end
-
+local function autocraft(inventory, craft)
 	local output_item = craft.output.item
-	if output_item:is_empty() or not inventory:room_for_item("dst", output_item) then return end
+	-- check if we have enough room in dst
+	if not inventory:room_for_item("dst", output_item) then return false end
 
 	local consumption = craft.consumption
 	local inv_index = count_index(inventory:get_list("src"))
 	-- check if we have enough materials available
 	for itemname, number in pairs(consumption) do
-		if (not inv_index[itemname]) or inv_index[itemname] < number then return end
+		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
 
 	-- consume materials
@@ -94,6 +85,25 @@ local function autocraft(inventory, pos)
 	for i = 1, 9 do
 		inventory:add_item("dst", craft.decremented_input.items[i])
 	end
+	return true
+end
+
+local function run_autocrafter(inventory, pos)
+	if not inventory then return end
+	local recipe = inventory:get_list("recipe")
+	if not recipe then return end
+
+	local _, craft = get_cached_craft(pos)
+	if craft == nil then
+		update_autocrafter(pos) -- only does some unnecessary calls for "old" autocrafters
+		craft = on_recipe_change(pos, inventory)
+	end
+
+	-- skip crafts that have no output
+	local output_item = craft.output.item
+	if output_item:is_empty() then return end
+
+	autocraft(inventory, craft)
 end
 
 minetest.register_node("pipeworks:autocrafter", {
@@ -191,6 +201,6 @@ minetest.register_abm({nodenames = {"pipeworks:autocrafter"}, interval = 1, chan
 			action = function(pos, node)
 				local meta = minetest.get_meta(pos)
 				local inv = meta:get_inventory()
-				autocraft(inv, pos)
+				run_autocrafter(inv, pos)
 			end
 })
