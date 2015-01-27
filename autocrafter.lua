@@ -40,6 +40,16 @@ local function get_craft(pos, inventory, hash)
 	end
 end
 
+local function start_crafter(pos)
+	local meta = minetest.get_meta(pos)
+	if meta:get_int("enabled") == 1 then
+		local timer = minetest.get_node_timer(pos)
+		if not timer:is_started() then
+			timer:start(craft_time)
+		end
+	end
+end
+
 -- note, that this function assumes allready being updated to virtual items
 -- and doesn't handle recipes with stacksizes > 1
 local function on_recipe_change(pos, inventory)
@@ -68,17 +78,11 @@ local function on_recipe_change(pos, inventory)
 		end
 	end
 
-	local timer = minetest.get_node_timer(pos)
-	if not timer:is_started() then
-		timer:start(craft_time)
-	end
+	start_crafter(pos)
 end
 
 local function on_inventory_change(pos, inventory)
-	local timer = minetest.get_node_timer(pos)
-	if not timer:is_started() then
-		timer:start(craft_time)
-	end
+	start_crafter(pos)
 end
 
 local function autocraft(inventory, craft)
@@ -137,6 +141,17 @@ local function update_autocrafter(pos)
 	end
 end
 
+local function set_formspec(meta, enabled)
+	local state = enabled and "on" or "off"
+	meta:set_string("formspec",
+			"size[8,11]"..
+			"list[context;recipe;0,0;3,3;]"..
+			"image_button[3,2;1,1;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
+			"list[context;src;0,3.5;8,3;]"..
+			"list[context;dst;4,0;4,3;]"..
+			"list[current_player;main;0,7;8,4;]")
+end
+
 minetest.register_node("pipeworks:autocrafter", {
 	description = "Autocrafter", 
 	drawtype = "normal", 
@@ -158,18 +173,28 @@ minetest.register_node("pipeworks:autocrafter", {
 		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1}}, 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-				"size[8,11]"..
-				"list[current_name;recipe;0,0;3,3;]"..
-				"list[current_name;src;0,3.5;8,3;]"..
-				"list[current_name;dst;4,0;4,3;]"..
-				"list[current_player;main;0,7;8,4;]")
+		set_formspec(meta)
 		meta:set_string("infotext", "unconfigured Autocrafter")
 		meta:set_string("virtual_items", "1")
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3*8)
 		inv:set_size("recipe", 3*3)
 		inv:set_size("dst", 4*3)
+	end,
+	on_receive_fields = function(pos, formname, fields, sender)
+		local meta = minetest.get_meta(pos)
+		if fields.on then
+			meta:set_int("enabled", 0)
+			set_formspec(meta, false)
+			minetest.get_node_timer(pos):stop()
+			meta:set_string("infotext", text or "paused Autocrafter")
+		elseif fields.off then
+			meta:set_int("enabled", 1)
+			set_formspec(meta, true)
+			start_crafter(pos)
+		else -- update formspec on esc for now
+			set_formspec(meta, meta:get_int("enabled") == 1)
+		end
 	end,
 	on_punch = update_autocrafter,
 	can_dig = function(pos, player)
