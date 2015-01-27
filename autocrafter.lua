@@ -247,16 +247,18 @@ minetest.register_node("pipeworks:autocrafter", {
 		stack:set_count(count)
 		if from_list == "recipe" then
 			inv:set_stack(from_list, from_index, ItemStack(""))
-			after_recipe_change(pos, inv)
-			return 0
-		elseif to_list == "recipe" then
-			add_virtual_item(inv, to_list, to_index, stack)
-			after_recipe_change(pos, inv)
-			return 0
-		else
-			after_inventory_change(pos, inv)
-			return stack:get_count()
 		end
+		if to_list == "recipe" then
+			add_virtual_item(inv, to_list, to_index, stack)
+		end
+
+		if from_list == "recipe" or to_list == "recipe" then
+			after_recipe_change(pos, inv)
+			return 0
+		end
+
+		after_inventory_change(pos, inv)
+		return stack:get_count()
 	end,
 	on_timer = run_autocrafter
 })
