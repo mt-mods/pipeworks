@@ -1,5 +1,7 @@
 local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
 
+local craft_time = 1
+
 local function count_index(invlist)
 	local index = {}
 	for _, stack in pairs(invlist) do
@@ -57,14 +59,14 @@ local function on_recipe_change(pos, inventory)
 
 	local timer = minetest.get_node_timer(pos)
 	if not timer:is_started() then
-		timer:start(1)
+		timer:start(craft_time)
 	end
 end
 
 local function on_inventory_change(pos, inventory)
 	local timer = minetest.get_node_timer(pos)
 	if not timer:is_started() then
-		timer:start(1)
+		timer:start(craft_time)
 	end
 end
 
@@ -101,7 +103,12 @@ local function run_autocrafter(pos, elapsed)
 	local meta = minetest.get_meta(pos)
 	local inventory = meta:get_inventory()
 	local craft = get_craft(pos, inventory)
-	return autocraft(inventory, craft)
+
+	for step = 1, math.floor(elapsed/craft_time) do
+		local continue = autocraft(inventory, craft)
+		if not continue then return false end
+	end
+	return true
 end
 
 local function update_autocrafter(pos)
