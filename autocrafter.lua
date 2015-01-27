@@ -13,20 +13,30 @@ local function count_index(invlist)
 	return index
 end
 
+local function set_infotext(pos, text)
+	local meta = minetest.get_meta(pos)
+	meta:set_string("infotext", text or "unconfigured Autocrafter")
+end
+
 local function get_craft(pos, inventory, hash)
 	local hash = hash or minetest.hash_node_position(pos)
 	local craft = autocrafterCache[hash]
 	if not craft then
-		if inventory:is_empty("recipe") then return nil end
+		if inventory:is_empty("recipe") then
+			set_infotext(pos, nil)
+			return
+		end
 		local recipe = inventory:get_list("recipe")
 		local output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
 		craft = {recipe = recipe, consumption=count_index(recipe), output = output, decremented_input = decremented_input}
 		autocrafterCache[hash] = craft
-
+		set_infotext(pos, "Autocrafter: " .. output.item:get_name())
 	end
 	-- only return crafts that have an actual result
 	if not craft.output.item:is_empty() then
 		return craft
+	else
+		set_infotext(pos, "Autocrafter: unknown recipe")
 	end
 end
 
@@ -37,6 +47,7 @@ local function on_recipe_change(pos, inventory)
 	if inventory:is_empty("recipe") then
 		minetest.get_node_timer(pos):stop()
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
+		set_infotext(pos, nil)
 		return
 	end
 	local recipe_changed = false
@@ -153,7 +164,7 @@ minetest.register_node("pipeworks:autocrafter", {
 				"list[current_name;src;0,3.5;8,3;]"..
 				"list[current_name;dst;4,0;4,3;]"..
 				"list[current_player;main;0,7;8,4;]")
-		meta:set_string("infotext", "Autocrafter")
+		meta:set_string("infotext", "unconfigured Autocrafter")
 		meta:set_string("virtual_items", "1")
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3*8)
