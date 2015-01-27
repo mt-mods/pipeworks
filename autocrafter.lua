@@ -152,6 +152,12 @@ local function set_formspec(meta, enabled)
 			"list[current_player;main;0,7;8,4;]")
 end
 
+local function add_virtual_item(inv, listname, index, stack)
+	local stack_copy = ItemStack(stack)
+	stack_copy:set_count(1)
+	inv:set_stack(listname, index, stack_copy)
+end
+
 minetest.register_node("pipeworks:autocrafter", {
 	description = "Autocrafter", 
 	drawtype = "normal", 
@@ -214,9 +220,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		update_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		if listname == "recipe" then
-			local stack_copy = ItemStack(stack)
-			stack_copy:set_count(1)
-			inv:set_stack(listname, index, stack_copy)
+			add_virtual_item(inv, listname, index, stack)
 			after_recipe_change(pos, inv)
 			return 0
 		else
@@ -246,9 +250,7 @@ minetest.register_node("pipeworks:autocrafter", {
 			after_recipe_change(pos, inv)
 			return 0
 		elseif to_list == "recipe" then
-			local stack_copy = ItemStack(stack)
-			stack_copy:set_count(1)
-			inv:set_stack(to_list, to_index, stack_copy)
+			add_virtual_item(inv, to_list, to_index, stack)
 			after_recipe_change(pos, inv)
 			return 0
 		else
