@@ -52,7 +52,7 @@ end
 
 -- note, that this function assumes allready being updated to virtual items
 -- and doesn't handle recipes with stacksizes > 1
-local function on_recipe_change(pos, inventory)
+local function after_recipe_change(pos, inventory)
 	-- if we emptied the grid, there's no point in keeping it running or cached
 	if inventory:is_empty("recipe") then
 		minetest.get_node_timer(pos):stop()
@@ -81,7 +81,7 @@ local function on_recipe_change(pos, inventory)
 	start_crafter(pos)
 end
 
-local function on_inventory_change(pos, inventory)
+local function after_inventory_change(pos, inventory)
 	start_crafter(pos)
 end
 
@@ -137,7 +137,7 @@ local function update_autocrafter(pos)
 			stack:set_wear(0)
 			inv:set_stack("recipe", idx, stack)
 		end
-		on_recipe_change(pos, inv)
+		after_recipe_change(pos, inv)
 	end
 end
 
@@ -161,7 +161,7 @@ minetest.register_node("pipeworks:autocrafter", {
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			local added = inv:add_item("src", stack)
-			on_inventory_change(pos, inv)
+			after_inventory_change(pos, inv)
 			return added
 		end, 
 		can_insert = function(pos, node, stack, direction)
@@ -217,10 +217,10 @@ minetest.register_node("pipeworks:autocrafter", {
 			local stack_copy = ItemStack(stack)
 			stack_copy:set_count(1)
 			inv:set_stack(listname, index, stack_copy)
-			on_recipe_change(pos, inv)
+			after_recipe_change(pos, inv)
 			return 0
 		else
-			on_inventory_change(pos, inv)
+			after_inventory_change(pos, inv)
 			return stack:get_count()
 		end
 	end,
@@ -229,10 +229,10 @@ minetest.register_node("pipeworks:autocrafter", {
 		local inv = minetest.get_meta(pos):get_inventory()
 		if listname == "recipe" then
 			inv:set_stack(listname, index, ItemStack(""))
-			on_recipe_change(pos, inv)
+			after_recipe_change(pos, inv)
 			return 0
 		else
-			on_inventory_change(pos, inv)
+			after_inventory_change(pos, inv)
 			return stack:get_count()
 		end
 	end,
@@ -243,16 +243,16 @@ minetest.register_node("pipeworks:autocrafter", {
 		stack:set_count(count)
 		if from_list == "recipe" then
 			inv:set_stack(from_list, from_index, ItemStack(""))
-			on_recipe_change(pos, inv)
+			after_recipe_change(pos, inv)
 			return 0
 		elseif to_list == "recipe" then
 			local stack_copy = ItemStack(stack)
 			stack_copy:set_count(1)
 			inv:set_stack(to_list, to_index, stack_copy)
-			on_recipe_change(pos, inv)
+			after_recipe_change(pos, inv)
 			return 0
 		else
-			on_inventory_change(pos, inv)
+			after_inventory_change(pos, inv)
 			return stack:get_count()
 		end
 	end,
