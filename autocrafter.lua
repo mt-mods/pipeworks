@@ -170,17 +170,19 @@ local function update_autocrafter(pos, meta)
 		if meta:get_string("virtual_items") == "1" then -- we are version 2
 			-- we allready dropped stuff, so lets remove the metadatasetting (we are not being called again for this node)
 			meta:set_string("virtual_items", "")
-			return
 		else -- we are version 1
 			for idx, stack in ipairs(inv:get_list("recipe")) do
-				minetest.item_drop(stack, "", pos)
-				stack:set_count(1)
-				stack:set_wear(0)
-				inv:set_stack("recipe", idx, stack)
+				if not stack:is_empty() then
+					minetest.item_drop(stack, "", pos)
+					stack:set_count(1)
+					stack:set_wear(0)
+					inv:set_stack("recipe", idx, stack)
+				end
 			end
 		end
 
 		-- update the recipe, cache, and start the crafter
+		autocrafterCache[minetest.hash_node_position(pos)] = nil
 		after_recipe_change(pos, inv)
 	end
 end
