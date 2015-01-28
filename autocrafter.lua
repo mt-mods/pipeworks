@@ -263,18 +263,21 @@ minetest.register_node("pipeworks:autocrafter", {
 			on_output_change(pos, inv, stack)
 			return 0
 		elseif from_list == "output" then
-			on_output_change(pos, inv, nil)
-			return 0
+			inv:set_list("output", {})
+			inv:set_list("recipe", {})
+			if to_list ~= "recipe" then
+				return 0
+			end -- else fall through to recipe list handling
 		end
 
-		if from_list == "recipe" then
-			inv:set_stack(from_list, from_index, ItemStack(""))
-		end
-		if to_list == "recipe" then
-			stack:set_count(1)
-			inv:set_stack(to_list, to_index, stack)
-		end
 		if from_list == "recipe" or to_list == "recipe" then
+			if from_list == "recipe" then
+				inv:set_stack(from_list, from_index, ItemStack(""))
+			end
+			if to_list == "recipe" then
+				stack:set_count(1)
+				inv:set_stack(to_list, to_index, stack)
+			end
 			after_recipe_change(pos, inv)
 			return 0
 		end
