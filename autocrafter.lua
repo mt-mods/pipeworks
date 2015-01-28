@@ -251,6 +251,8 @@ minetest.register_node("pipeworks:autocrafter", {
 	after_place_node = pipeworks.scan_for_tube_objects,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_tube_objects(pos)
+	end,
+	on_destruct = function(pos)
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
