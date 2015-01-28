@@ -136,21 +136,6 @@ local function on_output_change(pos, inventory, stack)
 	after_recipe_change(pos, inventory)
 end
 
-local function update_autocrafter(pos)
-	local meta = minetest.get_meta(pos)
-	if meta:get_string("virtual_items") == "" then
-		meta:set_string("virtual_items", "1")
-		local inv = meta:get_inventory()
-		for idx, stack in ipairs(inv:get_list("recipe")) do
-			minetest.item_drop(stack, "", pos)
-			stack:set_count(1)
-			stack:set_wear(0)
-			inv:set_stack("recipe", idx, stack)
-		end
-		after_recipe_change(pos, inv)
-	end
-end
-
 local function set_formspec(meta, enabled)
 	local state = enabled and "on" or "off"
 	meta:set_string("formspec",
@@ -166,6 +151,38 @@ local function set_formspec(meta, enabled)
 			default.gui_slots..
 			default.get_hotbar_bg(0,7) ..
 			"list[current_player;main;0,7;8,4;]")
+end
+
+-- 1st version of the autocrafter had actual items in the crafting grid
+-- the 2nd replaced these with virtual items, dropped the content on update and set "virtual_items" to string "1"
+-- the third added an output inventory, changed the formspec and added a button for enabling/disabling
+-- so we work out way backwards on this history and update each single case to the newest version
+local function update_autocrafter(pos, meta)
+	local meta = meta or minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+
+	if inv:get_size("output") == 0 then -- we are version 2 or 1
+		inv:set_size("output", 1)
+		-- migrate the old autocrafters into an "enabled" state
+		meta:set_int("enabled", 1)
+		set_formspec(meta, true)
+
+		if meta:get_string("virtual_items") == "1" then -- we are version 2
+			-- we allready dropped stuff, so lets remove the metadatasetting (we are not being called again for this node)
+			meta:set_string("virtual_items", "")
+			return
+		else -- we are version 1
+			for idx, stack in ipairs(inv:get_list("recipe")) do
+				minetest.item_drop(stack, "", pos)
+				stack:set_count(1)
+				stack:set_wear(0)
+				inv:set_stack("recipe", idx, stack)
+			end
+		end
+
+		-- update the recipe, cache, and start the crafter
+		after_recipe_change(pos, inv)
+	end
 end
 
 minetest.register_node("pipeworks:autocrafter", {
@@ -189,9 +206,8 @@ minetest.register_node("pipeworks:autocrafter", {
 		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1}}, 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		set_formspec(meta)
+		set_formspec(meta, false)
 		meta:set_string("infotext", "unconfigured Autocrafter")
-		meta:set_string("virtual_items", "1")
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3*8)
 		inv:set_size("recipe", 3*3)
@@ -209,11 +225,8 @@ minetest.register_node("pipeworks:autocrafter", {
 			meta:set_int("enabled", 1)
 			set_formspec(meta, true)
 			start_crafter(pos)
-		else -- update formspec on esc for now
-			set_formspec(meta, meta:get_int("enabled") == 1)
 		end
 	end,
-	on_punch = update_autocrafter,
 	can_dig = function(pos, player)
 		update_autocrafter(pos)
 		local meta = minetest.get_meta(pos)
