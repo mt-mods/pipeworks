@@ -22,22 +22,12 @@ local function get_craft(pos, inventory, hash)
 	local hash = hash or minetest.hash_node_position(pos)
 	local craft = autocrafterCache[hash]
 	if not craft then
-		if inventory:is_empty("recipe") then
-			set_infotext(pos, nil)
-			return
-		end
 		local recipe = inventory:get_list("recipe")
 		local output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
 		craft = {recipe = recipe, consumption=count_index(recipe), output = output, decremented_input = decremented_input}
 		autocrafterCache[hash] = craft
-		set_infotext(pos, "Autocrafter: " .. output.item:get_name())
 	end
-	-- only return crafts that have an actual result
-	if not craft.output.item:is_empty() then
-		return craft
-	else
-		set_infotext(pos, "Autocrafter: unknown recipe")
-	end
+	return craft
 end
 
 local function start_crafter(pos)
@@ -77,6 +67,11 @@ local function after_recipe_change(pos, inventory)
 			end
 		end
 	end
+
+	craft = craft or get_craft(pos, inventory, hash)
+	local output_item = craft.output.item
+	set_infotext(pos, "Autocrafter: " .. output_item:get_name())
+	inventory:set_stack("output", 1, output_item)
 
 	start_crafter(pos)
 end
@@ -119,6 +114,12 @@ local function run_autocrafter(pos, elapsed)
 	local inventory = meta:get_inventory()
 	local craft = get_craft(pos, inventory)
 
+	-- only use crafts that have an actual result
+	if craft.output.item:is_empty() then
+		set_infotext(pos, "Autocrafter: unknown recipe")
+		return false
+	end
+
 	for step = 1, math.floor(elapsed/craft_time) do
 		local continue = autocraft(inventory, craft)
 		if not continue then return false end
@@ -146,6 +147,8 @@ local function set_formspec(meta, enabled)
 	meta:set_string("formspec",
 			"size[8,11]"..
 			"list[context;recipe;0,0;3,3;]"..
+			"image[3,1;1,1;gui_hb_bg.png^[colorize:#141318:255]"..
+			"list[context;output;3,1;1,1;]"..
 			"image_button[3,2;1,1;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
 			"list[context;src;0,3.5;8,3;]"..
 			"list[context;dst;4,0;4,3;]"..
@@ -160,6 +163,19 @@ local function add_virtual_item(inv, listname, index, stack)
 	local stack_copy = ItemStack(stack)
 	stack_copy:set_count(1)
 	inv:set_stack(listname, index, stack_copy)
+end
+
+local function on_output_change(pos, inventory, stack)
+	if not stack then
+		inventory:set_list("output", {})
+		inventory:set_list("recipe", {})
+	else
+		local input = minetest.get_craft_recipe(stack:get_name())
+		if not input.items or input.type ~= "normal" then return end
+		inventory:set_list("recipe", input.items)
+		add_virtual_item(inventory, "output", 1, stack)
+	end
+	after_recipe_change(pos, inventory)
 end
 
 minetest.register_node("pipeworks:autocrafter", {
@@ -190,6 +206,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		inv:set_size("src", 3*8)
 		inv:set_size("recipe", 3*3)
 		inv:set_size("dst", 4*3)
+		inv:set_size("output", 1)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
@@ -227,10 +244,12 @@ minetest.register_node("pipeworks:autocrafter", {
 			add_virtual_item(inv, listname, index, stack)
 			after_recipe_change(pos, inv)
 			return 0
-		else
-			after_inventory_change(pos, inv)
-			return stack:get_count()
+		elseif listname == "output" then
+			on_output_change(pos, inv, stack)
+			return 0
 		end
+		after_inventory_change(pos, inv)
+		return stack:get_count()
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		update_autocrafter(pos)
@@ -239,23 +258,33 @@ minetest.register_node("pipeworks:autocrafter", {
 			inv:set_stack(listname, index, ItemStack(""))
 			after_recipe_change(pos, inv)
 			return 0
-		else
-			after_inventory_change(pos, inv)
-			return stack:get_count()
+		elseif listname == "output" then
+			on_output_change(pos, inv, nil)
+			return 0
 		end
+		after_inventory_change(pos, inv)
+		return stack:get_count()
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		update_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 		stack:set_count(count)
+
+		if to_list == "output" then
+			on_output_change(pos, inv, stack)
+			return 0
+		elseif from_list == "output" then
+			on_output_change(pos, inv, nil)
+			return 0
+		end
+
 		if from_list == "recipe" then
 			inv:set_stack(from_list, from_index, ItemStack(""))
 		end
 		if to_list == "recipe" then
 			add_virtual_item(inv, to_list, to_index, stack)
 		end
-
 		if from_list == "recipe" or to_list == "recipe" then
 			after_recipe_change(pos, inv)
 			return 0
