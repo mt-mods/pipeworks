@@ -123,6 +123,19 @@ local function after_recipe_change(pos, inventory)
 	after_inventory_change(pos)
 end
 
+-- clean out unknown items and groups, which would be handled like unknown items in the crafting grid
+-- if minetest supports query by group one day, this might replace them
+-- with a canonical version instead
+local function normalize(item_list)
+	for i = 1, #item_list do
+		local name = item_list[i]
+		if not minetest.registered_items[name] then
+			item_list[i] = ""
+		end
+	end
+	return item_list
+end
+
 local function on_output_change(pos, inventory, stack)
 	if not stack then
 		inventory:set_list("output", {})
@@ -130,7 +143,7 @@ local function on_output_change(pos, inventory, stack)
 	else
 		local input = minetest.get_craft_recipe(stack:get_name())
 		if not input.items or input.type ~= "normal" then return end
-		inventory:set_list("recipe", input.items)
+		inventory:set_list("recipe", normalize(input.items))
 		-- we'll set the output slot in after_recipe_change to the actual result of the new recipe
 	end
 	after_recipe_change(pos, inventory)
