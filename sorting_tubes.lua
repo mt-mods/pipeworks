@@ -110,25 +110,25 @@ if pipeworks.enable_mese_tube then
 					return 0
 				end,
 				}, true) -- Must use old tubes, since the textures are rotated with 6d ones
+
+	minetest.register_craft( {
+		output = "pipeworks:mese_tube_1 2",
+		recipe = {
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+			{ "", "default:mese_crystal", "" },
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:mese_tube_000000",
+		recipe = {
+			"pipeworks:tube_1",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment",
+			"default:mese_crystal_fragment"
+		},
+	})
 end
-
-minetest.register_craft( {
-	output = "pipeworks:mese_tube_1 2",
-	recipe = {
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-	        { "", "default:mese_crystal", "" },
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
-	type = "shapeless",
-	output = "pipeworks:mese_tube_000000",
-	recipe = {
-	    "pipeworks:tube_1",
-		"default:mese_crystal_fragment",
-		"default:mese_crystal_fragment",
-		"default:mese_crystal_fragment",
-		"default:mese_crystal_fragment"
-	},
-})

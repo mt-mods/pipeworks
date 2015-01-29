@@ -26,6 +26,16 @@ if pipeworks.enable_accelerator_tube then
 						 return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end}
 	})
+
+	minetest.register_craft( {
+		output = "pipeworks:accelerator_tube_1 2",
+		recipe = {
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+			{ "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+
 end
 
 if pipeworks.enable_crossing_tube then
@@ -43,6 +53,15 @@ if pipeworks.enable_crossing_tube then
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 return {velocity}
 					end}
+	})
+
+	minetest.register_craft( {
+		output = "pipeworks:crossing_tube_1 5",
+		recipe = {
+			{ "", "pipeworks:tube_1", "" },
+			{ "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
+			{ "", "pipeworks:tube_1", "" }
+		},
 	})
 end
 
@@ -71,23 +90,12 @@ if pipeworks.enable_one_way_tube then
 			priority = 75 -- Higher than normal tubes, but lower than receivers
 		},
 	})
-
+	minetest.register_craft({
+		output = "pipeworks:one_way_tube 2",
+		recipe = {
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+			{ "group:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
 end
-
-minetest.register_craft( {
-	output = "pipeworks:accelerator_tube_1 2",
-	recipe = {
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-	        { "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:crossing_tube_1 5",
-	recipe = {
-	        { "", "pipeworks:tube_1", "" },
-	        { "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
-	        { "", "pipeworks:tube_1", "" }
-	},
-})

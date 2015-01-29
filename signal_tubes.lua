@@ -53,6 +53,15 @@ if pipeworks.enable_detector_tube then
 				 mesecons = {receptor = {state = "off",
 							 rules = pipeworks.mesecons_rules}}
 	})
+
+	minetest.register_craft( {
+		output = "pipeworks:conductor_tube_off_1 6",
+		recipe = {
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+			{ "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
 end
 
 if pipeworks.enable_conductor_tube then
@@ -88,22 +97,15 @@ if pipeworks.enable_conductor_tube then
 							  rules = pipeworks.mesecons_rules,
 							  offstate = "pipeworks:conductor_tube_off_#id"}}
 	})
+
+	minetest.register_craft( {
+		output = "pipeworks:detector_tube_off_1 2",
+		recipe = {
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+			{ "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
 end
 
-minetest.register_craft( {
-	output = "pipeworks:conductor_tube_off_1 6",
-	recipe = {
-		{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		{ "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
-		{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-	},
-})
 
-minetest.register_craft( {
-	output = "pipeworks:detector_tube_off_1 2",
-	recipe = {
-		{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-		{ "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
-		{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-	},
-})
