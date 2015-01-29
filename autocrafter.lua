@@ -209,7 +209,9 @@ local function upgrade_autocrafter(pos, meta)
 			-- we allready dropped stuff, so lets remove the metadatasetting (we are not being called again for this node)
 			meta:set_string("virtual_items", "")
 		else -- we are version 1
-			for idx, stack in ipairs(inv:get_list("recipe")) do
+			local recipe = inv:get_list("recipe")
+			if not recipe then return end
+			for idx, stack in ipairs(recipe) do
 				if not stack:is_empty() then
 					minetest.item_drop(stack, "", pos)
 					stack:set_count(1)
