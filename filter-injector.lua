@@ -199,3 +199,21 @@ for _, data in ipairs({
 		end,
 	})
 end
+
+minetest.register_craft( {
+	output = "pipeworks:filter 2",
+	recipe = {
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
+	        { "group:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:mese_filter 2",
+	recipe = {
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
+	        { "group:stick", "default:mese", "homedecor:plastic_sheeting" },
+	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+	},
+})

@@ -221,6 +221,15 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 	end
 })
 
+minetest.register_craft( {
+	output = "pipeworks:teleport_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:desert_stone", "default:mese_block", "default:desert_stone" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
 if minetest.get_modpath("mesecons_mvps") ~= nil then
 	mesecon.register_on_mvps_move(function(moved_nodes)
 		for _, n in ipairs(moved_nodes) do

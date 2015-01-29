@@ -340,3 +340,12 @@ minetest.register_node("pipeworks:autocrafter", {
 	end,
 	on_timer = run_autocrafter
 })
+
+minetest.register_craft( {
+	output = "pipeworks:autocrafter 2",
+	recipe = {
+	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
+	        { "homedecor:plastic_sheeting", "default:steel_ingot", "homedecor:plastic_sheeting" },
+	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
+	},
+})

@@ -216,15 +216,6 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
-	output = "pipeworks:teleport_tube_1 2",
-	recipe = {
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-	        { "default:desert_stone", "default:mese_block", "default:desert_stone" },
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
 	output = "pipeworks:sand_tube_1 2",
 	recipe = {
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
@@ -286,35 +277,6 @@ minetest.register_craft( {
 		"default:mese_crystal_fragment",
 		"default:mese_crystal_fragment",
 		"default:mese_crystal_fragment"
-	},
-})
-
--- Various ancillary tube devices
-
-minetest.register_craft( {
-	output = "pipeworks:filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "group:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:mese_filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "group:stick", "default:mese", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:autocrafter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
-	        { "homedecor:plastic_sheeting", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
 	},
 })
 
