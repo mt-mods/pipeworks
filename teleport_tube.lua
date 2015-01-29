@@ -121,9 +121,10 @@ local function update_meta(meta, can_receive)
 			"field[0.6,0.6;7,1;channel;Channel:;${channel}]"..
 			"label[7.3,0;Receive]"..
 			"image_button[7.3,0.3;1,1;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
-			"label[0.3,1.3;channels are public by default]" ..
-			"label[0.3,1.6;use <player>:<channel> for fully private channels]" ..
-			"label[0.3,1.9;use <player>\\;<channel> for private receivers]" ..
+			"image[0.3,1.3;1,1;pipeworks_teleport_tube_inv.png]"..
+			"label[1.6,1.2;channels are public by default]" ..
+			"label[1.6,1.5;use <player>:<channel> for fully private channels]" ..
+			"label[1.6,1.8;use <player>\\;<channel> for private receivers]" ..
 			default.gui_bg..
 			default.gui_bg_img)
 end
