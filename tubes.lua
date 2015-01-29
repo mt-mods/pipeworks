@@ -257,12 +257,12 @@ if pipeworks.enable_mese_tube then
 		end
 		meta:set_string("formspec",
 			"size[8,11]"..
-			"list[current_name;line1;1,0;6,1;]"..
-			"list[current_name;line2;1,1;6,1;]"..
-			"list[current_name;line3;1,2;6,1;]"..
-			"list[current_name;line4;1,3;6,1;]"..
-			"list[current_name;line5;1,4;6,1;]"..
-			"list[current_name;line6;1,5;6,1;]"..
+			"list[context;line1;1,0;6,1;]"..
+			"list[context;line2;1,1;6,1;]"..
+			"list[context;line3;1,2;6,1;]"..
+			"list[context;line4;1,3;6,1;]"..
+			"list[context;line5;1,4;6,1;]"..
+			"list[context;line6;1,5;6,1;]"..
 			"image[0,0;1,1;pipeworks_white.png]"..
 			"image[0,1;1,1;pipeworks_black.png]"..
 			"image[0,2;1,1;pipeworks_green.png]"..

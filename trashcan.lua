@@ -23,7 +23,7 @@ minetest.register_node("pipeworks:trashcan", {
 				"size[8,7]"..
 				"item_image[0,0;1,1;pipeworks:trashcan]"..
 				"label[1,0;Trash Can]"..
-				"list[current_name;trash;3.5,1;1,1;]"..
+				"list[context;trash;3.5,1;1,1;]"..
 				"list[current_player;main;0,3;8,4;]")
 		meta:set_string("infotext", "Trash Can")
 		meta:get_inventory():set_size("trash", 1)

@@ -16,7 +16,7 @@ local function set_filter_formspec(data, meta)
 			"item_image[0,0;1,1;pipeworks:"..data.name.."]"..
 			"label[1,0;"..minetest.formspec_escape(itemname).."]"..
 			"label[0,1;Prefer item types:]"..
-			"list[current_name;main;0,1.5;8,2;]"..
+			"list[context;main;0,1.5;8,2;]"..
 			fs_helpers.cycling_button(meta, "button[0,3.5;4,1", "slotseq_mode",
 				{"Sequence slots by Priority",
 				 "Sequence slots Randomly",
