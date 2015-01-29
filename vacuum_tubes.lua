@@ -1,0 +1,145 @@
+if pipeworks.enable_sand_tube then
+	local sand_noctr_textures = {"pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png",
+				     "pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png"}
+	local sand_plain_textures = {"pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png",
+				     "pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png"}
+	local sand_end_textures = {"pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png",
+				   "pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png"}
+	local sand_short_texture = "pipeworks_sand_tube_short.png"
+	local sand_inv_texture = "pipeworks_sand_tube_inv.png"
+
+	pipeworks.register_tube("pipeworks:sand_tube", "Vacuuming Pneumatic Tube Segment", sand_plain_textures, sand_noctr_textures, sand_end_textures,
+				sand_short_texture, sand_inv_texture,
+				{groups = {sand_tube = 1}})
+
+	minetest.register_abm({nodenames = {"group:sand_tube"},
+			       interval = 1,
+			       chance = 1,
+			       action = function(pos, node, active_object_count, active_object_count_wider)
+				       for _, object in ipairs(minetest.get_objects_inside_radius(pos, 2)) do
+					       if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
+						       if object:get_luaentity().itemstring ~= "" then
+							       pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), object:get_luaentity().itemstring)
+						       end
+						       object:get_luaentity().itemstring = ""
+						       object:remove()
+					       end
+				       end
+			       end
+	})
+end
+
+if pipeworks.enable_mese_sand_tube then
+	local mese_sand_noctr_textures = {"pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png",
+					  "pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png"}
+	local mese_sand_plain_textures = {"pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png",
+					  "pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png"}
+	local mese_sand_end_textures = {"pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png",
+					"pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png"}
+	local mese_sand_short_texture = "pipeworks_mese_sand_tube_short.png"
+	local mese_sand_inv_texture = "pipeworks_mese_sand_tube_inv.png"
+
+	pipeworks.register_tube("pipeworks:mese_sand_tube", "Adjustable Vacuuming Pneumatic Tube Segment", mese_sand_plain_textures, mese_sand_noctr_textures,
+				mese_sand_end_textures, mese_sand_short_texture,mese_sand_inv_texture,
+				{groups = {mese_sand_tube = 1},
+				 on_construct = function(pos)
+					 local meta = minetest.get_meta(pos)
+					 meta:set_int("dist", 0)
+					 meta:set_string("formspec",
+							 "size[2,1]"..
+								 "field[.5,.5;1.5,1;dist;distance;${dist}]")
+					 meta:set_string("infotext", "Adjustable Vacuuming Pneumatic Tube Segment")
+				 end,
+				 on_receive_fields = function(pos,formname,fields,sender)
+					 local meta = minetest.get_meta(pos)
+					 local dist
+					 _, dist = pcall(tonumber, fields.dist)
+					 if dist and 0 <= dist and dist <= 8 then meta:set_int("dist", dist) end
+				 end,
+	})
+
+	local function get_objects_with_square_radius(pos, rad)
+		rad = rad + .5;
+		local objs = {}
+		for _,object in ipairs(minetest.get_objects_inside_radius(pos, math.sqrt(3)*rad)) do
+			if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
+				local opos = object:getpos()
+				if pos.x - rad <= opos.x and opos.x <= pos.x + rad and pos.y - rad <= opos.y and opos.y <= pos.y + rad and pos.z - rad <= opos.z and opos.z <= pos.z + rad then
+					objs[#objs + 1] = object
+				end
+			end
+		end
+		return objs
+	end
+
+	minetest.register_abm({nodenames = {"group:mese_sand_tube"},
+			       interval = 1,
+			       chance = 1,
+			       action = function(pos, node, active_object_count, active_object_count_wider)
+				       for _,object in ipairs(get_objects_with_square_radius(pos, minetest.get_meta(pos):get_int("dist"))) do
+					       if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
+						       if object:get_luaentity().itemstring ~= "" then
+							       pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), object:get_luaentity().itemstring)
+						       end
+						       object:get_luaentity().itemstring = ""
+						       object:remove()
+					       end
+				       end
+			       end
+	})
+end
+
+minetest.register_craft( {
+	output = "pipeworks:sand_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:sand", "default:sand", "default:sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:sand_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:desert_sand", "default:desert_sand", "default:desert_sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:sand_tube_1",
+	recipe = {
+	        { "default:desert_sand", "pipeworks:tube_1", "default:desert_sand" },
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:mese_sand_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:sand", "default:mese_crystal", "default:sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	output = "pipeworks:mese_sand_tube_1 2",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "default:desert_sand", "default:mese_crystal", "default:desert_sand" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
+minetest.register_craft( {
+	type = "shapeless",
+	output = "pipeworks:mese_sand_tube_1",
+	recipe = {
+  "pipeworks:sand_tube_1",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment",
+		"default:mese_crystal_fragment"
+	},
+})
