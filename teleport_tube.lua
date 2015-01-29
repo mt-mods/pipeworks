@@ -153,6 +153,7 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		update_meta(meta, true)
+		meta:set_string("infotext", "unconfigured Teleportation Tube")
 	end,
 	on_receive_fields = function(pos,formname,fields,sender)
 		if not fields.channel then
@@ -206,9 +207,12 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 		if dirty then
 			if channel ~= "" then
 				set_tube(pos, channel, can_receive)
+				local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
+				meta:set_string("infotext", string.format("Teleportation Tube %s on '%s'", cr_description, channel))
 			else
 				-- remove empty channel tubes, to not have to search through them
 				remove_tube(pos)
+				meta:set_string("infotext", "unconfigured Teleportation Tube")
 			end
 		end
 	end,
