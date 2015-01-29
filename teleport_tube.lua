@@ -114,12 +114,18 @@ local teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_telepo
 local teleport_short_texture="pipeworks_teleport_tube_short.png"
 local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 
-local function set_teleport_tube_formspec(meta, can_receive)
-	local cr = (can_receive ~= 0)
-	meta:set_string("formspec","size[10.5,1;]"..
-			"field[0,0.5;7,1;channel;Channel:;${channel}]"..
-			"button[8,0;2.5,1;"..(cr and "cr0" or "cr1")..";"..
-			(cr and "Send and Receive" or "Send only").."]")
+local function update_meta(meta, can_receive)
+	meta:set_int("can_receive", can_receive and 1 or 0)
+	local cr_state = can_receive and "on" or "off"
+	meta:set_string("formspec","size[8.6,2.2]"..
+			"field[0.6,0.6;7,1;channel;Channel:;${channel}]"..
+			"label[7.3,0;Receive]"..
+			"image_button[7.3,0.3;1,1;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
+			"label[0.3,1.3;channels are public by default]" ..
+			"label[0.3,1.6;use <player>:<channel> for fully private channels]" ..
+			"label[0.3,1.9;use <player>\\;<channel> for private receivers]" ..
+			default.gui_bg..
+			default.gui_bg_img)
 end
 
 pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Segment",teleport_plain_textures,
@@ -146,8 +152,7 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 	},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_int("can_receive", 1)
-		set_teleport_tube_formspec(meta, 1)
+		update_meta(meta, true)
 	end,
 	on_receive_fields = function(pos,formname,fields,sender)
 		if not fields.channel then
@@ -178,22 +183,22 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 
 		local dirty = false
 
-		-- test if a can_receive button was pressed
-		if fields.cr0 and can_receive ~= 0 then
-			can_receive = 0
-			meta:set_int("can_receive", can_receive)
-			dirty = true
-		elseif fields.cr1 and can_receive ~= 1 then
-			can_receive = 1
-			meta:set_int("can_receive", can_receive)
-			dirty = true
-		end
-
 		-- was the channel changed?
 		local channel = meta:get_string("channel")
 		if fields.channel ~= channel then
 			channel = fields.channel
 			meta:set_string("channel", channel)
+			dirty = true
+		end
+
+		-- test if a can_receive button was pressed
+		if fields.cr0 and can_receive ~= 0 then
+			can_receive = 0
+			update_meta(meta, false)
+			dirty = true
+		elseif fields.cr1 and can_receive ~= 1 then
+			can_receive = 1
+			update_meta(meta, true)
 			dirty = true
 		end
 
@@ -205,7 +210,6 @@ pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Se
 				-- remove empty channel tubes, to not have to search through them
 				remove_tube(pos)
 			end
-			set_teleport_tube_formspec(meta, can_receive)
 		end
 	end,
 	on_destruct = function(pos)
