@@ -1,3 +1,14 @@
+-- the default tube and default textures
+pipeworks.register_tube("pipeworks:tube", "Pneumatic tube segment")
+minetest.register_craft( {
+	output = "pipeworks:tube_1 6",
+	recipe = {
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+	        { "", "", "" },
+	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+	},
+})
+
 if pipeworks.enable_accelerator_tube then
 	local accelerator_noctr_textures = {"pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png",
 					    "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png"}

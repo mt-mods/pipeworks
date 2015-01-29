@@ -3,8 +3,8 @@ if pipeworks.enable_detector_tube then
 					 "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png"}
 	local detector_inv_texture = "pipeworks_detector_tube_inv.png"
 	local detector_tube_step = 2 * tonumber(minetest.setting_get("dedicated_server_step"))
-	pipeworks.register_tube("pipeworks:detector_tube_on", "Detecting Pneumatic Tube Segment on (you hacker you)", detector_plain_textures, pipeworks.noctr_textures,
-				pipeworks.end_textures, pipeworks.short_texture, detector_inv_texture,
+	pipeworks.register_tube("pipeworks:detector_tube_on", "Detecting Pneumatic Tube Segment on (you hacker you)",
+				detector_plain_textures, nil, nil, nil, detector_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						 local meta = minetest.get_meta(pos)
 						 local name = minetest.get_node(pos).name
@@ -39,8 +39,8 @@ if pipeworks.enable_detector_tube then
 					 minetest.after(detector_tube_step, minetest.registered_nodes[name].item_exit, saved_pos)
 				end
 	})
-	pipeworks.register_tube("pipeworks:detector_tube_off", "Detecting Pneumatic Tube Segment", detector_plain_textures, pipeworks.noctr_textures,
-				pipeworks.end_textures, pipeworks.short_texture, detector_inv_texture,
+	pipeworks.register_tube("pipeworks:detector_tube_off", "Detecting Pneumatic Tube Segment",
+				detector_plain_textures, nil, nil, nil, detector_inv_texture,
 				{tube = {can_go = function(pos, node, velocity, stack)
 						local node = minetest.get_node(pos)
 						local name = node.name

@@ -10,7 +10,24 @@ local REGISTER_COMPATIBILITY = true
 
 local vti = {4, 3, 2, 1, 6, 5}
 
+local default_textures = {
+	noctrs = { "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png",
+			"pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png"},
+	plain = { "pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png",
+			"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png"},
+	ends = { "pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png",
+			"pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png"},
+	short = "pipeworks_tube_short.png",
+	inv = "pipeworks_tube_inv.png",
+}
+
 local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, ends, short, inv, special, connects, style)
+	noctrs = noctrs or default_textures.noctrs
+	plain = plain or default_textures.plain
+	ends = ends or default_textures.ends
+	short = short or default_textures.short
+	inv = inv or default_textures.inv
+
 	local outboxes = {}
 	local outsel = {}
 	local outimgs = {}
@@ -215,25 +232,3 @@ if REGISTER_COMPATIBILITY then
 		end
 	})
 end
-
-
--- the default tube and default textures
-pipeworks.noctr_textures = {"pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png",
-			"pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png"}
-pipeworks.plain_textures = {"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png",
-			"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png"}
-pipeworks.end_textures = {"pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png",
-		      "pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png"}
-pipeworks.short_texture = "pipeworks_tube_short.png"
-pipeworks.inv_texture = "pipeworks_tube_inv.png"
-
-pipeworks.register_tube("pipeworks:tube", "Pneumatic tube segment", pipeworks.plain_textures, pipeworks.noctr_textures, pipeworks.end_textures, pipeworks.short_texture, pipeworks.inv_texture)
-
-minetest.register_craft( {
-	output = "pipeworks:tube_1 6",
-	recipe = {
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-	        { "", "", "" },
-	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-	},
-})
