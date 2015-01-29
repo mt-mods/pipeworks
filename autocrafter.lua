@@ -13,6 +13,13 @@ local function count_index(invlist)
 	return index
 end
 
+local function get_item_info(stack)
+	local name = stack:get_name()
+	local def = minetest.registered_items[name]
+	local description = def and def.description or "Unknown item"
+	return description, name
+end
+
 local function get_craft(pos, inventory, hash)
 	local hash = hash or minetest.hash_node_position(pos)
 	local craft = autocrafterCache[hash]
@@ -30,7 +37,7 @@ local function autocraft(inventory, craft)
 	local output_item = craft.output.item
 
 	-- check if we have enough room in dst
-	if not inventory:room_for_item("dst", output_item) then return false end
+	if not inventory:room_for_item("dst", output_item) then	return false end
 	local consumption = craft.consumption
 	local inv_index = count_index(inventory:get_list("src"))
 	-- check if we have enough material available
@@ -58,10 +65,10 @@ local function run_autocrafter(pos, elapsed)
 	local meta = minetest.get_meta(pos)
 	local inventory = meta:get_inventory()
 	local craft = get_craft(pos, inventory)
-
+	local output_item = craft.output.item
 	-- only use crafts that have an actual result
-	if craft.output.item:is_empty() then
-		meta:set_string("infotext", text or "Autocrafter: unknown recipe")
+	if output_item:is_empty() then
+		meta:set_string("infotext", "unconfigured Autocrafter: unknown recipe")
 		return false
 	end
 
@@ -117,7 +124,8 @@ local function after_recipe_change(pos, inventory)
 
 	craft = craft or get_craft(pos, inventory, hash)
 	local output_item = craft.output.item
-	meta:set_string("infotext", "Autocrafter: " .. output_item:get_name())
+	local description, name = get_item_info(output_item)
+	meta:set_string("infotext", string.format("'%s' Autocrafter (%s)", description, name))
 	inventory:set_stack("output", 1, output_item)
 
 	after_inventory_change(pos)
@@ -149,8 +157,10 @@ local function on_output_change(pos, inventory, stack)
 	after_recipe_change(pos, inventory)
 end
 
-local function set_formspec(meta, enabled)
+-- returns false if we shouldn't bother attempting to start the timer again after this
+local function update_meta(meta, enabled)
 	local state = enabled and "on" or "off"
+	meta:set_int("enabled", enabled and 1 or 0)
 	meta:set_string("formspec",
 			"size[8,11]"..
 			"list[context;recipe;0,0;3,3;]"..
@@ -164,21 +174,36 @@ local function set_formspec(meta, enabled)
 			default.gui_slots..
 			default.get_hotbar_bg(0,7) ..
 			"list[current_player;main;0,7;8,4;]")
+
+	-- toggling the button doesn't quite call for running a recipe change check
+	-- so instead we run a minimal version for infotext setting only
+	-- this might be more written code, but actually executes less
+	local output = meta:get_inventory():get_stack("output", 1)
+	if output:is_empty() then -- doesn't matter if paused or not
+		meta:set_string("infotext", "unconfigured Autocrafter")
+		return false
+	end
+
+	local description, name = get_item_info(output)
+	local infotext = enabled and string.format("'%s' Autocrafter (%s)", description, name)
+				or string.format("paused '%s' Autocrafter", description)
+
+	meta:set_string("infotext", infotext)
+	return enabled
 end
 
 -- 1st version of the autocrafter had actual items in the crafting grid
 -- the 2nd replaced these with virtual items, dropped the content on update and set "virtual_items" to string "1"
 -- the third added an output inventory, changed the formspec and added a button for enabling/disabling
 -- so we work out way backwards on this history and update each single case to the newest version
-local function update_autocrafter(pos, meta)
+local function upgrade_autocrafter(pos, meta)
 	local meta = meta or minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 
 	if inv:get_size("output") == 0 then -- we are version 2 or 1
 		inv:set_size("output", 1)
 		-- migrate the old autocrafters into an "enabled" state
-		meta:set_int("enabled", 1)
-		set_formspec(meta, true)
+		update_meta(meta, true)
 
 		if meta:get_string("virtual_items") == "1" then -- we are version 2
 			-- we allready dropped stuff, so lets remove the metadatasetting (we are not being called again for this node)
@@ -221,29 +246,26 @@ minetest.register_node("pipeworks:autocrafter", {
 		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1}}, 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		set_formspec(meta, false)
-		meta:set_string("infotext", "unconfigured Autocrafter")
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3*8)
 		inv:set_size("recipe", 3*3)
 		inv:set_size("dst", 4*3)
 		inv:set_size("output", 1)
+		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
 		if fields.on then
-			meta:set_int("enabled", 0)
-			set_formspec(meta, false)
+			update_meta(meta, false)
 			minetest.get_node_timer(pos):stop()
-			meta:set_string("infotext", text or "paused Autocrafter")
 		elseif fields.off then
-			meta:set_int("enabled", 1)
-			set_formspec(meta, true)
-			start_crafter(pos)
+			if update_meta(meta, true) then
+				start_crafter(pos)
+			end
 		end
 	end,
 	can_dig = function(pos, player)
-		update_autocrafter(pos)
+		upgrade_autocrafter(pos)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("dst"))
@@ -256,7 +278,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		update_autocrafter(pos)
+		upgrade_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		if listname == "recipe" then
 			stack:set_count(1)
@@ -271,7 +293,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		return stack:get_count()
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		update_autocrafter(pos)
+		upgrade_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		if listname == "recipe" then
 			inv:set_stack(listname, index, ItemStack(""))
@@ -285,7 +307,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		return stack:get_count()
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-		update_autocrafter(pos)
+		upgrade_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 
