@@ -116,6 +116,7 @@ dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/crafts.lua")
 dofile(pipeworks.modpath.."/tubes.lua")
+dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 
