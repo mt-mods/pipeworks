@@ -104,7 +104,7 @@ if pipeworks.enable_mese_tube then
 					return 0
 				end,
 				allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-					qupdate_formspec(pos) -- For old tubes
+					update_formspec(pos) -- For old tubes
 					local inv = minetest.get_meta(pos):get_inventory()
 					inv:set_stack(from_list, from_index, ItemStack(""))
 					return 0
