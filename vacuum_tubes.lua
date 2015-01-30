@@ -51,20 +51,24 @@ if pipeworks.enable_mese_sand_tube then
 	pipeworks.register_tube("pipeworks:mese_sand_tube", "Adjustable Vacuuming Pneumatic Tube Segment", mese_sand_plain_textures, mese_sand_noctr_textures,
 				mese_sand_end_textures, mese_sand_short_texture,mese_sand_inv_texture,
 				{groups = {vacuum_tube = 1},
-				 on_construct = function(pos)
-					 local meta = minetest.get_meta(pos)
-					 meta:set_int("dist", 0)
-					 meta:set_string("formspec",
-							 "size[2,1]"..
-								 "field[.5,.5;1.5,1;dist;distance;${dist}]")
-					 meta:set_string("infotext", "Adjustable Vacuuming Pneumatic Tube Segment")
-				 end,
-				 on_receive_fields = function(pos,formname,fields,sender)
-					 local meta = minetest.get_meta(pos)
-					 local dist
-					 _, dist = pcall(tonumber, fields.dist)
-					 if dist and 0 <= dist and dist <= 8 then meta:set_int("dist", dist) end
-				 end,
+				on_construct = function(pos)
+					local meta = minetest.get_meta(pos)
+					meta:set_int("dist", 0)
+					meta:set_string("formspec", "size[2.1,0.8]"..
+							"image[0,0;1,1;pipeworks_mese_sand_tube_inv.png]"..
+							"field[1.3,0.4;1,1;dist;distance;${dist}]"..
+							default.gui_bg..
+							default.gui_bg_img)
+					meta:set_string("infotext", "Adjustable Vacuuming Pneumatic Tube Segment")
+				end,
+				on_receive_fields = function(pos,formname,fields,sender)
+					local meta = minetest.get_meta(pos)
+					local _, dist = pcall(tonumber, fields.dist)
+					if dist and 0 <= dist and dist <= 8 then
+						meta:set_int("dist", dist)
+						meta:set_string("infotext", ("Adjustable Vacuuming Pneumatic Tube Segment (%dm)"):format(dist))
+					end
+				end,
 	})
 
 	minetest.register_craft( {
