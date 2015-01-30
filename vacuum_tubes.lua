@@ -63,7 +63,7 @@ if pipeworks.enable_mese_sand_tube then
 				end,
 				on_receive_fields = function(pos,formname,fields,sender)
 					local meta = minetest.get_meta(pos)
-					local _, dist = pcall(tonumber, fields.dist)
+					local dist = tonumber(fields.dist)
 					if dist and 0 <= dist and dist <= 8 then
 						meta:set_int("dist", dist)
 						meta:set_string("infotext", ("Adjustable Vacuuming Pneumatic Tube Segment (%dm)"):format(dist))
