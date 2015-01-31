@@ -1,13 +1,13 @@
 if pipeworks.enable_sand_tube then
-	local sand_noctr_textures = { "pipeworks_sand_tube_noctr.png" }
-	local sand_plain_textures = { "pipeworks_sand_tube_plain.png" }
-	local sand_end_textures = { "pipeworks_sand_tube_end.png" }
-	local sand_short_texture = "pipeworks_sand_tube_short.png"
-	local sand_inv_texture = "pipeworks_sand_tube_inv.png"
-
-	pipeworks.register_tube("pipeworks:sand_tube", "Vacuuming Pneumatic Tube Segment", sand_plain_textures, sand_noctr_textures, sand_end_textures,
-				sand_short_texture, sand_inv_texture,
-				{groups = {vacuum_tube = 1}})
+	pipeworks.register_tube("pipeworks:sand_tube", {
+			description = "Vacuuming Pneumatic Tube Segment",
+			inventory_image = "pipeworks_sand_tube_inv.png",
+			short = "pipeworks_sand_tube_short.png",
+			noctr = { "pipeworks_sand_tube_noctr.png" },
+			plain = { "pipeworks_sand_tube_plain.png" },
+			ends = { "pipeworks_sand_tube_end.png" },
+			node_def = { groups = {vacuum_tube = 1}},
+	})
 
 	minetest.register_craft( {
 		output = "pipeworks:sand_tube_1 2",
@@ -36,15 +36,15 @@ if pipeworks.enable_sand_tube then
 end
 
 if pipeworks.enable_mese_sand_tube then
-	local mese_sand_noctr_textures = { "pipeworks_mese_sand_tube_noctr.png" }
-	local mese_sand_plain_textures = { "pipeworks_mese_sand_tube_plain.png" }
-	local mese_sand_end_textures = { "pipeworks_mese_sand_tube_end.png" }
-	local mese_sand_short_texture = "pipeworks_mese_sand_tube_short.png"
-	local mese_sand_inv_texture = "pipeworks_mese_sand_tube_inv.png"
-
-	pipeworks.register_tube("pipeworks:mese_sand_tube", "Adjustable Vacuuming Pneumatic Tube Segment", mese_sand_plain_textures, mese_sand_noctr_textures,
-				mese_sand_end_textures, mese_sand_short_texture,mese_sand_inv_texture,
-				{groups = {vacuum_tube = 1},
+	pipeworks.register_tube("pipeworks:mese_sand_tube", {
+			description = "Adjustable Vacuuming Pneumatic Tube Segment",
+			inventory_image = "pipeworks_mese_sand_tube_inv.png",
+			short = "pipeworks_mese_sand_tube_short.png",
+			noctr = { "pipeworks_mese_sand_tube_noctr.png" },
+			plain = { "pipeworks_mese_sand_tube_plain.png" },
+			ends = { "pipeworks_mese_sand_tube_end.png" },
+			node_def = {
+				groups = {vacuum_tube = 1},
 				on_construct = function(pos)
 					local meta = minetest.get_meta(pos)
 					meta:set_int("dist", 0)
@@ -63,6 +63,7 @@ if pipeworks.enable_mese_sand_tube then
 						meta:set_string("infotext", ("Adjustable Vacuuming Pneumatic Tube Segment (%dm)"):format(dist))
 					end
 				end,
+			},
 	})
 
 	minetest.register_craft( {

@@ -147,7 +147,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 	minetest.register_node(rname, nodedef)
 end
 
-pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, special, old_registration)
+local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv, special, old_registration)
 	if old_registration then
 		for xm = 0, 1 do
 		for xp = 0, 1 do
@@ -227,6 +227,20 @@ pipeworks.register_tube = function(name, desc, plain, noctrs, ends, short, inv, 
 		end
 	end
 end
+
+pipeworks.register_tube = function(name, def, ...)
+	if type(def) == "table" then
+		register_all_tubes(name, def.description,
+				def.plain, def.noctr, def.ends, def.short,
+				def.inventory_image, def.node_def, def.no_facedir)
+	else
+		-- we assert to be the old function with the second parameter being the description
+		-- function(name, desc, plain, noctrs, ends, short, inv, special, old_registration)
+		assert(type(def) == "string", "invalid arguments to pipeworks.register_tube")
+		register_all_tubes(name, def, ...)
+	end
+end
+
 
 if REGISTER_COMPATIBILITY then
 	minetest.register_abm({

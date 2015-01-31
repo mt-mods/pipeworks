@@ -105,12 +105,6 @@ local function get_receivers(pos, channel)
 	return receivers
 end
 
-local teleport_noctr_textures={ "pipeworks_teleport_tube_noctr.png" }
-local teleport_plain_textures={ "pipeworks_teleport_tube_plain.png" }
-local teleport_end_textures={ "pipeworks_teleport_tube_end.png" }
-local teleport_short_texture="pipeworks_teleport_tube_short.png"
-local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
-
 local function update_meta(meta, can_receive)
 	meta:set_int("can_receive", can_receive and 1 or 0)
 	local cr_state = can_receive and "on" or "off"
@@ -126,99 +120,105 @@ local function update_meta(meta, can_receive)
 			default.gui_bg_img)
 end
 
-pipeworks.register_tube("pipeworks:teleport_tube","Teleporting Pneumatic Tube Segment",teleport_plain_textures,
-	teleport_noctr_textures,teleport_end_textures,teleport_short_texture,teleport_inv_texture, {
-	is_teleport_tube = true,
-	tube = {
-		can_go = function(pos,node,velocity,stack)
-			velocity.x = 0
-			velocity.y = 0
-			velocity.z = 0
+pipeworks.register_tube("pipeworks:teleport_tube", {
+	description = "Teleporting Pneumatic Tube Segment",
+	inventory_image = "pipeworks_teleport_tube_inv.png",
+	noctr = { "pipeworks_teleport_tube_noctr.png" },
+	plain = { "pipeworks_teleport_tube_plain.png" },
+	ends = { "pipeworks_teleport_tube_end.png" },
+	short = "pipeworks_teleport_tube_short.png",
+	node_def = {
+		is_teleport_tube = true,
+		tube = {
+			can_go = function(pos,node,velocity,stack)
+				velocity.x = 0
+				velocity.y = 0
+				velocity.z = 0
 
-			local channel = minetest.get_meta(pos):get_string("channel")
-			if channel == "" then return {} end
+				local channel = minetest.get_meta(pos):get_string("channel")
+				if channel == "" then return {} end
 
-			local target = get_receivers(pos, channel)
-			if target[1] == nil then return {} end
+				local target = get_receivers(pos, channel)
+				if target[1] == nil then return {} end
 
-			local d = math.random(1,#target)
-			pos.x = target[d].x
-			pos.y = target[d].y
-			pos.z = target[d].z
-			return pipeworks.meseadjlist
-		end
-	},
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		update_meta(meta, true)
-		meta:set_string("infotext", "unconfigured Teleportation Tube")
-	end,
-	on_receive_fields = function(pos,formname,fields,sender)
-		if not fields.channel then
-			return -- ignore escaping or clientside manipulation of the form
-		end
+				local d = math.random(1,#target)
+				pos.x = target[d].x
+				pos.y = target[d].y
+				pos.z = target[d].z
+				return pipeworks.meseadjlist
+			end
+		},
+		on_construct = function(pos)
+			local meta = minetest.get_meta(pos)
+			update_meta(meta, true)
+			meta:set_string("infotext", "unconfigured Teleportation Tube")
+		end,
+		on_receive_fields = function(pos,formname,fields,sender)
+			if not fields.channel then
+				return -- ignore escaping or clientside manipulation of the form
+			end
 
-		local meta = minetest.get_meta(pos)
-		local can_receive = meta:get_int("can_receive")
+			local meta = minetest.get_meta(pos)
+			local can_receive = meta:get_int("can_receive")
 
-		-- check for private channels each time before actually changing anything
-		-- to not even allow switching between can_receive states of private channels
-		if fields.channel ~= "" then
-			local sender_name = sender:get_player_name()
-			local name, mode = fields.channel:match("^([^:;]+)([:;])")
-			if name and mode and name ~= sender_name then
-				--channels starting with '[name]:' can only be used by the named player
-				if mode == ":" then
-					minetest.chat_send_player(sender_name, "Sorry, channel '"..fields.channel.."' is reserved for exclusive use by "..name)
-					return
+			-- check for private channels each time before actually changing anything
+			-- to not even allow switching between can_receive states of private channels
+			if fields.channel ~= "" then
+				local sender_name = sender:get_player_name()
+				local name, mode = fields.channel:match("^([^:;]+)([:;])")
+				if name and mode and name ~= sender_name then
+					--channels starting with '[name]:' can only be used by the named player
+					if mode == ":" then
+						minetest.chat_send_player(sender_name, "Sorry, channel '"..fields.channel.."' is reserved for exclusive use by "..name)
+						return
 				
-				--channels starting with '[name];' can be used by other players, but cannot be received from
-				elseif mode == ";" and (fields.cr1 or (can_receive ~= 0 and not fields.cr0)) then
-					minetest.chat_send_player(sender_name, "Sorry, receiving from channel '"..fields.channel.."' is reserved for "..name)
-					return
+					--channels starting with '[name];' can be used by other players, but cannot be received from
+					elseif mode == ";" and (fields.cr1 or (can_receive ~= 0 and not fields.cr0)) then
+						minetest.chat_send_player(sender_name, "Sorry, receiving from channel '"..fields.channel.."' is reserved for "..name)
+						return
+					end
 				end
 			end
-		end
 
-		local dirty = false
+			local dirty = false
 
-		-- was the channel changed?
-		local channel = meta:get_string("channel")
-		if fields.channel ~= channel then
-			channel = fields.channel
-			meta:set_string("channel", channel)
-			dirty = true
-		end
-
-		-- test if a can_receive button was pressed
-		if fields.cr0 and can_receive ~= 0 then
-			can_receive = 0
-			update_meta(meta, false)
-			dirty = true
-		elseif fields.cr1 and can_receive ~= 1 then
-			can_receive = 1
-			update_meta(meta, true)
-			dirty = true
-		end
-
-		-- save if we changed something, handle the empty channel while we're at it
-		if dirty then
-			if channel ~= "" then
-				set_tube(pos, channel, can_receive)
-				local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
-				meta:set_string("infotext", string.format("Teleportation Tube %s on '%s'", cr_description, channel))
-			else
-				-- remove empty channel tubes, to not have to search through them
-				remove_tube(pos)
-				meta:set_string("infotext", "unconfigured Teleportation Tube")
+			-- was the channel changed?
+			local channel = meta:get_string("channel")
+			if fields.channel ~= channel then
+				channel = fields.channel
+				meta:set_string("channel", channel)
+				dirty = true
 			end
-		end
-	end,
-	on_destruct = function(pos)
-		remove_tube(pos)
-	end
-})
 
+			-- test if a can_receive button was pressed
+			if fields.cr0 and can_receive ~= 0 then
+				can_receive = 0
+				update_meta(meta, false)
+				dirty = true
+			elseif fields.cr1 and can_receive ~= 1 then
+				can_receive = 1
+				update_meta(meta, true)
+				dirty = true
+			end
+
+			-- save if we changed something, handle the empty channel while we're at it
+			if dirty then
+				if channel ~= "" then
+					set_tube(pos, channel, can_receive)
+					local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
+					meta:set_string("infotext", string.format("Teleportation Tube %s on '%s'", cr_description, channel))
+				else
+					-- remove empty channel tubes, to not have to search through them
+					remove_tube(pos)
+					meta:set_string("infotext", "unconfigured Teleportation Tube")
+				end
+			end
+		end,
+		on_destruct = function(pos)
+			remove_tube(pos)
+		end
+	},
+})
 minetest.register_craft( {
 	output = "pipeworks:teleport_tube_1 2",
 	recipe = {

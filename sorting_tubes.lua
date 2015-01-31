@@ -1,11 +1,4 @@
 if pipeworks.enable_mese_tube then
-	local mese_noctr_textures = {"pipeworks_mese_tube_noctr_1.png", "pipeworks_mese_tube_noctr_2.png", "pipeworks_mese_tube_noctr_3.png",
-				     "pipeworks_mese_tube_noctr_4.png", "pipeworks_mese_tube_noctr_5.png", "pipeworks_mese_tube_noctr_6.png"}
-	local mese_plain_textures = {"pipeworks_mese_tube_plain_1.png", "pipeworks_mese_tube_plain_2.png", "pipeworks_mese_tube_plain_3.png",
-				     "pipeworks_mese_tube_plain_4.png", "pipeworks_mese_tube_plain_5.png", "pipeworks_mese_tube_plain_6.png"}
-	local mese_end_textures = { "pipeworks_mese_tube_end.png" }
-	local mese_short_texture = "pipeworks_mese_tube_short.png"
-	local mese_inv_texture = "pipeworks_mese_tube_inv.png"
 	local function update_formspec(pos)
 		local meta = minetest.get_meta(pos)
 		local old_formspec = meta:get_string("formspec")
@@ -40,9 +33,19 @@ if pipeworks.enable_mese_tube then
 			buttons_formspec..
 			"list[current_player;main;0,7;8,4;]")
 	end
-	pipeworks.register_tube("pipeworks:mese_tube", "Sorting Pneumatic Tube Segment", mese_plain_textures, mese_noctr_textures,
-				mese_end_textures, mese_short_texture, mese_inv_texture,
-				{tube = {can_go = function(pos, node, velocity, stack)
+
+	pipeworks.register_tube("pipeworks:mese_tube", {
+			description = "Sorting Pneumatic Tube Segment",
+			inventory_image = "pipeworks_mese_tube_inv.png",
+			noctr = {"pipeworks_mese_tube_noctr_1.png", "pipeworks_mese_tube_noctr_2.png", "pipeworks_mese_tube_noctr_3.png",
+				"pipeworks_mese_tube_noctr_4.png", "pipeworks_mese_tube_noctr_5.png", "pipeworks_mese_tube_noctr_6.png"},
+			plain = {"pipeworks_mese_tube_plain_1.png", "pipeworks_mese_tube_plain_2.png", "pipeworks_mese_tube_plain_3.png",
+				"pipeworks_mese_tube_plain_4.png", "pipeworks_mese_tube_plain_5.png", "pipeworks_mese_tube_plain_6.png"},
+			ends = { "pipeworks_mese_tube_end.png" },
+			short = "pipeworks_mese_tube_short.png",
+			no_facedir = true,  -- Must use old tubes, since the textures are rotated with 6d ones
+			node_def = {
+				tube = {can_go = function(pos, node, velocity, stack)
 						 local tbl, tbln = {}, 0
 						 local found, foundn = {}, 0
 						 local meta = minetest.get_meta(pos)
@@ -108,7 +111,8 @@ if pipeworks.enable_mese_tube then
 					inv:set_stack(from_list, from_index, ItemStack(""))
 					return 0
 				end,
-				}, true) -- Must use old tubes, since the textures are rotated with 6d ones
+			},
+	})
 
 	minetest.register_craft( {
 		output = "pipeworks:mese_tube_1 2",
