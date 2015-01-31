@@ -97,17 +97,23 @@ if pipeworks.enable_mese_sand_tube then
 	})
 end
 
+local sqrt_3 = math.sqrt(3)
+local tube_inject_item = pipeworks.tube_inject_item
+local get_objects_inside_radius = minetest.get_objects_inside_radius
 local function vacuum(pos, radius)
 	radius = radius + 0.5
-	for _, object in pairs(minetest.get_objects_inside_radius(pos, math.sqrt(2) * radius)) do
+	for _, object in pairs(get_objects_inside_radius(pos, sqrt_3 * radius)) do
 		local lua_entity = object:get_luaentity()
 		if not object:is_player() and lua_entity and lua_entity.name == "__builtin:item" then
 			local obj_pos = object:getpos()
-			if pos.x - radius <= obj_pos.x and obj_pos.x <= pos.x + radius
-			and pos.y - radius <= obj_pos.y and obj_pos.y <= pos.y + radius
-			and pos.z - radius <= obj_pos.z and obj_pos.z <= pos.z + radius then
+			local x1, y1, z1 = pos.x, pos.y, pos.z
+			local x2, y2, z2 = obj_pos.x, obj_pos.y, obj_pos.z
+
+			if  x1 - radius <= x2 and x2 <= x1 + radius
+			and y1 - radius <= y2 and y2 <= y1 + radius
+			and z1 - radius <= z2 and z2 <= z1 + radius then
 				if lua_entity.itemstring ~= "" then
-					pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), lua_entity.itemstring)
+					tube_inject_item(pos, pos, vector.new(0, 0, 0), lua_entity.itemstring)
 					lua_entity.itemstring = ""
 				end
 				object:remove()
