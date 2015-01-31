@@ -105,12 +105,9 @@ local function get_receivers(pos, channel)
 	return receivers
 end
 
-local teleport_noctr_textures={"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png",
-		"pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png","pipeworks_teleport_tube_noctr.png"}
-local teleport_plain_textures={"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png",
-		"pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png","pipeworks_teleport_tube_plain.png"}
-local teleport_end_textures={"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png",
-		"pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png","pipeworks_teleport_tube_end.png"}
+local teleport_noctr_textures={ "pipeworks_teleport_tube_noctr.png" }
+local teleport_plain_textures={ "pipeworks_teleport_tube_plain.png" }
+local teleport_end_textures={ "pipeworks_teleport_tube_end.png" }
 local teleport_short_texture="pipeworks_teleport_tube_short.png"
 local teleport_inv_texture="pipeworks_teleport_tube_inv.png"
 

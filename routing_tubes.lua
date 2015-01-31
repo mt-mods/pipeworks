@@ -10,12 +10,9 @@ minetest.register_craft( {
 })
 
 if pipeworks.enable_accelerator_tube then
-	local accelerator_noctr_textures = {"pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png",
-					    "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png", "pipeworks_accelerator_tube_noctr.png"}
-	local accelerator_plain_textures = {"pipeworks_accelerator_tube_plain.png" ,"pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png",
-					    "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png", "pipeworks_accelerator_tube_plain.png"}
-	local accelerator_end_textures = {"pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png",
-					  "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png", "pipeworks_accelerator_tube_end.png"}
+	local accelerator_noctr_textures = { "pipeworks_accelerator_tube_noctr.png" }
+	local accelerator_plain_textures = { "pipeworks_accelerator_tube_plain.png" }
+	local accelerator_end_textures = { "pipeworks_accelerator_tube_end.png" }
 	local accelerator_short_texture = "pipeworks_accelerator_tube_short.png"
 	local accelerator_inv_texture = "pipeworks_accelerator_tube_inv.png"
 
@@ -39,12 +36,9 @@ if pipeworks.enable_accelerator_tube then
 end
 
 if pipeworks.enable_crossing_tube then
-	local crossing_noctr_textures = {"pipeworks_crossing_tube_noctr.png", "pipeworks_crossing_tube_noctr.png", "pipeworks_crossing_tube_noctr.png",
-					 "pipeworks_crossing_tube_noctr.png", "pipeworks_crossing_tube_noctr.png", "pipeworks_crossing_tube_noctr.png"}
-	local crossing_plain_textures = {"pipeworks_crossing_tube_plain.png" ,"pipeworks_crossing_tube_plain.png", "pipeworks_crossing_tube_plain.png",
-					 "pipeworks_crossing_tube_plain.png", "pipeworks_crossing_tube_plain.png", "pipeworks_crossing_tube_plain.png"}
-	local crossing_end_textures = {"pipeworks_crossing_tube_end.png", "pipeworks_crossing_tube_end.png", "pipeworks_crossing_tube_end.png",
-				       "pipeworks_crossing_tube_end.png", "pipeworks_crossing_tube_end.png", "pipeworks_crossing_tube_end.png"}
+	local crossing_noctr_textures = { "pipeworks_crossing_tube_noctr.png" }
+	local crossing_plain_textures = { "pipeworks_crossing_tube_plain.png" }
+	local crossing_end_textures = { "pipeworks_crossing_tube_end.png" }
 	local crossing_short_texture = "pipeworks_crossing_tube_short.png"
 	local crossing_inv_texture = "pipeworks_crossing_tube_inv.png"
 

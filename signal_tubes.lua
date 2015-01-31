@@ -1,6 +1,5 @@
 if pipeworks.enable_detector_tube then
-	local detector_plain_textures = {"pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png",
-					 "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png", "pipeworks_detector_tube_plain.png"}
+	local detector_plain_textures = { "pipeworks_detector_tube_plain.png" }
 	local detector_inv_texture = "pipeworks_detector_tube_inv.png"
 	local detector_tube_step = 2 * tonumber(minetest.setting_get("dedicated_server_step"))
 	pipeworks.register_tube("pipeworks:detector_tube_on", "Detecting Pneumatic Tube Segment on (you hacker you)",
@@ -65,21 +64,15 @@ if pipeworks.enable_detector_tube then
 end
 
 if pipeworks.enable_conductor_tube then
-	local conductor_plain_textures = {"pipeworks_conductor_tube_plain.png", "pipeworks_conductor_tube_plain.png", "pipeworks_conductor_tube_plain.png",
-					  "pipeworks_conductor_tube_plain.png", "pipeworks_conductor_tube_plain.png", "pipeworks_conductor_tube_plain.png"}
-	local conductor_noctr_textures = {"pipeworks_conductor_tube_noctr.png", "pipeworks_conductor_tube_noctr.png", "pipeworks_conductor_tube_noctr.png",
-					  "pipeworks_conductor_tube_noctr.png", "pipeworks_conductor_tube_noctr.png", "pipeworks_conductor_tube_noctr.png"}
-	local conductor_end_textures = {"pipeworks_conductor_tube_end.png", "pipeworks_conductor_tube_end.png", "pipeworks_conductor_tube_end.png",
-					"pipeworks_conductor_tube_end.png", "pipeworks_conductor_tube_end.png", "pipeworks_conductor_tube_end.png"}
+	local conductor_plain_textures = { "pipeworks_conductor_tube_plain.png" }
+	local conductor_noctr_textures = { "pipeworks_conductor_tube_noctr.png" }
+	local conductor_end_textures = { "pipeworks_conductor_tube_end.png" }
 	local conductor_short_texture = "pipeworks_conductor_tube_short.png"
 	local conductor_inv_texture = "pipeworks_conductor_tube_inv.png"
 
-	local conductor_on_plain_textures = {"pipeworks_conductor_tube_on_plain.png", "pipeworks_conductor_tube_on_plain.png", "pipeworks_conductor_tube_on_plain.png",
-					     "pipeworks_conductor_tube_on_plain.png", "pipeworks_conductor_tube_on_plain.png", "pipeworks_conductor_tube_on_plain.png"}
-	local conductor_on_noctr_textures = {"pipeworks_conductor_tube_on_noctr.png", "pipeworks_conductor_tube_on_noctr.png", "pipeworks_conductor_tube_on_noctr.png",
-					     "pipeworks_conductor_tube_on_noctr.png", "pipeworks_conductor_tube_on_noctr.png", "pipeworks_conductor_tube_on_noctr.png"}
-	local conductor_on_end_textures = {"pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png",
-					   "pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png", "pipeworks_conductor_tube_on_end.png"}
+	local conductor_on_plain_textures = { "pipeworks_conductor_tube_on_plain.png" }
+	local conductor_on_noctr_textures = { "pipeworks_conductor_tube_on_noctr.png" }
+	local conductor_on_end_textures = { "pipeworks_conductor_tube_on_end.png" }
 
 	pipeworks.register_tube("pipeworks:conductor_tube_off", "Conducting Pneumatic Tube Segment", conductor_plain_textures, conductor_noctr_textures,
 				conductor_end_textures, conductor_short_texture, conductor_inv_texture,

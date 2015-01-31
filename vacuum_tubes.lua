@@ -1,10 +1,7 @@
 if pipeworks.enable_sand_tube then
-	local sand_noctr_textures = {"pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png",
-				     "pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png", "pipeworks_sand_tube_noctr.png"}
-	local sand_plain_textures = {"pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png",
-				     "pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png", "pipeworks_sand_tube_plain.png"}
-	local sand_end_textures = {"pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png",
-				   "pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png", "pipeworks_sand_tube_end.png"}
+	local sand_noctr_textures = { "pipeworks_sand_tube_noctr.png" }
+	local sand_plain_textures = { "pipeworks_sand_tube_plain.png" }
+	local sand_end_textures = { "pipeworks_sand_tube_end.png" }
 	local sand_short_texture = "pipeworks_sand_tube_short.png"
 	local sand_inv_texture = "pipeworks_sand_tube_inv.png"
 
@@ -39,12 +36,9 @@ if pipeworks.enable_sand_tube then
 end
 
 if pipeworks.enable_mese_sand_tube then
-	local mese_sand_noctr_textures = {"pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png",
-					  "pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png", "pipeworks_mese_sand_tube_noctr.png"}
-	local mese_sand_plain_textures = {"pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png",
-					  "pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png", "pipeworks_mese_sand_tube_plain.png"}
-	local mese_sand_end_textures = {"pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png",
-					"pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png", "pipeworks_mese_sand_tube_end.png"}
+	local mese_sand_noctr_textures = { "pipeworks_mese_sand_tube_noctr.png" }
+	local mese_sand_plain_textures = { "pipeworks_mese_sand_tube_plain.png" }
+	local mese_sand_end_textures = { "pipeworks_mese_sand_tube_end.png" }
 	local mese_sand_short_texture = "pipeworks_mese_sand_tube_short.png"
 	local mese_sand_inv_texture = "pipeworks_mese_sand_tube_inv.png"
 

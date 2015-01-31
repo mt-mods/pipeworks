@@ -11,20 +11,30 @@ local REGISTER_COMPATIBILITY = true
 local vti = {4, 3, 2, 1, 6, 5}
 
 local default_textures = {
-	noctrs = { "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png",
-			"pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png", "pipeworks_tube_noctr.png"},
-	plain = { "pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png",
-			"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png"},
-	ends = { "pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png",
-			"pipeworks_tube_end.png", "pipeworks_tube_end.png", "pipeworks_tube_end.png"},
+	noctrs = { "pipeworks_tube_noctr.png" },
+	plain = { "pipeworks_tube_plain.png" },
+	ends = { "pipeworks_tube_end.png" },
 	short = "pipeworks_tube_short.png",
 	inv = "pipeworks_tube_inv.png",
 }
 
+local texture_mt = {
+	__index = function(table, key)
+		local size, idx = #table, tonumber(key)
+		if size > 0 then -- avoid endless loops with empty tables
+			while idx > size do idx = idx - size end
+			return table[idx]
+		end
+	end
+}
+
 local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, ends, short, inv, special, connects, style)
 	noctrs = noctrs or default_textures.noctrs
+	setmetatable(noctrs, texture_mt)
 	plain = plain or default_textures.plain
+	setmetatable(plain, texture_mt)
 	ends = ends or default_textures.ends
+	setmetatable(ends, texture_mt)
 	short = short or default_textures.short
 	inv = inv or default_textures.inv
 

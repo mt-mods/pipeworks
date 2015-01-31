@@ -3,8 +3,7 @@ if pipeworks.enable_mese_tube then
 				     "pipeworks_mese_tube_noctr_4.png", "pipeworks_mese_tube_noctr_5.png", "pipeworks_mese_tube_noctr_6.png"}
 	local mese_plain_textures = {"pipeworks_mese_tube_plain_1.png", "pipeworks_mese_tube_plain_2.png", "pipeworks_mese_tube_plain_3.png",
 				     "pipeworks_mese_tube_plain_4.png", "pipeworks_mese_tube_plain_5.png", "pipeworks_mese_tube_plain_6.png"}
-	local mese_end_textures = {"pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png",
-				   "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png", "pipeworks_mese_tube_end.png"}
+	local mese_end_textures = { "pipeworks_mese_tube_end.png" }
 	local mese_short_texture = "pipeworks_mese_tube_short.png"
 	local mese_inv_texture = "pipeworks_mese_tube_inv.png"
 	local function update_formspec(pos)
