@@ -72,8 +72,8 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 minetest.register_craft( {
 	output = "pipeworks:steel_pane_embedded_tube 1",
 	recipe = {
-		{ "", "pipeworks:tube_1t", "" },
-		{ "default:steel_ingot", "pipeworks:tube_1", "default:steel_ingot" },
-		{ "", "pipeworks:tube_1", "" }
+		{ "", "default:steel_ingot", "" },
+		{ "", "pipeworks:tube_1", "" },
+		{ "", "default:steel_ingot", "" }
 	},
 })
