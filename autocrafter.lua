@@ -153,8 +153,15 @@ local function on_output_change(pos, inventory, stack)
 		if not input.items or input.type ~= "normal" then return end
 		local items, width = normalize(input.items), input.width
 		local item_idx, width_idx = 1, 1
-		inventory:set_width("recipe", 3)
-		inventory:set_list("recipe", items)
+		for i = 1, 9 do
+			if width_idx <= width then
+				inventory:set_stack("recipe", i, items[item_idx])
+				item_idx = item_idx + 1
+			else
+				inventory:set_stack("recipe", i, ItemStack(""))
+			end
+			width_idx = (width_idx < 3) and (width_idx + 1) or 1
+		end
 		-- we'll set the output slot in after_recipe_change to the actual result of the new recipe
 	end
 	after_recipe_change(pos, inventory)
