@@ -154,27 +154,29 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 			meta:set_string("infotext", "unconfigured Teleportation Tube")
 		end,
 		on_receive_fields = function(pos,formname,fields,sender)
-			if not fields.channel then
+			local new_channel = tostring(fields.channel)
+			if not new_channel then
 				return -- ignore escaping or clientside manipulation of the form
 			end
+			new_channel = new_channel:trim()
 
 			local meta = minetest.get_meta(pos)
 			local can_receive = meta:get_int("can_receive")
 
 			-- check for private channels each time before actually changing anything
 			-- to not even allow switching between can_receive states of private channels
-			if fields.channel ~= "" then
+			if new_channel ~= "" then
 				local sender_name = sender:get_player_name()
-				local name, mode = fields.channel:match("^([^:;]+)([:;])")
+				local name, mode = new_channel:match("^([^:;]+)([:;])")
 				if name and mode and name ~= sender_name then
 					--channels starting with '[name]:' can only be used by the named player
 					if mode == ":" then
-						minetest.chat_send_player(sender_name, "Sorry, channel '"..fields.channel.."' is reserved for exclusive use by "..name)
+						minetest.chat_send_player(sender_name, "Sorry, channel '"..new_channel.."' is reserved for exclusive use by "..name)
 						return
 				
 					--channels starting with '[name];' can be used by other players, but cannot be received from
 					elseif mode == ";" and (fields.cr1 or (can_receive ~= 0 and not fields.cr0)) then
-						minetest.chat_send_player(sender_name, "Sorry, receiving from channel '"..fields.channel.."' is reserved for "..name)
+						minetest.chat_send_player(sender_name, "Sorry, receiving from channel '"..new_channel.."' is reserved for "..name)
 						return
 					end
 				end
@@ -184,8 +186,8 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 
 			-- was the channel changed?
 			local channel = meta:get_string("channel")
-			if fields.channel ~= channel then
-				channel = fields.channel
+			if new_channel ~= channel then
+				channel = new_channel
 				meta:set_string("channel", channel)
 				dirty = true
 			end
