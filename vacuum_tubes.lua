@@ -50,7 +50,7 @@ if pipeworks.enable_mese_sand_tube then
 					meta:set_int("dist", 0)
 					meta:set_string("formspec", "size[2.1,0.8]"..
 							"image[0,0;1,1;pipeworks_mese_sand_tube_inv.png]"..
-							"field[1.3,0.4;1,1;dist;distance;${dist}]"..
+							"field[1.3,0.4;1,1;dist;radius;${dist}]"..
 							default.gui_bg..
 							default.gui_bg_img)
 					meta:set_string("infotext", "Adjustable Vacuuming Pneumatic Tube Segment")
@@ -58,7 +58,9 @@ if pipeworks.enable_mese_sand_tube then
 				on_receive_fields = function(pos,formname,fields,sender)
 					local meta = minetest.get_meta(pos)
 					local dist = tonumber(fields.dist)
-					if dist and 0 <= dist and dist <= 8 then
+					if dist then
+						dist = math.max(0, dist)
+						dist = math.min(8, dist)
 						meta:set_int("dist", dist)
 						meta:set_string("infotext", ("Adjustable Vacuuming Pneumatic Tube Segment (%dm)"):format(dist))
 					end
