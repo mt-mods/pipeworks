@@ -9,6 +9,32 @@ minetest.register_craft( {
 	},
 })
 
+-- the high priority tube is a low-cpu replacement for sorting tubes in situations
+-- where players would use them for simple routing (turning off paths)
+-- without doing actual sorting, like at outputs of tubedevices that might both accept and eject items
+if pipeworks.enable_priority_tube then
+	local color = "#ff3030:128"
+	pipeworks.register_tube("pipeworks:priority_tube", {
+			description = "High Priority Tube Segment",
+			inventory_image = "pipeworks_tube_inv.png^[colorize:" .. color,
+			plain = { "pipeworks_tube_plain.png^[colorize:" .. color },
+			noctr = { "pipeworks_tube_noctr.png^[colorize:" .. color },
+			ends = { "pipeworks_tube_end.png^[colorize:" .. color },
+			short = "pipeworks_tube_tube_short.png^[colorize:" .. color,
+			node_def = {
+				tube = { priority = 150 } -- higher than tubedevices (100)
+			},
+	})
+	minetest.register_craft( {
+		output = "pipeworks:priority_tube_1 6",
+		recipe = {
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
+			{ "default:gold_ingot", "", "default:gold_ingot" },
+			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
+		},
+	})
+end
+
 if pipeworks.enable_accelerator_tube then
 	pipeworks.register_tube("pipeworks:accelerator_tube", {
 			description = "Accelerating Pneumatic Tube Segment",
