@@ -26,14 +26,14 @@ local function set_filter_formspec(data, meta)
 end
 
 -- todo SOON: this function has *way too many* parameters
-local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompos,fromnode,filtername,fromtube,fromdef,dir,fakePlayer,all)
+local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompos,fromnode,filterfor,fromtube,fromdef,dir,fakePlayer,all)
 	local sposes = {}
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
 		local matches
-		if filtername == "" then
+		if filterfor == "" then
 			matches = stack:get_name() ~= ""
 		else
-			matches = stack:get_name() == filtername
+			matches = stack:get_name() == filterfor.name
 		end
 		if matches then table.insert(sposes, spos) end
 	end
@@ -78,6 +78,9 @@ local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompo
 				local count
 				if all then
 					count = math.min(stack:get_count(), doRemove)
+					if filterfor.count > 1 then
+						count = math.min(filterfor.count, count)
+					end
 				else
 					count = 1
 				end
@@ -118,7 +121,8 @@ local function punch_filter(data, filtpos, filtnode)
 	local filters = {}
 	for _, filterstack in ipairs(filtinv:get_list("main")) do
 		local filtername = filterstack:get_name()
-		if filtername ~= "" then table.insert(filters, filtername) end
+		local filtercount = filterstack:get_count()
+		if filtername ~= "" then table.insert(filters, {name = filtername, count = filtercount}) end
 	end
 	if #filters == 0 then table.insert(filters, "") end
 	local slotseq_mode = filtmeta:get_int("slotseq_mode")
@@ -127,8 +131,8 @@ local function punch_filter(data, filtpos, filtnode)
 	if fromtube.before_filter then fromtube.before_filter(frompos) end
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
 		local done = false
-		for _, filtername in ipairs(filters) do
-			if grabAndFire(data, slotseq_mode, filtmeta, frominv, frominvname, frompos, fromnode, filtername, fromtube, fromdef, dir, fakePlayer, data.stackwise) then
+		for _, filterfor in ipairs(filters) do
+			if grabAndFire(data, slotseq_mode, filtmeta, frominv, frominvname, frompos, fromnode, filterfor, fromtube, fromdef, dir, fakePlayer, data.stackwise) then
 				done = true
 				break
 			end
