@@ -78,7 +78,7 @@ local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompo
 				local count
 				if all then
 					count = math.min(stack:get_count(), doRemove)
-					if filterfor.count > 1 then
+					if filterfor.count and filterfor.count > 1 then
 						count = math.min(filterfor.count, count)
 					end
 				else
