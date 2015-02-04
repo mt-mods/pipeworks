@@ -20,7 +20,7 @@ if pipeworks.enable_priority_tube then
 			plain = { "pipeworks_tube_plain.png^[colorize:" .. color },
 			noctr = { "pipeworks_tube_noctr.png^[colorize:" .. color },
 			ends = { "pipeworks_tube_end.png^[colorize:" .. color },
-			short = "pipeworks_tube_tube_short.png^[colorize:" .. color,
+			short = "pipeworks_tube_short.png^[colorize:" .. color,
 			node_def = {
 				tube = { priority = 150 } -- higher than tubedevices (100)
 			},
