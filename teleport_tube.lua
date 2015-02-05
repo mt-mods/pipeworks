@@ -154,7 +154,7 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 			meta:set_string("infotext", "unconfigured Teleportation Tube")
 		end,
 		on_receive_fields = function(pos,formname,fields,sender)
-			if not new_channel then
+			if not fields.channel then
 				return -- ignore escaping or clientside manipulation of the form
 			end
 			local new_channel = tostring(fields.channel):trim()
