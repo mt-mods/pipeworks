@@ -103,6 +103,14 @@ function pipeworks.scan_for_tube_objects(pos)
 	end
 end
 
+function pipeworks.after_place(pos)
+	pipeworks.scan_for_tube_objects(pos)
+end
+
+function pipeworks.after_dig(pos)
+	pipeworks.scan_for_tube_objects(pos)
+end
+
 if minetest.get_modpath("mesecons_mvps") then
 	mesecon.register_on_mvps_move(function(moved_nodes)
 		for _, n in ipairs(moved_nodes) do
