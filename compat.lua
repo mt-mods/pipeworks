@@ -133,7 +133,13 @@ minetest.override_item("default:chest_locked", {
 		end,
 		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
-	after_place_node = pipeworks.after_place,
+	after_place_node = function (pos, placer)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("owner", placer:get_player_name() or "")
+		meta:set_string("infotext", "Locked Chest (owned by "..
+		meta:get_string("owner")..")")
+		pipeworks.after_place(pos)
+	end,
 	after_dig_node = pipeworks.after_dig
 })
 
