@@ -43,8 +43,8 @@ local function wielder_on(data, wielder_pos, wielder_node)
 		wieldstack = inv:get_stack(wield_inv_name, 1)
 	end
 	local dir = minetest.facedir_to_dir(wielder_node.param2)
-	local under_pos = vector.subtract(wielder_pos, dir)
-	local above_pos = vector.subtract(under_pos, dir)
+	local above_pos = vector.subtract(wielder_pos, dir)
+	local under_pos = vector.subtract(above_pos, dir)
 	local pitch
 	local yaw
 	if dir.z < 0 then
