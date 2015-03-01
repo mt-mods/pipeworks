@@ -13,16 +13,7 @@ if pipeworks.enable_sand_tube then
 		output = "pipeworks:sand_tube_1 2",
 		recipe = {
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-			{ "default:sand", "default:sand", "default:sand" },
-			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:sand_tube_1 2",
-		recipe = {
-			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-			{ "default:desert_sand", "default:desert_sand", "default:desert_sand" },
+			{ "group:sand", "group:sand", "group:sand" },
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})
@@ -30,7 +21,7 @@ if pipeworks.enable_sand_tube then
 	minetest.register_craft( {
 		output = "pipeworks:sand_tube_1",
 		recipe = {
-			{ "default:desert_sand", "pipeworks:tube_1", "default:desert_sand" },
+			{ "group:sand", "pipeworks:tube_1", "group:sand" },
 		},
 	})
 end
@@ -72,16 +63,7 @@ if pipeworks.enable_mese_sand_tube then
 		output = "pipeworks:mese_sand_tube_1 2",
 		recipe = {
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-			{ "default:sand", "default:mese_crystal", "default:sand" },
-			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
-		},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:mese_sand_tube_1 2",
-		recipe = {
-			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-			{ "default:desert_sand", "default:mese_crystal", "default:desert_sand" },
+			{ "group:sand", "default:mese_crystal", "group:sand" },
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})
