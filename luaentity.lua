@@ -11,7 +11,7 @@ local function read_file()
     	local t = f:read("*all")
     	f:close()
 	if t == "" or t == nil then return {} end
-	return minetest.deserialize(t)
+	return minetest.deserialize(t) or {}
 end
 
 local function write_file(tbl)
