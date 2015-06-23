@@ -6,7 +6,6 @@ function pipeworks.tube_inject_item(pos, start_pos, velocity, item)
 	-- Take item in any format
 	local stack = ItemStack(item)
 	local obj = luaentity.add_entity(pos, "pipeworks:tubed_item")
-	if not obj then return end
 	obj:set_item(stack:to_string())
 	obj.start_pos = vector.new(start_pos)
 	obj:setvelocity(velocity)
