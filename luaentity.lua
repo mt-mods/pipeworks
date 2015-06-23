@@ -22,6 +22,7 @@ end
 
 local function read_entities()
 	local t = read_file()
+	if not t then return end
 	for _, entity in pairs(t) do
 		setmetatable(entity, luaentity.registered_entities[entity.name])
 	end
@@ -29,6 +30,7 @@ local function read_entities()
 end
 
 local function write_entities()
+	if not luaentity.entities then return end
 	for _, entity in pairs(luaentity.entities) do
 		setmetatable(entity, nil)
 		for _, attached in pairs(entity._attached_entities) do
@@ -251,6 +253,7 @@ end
 -- end
 
 function luaentity.add_entity(pos, name)
+	if not luaentity.entities then return end
 	local index = luaentity.entities_index
 	while luaentity.entities[index] do
 		index = index + 1
@@ -281,6 +284,7 @@ end
 
 -- todo: check if remove in get_staticdata works
 function luaentity.get_staticdata(self)
+	if not luaentity.entities then return end
 	local parent = luaentity.entities[self.parent_id]
 	if parent and parent._remove_attached then
 		parent:_remove_attached(self.attached_id)
@@ -295,6 +299,7 @@ function luaentity.on_activate(self, staticdata)
 end
 
 function luaentity.get_objects_inside_radius(pos, radius)
+	if not luaentity.entities then return end
 	local objects = {}
 	local index = 1
 	for id, entity in pairs(luaentity.entities) do
@@ -309,6 +314,7 @@ minetest.register_globalstep(function(dtime)
 	if not luaentity.entities then
 		luaentity.entities = read_entities()
 	end
+	if not luaentity.entities then return end
 	for id, entity in pairs(luaentity.entities) do
 		local master = entity._attached_entities_master
 		if master then
