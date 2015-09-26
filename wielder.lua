@@ -104,7 +104,7 @@ local function wielder_on(data, wielder_pos, wielder_node)
 		set_attach = delay(),
 		set_detach = delay(),
 		set_bone_position = delay(),
-		hud_channge = delay(),
+		hud_change = delay(),
 		get_breath = delay(11),
 		-- TODO "implement" all these
 		-- set_armor_groups
