@@ -121,7 +121,6 @@ local function wielder_on(data, wielder_pos, wielder_node)
 		-- get_physics_override
 		-- hud_add
 		-- hud_remove
-		-- hud_change
 		-- hud_get
 		-- hud_set_flags
 		-- hud_get_flags
