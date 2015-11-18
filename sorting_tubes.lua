@@ -6,7 +6,7 @@ if pipeworks.enable_mese_tube then
 			local inv = meta:get_inventory()
 			for i = 1, 6 do
 				for _, stack in ipairs(inv:get_list("line"..i)) do
-					minetest.item_drop(stack, "", pos)
+					minetest.item_drop(stack, nil, pos)
 				end
 			end
 		end
