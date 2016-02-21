@@ -150,4 +150,4 @@ end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 
-print("Pipeworks loaded!")
+minetest.log("info", "Pipeworks loaded!")
