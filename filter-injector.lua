@@ -12,6 +12,13 @@ end
 
 local function set_filter_formspec(data, meta)
 	local itemname = data.wise_desc.." Filter-Injector"
+	local exmatch_button = ""
+	if data.stackwise then
+		exmatch_button =
+			fs_helpers.cycling_button(meta, "button[4,3.5;4,1", "exmatch_mode",
+				{"Exact match - off",
+				 "Exact match - on "})
+	end
 	local formspec = "size[8,8.5]"..
 			"item_image[0,0;1,1;pipeworks:"..data.name.."]"..
 			"label[1,0;"..minetest.formspec_escape(itemname).."]"..
@@ -21,12 +28,13 @@ local function set_filter_formspec(data, meta)
 				{"Sequence slots by Priority",
 				 "Sequence slots Randomly",
 				 "Sequence slots by Rotation"})..
+			exmatch_button..
 			"list[current_player;main;0,4.5;8,4;]"
 	meta:set_string("formspec", formspec)
 end
 
 -- todo SOON: this function has *way too many* parameters
-local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompos,fromnode,filterfor,fromtube,fromdef,dir,fakePlayer,all)
+local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,frominvname,frompos,fromnode,filterfor,fromtube,fromdef,dir,fakePlayer,all)
 	local sposes = {}
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
 		local matches
@@ -79,7 +87,11 @@ local function grabAndFire(data,slotseq_mode,filtmeta,frominv,frominvname,frompo
 				if all then
 					count = math.min(stack:get_count(), doRemove)
 					if filterfor.count and filterfor.count > 1 then
-						count = math.min(filterfor.count, count)
+						if exmatch_mode ~= 0 and filterfor.count > count then
+							return false
+						else
+							count = math.min(filterfor.count, count)
+						end
 					end
 				else
 					count = 1
@@ -127,13 +139,14 @@ local function punch_filter(data, filtpos, filtnode)
 	end
 	if #filters == 0 then table.insert(filters, "") end
 	local slotseq_mode = filtmeta:get_int("slotseq_mode")
+	local exact_match = filtmeta:get_int("exmatch_mode")
 	local frommeta = minetest.get_meta(frompos)
 	local frominv = frommeta:get_inventory()
 	if fromtube.before_filter then fromtube.before_filter(frompos) end
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
 		local done = false
 		for _, filterfor in ipairs(filters) do
-			if grabAndFire(data, slotseq_mode, filtmeta, frominv, frominvname, frompos, fromnode, filterfor, fromtube, fromdef, dir, fakePlayer, data.stackwise) then
+			if grabAndFire(data, slotseq_mode, exact_match, filtmeta, frominv, frominvname, frompos, fromnode, filterfor, fromtube, fromdef, dir, fakePlayer, data.stackwise) then
 				done = true
 				break
 			end
