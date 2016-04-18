@@ -58,10 +58,10 @@ if pipeworks.enable_detector_tube then
 	})
 
 	minetest.register_craft( {
-		output = "pipeworks:conductor_tube_off_1 6",
+		output = "pipeworks:detector_tube_off_1 2",
 		recipe = {
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-			{ "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
+			{ "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})
@@ -99,10 +99,10 @@ if pipeworks.enable_conductor_tube then
 	})
 
 	minetest.register_craft( {
-		output = "pipeworks:detector_tube_off_1 2",
+		output = "pipeworks:conductor_tube_off_1 6",
 		recipe = {
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" },
-			{ "mesecons:mesecon", "mesecons_materials:silicon", "mesecons:mesecon" },
+			{ "mesecons:mesecon", "mesecons:mesecon", "mesecons:mesecon" },
 			{ "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 		},
 	})
