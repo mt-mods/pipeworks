@@ -52,7 +52,7 @@ local function set_filter_formspec(data, meta)
 end
 
 -- todo SOON: this function has *way too many* parameters
-local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,frominvname,frompos,fromnode,filterfor,fromtube,fromdef,dir,fakePlayer,all)
+local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,frominvname,frompos,fromnode,filterfor,fromtube,fromdef,dir,fakePlayer,all,digiline)
 	local sposes = {}
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
 		local matches
@@ -104,10 +104,11 @@ local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,fromi
 				local count
 				if all then
 					count = math.min(stack:get_count(), doRemove)
-					if filterfor.count and filterfor.count > 1 then
+					if filterfor.count and (filterfor.count > 1 or digiline) then
 						if exmatch_mode ~= 0 and filterfor.count > count then
-							return false
+							return false -- not enough, fail
 						else
+							-- limit quantity to filter amount
 							count = math.min(filterfor.count, count)
 						end
 					end
@@ -207,13 +208,13 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			end
 
 			if type(msg.name) == "string" then
-				table.insert(filters, {name = msg.name, count = tonumber(msg.count) or 1})
+				table.insert(filters, {name = msg.name, count = tonumber(msg.count)})
 			else
 				for _, filter in ipairs(msg) do
 					local t_filter = type(filter)
 					if t_filter == "table" then
 						if type(filter.name) == "string" then
-							table.insert(filters, {name = filter.name, count = tonumber(filter.count) or 1})
+							table.insert(filters, {name = filter.name, count = tonumber(filter.count)})
 						end
 					elseif t_filter == "string" then
 						local filterstack = ItemStack(filter)
@@ -252,7 +253,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
 		local done = false
 		for _, filterfor in ipairs(filters) do
-			if grabAndFire(data, slotseq_mode, exact_match, filtmeta, frominv, frominvname, frompos, fromnode, filterfor, fromtube, fromdef, dir, fakePlayer, data.stackwise) then
+			if grabAndFire(data, slotseq_mode, exact_match, filtmeta, frominv, frominvname, frompos, fromnode, filterfor, fromtube, fromdef, dir, fakePlayer, data.stackwise, data.digiline) then
 				done = true
 				break
 			end
