@@ -16,8 +16,8 @@ pipeworks.modpath = minetest.get_modpath("pipeworks")
 dofile(pipeworks.modpath.."/default_settings.txt")
 
 -- Read the external config file if it exists.
-local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt","r"
-local worldsettingsfile = io.open(worldsettingspath)
+local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
+local worldsettingsfile = io.open(worldsettingspath, "r")
 if worldsettingsfile then
 	worldsettingsfile:close()
 	dofile(worldsettingspath)
