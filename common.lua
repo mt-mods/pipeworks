@@ -86,10 +86,9 @@ function pipeworks.table_contains(tbl, element)
 end
 
 function pipeworks.table_extend(tbl, tbl2)
-	local index = #tbl + 1
-	for _, elt in ipairs(tbl2) do
-		tbl[index] = elt
-		index = index + 1
+	local oldlength = #tbl
+	for i = 1,#tbl2 do
+		tbl[oldlength + i] = tbl2[i]
 	end
 end
 
