@@ -28,7 +28,8 @@ minetest.register_node("pipeworks:trashcan", {
 				default.gui_bg_img..
 				default.gui_slots..
 				default.get_hotbar_bg(0,3) ..
-				"list[current_player;main;0,3;8,4;]")
+				"list[current_player;main;0,3;8,4;]" ..
+				"listring[]")
 		meta:set_string("infotext", "Trash Can")
 		meta:get_inventory():set_size("trash", 1)
 	end, 
