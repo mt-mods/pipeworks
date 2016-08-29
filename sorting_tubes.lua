@@ -119,8 +119,13 @@ if pipeworks.enable_mese_tube then
 					if not pipeworks.may_configure(pos, player) then return 0 end
 					update_formspec(pos) -- For old tubes
 					local inv = minetest.get_meta(pos):get_inventory()
-					inv:set_stack(from_list, from_index, ItemStack(""))
-					return 0
+
+					if from_list:match("line%d") and to_list:match("line%d") then
+						return count
+					else
+						inv:set_stack(from_list, from_index, ItemStack(""))
+						return 0
+					end
 				end,
 			},
 	})
