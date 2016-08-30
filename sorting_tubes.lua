@@ -31,7 +31,21 @@ if pipeworks.enable_mese_tube then
 			"image[0,4;1,1;pipeworks_blue.png]"..
 			"image[0,5;1,1;pipeworks_red.png]"..
 			buttons_formspec..
-			"list[current_player;main;0,7;8,4;]")
+			"list[current_player;main;0,7;8,4;]" ..
+			"listring[current_player;main]" ..
+			"listring[current_player;main]" ..
+			"listring[context;line1]" ..
+			"listring[current_player;main]" ..
+			"listring[context;line2]" ..
+			"listring[current_player;main]" ..
+			"listring[context;line3]" ..
+			"listring[current_player;main]" ..
+			"listring[context;line4]" ..
+			"listring[current_player;main]" ..
+			"listring[context;line5]" ..
+			"listring[current_player;main]" ..
+			"listring[context;line6]"
+			)
 	end
 
 	pipeworks.register_tube("pipeworks:mese_tube", {
@@ -119,8 +133,13 @@ if pipeworks.enable_mese_tube then
 					if not pipeworks.may_configure(pos, player) then return 0 end
 					update_formspec(pos) -- For old tubes
 					local inv = minetest.get_meta(pos):get_inventory()
-					inv:set_stack(from_list, from_index, ItemStack(""))
-					return 0
+
+					if from_list:match("line%d") and to_list:match("line%d") then
+						return count
+					else
+						inv:set_stack(from_list, from_index, ItemStack(""))
+						return 0
+					end
 				end,
 			},
 	})
