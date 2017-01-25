@@ -14,13 +14,14 @@ minetest.register_craft( {
 -- without doing actual sorting, like at outputs of tubedevices that might both accept and eject items
 if pipeworks.enable_priority_tube then
 	local color = "#ff3030:128"
+	local nodecolor = 0xffff3030
 	pipeworks.register_tube("pipeworks:priority_tube", {
 			description = "High Priority Tube Segment",
 			inventory_image = "pipeworks_tube_inv.png^[colorize:" .. color,
-			plain = { "pipeworks_tube_plain.png^[colorize:" .. color },
-			noctr = { "pipeworks_tube_noctr.png^[colorize:" .. color },
-			ends = { "pipeworks_tube_end.png^[colorize:" .. color },
-			short = "pipeworks_tube_short.png^[colorize:" .. color,
+			plain = { { name = "pipeworks_tube_plain.png", color = nodecolor } },
+			noctr = { { name = "pipeworks_tube_noctr.png", color = nodecolor } },
+			ends  = { { name = "pipeworks_tube_end.png",   color = nodecolor } },
+			short =   { name = "pipeworks_tube_short.png", color = nodecolor },
 			node_def = {
 				tube = { priority = 150 } -- higher than tubedevices (100)
 			},
