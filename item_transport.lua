@@ -246,15 +246,24 @@ luaentity.register_entity("pipeworks:tubed_item", {
 
 		if moved then
 			local found_next, new_velocity = go_next(self.start_pos, velocity, stack) -- todo: color
+			local rev_vel = vector.multiply(velocity, -1)
+			local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
+			local rev_node = minetest.get_node(vector.round(vector.add(self.start_pos,rev_dir)))
+			local tube_present = minetest.get_item_group(rev_node.name,"tubedevice") == 1
 			if not found_next then
-				drop_pos = minetest.find_node_near(vector.add(self.start_pos, velocity), 1, "air")
-				if drop_pos then
-					-- Using add_item instead of item_drop since this makes pipeworks backward
-					-- compatible with Minetest 0.4.13.
-					-- Using item_drop here makes Minetest 0.4.13 crash.
-					minetest.add_item(drop_pos, stack)
-					self:remove()
-					return
+				if pipeworks.drop_on_routing_fail or not tube_present then
+					drop_pos = minetest.find_node_near(vector.add(self.start_pos, velocity), 1, "air")
+					if drop_pos then
+						-- Using add_item instead of item_drop since this makes pipeworks backward
+						-- compatible with Minetest 0.4.13.
+						-- Using item_drop here makes Minetest 0.4.13 crash.
+						minetest.add_item(drop_pos, stack)
+						self:remove()
+						return
+					end
+				else
+					velocity = vector.multiply(velocity, -1)
+					self:setvelocity(velocity)
 				end
 			end
 

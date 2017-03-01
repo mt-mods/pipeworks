@@ -19,5 +19,6 @@ pipeworks.enable_mese_sand_tube = true
 pipeworks.enable_one_way_tube = true
 pipeworks.enable_priority_tube = true
 pipeworks.enable_cyclic_mode = true
+pipeworks.drop_on_routing_fail = false
 
 pipeworks.delete_item_on_clearobject = true
