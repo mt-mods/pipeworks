@@ -178,6 +178,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local input_special_cases = {
 		["technic:mv_furnace"] = "dst",
 		["technic:mv_furnace_active"] = "dst",
+		["technic:mv_electric_furnace"] = "dst",
+		["technic:mv_electric_furnace_active"] = "dst",
 		["technic:mv_alloy_furnace"] = "dst",
 		["technic:mv_alloy_furnace_active"] = "dst",
 		["technic:mv_centrifuge"] = "dst",
