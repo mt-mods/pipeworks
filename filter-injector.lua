@@ -175,6 +175,23 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local fromdef = minetest.registered_nodes[fromnode.name]
 	if not fromdef then return end
 	local fromtube = fromdef.tube
+	local input_special_cases = {
+		["technic:mv_furnace"] = "dst",
+		["technic:mv_furnace_active"] = "dst",
+		["technic:mv_alloy_furnace"] = "dst",
+		["technic:mv_alloy_furnace_active"] = "dst",
+		["technic:mv_centrifuge"] = "dst",
+		["technic:mv_centrifuge_active"] = "dst",
+		["technic:mv_compressor"] = "dst",
+		["technic:mv_compressor_active"] = "dst",
+		["technic:mv_extractor"] = "dst",
+		["technic:mv_extractor_active"] = "dst",
+		["technic:mv_grinder"] = "dst",
+		["technic:mv_grinder_active"] = "dst",
+		["technic:tool_workshop"] = "src",
+	}
+
+	if fromtube then fromtube.input_inventory = input_special_cases[fromnode.name] or fromtube.input_inventory end
 	if not (fromtube and fromtube.input_inventory) then return end
 
 	local slotseq_mode
