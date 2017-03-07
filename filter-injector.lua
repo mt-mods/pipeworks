@@ -167,6 +167,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local fakePlayer = {
 		get_player_name = delay(owner),
 		is_fake_player = ":pipeworks",
+		get_wielded_item = delay(ItemStack(nil))
 	} -- TODO: use a mechanism as the wielder one
 	local dir = minetest.facedir_to_right_dir(filtnode.param2)
 	local frompos = vector.subtract(filtpos, dir)
