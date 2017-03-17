@@ -73,8 +73,8 @@ for s in ipairs(states) do
 				minetest.add_node(pos,{name="pipeworks:pump_off", param2 = node.param2}) 
 			end
 		}},
-		on_punch = function(pos, node, puncher)
-			local fdir = minetest.get_node(pos).param2
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+			local fdir = node.param2
 			minetest.add_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
 		end
 	})
@@ -104,7 +104,7 @@ for s in ipairs(states) do
 		after_dig_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
-	drop = "pipeworks:valve_off_empty",
+		drop = "pipeworks:valve_off_empty",
 		mesecons = {effector = {
 			action_on = function (pos, node)
 				minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
@@ -113,8 +113,8 @@ for s in ipairs(states) do
 				minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 			end
 		}},
-		on_punch = function(pos, node, puncher)
-			local fdir = minetest.get_node(pos).param2
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+			local fdir = node.param2
 			minetest.add_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
 		end
 	})
@@ -154,8 +154,8 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 			minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 		end
 	}},
-	on_punch = function(pos, node, puncher)
-		local fdir = minetest.get_node(pos).param2
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		local fdir = node.param2
 		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
 	end
 })
