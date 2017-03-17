@@ -1,4 +1,6 @@
 
+-- rotation handlers
+
 function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
 
 	if string.find(node.name, "spigot") then new_param2 = new_param2 % 4 end
@@ -8,6 +10,71 @@ function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
 	pipeworks.scan_for_pipe_objects(pos)
 
 	return true
+end
+
+function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
+
+	local playername = placer:get_player_name()
+	if not minetest.is_protected(pointed_thing.under, playername) 
+	   and not minetest.is_protected(pointed_thing.above, playername) then
+
+		local node = minetest.get_node(pointed_thing.under)
+
+		if (not placer:get_player_control().sneak)
+		  and minetest.registered_nodes[node.name]
+		  and minetest.registered_nodes[node.name].on_rightclick then
+			minetest.registered_nodes[node.name].on_rightclick(pointed_thing.under, node, placer, itemstack)
+		else
+
+			local pitch = placer:get_look_pitch()
+			local above = pointed_thing.above
+			local under = pointed_thing.under
+			local fdir = minetest.dir_to_facedir(placer:get_look_dir())
+			local undernode = minetest.get_node(under)
+			local abovenode = minetest.get_node(above)
+			local uname = undernode.name
+			local aname = abovenode.name
+			local isabove = (above.x == under.x) and (above.z == under.z) and (pitch > 0)
+			local pos1 = above
+
+			-- check if the object should be turned vertically
+			if above.x == under.x
+				and above.z == under.z
+				and (
+				  string.find(uname, "pipeworks:pipe_")
+				  or string.find(uname, "pipeworks:storage_")
+				  or string.find(uname, "pipeworks:expansion_")
+				  or ( string.find(uname, "pipeworks:grating") and not isabove )
+				  or ( string.find(uname, "pipeworks:pump_") and not isabove )
+
+				  or (
+						( string.find(uname, "pipeworks:valve")
+						  or string.find(uname, "pipeworks:entry_panel")
+						  or string.find(uname, "pipeworks:flow_sensor") )
+						and minetest.facedir_to_dir(undernode.param2).y ~= 0 )
+					)
+			then
+				fdir = 17
+			end
+
+			if minetest.registered_nodes[uname]
+			  and minetest.registered_nodes[uname]["buildable_to"] then
+				pos1 = under
+			end
+
+			if minetest.registered_nodes[minetest.get_node(pos1).name]
+			  and not minetest.registered_nodes[minetest.get_node(pos1).name]["buildable_to"] then return end
+
+			local placednode = itemstack:get_name()
+			minetest.add_node(pos1, {name = placednode, param2 = fdir })
+			pipeworks.scan_for_pipe_objects(pos1)
+
+			if not pipeworks.expect_infinite_stacks then
+				itemstack:take_item()
+			end
+		end
+	end
+	return itemstack
 end
 
 -- List of devices that should participate in the autoplace algorithm
@@ -111,6 +178,7 @@ for s in ipairs(states) do
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
+		on_place = pipeworks.rotate_on_place,
 		after_place_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
@@ -153,6 +221,7 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	on_place = pipeworks.rotate_on_place,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -292,6 +361,7 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	on_place = pipeworks.rotate_on_place,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -300,58 +370,6 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	end,
 	selection_box = panel_cbox,
 	collision_box = panel_cbox,
-	on_place = function(itemstack, placer, pointed_thing)
-		local playername = placer:get_player_name()
-		if not minetest.is_protected(pointed_thing.under, playername) 
-		   and not minetest.is_protected(pointed_thing.above, playername) then
-			local node = minetest.get_node(pointed_thing.under)
-
-			if not minetest.registered_nodes[node.name]
-			    or not minetest.registered_nodes[node.name].on_rightclick then
-				local pitch = placer:get_look_pitch()
-				local above = pointed_thing.above
-				local under = pointed_thing.under
-				local fdir = minetest.dir_to_facedir(placer:get_look_dir())
-				local undernode = minetest.get_node(under)
-				local abovenode = minetest.get_node(above)
-				local uname = undernode.name
-				local aname = abovenode.name
-				local isabove = (above.x == under.x) and (above.z == under.z) and (pitch > 0)
-				local pos1 = above
-
-				if above.x == under.x
-				    and above.z == under.z
-				    and ( string.find(uname, "pipeworks:pipe_")
-					 or string.find(uname, "pipeworks:storage_")
-					 or string.find(uname, "pipeworks:expansion_")
-					 or ( string.find(uname, "pipeworks:grating") and not isabove )
-					 or ( string.find(uname, "pipeworks:pump_") and not isabove )
-					 or ( string.find(uname, "pipeworks:entry_panel")
-					      and undernode.param2 == 13 )
-					 )
-				then
-					fdir = 13
-				end
-
-				if minetest.registered_nodes[uname]["buildable_to"] then
-					pos1 = under
-				end
-
-				if not minetest.registered_nodes[minetest.get_node(pos1).name]["buildable_to"] then return end
-
-				minetest.add_node(pos1, {name = "pipeworks:entry_panel_empty", param2 = fdir })
-				pipeworks.scan_for_pipe_objects(pos1)
-
-				if not pipeworks.expect_infinite_stacks then
-					itemstack:take_item()
-				end
-
-			else
-				minetest.registered_nodes[node.name].on_rightclick(pointed_thing.under, node, placer, itemstack)
-			end
-		end
-		return itemstack
-	end,
 	on_rotate = pipeworks.fix_after_rotation
 })
 
@@ -365,6 +383,7 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	on_place = pipeworks.rotate_on_place,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -388,6 +407,7 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	on_place = pipeworks.rotate_on_place,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -428,6 +448,7 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	on_place = pipeworks.rotate_on_place,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
