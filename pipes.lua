@@ -107,6 +107,7 @@ for index, connects in ipairs(cconnects) do
 		walkable = true,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
+			minetest.set_node(pos, { name = "pipeworks:pipe_"..index.."_empty" })
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)

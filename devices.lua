@@ -65,7 +65,9 @@ function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 			if minetest.registered_nodes[minetest.get_node(pos1).name]
 			  and not minetest.registered_nodes[minetest.get_node(pos1).name]["buildable_to"] then return end
 
-			local placednode = itemstack:get_name()
+			local placednode = string.gsub(itemstack:get_name(), "_loaded", "_empty")
+			placednode = string.gsub(placednode, "_on", "_off")
+
 			minetest.add_node(pos1, {name = placednode, param2 = fdir })
 			pipeworks.scan_for_pipe_objects(pos1)
 
@@ -179,9 +181,6 @@ for s in ipairs(states) do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		on_place = pipeworks.rotate_on_place,
-		after_place_node = function(pos)
-			pipeworks.scan_for_pipe_objects(pos)
-		end,
 		after_dig_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
@@ -222,9 +221,6 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
-	after_place_node = function(pos)
-		pipeworks.scan_for_pipe_objects(pos)
-	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -323,6 +319,7 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
+		minetest.set_node(pos, { name = "pipeworks:spigot", param2 = minetest.get_node(pos).param2 })
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
@@ -362,9 +359,6 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
-	after_place_node = function(pos)
-		pipeworks.scan_for_pipe_objects(pos)
-	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -384,9 +378,6 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
-	after_place_node = function(pos)
-		pipeworks.scan_for_pipe_objects(pos)
-	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -408,9 +399,6 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
-	after_place_node = function(pos)
-		pipeworks.scan_for_pipe_objects(pos)
-	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -449,9 +437,6 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
-	after_place_node = function(pos)
-		pipeworks.scan_for_pipe_objects(pos)
-	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -592,6 +577,7 @@ minetest.register_node("pipeworks:fountainhead_pouring", {
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
 	after_place_node = function(pos)
+		minetest.set_node(pos, { name = "pipeworks:fountainhead", param2 = minetest.get_node(pos).param2 })
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
