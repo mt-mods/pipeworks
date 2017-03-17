@@ -1,3 +1,42 @@
+
+-- get the axis dir (just 6 faces) of target node, assumes the pipe is the axis
+
+function pipeworks.get_axis_dir(nodetable, pattern)
+	local pxm,pxp,pym,pyp,pzm,pzp
+
+	if string.find(nodetable.nxm.name, pattern)
+	  and minetest.facedir_to_dir(nodetable.nxm.param2).x ~= 0 then
+		pxm=1
+	end
+
+	if string.find(nodetable.nxp.name, pattern)
+	  and minetest.facedir_to_dir(nodetable.nxp.param2).x ~= 0 then
+		pxp=1
+	end
+
+	if string.find(nodetable.nzm.name, pattern)
+	  and minetest.facedir_to_dir(nodetable.nzm.param2).z ~= 0 then
+		pzm=1
+	end
+
+	if string.find(nodetable.nzp.name, pattern)
+	  and minetest.facedir_to_dir(nodetable.nzp.param2).z ~= 0 then
+		pzp=1
+	end
+
+	if string.find(nodetable.nym.name, pattern)
+	  and minetest.facedir_to_dir(nodetable.nym.param2).y ~= 0 then
+		pym=1
+	end
+
+	if string.find(nodetable.nyp.name, pattern)
+	  and minetest.facedir_to_dir(nodetable.nyp.param2).y ~= 0 then
+		pyp=1
+	end
+	local match = pxm or pxp or pym or pyp or pzm or pzp
+	return match,pxm,pxp,pym,pyp,pzm,pzp
+end
+
 -- autorouting for pipes
 local tube_table = {[0] = 1, 2, 2, 4, 2, 4, 4, 5, 2, 3, 4, 6, 4, 6, 5, 7, 2, 4, 3, 6, 4, 5, 6, 7, 4, 6, 6, 8, 5, 7, 7, 9, 2, 4, 4, 5, 3, 6, 6, 7, 4, 6, 5, 7, 6, 8, 7, 9, 4, 5, 6, 7, 6, 7, 8, 9, 5, 7, 7, 9, 7, 9, 9, 10}
 local tube_table_facedirs = {[0] = 0, 0, 5, 0, 3, 4, 3, 0, 2, 0, 2, 0, 6, 4, 3, 0, 7, 12, 5, 12, 7, 4, 5, 5, 18, 20, 16, 0, 7, 4, 7, 0, 1, 8, 1, 1, 1, 13, 1, 1, 10, 8, 2, 2, 17, 4, 3, 6, 9, 9, 9, 9, 21, 13, 1, 1, 10, 10, 11, 2, 19, 4, 3, 0}
@@ -40,6 +79,15 @@ function pipeworks.scan_pipe_surroundings(pos)
 	local nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
 	local nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
+	local nodetable = {
+		nxm = nxm,
+		nxp = nxp,
+		nym = nym,
+		nyp = nyp,
+		nzm = nzm,
+		nzp = nzp
+	}
+
 	if (string.find(nxm.name, "pipeworks:pipe_") ~= nil) then pxm=1 end
 	if (string.find(nxp.name, "pipeworks:pipe_") ~= nil) then pxp=1 end
 	if (string.find(nym.name, "pipeworks:pipe_") ~= nil) then pym=1 end
@@ -49,46 +97,26 @@ function pipeworks.scan_pipe_surroundings(pos)
 
 -- Special handling for valves...
 
-	if (string.find(nxm.name, "pipeworks:valve") ~= nil)
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
-		pxm=1
-	end
-
-	if (string.find(nxp.name, "pipeworks:valve") ~= nil)
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
-		pxp=1
-	end
-
-	if (string.find(nzm.name, "pipeworks:valve") ~= nil)
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
-		pzm=1
-	end
-
-	if (string.find(nzp.name, "pipeworks:valve") ~= nil)
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
-		pzp=1
+	local match,a,b,c,d,e,f = pipeworks.get_axis_dir(nodetable, "pipeworks:valve")
+	if match then
+		pxm = a or pxm
+		pxp = b or pxp
+		pym = c or pym
+		pyp = d or pyp
+		pzm = e or pzm
+		pzp = f or pzp
 	end
 
 -- ...flow sensors...
 
-	if (string.find(nxm.name, "pipeworks:flow_sensor") ~= nil)
-	  and (nxm.param2 == 0 or nxm.param2 == 2) then
-		pxm=1
-	end
-
-	if (string.find(nxp.name, "pipeworks:flow_sensor") ~= nil)
-	  and (nxp.param2 == 0 or nxp.param2 == 2) then
-		pxp=1
-	end
-
-	if (string.find(nzm.name, "pipeworks:flow_sensor") ~= nil)
-	  and (nzm.param2 == 1 or nzm.param2 == 3) then
-		pzm=1
-	end
-
-	if (string.find(nzp.name, "pipeworks:flow_sensor") ~= nil)
-	  and (nzp.param2 == 1 or nzp.param2 == 3) then
-		pzp=1
+	local match,a,b,c,d,e,f = pipeworks.get_axis_dir(nodetable, "pipeworks:flow_sensor")
+	if match then
+		pxm = a or pxm
+		pxp = b or pxp
+		pym = c or pym
+		pyp = d or pyp
+		pzm = e or pzm
+		pzp = f or pzp
 	end
 
 -- ...spigots...
@@ -115,36 +143,15 @@ function pipeworks.scan_pipe_surroundings(pos)
 
 -- ...sealed pipe entry/exit...
 
-	if (string.find(nxm.name, "pipeworks:entry_panel") ~= nil)
-	  and (nxm.param2 == 1 or nxm.param2 == 3) then
-		pxm=1
+	local match,a,b,c,d,e,f = pipeworks.get_axis_dir(nodetable, "pipeworks:entry_panel")
+	if match then
+		pxm = a or pxm
+		pxp = b or pxp
+		pym = c or pym
+		pyp = d or pyp
+		pzm = e or pzm
+		pzp = f or pzp
 	end
-
-	if (string.find(nxp.name, "pipeworks:entry_panel") ~= nil)
-	  and (nxp.param2 == 1 or nxp.param2 == 3) then
-		pxp=1
-	end
-
-	if (string.find(nzm.name, "pipeworks:entry_panel") ~= nil)
-	  and (nzm.param2 == 0 or nzm.param2 == 2) then
-		pzm=1
-	end
-
-	if (string.find(nzp.name, "pipeworks:entry_panel") ~= nil)
-	  and (nzp.param2 == 0 or nzp.param2 == 2) then
-		pzp=1
-	end
-
-	if (string.find(nym.name, "pipeworks:entry_panel") ~= nil)
-	  and nym.param2 == 13 then
-		pym=1
-	end
-
-	if (string.find(nyp.name, "pipeworks:entry_panel") ~= nil)
-	  and nyp.param2 == 13 then
-		pyp=1
-	end
-
 
 -- ...pumps, grates...
 

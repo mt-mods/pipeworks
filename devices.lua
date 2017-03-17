@@ -1,3 +1,15 @@
+
+function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
+
+	if string.find(node.name, "spigot") then new_param2 = new_param2 % 4 end
+
+	newnode = string.gsub(node.name, "_on", "_off")
+	minetest.swap_node(pos, { name = newnode, param2 = new_param2 })
+	pipeworks.scan_for_pipe_objects(pos)
+
+	return true
+end
+
 -- List of devices that should participate in the autoplace algorithm
 
 local pipereceptor_on = nil
@@ -76,7 +88,8 @@ for s in ipairs(states) do
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			local fdir = node.param2
 			minetest.add_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
-		end
+		end,
+		on_rotate = screwdriver.rotate_simple
 	})
 	
 	minetest.register_node("pipeworks:valve_"..states[s].."_empty", {
@@ -89,11 +102,11 @@ for s in ipairs(states) do
 		paramtype2 = "facedir",
 		selection_box = {
 	             	type = "fixed",
-			fixed = { -8/16, -4/16, -5/16, 8/16, 5/16, 5/16 }
+			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		collision_box = {
 	             	type = "fixed",
-			fixed = { -8/16, -4/16, -5/16, 8/16, 5/16, 5/16 }
+			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
@@ -116,7 +129,8 @@ for s in ipairs(states) do
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			local fdir = node.param2
 			minetest.add_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
-		end
+		end,
+		on_rotate = pipeworks.fix_after_rotation
 	})
 end
 
@@ -130,11 +144,11 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	paramtype2 = "facedir",
 	selection_box = {
              	type = "fixed",
-		fixed = { -8/16, -4/16, -5/16, 8/16, 5/16, 5/16 }
+		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
 	collision_box = {
              	type = "fixed",
-		fixed = { -8/16, -4/16, -5/16, 8/16, 5/16, 5/16 }
+		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
@@ -154,10 +168,11 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 			minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
 		end
 	}},
-		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local fdir = node.param2
 		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
-	end
+	end,
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 -- grating
@@ -183,6 +198,7 @@ minetest.register_node("pipeworks:grating", {
 	after_dig_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
+	on_rotate = false
 })
 
 -- outlet spigot
@@ -211,7 +227,8 @@ minetest.register_node("pipeworks:spigot", {
 	collision_box = {
 		type = "fixed",
 		fixed = { -2/16, -6/16, -2/16, 2/16, 2/16, 8/16 }
-	}
+	},
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 minetest.register_node("pipeworks:spigot_pouring", {
@@ -251,6 +268,7 @@ minetest.register_node("pipeworks:spigot_pouring", {
 		fixed = { -2/16, -6/16, -2/16, 2/16, 2/16, 8/16 }
 	},
 	drop = "pipeworks:spigot",
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 -- sealed pipe entry/exit (horizontal pipe passing through a metal
@@ -333,7 +351,8 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 			end
 		end
 		return itemstack
-	end
+	end,
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 minetest.register_node("pipeworks:entry_panel_loaded", {
@@ -354,7 +373,8 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	end,
 	selection_box = panel_cbox,
 	collision_box = panel_cbox,
-	drop = "pipeworks:entry_panel_empty"
+	drop = "pipeworks:entry_panel_empty",
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 minetest.register_node("pipeworks:flow_sensor_empty", {
@@ -382,18 +402,19 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	selection_box = {
 		type = "fixed",
 		fixed = {
-			{ -8/16, -2/16, -2/16, 8/16, 2/16, 2/16 },
-			{ -4/16, -3/16, -3/16, 4/16, 3/16, 3/16 },
+			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
+			{ -3/16, -3/16, -4/16, 3/16, 3/16, 4/16 },
 		}
 	},
 	collision_box = {
 		type = "fixed",
 		fixed = {
-			{ -8/16, -2/16, -2/16, 8/16, 2/16, 2/16 },
-			{ -4/16, -3/16, -3/16, 4/16, 3/16, 3/16 },
+			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
+			{ -3/16, -3/16, -4/16, 3/16, 3/16, 4/16 },
 		}
 	},
-	mesecons = pipereceptor_off
+	mesecons = pipereceptor_off,
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 minetest.register_node("pipeworks:flow_sensor_loaded", {
@@ -421,19 +442,20 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 	selection_box = {
 		type = "fixed",
 		fixed = {
-			{ -8/16, -2/16, -2/16, 8/16, 2/16, 2/16 },
-			{ -4/16, -3/16, -3/16, 4/16, 3/16, 3/16 },
+			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
+			{ -3/16, -3/16, -4/16, 3/16, 3/16, 4/16 },
 		}
 	},
 	collision_box = {
 		type = "fixed",
 		fixed = {
-			{ -8/16, -2/16, -2/16, 8/16, 2/16, 2/16 },
-			{ -4/16, -3/16, -3/16, 4/16, 3/16, 3/16 },
+			{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 },
+			{ -3/16, -3/16, -4/16, 3/16, 3/16, 4/16 },
 		}
 	},
 	drop = "pipeworks:flow_sensor_empty",
-	mesecons = pipereceptor_on
+	mesecons = pipereceptor_on,
+	on_rotate = pipeworks.fix_after_rotation
 })
 
 -- tanks
@@ -473,6 +495,7 @@ for fill = 0, 10 do
 		after_dig_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
+		on_rotate = false
 	})
 
 	minetest.register_node("pipeworks:storage_tank_"..fill, {
@@ -499,6 +522,7 @@ for fill = 0, 10 do
 		after_dig_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
+		on_rotate = false
 	})
 end
 
@@ -533,6 +557,7 @@ minetest.register_node("pipeworks:fountainhead", {
 		type = "fixed",
 		fixed = { -2/16, -8/16, -2/16, 2/16, 8/16, 2/16 }
 	},
+	on_rotate = false
 })
 
 minetest.register_node("pipeworks:fountainhead_pouring", {
@@ -564,9 +589,28 @@ minetest.register_node("pipeworks:fountainhead_pouring", {
 		type = "fixed",
 		fixed = { -2/16, -8/16, -2/16, 2/16, 8/16, 2/16 }
 	},
-	drop = "pipeworks:fountainhead"
+	drop = "pipeworks:fountainhead",
+	on_rotate = false
 })
 
 minetest.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
 minetest.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")
 
+minetest.register_lbm({
+	name = "pipeworks:rotate_valves_flowsensors",
+	label = "Flip pipeworks valves and flow sensors around X/Z",
+	run_at_every_load = false,
+	nodenames = {
+		"pipeworks:flow_sensor_empty",
+		"pipeworks:flow_sensor_loaded",
+		"pipeworks:valve_off_empty",
+		"pipeworks:valve_on_empty",
+		"pipeworks:valve_off_loaded",
+	},
+	action = function(pos, node)
+		local dir = minetest.facedir_to_dir(node.param2)
+		local newdir = { x=dir.z, y=dir.y, z=dir.x }
+		local newfdir = minetest.dir_to_facedir(newdir)
+		minetest.swap_node(pos, { name = node.name, param2 = newfdir })
+	end
+})
