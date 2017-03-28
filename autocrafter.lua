@@ -186,10 +186,9 @@ local function update_meta(meta, enabled)
 			"list[current_player;main;0,8;8,4;]" ..
 			"listring[current_player;main]"..
 			"listring[context;src]" ..
-			"listring[context;dst]" ..
 			"listring[current_player;main]"..
-			"listring[context;recipe]" ..
-			"listring[context;output]"
+			"listring[context;dst]" ..
+			"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
 		fs = fs.."field[1,3.5;4,1;channel;Channel;${channel}]"
 		fs = fs.."button_exit[5,3.2;2,1;save;Save]"
