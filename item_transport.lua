@@ -262,6 +262,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 						return
 					end
 				else
+					print("[Pipeworks] Warning - tubed item had to reverse direction at "..minetest.pos_to_string(self.start_pos))
 					velocity = vector.multiply(velocity, -1)
 					self:setvelocity(velocity)
 				end
