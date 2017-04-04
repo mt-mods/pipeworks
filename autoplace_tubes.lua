@@ -1,7 +1,7 @@
 -- autorouting for pneumatic tubes
 
 local function is_tube(nodename)
-	return table.contains(pipeworks.tubenodes, nodename)
+	return pipeworks.table_contains(pipeworks.tubenodes, nodename)
 end
 
 --a function for determining which side of the node we are on
@@ -11,23 +11,23 @@ local function nodeside(node, tubedir)
 	end
 
 	local backdir = minetest.facedir_to_dir(node.param2)
-	local back = vector.dot(backdir, tubedir)
+	local back = pipeworks.vector_dot(backdir, tubedir)
 	if back == 1 then
 		return "back"
 	elseif back == -1 then
 		return "front"
 	end
 
-	local topdir = minetest.facedir_to_top_dir(node.param2)
-	local top = vector.dot(topdir, tubedir)
+	local topdir = pipeworks.facedir_to_top_dir(node.param2)
+	local top = pipeworks.vector_dot(topdir, tubedir)
 	if top == 1 then
 		return "top"
 	elseif top == -1 then
 		return "bottom"
 	end
 
-	local rightdir = minetest.facedir_to_right_dir(node.param2)
-	local right = vector.dot(rightdir, tubedir)
+	local rightdir = pipeworks.facedir_to_right_dir(node.param2)
+	local right = pipeworks.vector_dot(rightdir, tubedir)
 	if right == 1 then
 		return "right"
 	else
@@ -99,7 +99,7 @@ end
 
 function pipeworks.scan_for_tube_objects(pos)
 	for side = 0, 6 do
-		tube_autoroute(vector.add(pos, directions.side_to_dir(side)))
+		tube_autoroute(vector.add(pos, pipeworks.directions.side_to_dir(side)))
 	end
 end
 

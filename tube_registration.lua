@@ -44,7 +44,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 	end
 	
 	for _, v in ipairs(connects) do
-		table.extend(outboxes, pipeworks.tube_boxes[v])
+		pipeworks.table_extend(outboxes, pipeworks.tube_boxes[v])
 		table.insert(outsel, pipeworks.tube_selectboxes[v])
 		outimgs[vti[v]] = noctrs[v]
 	end
@@ -127,7 +127,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 				nodedef.tube[key] = val
 			end
 		else
-			nodedef[key] = table.recursive_replace(value, "#id", tname)
+			nodedef[key] = pipeworks.table_recursive_replace(value, "#id", tname)
 		end
 	end
 

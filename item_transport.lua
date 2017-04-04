@@ -1,3 +1,5 @@
+local luaentity = pipeworks.luaentity
+
 function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
 end
@@ -55,7 +57,7 @@ local function go_next(pos, velocity, stack)
 	end
 	for _, vect in ipairs(can_go) do
 		local npos = vector.add(pos, vect)
-		minetest.load_position(npos)
+		pipeworks.load_position(npos)
 		local node = minetest.get_node(npos)
 		local reg_node = minetest.registered_nodes[node.name]
 		if reg_node then
@@ -225,7 +227,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			moved = true
 		end
 
-		minetest.load_position(self.start_pos)
+		pipeworks.load_position(self.start_pos)
 		local node = minetest.get_node(self.start_pos)
 		if moved and minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
 			local leftover

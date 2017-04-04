@@ -1,3 +1,5 @@
+local fs_helpers = pipeworks.fs_helpers
+
 if pipeworks.enable_mese_tube then
 	local function update_formspec(pos)
 		local meta = minetest.get_meta(pos)

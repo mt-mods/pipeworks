@@ -1,6 +1,7 @@
 local max_entity_id = 1000000000000 -- If you need more, there's a problem with your code
 
-luaentity = {}
+local luaentity = {}
+pipeworks.luaentity = luaentity
 
 luaentity.registered_entities = {}
 

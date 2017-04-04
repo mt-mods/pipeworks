@@ -101,7 +101,7 @@ if pipeworks.enable_one_way_tube then
 				return {velocity}
 			end,
 			can_insert = function(pos, node, stack, direction)
-				local dir = minetest.facedir_to_right_dir(node.param2)
+				local dir = pipeworks.facedir_to_right_dir(node.param2)
 				return vector.equals(dir, direction)
 			end,
 			priority = 75 -- Higher than normal tubes, but lower than receivers
