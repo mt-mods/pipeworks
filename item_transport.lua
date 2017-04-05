@@ -2,8 +2,6 @@ local luaentity = pipeworks.luaentity
 local enable_max_limit = minetest.setting_get("pipeworks_enable_items_per_tube_limit")
 local max_tube_limit = minetest.setting_get("pipeworks_max_items_per_tube") or 40
 
-pipeworks.tube_item_count = {}
-
 function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
 end
@@ -34,6 +32,21 @@ function pipeworks.notvel(tbl, vel)
 	end
 	return tbl2
 end
+
+local tube_item_count = {}
+
+minetest.register_globalstep(function(dtime)
+	if not luaentity.entities then
+		return
+	end
+	tube_item_count = {}
+	for id, entity in pairs(luaentity.entities) do
+		if entity.name == "pipeworks:tubed_item" then
+			local h = minetest.hash_node_position(vector.round(entity._pos))
+			tube_item_count[h] = (tube_item_count[h] or 0) + 1
+		end
+	end
+end)
 
 local function go_next(pos, velocity, stack)
 	local next_positions = {}
@@ -82,17 +95,13 @@ local function go_next(pos, velocity, stack)
 	end
 
 	if enable_max_limit then
-		local itemcount = #minetest.get_objects_inside_radius(pos, 0.5)
-
 		local h = minetest.hash_node_position(pos)
+		local itemcount = tube_item_count[h] or 0
 		if itemcount > max_tube_limit then
 			cmeta:set_string("the_tube_was", minetest.serialize(cnode))
 			print("[Pipeworks] Warning - a tube at "..minetest.pos_to_string(pos).." broke due to too many items ("..itemcount..")")
 			minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 			pipeworks.scan_for_tube_objects(pos)
-			pipeworks.tube_item_count[h] = 0
-		else
-			pipeworks.tube_item_count[h] = itemcount
 		end
 	end
 
