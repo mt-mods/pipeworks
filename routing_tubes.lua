@@ -1,3 +1,4 @@
+
 -- the default tube and default textures
 pipeworks.register_tube("pipeworks:tube", "Pneumatic tube segment")
 minetest.register_craft( {
@@ -7,6 +8,28 @@ minetest.register_craft( {
 	        { "", "", "" },
 	        { "homedecor:plastic_sheeting", "homedecor:plastic_sheeting", "homedecor:plastic_sheeting" }
 	},
+})
+
+pipeworks.register_tube("pipeworks:broken_tube", {
+	description = "Broken Tube (you hacker you)",
+	plain = { { name = "pipeworks_broken_tube_plain.png", backface_culling = false, color = nodecolor } },
+	noctr = { { name = "pipeworks_broken_tube_plain.png", backface_culling = false, color = nodecolor } },
+	ends  = { { name = "pipeworks_broken_tube_end.png",   color = nodecolor } },
+	short =   { name = "pipeworks_broken_tube_short.png", color = nodecolor },
+	node_def = {
+		drop = "pipeworks:tube_1",
+		groups = {not_in_creative_inventory = 1, tubedevice_receiver = 1},
+		tube = {
+			insert_object = function(pos, node, stack, direction)
+				minetest.item_drop(stack, nil, pos)
+				return ItemStack("")
+			end,
+			can_insert = function(pos,node,stack,direction)
+				return true
+			end,
+			priority = 50,
+		}
+	}
 })
 
 -- the high priority tube is a low-cpu replacement for sorting tubes in situations
