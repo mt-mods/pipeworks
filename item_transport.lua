@@ -249,8 +249,9 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			moved = true
 		end
 		local vel = {x = velocity.x / speed, y = velocity.y / speed, z = velocity.z / speed, speed = speed}
+		local moved_by = vector.distance(pos, self.start_pos)
 
-		if vector.distance(pos, self.start_pos) >= 1 then
+		if moved_by >= 1 then
 			self.start_pos = vector.add(self.start_pos, vel)
 			moved = true
 		end
@@ -269,6 +270,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 				return
 			end
 			velocity = vector.multiply(velocity, -1)
+			self:setpos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
 			self:setvelocity(velocity)
 			self:set_item(leftover:to_string())
 			return
@@ -295,7 +297,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 					if minetest.get_item_group(rev_node.name,"tube") == 1 then
 						print("[Pipeworks] Warning - tubed item had to reverse direction at "..minetest.pos_to_string(self.start_pos))
 						velocity = vector.multiply(velocity, -1)
-						self:setpos(self.start_pos)
+						self:setpos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
 						self:setvelocity(velocity)
 					else
 						if drop_pos then
@@ -308,7 +310,8 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			end
 
 			if new_velocity and not vector.equals(velocity, new_velocity) then
-				self:setpos(self.start_pos)
+				local nvelr = math.abs(new_velocity.x + new_velocity.y + new_velocity.z)
+				self:setpos(vector.add(self.start_pos, vector.multiply(new_velocity, (moved_by - 1) / nvelr)))
 				self:setvelocity(new_velocity)
 			end
 		end
