@@ -1,6 +1,6 @@
 local luaentity = pipeworks.luaentity
 local enable_max_limit = minetest.setting_get("pipeworks_enable_items_per_tube_limit")
-local max_tube_limit = minetest.setting_get("pipeworks_max_items_per_tube") or 40
+local max_tube_limit = tonumber(minetest.setting_get("pipeworks_max_items_per_tube")) or 40
 
 function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
