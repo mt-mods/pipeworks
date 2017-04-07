@@ -28,7 +28,36 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 				return true
 			end,
 			priority = 50,
-		}
+		},
+		on_punch = function(pos, node, puncher, pointed_thing)
+			local itemstack = puncher:get_wielded_item()
+			local wieldname = itemstack:get_name()
+			local playername = puncher:get_player_name()
+			print("[Pipeworks] "..playername.." struck a broken tube at "..minetest.pos_to_string(pos))
+			if   wieldname == "anvil:hammer"
+			  or wieldname == "cottages:hammer"
+			  or wieldname == "glooptest:hammer_steel"
+			  or wieldname == "glooptest:hammer_bronze"
+			  or wieldname == "glooptest:hammer_diamond"
+			  or wieldname == "glooptest:hammer_mese"
+			  or wieldname == "glooptest:hammer_alatro"
+			  or wieldname == "glooptest:hammer_arol" then
+				local meta = minetest.get_meta(pos)
+				local was_node = minetest.deserialize(meta:get_string("the_tube_was"))
+				if was_node and was_node ~= "" then
+					print("            with "..wieldname.." to repair it.")
+					minetest.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
+					pipeworks.scan_for_tube_objects(pos)
+					itemstack:add_wear(1000)
+					puncher:set_wielded_item(itemstack)
+					return itemstack
+				else
+					print("            but it can't be repaired.")
+				end
+			else
+				print("            with "..wieldname.." but that tool is too weak.")
+			end
+		end
 	}
 })
 
