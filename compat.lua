@@ -26,12 +26,13 @@ minetest.override_item("default:furnace", {
 			end
 		end,
 		can_insert = function(pos,node,stack,direction)
+			local onestack = stack:peek_item(1)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			if direction.y == 1 then
-				return inv:room_for_item("fuel", stack)
+				return inv:room_for_item("fuel", onestack)
 			else
-				return inv:room_for_item("src", stack)
+				return inv:room_for_item("src", onestack)
 			end
 		end,
 		input_inventory = "dst",
@@ -77,10 +78,11 @@ minetest.override_item("default:furnace_active", {
 		can_insert = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
+			local onestack = stack:peek_item(1)
 			if direction.y == 1 then
-				return inv:room_for_item("fuel", stack)
+				return inv:room_for_item("fuel", onestack)
 			else
-				return inv:room_for_item("src", stack)
+				return inv:room_for_item("src", onestack)
 			end
 		end,
 		input_inventory = "dst",
@@ -109,7 +111,8 @@ minetest.override_item("default:chest", {
 		can_insert = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
-			return inv:room_for_item("main", stack)
+			local onestack = stack:peek_item(1)
+			return inv:room_for_item("main", onestack)
 		end,
 		input_inventory = "main",
 		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
@@ -137,7 +140,8 @@ minetest.override_item("default:chest_locked", {
 		can_insert = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
-			return inv:room_for_item("main", stack)
+			local onestack = stack:peek_item(1)
+			return inv:room_for_item("main", onestack)
 		end,
 		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
