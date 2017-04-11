@@ -33,8 +33,8 @@ local function active_formspec(fuel_percent, item_percent, pos, meta)
 				"image_button[0,3.5;1,0.6",
 				"split_material_stacks",
 				{
-					{text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"},
-					{text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
+					pipeworks.button_off,
+					pipeworks.button_on
 				}
 			).."label[0.9,3.51;Allow splitting incoming material (not fuel) stacks from tubes]"
 	return formspec
@@ -64,8 +64,8 @@ local function inactive_formspec(pos, meta)
 			"image_button[0,3.5;1,0.6",
 			"split_material_stacks",
 			{
-				{text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"},
-				{text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
+				pipeworks.button_off,
+				pipeworks.button_on
 			}
 		).."label[0.9,3.51;Allow splitting incoming material (not fuel) stacks from tubes]"
 	return formspec

@@ -41,6 +41,10 @@ pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z
 
 pipeworks.liquid_texture = "default_water.png"
 
+pipeworks.button_off = {text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"}
+pipeworks.button_on  = {text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
+pipeworks.button_label = "label[0.9,4.31;Allow splitting incoming stacks from tubes]"
+
 -- Helper functions
 
 function pipeworks.fix_image_names(table, replacement)

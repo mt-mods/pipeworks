@@ -141,6 +141,13 @@ function fs_helpers.cycling_button(meta, base, meta_name, values)
 		text = val
 	end
 	local field = "fs_helpers_cycling:"..new_value..":"..meta_name
+
+	print("base"..dump(base))
+	print("texture_name"..dump(texture_name))
+	print("field"..dump(field))
+	print("text"..dump(text))
+	print("addopts"..dump(addopts))
+
 	return base..";"..(texture_name and texture_name..";" or "")..field..";"..minetest.formspec_escape(text)..(addopts and ";"..addopts or "").."]"
 end
 

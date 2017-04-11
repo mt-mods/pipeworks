@@ -27,10 +27,10 @@ local function update_chest_formspec(pos)
 			"image_button[0,4.3;1,0.6",
 			"splitstacks",
 			{
-				{text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"},
-				{text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
+				pipeworks.button_off,
+				pipeworks.button_on
 			}
-		).."label[0.9,4.31;Allow splitting incoming stacks from tubes]"
+		)..pipeworks.button_label
 	meta:set_string("formspec", formspec)
 end
 
@@ -94,10 +94,10 @@ local function setup_locked_formspec(pos, meta)
 			"image_button[0,4.3;1,0.6",
 			"splitstacks",
 			{
-				{text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"},
-				{text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
+				pipeworks.button_off,
+				pipeworks.button_on
 			}
-		).."label[0.9,4.31;Allow splitting incoming stacks from tubes]"
+		)..pipeworks.button_label
 	)
 end
 
