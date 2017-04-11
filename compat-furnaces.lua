@@ -4,6 +4,8 @@
 
 local fs_helpers = pipeworks.fs_helpers
 
+tube_entry = "^pipeworks_tube_connection_stony.png"
+
 local function active_formspec(fuel_percent, item_percent, pos, meta)
 	local formspec =
 		"size[8,8.5]"..
@@ -271,11 +273,11 @@ end
 minetest.register_node(":default:furnace", {
 	description = "Furnace",
 	tiles = {
-		"default_furnace_top.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_bottom.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
+		"default_furnace_top.png"..tube_entry,
+		"default_furnace_bottom.png"..tube_entry,
+		"default_furnace_side.png"..tube_entry,
+		"default_furnace_side.png"..tube_entry,
+		"default_furnace_side.png"..tube_entry,
 		"default_furnace_front.png"
 	},
 	groups = {cracky = 2, tubedevice = 1, tubedevice_receiver = 1},
@@ -359,11 +361,11 @@ minetest.register_node(":default:furnace", {
 minetest.register_node(":default:furnace_active", {
 	description = "Furnace",
 	tiles = {
-		"default_furnace_top.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_bottom.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
-		"default_furnace_side.png^pipeworks_tube_connection_stony.png",
+		"default_furnace_top.png"..tube_entry,
+		"default_furnace_bottom.png"..tube_entry,
+		"default_furnace_side.png"..tube_entry,
+		"default_furnace_side.png"..tube_entry,
+		"default_furnace_side.png"..tube_entry,
 		{
 			image = "default_furnace_front_active.png",
 			backface_culling = false,
