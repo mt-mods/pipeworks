@@ -108,7 +108,10 @@ dofile(pipeworks.modpath.."/wielder.lua")
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
-if pipeworks.enable_redefines then dofile(pipeworks.modpath.."/compat.lua") end
+if pipeworks.enable_redefines then
+	dofile(pipeworks.modpath.."/compat-chests.lua")
+	dofile(pipeworks.modpath.."/compat-furnaces.lua")
+end
 if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
