@@ -196,17 +196,15 @@ local function punch_filter(data, filtpos, filtnode, msg)
 		["technic:tool_workshop"] = "src",
 	}
 
+	-- make sure there's something appropriate to inject the item into
 	local todir = pipeworks.facedir_to_right_dir(filtnode.param2)
 	local topos = vector.add(filtpos, todir)
 	local tonode = minetest.get_node(topos)
 	local todef = minetest.registered_nodes[tonode.name]
 
-	print("===================")
-	print(tonode.name)
-	print(minetest.get_item_group(tonode.name, "tube"))
-	print(minetest.get_item_group(tonode.name, "tubedevice_receiver"))
 	if not todef
 	  or not (minetest.get_item_group(tonode.name, "tube") == 1
+			  or minetest.get_item_group(tonode.name, "tubedevice") == 1
 			  or minetest.get_item_group(tonode.name, "tubedevice_receiver") == 1) then
 		return
 	end
