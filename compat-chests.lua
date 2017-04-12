@@ -24,7 +24,7 @@ local function update_chest_formspec(pos)
 		"listring[current_name;main]" ..
 		fs_helpers.cycling_button(
 			meta,
-			"image_button[0,4.3;1,0.6",
+			pipeworks.button_base,
 			"splitstacks",
 			{
 				pipeworks.button_off,
@@ -91,7 +91,7 @@ local function setup_locked_formspec(pos, meta)
 		get_locked_chest_formspec(pos) ..
 		fs_helpers.cycling_button(
 			meta,
-			"image_button[0,4.3;1,0.6",
+			pipeworks.button_base,
 			"splitstacks",
 			{
 				pipeworks.button_off,
