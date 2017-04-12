@@ -139,6 +139,7 @@ for s in ipairs(states) do
 		groups = dgroups,
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
+		pipe_connections = { top = 1 },
 		after_place_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
@@ -252,11 +253,17 @@ minetest.register_node("pipeworks:grating", {
 		"pipeworks_grating_sides.png",
 		"pipeworks_grating_sides.png"
 	},
+	drawtype = "nodebox",
+	node_box = {
+		type = "fixed",
+		fixed = { -0.49, -0.49, -0.49, 0.49, 0.5, 0.49 }
+	},
 	sunlight_propagates = true,
 	paramtype = "light",
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	pipe_connections = { top = 1 },
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -279,6 +286,8 @@ minetest.register_node("pipeworks:spigot", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	pipe_connections = { left=1, right=1, front=1, back=1,
+						 left_param2 = 3, right_param2 = 1, front_param2 = 2, back_param2 = 0 },
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -318,6 +327,8 @@ minetest.register_node("pipeworks:spigot_pouring", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	pipe_connections = { left=1, right=1, front=1, back=1,
+						 left_param2 = 3, right_param2 = 1, front_param2 = 2, back_param2 = 0 },
 	after_place_node = function(pos)
 		minetest.set_node(pos, { name = "pipeworks:spigot", param2 = minetest.get_node(pos).param2 })
 		pipeworks.scan_for_pipe_objects(pos)
@@ -494,6 +505,7 @@ for fill = 0, 10 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		drop = "pipeworks:storage_tank_0",
+		pipe_connections = { top = 1, bottom = 1},
 		after_place_node = function(pos)
 			pipeworks.look_for_stackable_tanks(pos)
 			pipeworks.scan_for_pipe_objects(pos)
@@ -521,6 +533,7 @@ for fill = 0, 10 do
 		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
 		drop = "pipeworks:storage_tank_0",
+		pipe_connections = { top = 1, bottom = 1},
 		after_place_node = function(pos)
 			pipeworks.look_for_stackable_tanks(pos)
 			pipeworks.scan_for_pipe_objects(pos)
@@ -544,6 +557,7 @@ minetest.register_node("pipeworks:fountainhead", {
 	groups = {snappy=3, pipe=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	pipe_connections = { bottom = 1 },
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -576,6 +590,7 @@ minetest.register_node("pipeworks:fountainhead_pouring", {
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_wood_defaults(),
 	walkable = true,
+	pipe_connections = { bottom = 1 },
 	after_place_node = function(pos)
 		minetest.set_node(pos, { name = "pipeworks:fountainhead", param2 = minetest.get_node(pos).param2 })
 		pipeworks.scan_for_pipe_objects(pos)
