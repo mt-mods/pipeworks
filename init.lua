@@ -13,7 +13,7 @@ local DEBUG = false
 pipeworks.worldpath = minetest.get_worldpath()
 pipeworks.modpath = minetest.get_modpath("pipeworks")
 
-dofile(pipeworks.modpath.."/default_settings.txt")
+dofile(pipeworks.modpath.."/default_settings.lua")
 
 -- Read the external config file if it exists.
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
