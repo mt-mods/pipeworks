@@ -26,7 +26,7 @@ end
 -- Random variables
 
 pipeworks.expect_infinite_stacks = true
-if minetest.get_modpath("unified_inventory") or not minetest.setting_getbool("creative_mode") then
+if minetest.get_modpath("unified_inventory") or not minetest.settings:get_bool("creative_mode") then
 	pipeworks.expect_infinite_stacks = false
 end
 

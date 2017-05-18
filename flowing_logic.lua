@@ -4,7 +4,7 @@
 -- Contributed by mauvebic, 2013-01-03, rewritten a bit by Vanessa Ezekowitz
 --
 
-local finitewater = minetest.setting_getbool("liquid_finite")
+local finitewater = minetest.settings:get_bool("liquid_finite")
 
 pipeworks.check_for_liquids = function(pos)
 	local coords = {

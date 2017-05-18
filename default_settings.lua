@@ -30,7 +30,7 @@ local settings = {
 for name, value in pairs(settings) do
 	local setting_type = type(value)
 	if setting_type == "boolean" then
-		pipeworks[name] = minetest.setting_getbool(prefix..name)
+		pipeworks[name] = minetest.settings:get_bool(prefix..name)
 		if pipeworks[name] == nil then
 			pipeworks[name] = value
 		end

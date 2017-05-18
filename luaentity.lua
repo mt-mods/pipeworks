@@ -71,7 +71,7 @@ end
 local active_blocks = {} -- These only contain active blocks near players (i.e., not forceloaded ones)
 
 local move_entities_globalstep_part1 = function(dtime)
-	local active_block_range = tonumber(minetest.setting_get("active_block_range")) or 2
+	local active_block_range = tonumber(minetest.settings:get("active_block_range")) or 2
 	local new_active_blocks = {}
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local blockpos = get_blockpos(player:getpos())
