@@ -10,6 +10,8 @@ minetest.register_craft( {
 	},
 })
 
+local nodecolor = 0xffff3030
+
 pipeworks.register_tube("pipeworks:broken_tube", {
 	description = "Broken Tube (you hacker you)",
 	plain = { { name = "pipeworks_broken_tube_plain.png", backface_culling = false, color = nodecolor } },
@@ -66,7 +68,6 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 -- without doing actual sorting, like at outputs of tubedevices that might both accept and eject items
 if pipeworks.enable_priority_tube then
 	local color = "#ff3030:128"
-	local nodecolor = 0xffff3030
 	pipeworks.register_tube("pipeworks:priority_tube", {
 			description = "High Priority Tube Segment",
 			inventory_image = "pipeworks_tube_inv.png^[colorize:" .. color,
