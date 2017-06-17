@@ -4,26 +4,31 @@
 -- the formspecs found here are basically copies of the ones from minetest_game
 -- plus bits from pipeworks' sorting tubes
 
+-- Pipeworks Specific
 local fs_helpers = pipeworks.fs_helpers
+local tube_entry = "^pipeworks_tube_connection_wooden.png"
 
-tube_entry = "^pipeworks_tube_connection_wooden.png"
+-- Chest Locals
+local open_chests = {}
 
-local base_chest_formspec = "size[8,9]" ..
-	default.gui_bg ..
-	default.gui_bg_img ..
-	default.gui_slots ..
-	"list[current_player;main;0,4.85;8,1;]" ..
-	"list[current_player;main;0,6.08;8,3;8]" ..
-	"listring[current_player;main]" ..
-	default.get_hotbar_bg(0,4.85)
+local function get_chest_formspec(pos)
+	local spos = pos.x .. "," .. pos.y .. "," .. pos.z
+	local formspec =
+		"size[8,9]" ..
+		default.gui_bg ..
+		default.gui_bg_img ..
+		default.gui_slots ..
+		"list[nodemeta:" .. spos .. ";main;0,0.3;8,4;]" ..
+		"list[current_player;main;0,4.85;8,1;]" ..
+		"list[current_player;main;0,6.08;8,3;8]" ..
+		"listring[nodemeta:" .. spos .. ";main]" ..
+		"listring[current_player;main]" ..
+		default.get_hotbar_bg(0,4.85)
 
-local function update_chest_formspec(pos)
-	local meta = minetest.get_meta(pos)
-	local formspec = base_chest_formspec ..
-		"list[current_name;main;0,0.3;8,4;]" ..
-		"listring[current_name;main]" ..
+	-- Pipeworks Switch
+	formspec = formspec ..
 		fs_helpers.cycling_button(
-			meta,
+			minetest.get_meta(pos),
 			pipeworks.button_base,
 			"splitstacks",
 			{
@@ -31,19 +36,137 @@ local function update_chest_formspec(pos)
 				pipeworks.button_on
 			}
 		)..pipeworks.button_label
-	meta:set_string("formspec", formspec)
+	
+	return formspec
 end
 
-minetest.override_item("default:chest", {
+local function chest_lid_obstructed(pos)
+	local above = { x = pos.x, y = pos.y + 1, z = pos.z }
+	local def = minetest.registered_nodes[minetest.get_node(above).name]
+	-- allow ladders, signs, wallmounted things and torches to not obstruct
+	if def.drawtype == "airlike" or
+			def.drawtype == "signlike" or
+			def.drawtype == "torchlike" or
+			(def.drawtype == "nodebox" and def.paramtype2 == "wallmounted") then
+		return false
+	end
+	return true
+end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname == "pipeworks:chest_formspec" and player then
+		local pn = player:get_player_name()
+		if open_chests[pn] then
+			local pos = open_chests[pn].pos
+			if fields.quit then
+				local sound = open_chests[pn].sound
+				local swap = open_chests[pn].swap
+				local node = minetest.get_node(pos)
+				
+				open_chests[pn] = nil
+				for k, v in pairs(open_chests) do
+					if v.pos.x == pos.x and v.pos.y == pos.y and v.pos.z == pos.z then
+						return true
+					end
+				end
+				minetest.after(0.2, minetest.swap_node, pos, { name = "default:" .. swap,
+						param2 = node.param2 })
+				minetest.sound_play(sound, {gain = 0.3, pos = pos, max_hear_distance = 10})
+			end
+			
+			-- Pipeworks Switch
+			if pipeworks.may_configure(pos, player) and not fields.quit then
+				fs_helpers.on_receive_fields(pos, fields)
+				minetest.show_formspec(player:get_player_name(), "pipeworks:chest_formspec", get_chest_formspec(pos))
+			end
+		end
+	end
+
+	return true
+end)
+
+-- Original Definitions
+local old_chest_def = table.copy(minetest.registered_items["default:chest"])
+local old_chest_open_def = table.copy(minetest.registered_items["default:chest_open"])
+local old_chest_locked_def = table.copy(minetest.registered_items["default:chest_locked"])
+local old_chest_locked_open_def = table.copy(minetest.registered_items["default:chest_locked_open"])
+
+-- Override Construction
+local override_protected, override, override_open, override_protected_open
+override_protected = {
 	tiles = {
 		"default_chest_top.png"..tube_entry,
 		"default_chest_top.png"..tube_entry,
 		"default_chest_side.png"..tube_entry,
 		"default_chest_side.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_front.png"
+		"default_chest_lock.png",
+		"default_chest_inside.png"
 	},
-	groups = {choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
+	after_place_node = function(pos, placer)
+		old_chest_locked_def.after_place_node(pos, placer)
+		pipeworks.after_place(pos)
+	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		if not default.can_interact_with_node(clicker, pos) then
+			return itemstack
+		end
+
+		minetest.sound_play(old_chest_locked_def.sound_open, {gain = 0.3,
+				pos = pos, max_hear_distance = 10})
+		if not chest_lid_obstructed(pos) then
+			minetest.swap_node(pos,
+					{ name = "default:" .. "chest_locked" .. "_open",
+					param2 = node.param2 })
+		end
+		minetest.after(0.2, minetest.show_formspec,
+				clicker:get_player_name(),
+				"pipeworks:chest_formspec", get_chest_formspec(pos))
+		open_chests[clicker:get_player_name()] = { pos = pos,
+				sound = old_chest_locked_def.sound_close, swap = "chest_locked" }
+	end,
+	groups = table.copy(old_chest_locked_def.groups),
+	tube = {
+		insert_object = function(pos, node, stack, direction)
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			return inv:add_item("main", stack)
+		end,
+		can_insert = function(pos, node, stack, direction)
+			local meta = minetest.get_meta(pos)
+			local inv = meta:get_inventory()
+			if meta:get_int("splitstacks") == 1 then
+				stack = stack:peek_item(1)
+			end
+			return inv:room_for_item("main", stack)
+		end,
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
+	},
+	after_dig_node = pipeworks.after_dig
+}
+override = {
+	tiles = {
+		"default_chest_top.png"..tube_entry,
+		"default_chest_top.png"..tube_entry,
+		"default_chest_side.png"..tube_entry,
+		"default_chest_side.png"..tube_entry,
+		"default_chest_front.png",
+		"default_chest_inside.png"
+	},
+	on_rightclick = function(pos, node, clicker)
+		minetest.sound_play(old_chest_def.sound_open, {gain = 0.3, pos = pos,
+				max_hear_distance = 10})
+		if not chest_lid_obstructed(pos) then
+			minetest.swap_node(pos, {
+					name = "default:" .. "chest" .. "_open",
+					param2 = node.param2 })
+		end
+		minetest.after(0.2, minetest.show_formspec,
+				clicker:get_player_name(),
+				"pipeworks:chest_formspec", get_chest_formspec(pos))
+		open_chests[clicker:get_player_name()] = { pos = pos,
+				sound = old_chest_def.sound_close, swap = "chest" }
+	end,
+	groups = table.copy(old_chest_def.groups),
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
@@ -62,126 +185,47 @@ minetest.override_item("default:chest", {
 		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
 	after_place_node = pipeworks.after_place,
-	after_dig_node = pipeworks.after_dig,
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		inv:set_size("main", 8*4)
-		update_chest_formspec(pos)
-	end,
-	on_receive_fields = function(pos, formname, fields, sender)
-		if not pipeworks.may_configure(pos, sender) then return end
-		fs_helpers.on_receive_fields(pos, fields)
-		update_chest_formspec(pos)
-	end,
-})
-
--- =====================
-
-local function get_locked_chest_formspec(pos)
-	local spos = pos.x .. "," .. pos.y .. "," .. pos.z
-	local formspec = base_chest_formspec ..
-		"list[nodemeta:" .. spos .. ";main;0,0.3;8,4;]" ..
-		"listring[nodemeta:" .. spos .. ";main]"
-	return formspec
-end
-
-local function setup_locked_formspec(pos, meta)
-	meta:set_string("formspec",
-		get_locked_chest_formspec(pos) ..
-		fs_helpers.cycling_button(
-			meta,
-			pipeworks.button_base,
-			"splitstacks",
-			{
-				pipeworks.button_off,
-				pipeworks.button_on
-			}
-		)..pipeworks.button_label
-	)
-end
-
-minetest.override_item("default:chest_locked", {
-	tiles = {
-		"default_chest_top.png"..tube_entry,
-		"default_chest_top.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_lock.png"
-	},
-	groups = {choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tubedevice_receiver = 1},
-	tube = {
-		insert_object = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
-			local inv = meta:get_inventory()
-			return inv:add_item("main", stack)
-		end,
-		can_insert = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
-			local inv = meta:get_inventory()
-			if meta:get_int("splitstacks") == 1 then
-				stack = stack:peek_item(1)
-			end
-			return inv:room_for_item("main", stack)
-		end,
-		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
-	},
-	after_place_node = function (pos, placer)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("owner", placer:get_player_name() or "")
-		meta:set_string("infotext", "Locked Chest (owned by "..
-		meta:get_string("owner")..")")
-		pipeworks.after_place(pos)
-	end,
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		if default.can_interact_with_node(clicker, pos) then
-			local meta = minetest.get_meta(pos)
-			local formspec = meta:get_string("formspec")
-			print("on_rightclick")
-			print(dump(formspec))
-			setup_locked_formspec(pos, meta, clicker)
-			minetest.show_formspec(
-				clicker:get_player_name(),
-				"default:chest_locked",
-				get_locked_chest_formspec(pos)
-			)
-		end
-		return itemstack
-	end,
-	on_key_use = function(pos, player)
-		local secret = minetest.get_meta(pos):get_string("key_lock_secret")
-		local itemstack = player:get_wielded_item()
-		local key_meta = itemstack:get_meta()
-
-		if key_meta:get_string("secret") == "" then
-			key_meta:set_string("secret", minetest.parse_json(itemstack:get_metadata()).secret)
-			itemstack:set_metadata("")
-		end
-
-		if secret ~= key_meta:get_string("secret") then
-			return
-		end
-		setup_locked_formspec(pos, minetest.get_meta(pos))
-	end,
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		inv:set_size("main", 8*4)
-		setup_locked_formspec(pos, meta)
-	end,
-	on_receive_fields = function(pos, formname, fields, sender)
-		if not pipeworks.may_configure(pos, sender) then return end
-		fs_helpers.on_receive_fields(pos, fields)
-		local formspec = get_locked_chest_formspec(pos)
-		print("on_receive_fields")
-		print(dump(formspec))
-
-		if formspec == "" then
-			meta:set_string("formspec", formspec)
-		else
-			setup_locked_formspec(pos, minetest.get_meta(pos))
-		end
-	end,
 	after_dig_node = pipeworks.after_dig
-})
+}
+--[[local override_common = {
+	
+}
+for k,v in pairs(override_common) do 
+	override_protected[k] = v
+	override[k] = v
+end]]
+
+override_open = table.copy(override)
+override_open.groups = table.copy(old_chest_open_def.groups)
+
+override_protected_open = table.copy(override_protected)
+override_protected_open.groups = table.copy(old_chest_locked_open_def.groups)
+override_protected.tiles = { -- Rearranged according to the chest registration in Minetest_Game.
+	"default_chest_top.png"..tube_entry,
+	"default_chest_top.png"..tube_entry,
+	"default_chest_side.png"..tube_entry.."^[transformFX",
+	"default_chest_side.png"..tube_entry,
+	"default_chest_side.png"..tube_entry,
+	"default_chest_lock.png",
+}
+override.tiles = {
+	"default_chest_top.png"..tube_entry,
+	"default_chest_top.png"..tube_entry,
+	"default_chest_side.png"..tube_entry.."^[transformFX",
+	"default_chest_side.png"..tube_entry,
+	"default_chest_side.png"..tube_entry,
+	"default_chest_front.png",
+}
+
+-- Add the extra groups
+for i,v in ipairs({override_protected, override, override_open, override_protected_open}) do
+	v.groups.tubedevice = 1
+	v.groups.tubedevice_receiver = 1
+end
+
+-- Override with the new modifications.
+minetest.override_item("default:chest", override)
+minetest.override_item("default:chest_open", override_open)
+minetest.override_item("default:chest_locked", override_protected)
+minetest.override_item("default:chest_locked_open", override_protected_open)
+
