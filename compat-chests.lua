@@ -69,8 +69,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 						return true
 					end
 				end
-				minetest.after(0.2, minetest.swap_node, pos, { name = "default:" .. swap,
-						param2 = node.param2 })
+				minetest.after(0.2, function()
+					minetest.swap_node(pos, { name = "default:" .. swap, param2 = node.param2 })
+					
+					-- Pipeworks notification
+					pipeworks.after_place(pos)
+				end)
 				minetest.sound_play(sound, {gain = 0.3, pos = pos, max_hear_distance = 10})
 			end
 			
@@ -139,7 +143,7 @@ override_protected = {
 			end
 			return inv:room_for_item("main", stack)
 		end,
-		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
+		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
 	},
 	after_dig_node = pipeworks.after_dig
 }
@@ -182,7 +186,7 @@ override = {
 			return inv:room_for_item("main", stack)
 		end,
 		input_inventory = "main",
-		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
+		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
 	},
 	after_place_node = pipeworks.after_place,
 	after_dig_node = pipeworks.after_dig
@@ -197,9 +201,16 @@ end]]
 
 override_open = table.copy(override)
 override_open.groups = table.copy(old_chest_open_def.groups)
+override_open.tube = table.copy(override.tube)
+override_open.tube.connect_sides = table.copy(override.tube.connect_sides)
+override_open.tube.connect_sides.top = nil
 
 override_protected_open = table.copy(override_protected)
 override_protected_open.groups = table.copy(old_chest_locked_open_def.groups)
+override_protected_open.tube = table.copy(override_protected.tube)
+override_protected_open.tube.connect_sides = table.copy(override_protected.tube.connect_sides)
+override_protected_open.tube.connect_sides.top = nil
+
 override_protected.tiles = { -- Rearranged according to the chest registration in Minetest_Game.
 	"default_chest_top.png"..tube_entry,
 	"default_chest_top.png"..tube_entry,
