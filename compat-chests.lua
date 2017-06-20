@@ -83,10 +83,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				fs_helpers.on_receive_fields(pos, fields)
 				minetest.show_formspec(player:get_player_name(), "pipeworks:chest_formspec", get_chest_formspec(pos))
 			end
+			return true
 		end
 	end
-
-	return true
 end)
 
 -- Original Definitions
