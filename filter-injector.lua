@@ -56,6 +56,7 @@ end
 -- todo SOON: this function has *way too many* parameters
 local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,frominvname,frompos,fromnode,filterfor,fromtube,fromdef,dir,fakePlayer,all,digiline)
 	local sposes = {}
+	if not frominvname or not frominv:get_list(frominvname) then return end
 	for spos,stack in ipairs(frominv:get_list(frominvname)) do
 		local matches
 		if filterfor == "" then
