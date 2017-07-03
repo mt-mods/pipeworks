@@ -362,13 +362,12 @@ local move_entities_globalstep_part2 = function(dtime)
 	end
 end
 
-local handle_active_blocks_step = 0.2
 local handle_active_blocks_timer = 0.1
 
 minetest.register_globalstep(function(dtime)
 	handle_active_blocks_timer = handle_active_blocks_timer + dtime
-	if handle_active_blocks_timer >= handle_active_blocks_step then
-		handle_active_blocks_timer = handle_active_blocks_timer - handle_active_blocks_step
+	if dtime < 0.2 or handle_active_blocks_timer >= (dtime * 3) then
+		handle_active_blocks_timer = 0.1
 		move_entities_globalstep_part1(dtime)
 		move_entities_globalstep_part2(dtime)
 	end
