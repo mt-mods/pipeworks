@@ -36,7 +36,7 @@ local function get_chest_formspec(pos)
 				pipeworks.button_on
 			}
 		)..pipeworks.button_label
-	
+
 	return formspec
 end
 
@@ -62,7 +62,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				local sound = open_chests[pn].sound
 				local swap = open_chests[pn].swap
 				local node = minetest.get_node(pos)
-				
+
 				open_chests[pn] = nil
 				for k, v in pairs(open_chests) do
 					if v.pos.x == pos.x and v.pos.y == pos.y and v.pos.z == pos.z then
@@ -71,13 +71,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				end
 				minetest.after(0.2, function()
 					minetest.swap_node(pos, { name = "default:" .. swap, param2 = node.param2 })
-					
+
 					-- Pipeworks notification
 					pipeworks.after_place(pos)
 				end)
 				minetest.sound_play(sound, {gain = 0.3, pos = pos, max_hear_distance = 10})
 			end
-			
+
 			-- Pipeworks Switch
 			if pipeworks.may_configure(pos, player) and not fields.quit then
 				fs_helpers.on_receive_fields(pos, fields)
@@ -142,6 +142,7 @@ override_protected = {
 			end
 			return inv:room_for_item("main", stack)
 		end,
+		input_inventory = "main",
 		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
 	},
 	after_dig_node = pipeworks.after_dig
@@ -191,9 +192,9 @@ override = {
 	after_dig_node = pipeworks.after_dig
 }
 --[[local override_common = {
-	
+
 }
-for k,v in pairs(override_common) do 
+for k,v in pairs(override_common) do
 	override_protected[k] = v
 	override[k] = v
 end]]
