@@ -7,13 +7,14 @@ function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
 end
 
-function pipeworks.tube_inject_item(pos, start_pos, velocity, item)
+function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner)
 	-- Take item in any format
 	local stack = ItemStack(item)
 	local obj = luaentity.add_entity(pos, "pipeworks:tubed_item")
 	obj:set_item(stack:to_string())
 	obj.start_pos = vector.new(start_pos)
 	obj:setvelocity(velocity)
+	obj.owner = owner
 	--obj:set_color("red") -- todo: this is test-only code
 	return obj
 end
@@ -49,7 +50,7 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
-local function go_next(pos, velocity, stack)
+local function go_next(pos, velocity, stack, owner)
 	local next_positions = {}
 	local max_priority = 0
 	local cnode = minetest.get_node(pos)
@@ -84,7 +85,7 @@ local function go_next(pos, velocity, stack)
 			local tube_priority = (tube_def and tube_def.priority) or 100
 			if tubedevice > 0 and tube_priority >= max_priority then
 				if not tube_def or not tube_def.can_insert or
-						tube_def.can_insert(npos, node, stack, vect) then
+						tube_def.can_insert(npos, node, stack, vect, owner) then
 					if tube_priority > max_priority then
 						max_priority = tube_priority
 						next_positions = {}
@@ -260,7 +261,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		if moved and minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
 			local leftover
 			if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
-				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel)
+				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel, self.owner)
 			else
 				leftover = stack
 			end
@@ -276,7 +277,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		end
 
 		if moved then
-			local found_next, new_velocity = go_next(self.start_pos, velocity, stack) -- todo: color
+			local found_next, new_velocity = go_next(self.start_pos, velocity, stack, self.owner) -- todo: color
 			local rev_vel = vector.multiply(velocity, -1)
 			local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
 			local rev_node = minetest.get_node(vector.round(vector.add(self.start_pos,rev_dir)))

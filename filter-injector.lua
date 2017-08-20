@@ -156,7 +156,7 @@ local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,fromi
 				end
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
-				local item1 = pipeworks.tube_inject_item(pos, start_pos, dir, item)
+				local item1 = pipeworks.tube_inject_item(pos, start_pos, dir, item, fakePlayer:get_player_name())
 				return true-- only fire one item, please
 			end
 	end
@@ -317,8 +317,17 @@ local function punch_filter(data, filtpos, filtnode, msg)
 		exact_match = filtmeta:get_int("exmatch_mode")
 	end
 
-	local frommeta = minetest.get_meta(frompos)
-	local frominv = frommeta:get_inventory()
+	local frominv
+	if fromtube.return_input_invref then
+		local pos = vector.add(filtpos, vector.multiply(dir, -1))
+		frominv = fromtube.return_input_invref(pos, fromnode, dir, owner)
+		if not frominv then
+			return
+		end
+	else
+		local frommeta = minetest.get_meta(frompos)
+		frominv = frommeta:get_inventory()
+	end
 	if fromtube.before_filter then fromtube.before_filter(frompos) end
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
 		local done = false
