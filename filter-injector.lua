@@ -319,8 +319,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 	local frominv
 	if fromtube.return_input_invref then
-		local pos = vector.add(filtpos, vector.multiply(dir, -1))
-		frominv = fromtube.return_input_invref(pos, fromnode, dir, owner)
+		frominv = fromtube.return_input_invref(frompos, fromnode, dir, owner)
 		if not frominv then
 			return
 		end
@@ -387,12 +386,22 @@ for _, data in ipairs({
 		end,
 		after_dig_node = pipeworks.after_dig,
 		allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-			if not pipeworks.may_configure(pos, player) then return 0 end
-			return stack:get_count()
+			if not pipeworks.may_configure(pos, player) then
+				return 0
+			end
+			local inv = minetest.get_meta(pos):get_inventory()
+			inv:set_stack("main", index, stack)
+			return 0
 		end,
 		allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-			if not pipeworks.may_configure(pos, player) then return 0 end
-			return stack:get_count()
+			if not pipeworks.may_configure(pos, player) then
+				return 0
+			end
+			local inv = minetest.get_meta(pos):get_inventory()
+			local fake_stack = inv:get_stack("main", index)
+			fake_stack:take_item(stack:get_count())
+			inv:set_stack("main", index, fake_stack)
+			return 0
 		end,
 		allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 			if not pipeworks.may_configure(pos, player) then return 0 end
@@ -490,3 +499,64 @@ if minetest.get_modpath("digilines") then
 		},
 	})
 end
+
+--[[
+In the past the filter-injectors had real items in their inventories. This code
+puts them to the input to the filter-injector if possible. Else the items are
+dropped.
+]]
+local function put_to_inputinv(pos, node, filtmeta, list)
+	local dir = pipeworks.facedir_to_right_dir(node.param2)
+	local frompos = vector.subtract(pos, dir)
+	local fromnode = minetest.get_node(frompos)
+	local fromdef = minetest.registered_nodes[fromnode.name]
+	if not fromdef or not fromdef.tube then
+		return
+	end
+	local fromtube = fromdef.tube
+	local frominv
+	if fromtube.return_input_invref then
+		local owner = filtmeta:get_string("owner")
+		frominv = fromtube.return_input_invref(frompos, fromnode, dir, owner)
+		if not frominv then
+			return
+		end
+	else
+		frominv = minetest.get_meta(frompos):get_inventory()
+	end
+	local listname = type(fromtube.input_inventory) == "table" and
+			fromtube.input_inventory[1] or fromtube.input_inventory
+	if not listname then
+		return
+	end
+	for i = 1, #list do
+		local item = list[i]
+		if not item:is_empty() then
+			local leftover = frominv:add_item(listname, item)
+			if not leftover:is_empty() then
+				minetest.add_item(pos, leftover)
+			end
+		end
+	end
+	return true
+end
+minetest.register_lbm({
+	label = "Give back items of old filters that had real inventories",
+	name = "pipeworks:give_back_old_filter_items",
+	nodenames = {"pipeworks:filter", "pipeworks:mese_filter"},
+	run_at_every_load = false,
+	action = function(pos, node)
+		local meta = minetest.get_meta(pos)
+		local list = meta:get_inventory():get_list("main")
+		if put_to_inputinv(pos, node, meta, list) then
+			return
+		end
+		pos.y = pos.y + 1
+		for i = 1, #list do
+			local item = list[i]
+			if not item:is_empty() then
+				minetest.add_item(pos, item)
+			end
+		end
+	end,
+})
