@@ -219,7 +219,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local filters = {}
 	if data.digiline then
 		local function add_filter(name, group, count, wear, metadata)
-			table.insert(filters, {name = name, group = group, count = count, wear = wear, metadata = metadata})
+			table.insert(filters, {name = name, group = group, count = tonumber(count), wear = wear, metadata = metadata})
 		end
 
 		local function add_itemstring_filter(filter)
