@@ -15,6 +15,7 @@ local settings = {
 	enable_detector_tube = true,
 	enable_digiline_detector_tube = true,
 	enable_conductor_tube = true,
+	enable_digiline_conductor_tube = true,
 	enable_accelerator_tube = true,
 	enable_crossing_tube = true,
 	enable_sand_tube = true,
