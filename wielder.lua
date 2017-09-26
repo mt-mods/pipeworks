@@ -24,7 +24,7 @@ local function wielder_on(data, wielder_pos, wielder_node)
 	if wielder_node.name ~= data.name_base.."_off" then return end
 	wielder_node.name = data.name_base.."_on"
 	minetest.swap_node(wielder_pos, wielder_node)
-	nodeupdate(wielder_pos)
+	minetest.check_for_falling(wielder_pos)
 	local wielder_meta = minetest.get_meta(wielder_pos)
 	local inv = wielder_meta:get_inventory()
 	local wield_inv_name = data.wield_inv_name
@@ -154,7 +154,7 @@ local function wielder_off(data, pos, node)
 	if node.name == data.name_base.."_on" then
 		node.name = data.name_base.."_off"
 		minetest.swap_node(pos, node)
-		nodeupdate(pos)
+		minetest.check_for_falling(pos)
 	end
 end
 
