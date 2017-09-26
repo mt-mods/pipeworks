@@ -22,6 +22,7 @@ local settings = {
 	enable_mese_sand_tube = true,
 	enable_one_way_tube = true,
 	enable_priority_tube = true,
+	enable_lua_tube = true,
 	enable_cyclic_mode = true,
 	drop_on_routing_fail = false,
 

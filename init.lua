@@ -119,6 +119,7 @@ if pipeworks.enable_redefines then
 	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
 if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
+if pipeworks.enable_lua_tube then dofile(pipeworks.modpath.."/lua_tube.lua") end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 

@@ -63,6 +63,10 @@ pipeworks_enable_one_way_tube (Enable One Way Tube) bool true
 #always go to it if there are multible ways.
 pipeworks_enable_priority_tube (Enable High Priority Tube) bool true
 
+#Enable lua controlled tube.
+#It is comparable with mesecons luacontroller.
+pipeworks_enable_lua_tube (Enable Lua controlled Tube) bool true
+
 #Enable cyclic mode.
 pipeworks_enable_cyclic_mode (Enable Cyclic Mode) bool true
 
