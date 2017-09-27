@@ -133,10 +133,52 @@ pipeworks.fountainhead_check = function(pos, node)
 	end
 end
 
-local debuglog = function(msg)
-	print("## pipeworks: "..msg)
+
+
+-- borrowed from above: might be useable to replace the above coords tables
+local make_coords_offsets = function(pos, include_base)
+	local coords = {
+		{x=pos.x,y=pos.y-1,z=pos.z},
+		{x=pos.x,y=pos.y+1,z=pos.z},
+		{x=pos.x-1,y=pos.y,z=pos.z},
+		{x=pos.x+1,y=pos.y,z=pos.z},
+		{x=pos.x,y=pos.y,z=pos.z-1},
+		{x=pos.x,y=pos.y,z=pos.z+1},
+	}
+	if include_base then table.insert(coords, pos) end
+	return coords
 end
 
+local label_pressure = "pipeworks.water_pressure"
+local label_haspressure = "pipeworks.is_pressure_node"
 pipeworks.balance_pressure = function(pos, node)
-	debuglog("balance_pressure() stub! "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
+	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
+	-- check the pressure of all nearby nodes, and average it out.
+	-- for the moment, only balance neighbour nodes if it already has a pressure value.
+	-- XXX: maybe this could be used to add fluid behaviour to other mod's nodes too?
+
+	-- unconditionally include self in nodes to average over
+	local meta = minetest.get_meta(pos)
+	local currentpressure = meta:get_float(label_pressure)
+	meta:set_int(label_haspressure, 1)
+	local connections = { meta }
+	local totalv = currentpressure
+	local totalc = 1
+
+	-- then handle neighbours, but if not a pressure node don't consider them at all
+	for _, npos in ipairs(make_coords_offsets(pos, false)) do
+		local neighbour = minetest.get_meta(npos)
+		local haspressure = (neighbour:get_int(label_haspressure) ~= 0)
+		if haspressure then
+			local n = neighbour:get_float(label_pressure)
+			table.insert(connections, neighbour)
+			totalv = totalv + n
+			totalc = totalc + 1
+		end
+	end
+
+	local average = totalv / totalc
+	for _, targetmeta in ipairs(connections) do
+		targetmeta:set_float(label_pressure, average)
+	end
 end
