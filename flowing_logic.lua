@@ -149,6 +149,31 @@ local make_coords_offsets = function(pos, include_base)
 	return coords
 end
 
+
+
+-- new version of liquid check
+-- accepts a limit parameter to only delete water blocks that the receptacle can accept,
+-- and returns it so that the receptacle can update it's pressure values.
+-- this should ensure that water blocks aren't vanished from existance.
+pipeworks.check_for_liquids_v2 = function(pos, limit)
+	if not limit then
+		limit = 6
+	end
+	local coords = make_coords_offsets(pos, false)
+	local total = 0
+	for index, tpos in ipairs(coords) do
+		if total >= limit then break end
+		local name = minetest.get_node(tpos).name
+		if name == "default:water_source" then
+			minetest.remove_node(tpos)
+			total = total + 1
+		end
+	end
+	return total
+end
+
+
+
 local label_pressure = "pipeworks.water_pressure"
 local label_haspressure = "pipeworks.is_pressure_node"
 pipeworks.balance_pressure = function(pos, node)
