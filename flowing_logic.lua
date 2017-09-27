@@ -159,6 +159,10 @@ end
 
 
 
+-- local debuglog = function(msg) print("## "..msg) end
+
+
+
 -- new version of liquid check
 -- accepts a limit parameter to only delete water blocks that the receptacle can accept,
 -- and returns it so that the receptacle can update it's pressure values.
@@ -217,13 +221,16 @@ pipeworks.balance_pressure = function(pos, node)
 	end
 end
 
+
+
 pipeworks.run_pump_intake = function(pos, node)
 	-- try to absorb nearby water nodes, but only up to limit.
 	-- NB: check_for_liquids_v2 handles zero or negative from the following subtraction
 	local meta = minetest.get_meta(pos)
 	local currentpressure = meta:get_float(label_pressure)
 	local intake_limit = thresholds.pump_pressure - currentpressure
-	local actual_intake = pipeworks.check_for_liquids_v2(pos, limit)
+	local actual_intake = pipeworks.check_for_liquids_v2(pos, intake_limit)
 	local newpressure = actual_intake + currentpressure
+	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
 	meta:set_float(label_pressure, newpressure)
 end
