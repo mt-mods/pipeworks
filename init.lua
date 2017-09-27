@@ -117,6 +117,9 @@ pipeworks.enable_new_flow_logic = true
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
+-- individual enable flags also checked in register_flow_logic.lua
+if pipeworks.enable_new_flow_logic then dofile(pipeworks.modpath.."/register_flow_logic.lua") end
+
 if pipeworks.enable_redefines then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
 	dofile(pipeworks.modpath.."/compat-furnaces.lua")
