@@ -14,13 +14,17 @@ pipeworks.worldpath = minetest.get_worldpath()
 pipeworks.modpath = minetest.get_modpath("pipeworks")
 
 dofile(pipeworks.modpath.."/default_settings.lua")
-
 -- Read the external config file if it exists.
+
+
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
 local worldsettingsfile = io.open(worldsettingspath, "r")
 if worldsettingsfile then
 	worldsettingsfile:close()
 	dofile(worldsettingspath)
+end
+if pipeworks.enable_new_flow_logic then
+	minetest.log("warning", "pipeworks new_flow_logic is WIP and incomplete!")
 end
 
 -- Random variables
@@ -110,9 +114,6 @@ dofile(pipeworks.modpath.."/decorative_tubes.lua")
 dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
-
--- temporary flag to enable new flowing behaviour
-pipeworks.enable_new_flow_logic = true
 
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end

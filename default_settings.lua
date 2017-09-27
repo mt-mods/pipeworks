@@ -27,6 +27,8 @@ local settings = {
 	drop_on_routing_fail = false,
 
 	delete_item_on_clearobject = true,
+
+	enable_new_flow_logic = false,
 }
 
 for name, value in pairs(settings) do
