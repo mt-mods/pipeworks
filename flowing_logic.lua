@@ -135,6 +135,14 @@ end
 
 
 
+-- global values and thresholds for water behaviour
+-- TODO: add some way of setting this per-world
+local thresholds = {}
+-- limit on pump pressure - will not absorb more than can be taken
+thresholds.pump_pressure = 2
+
+
+
 -- borrowed from above: might be useable to replace the above coords tables
 local make_coords_offsets = function(pos, include_base)
 	local coords = {
@@ -155,6 +163,7 @@ end
 -- accepts a limit parameter to only delete water blocks that the receptacle can accept,
 -- and returns it so that the receptacle can update it's pressure values.
 -- this should ensure that water blocks aren't vanished from existance.
+-- will take care of zero or negative-valued limits.
 pipeworks.check_for_liquids_v2 = function(pos, limit)
 	if not limit then
 		limit = 6
@@ -206,4 +215,15 @@ pipeworks.balance_pressure = function(pos, node)
 	for _, targetmeta in ipairs(connections) do
 		targetmeta:set_float(label_pressure, average)
 	end
+end
+
+pipeworks.run_pump_intake = function(pos, node)
+	-- try to absorb nearby water nodes, but only up to limit.
+	-- NB: check_for_liquids_v2 handles zero or negative from the following subtraction
+	local meta = minetest.get_meta(pos)
+	local currentpressure = meta:get_float(label_pressure)
+	local intake_limit = thresholds.pump_pressure - currentpressure
+	local actual_intake = pipeworks.check_for_liquids_v2(pos, limit)
+	local newpressure = actual_intake + currentpressure
+	meta:set_float(label_pressure, newpressure)
 end
