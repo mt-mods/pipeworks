@@ -111,6 +111,9 @@ dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 
+-- temporary flag to enable new flowing behaviour
+pipeworks.enable_new_flow_logic = true
+
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end

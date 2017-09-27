@@ -191,6 +191,13 @@ table.insert(pipes_full_nodenames,"pipeworks:valve_on_loaded")
 table.insert(pipes_full_nodenames,"pipeworks:entry_panel_loaded")
 table.insert(pipes_full_nodenames,"pipeworks:flow_sensor_loaded")
 
+
+
+
+if not pipeworks.enable_new_flow_logic then
+-- sorry, no indents... it messes with the patchlogs too much
+
+
 minetest.register_abm({
 	nodenames = pipes_empty_nodenames,
 	interval = 1,
@@ -228,6 +235,9 @@ minetest.register_abm({
 })
 
 
+else
+
+
 -- run pressure balancing ABM over all water-moving nodes
 local pipes_all_nodenames = pipes_full_nodenames
 for _, pipe in ipairs(pipes_empty_nodenames) do
@@ -241,3 +251,7 @@ minetest.register_abm({
 		pipeworks.balance_pressure(pos, node)
 	end
 })
+
+
+
+end
