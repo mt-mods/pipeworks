@@ -132,3 +132,11 @@ pipeworks.fountainhead_check = function(pos, node)
 		end
 	end
 end
+
+local debuglog = function(msg)
+	print("## pipeworks: "..msg)
+end
+
+pipeworks.balance_pressure = function(pos, node)
+	debuglog("balance_pressure() stub! "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
+end

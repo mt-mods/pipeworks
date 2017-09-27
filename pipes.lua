@@ -227,3 +227,17 @@ minetest.register_abm({
 	end
 })
 
+
+-- run pressure balancing ABM over all water-moving nodes
+local pipes_all_nodenames = pipes_full_nodenames
+for _, pipe in ipairs(pipes_empty_nodenames) do
+	table.insert(pipes_all_nodenames, pipe)
+end
+minetest.register_abm({
+	nodenames = pipes_all_nodenames,
+	interval = 1,
+	chance = 1,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		pipeworks.balance_pressure(pos, node)
+	end
+})
