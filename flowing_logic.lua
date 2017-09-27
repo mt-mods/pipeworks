@@ -234,3 +234,19 @@ pipeworks.run_pump_intake = function(pos, node)
 	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
 	meta:set_float(label_pressure, newpressure)
 end
+
+
+
+pipeworks.run_spigot_output = function(pos, node)
+	-- try to output a water source node if there's enough pressure and space below.
+	local meta = minetest.get_meta(pos)
+	local currentpressure = meta:get_float(label_pressure)
+	if currentpressure > 1 then
+		local below = {x=pos.x, y=pos.y-1, z=pos.z}
+		local name = minetest.get_node(below).name
+		if (name == "air") or (name == "default:water_flowing") then
+			minetest.set_node(below, {name="default:water_source"})
+			meta:set_float(label_pressure, currentpressure - 1)
+		end
+	end
+end
