@@ -1,4 +1,5 @@
 -- register new flow logic ABMs
+-- written 2017 by thetaepsilon
 
 local pipes_full_nodenames = pipeworks.pipes_full_nodenames
 local pipes_empty_nodenames = pipeworks.pipes_empty_nodenames
