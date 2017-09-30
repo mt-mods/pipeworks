@@ -1,5 +1,4 @@
--- conditional registration of pipe nodes for the new pipe logic, depending on enable flags.
--- otherwise register_flow_logic.lua would be attempting to register ABMs for non-existant nodes.
+-- registration of pipework's own pipes.
 -- written 2017 by thetaepsilon
 
 
