@@ -3,6 +3,11 @@
 
 
 
+local flowlogic = {}
+pipeworks.flowlogic = flowlogic
+
+
+
 -- borrowed from above: might be useable to replace the above coords tables
 local make_coords_offsets = function(pos, include_base)
 	local coords = {
@@ -28,7 +33,7 @@ end
 -- and returns it so that the receptacle can update it's pressure values.
 -- this should ensure that water blocks aren't vanished from existance.
 -- will take care of zero or negative-valued limits.
-pipeworks.check_for_liquids_v2 = function(pos, limit)
+flowlogic.check_for_liquids_v2 = function(pos, limit)
 	if not limit then
 		limit = 6
 	end
@@ -50,7 +55,7 @@ end
 
 local label_pressure = "pipeworks.water_pressure"
 local label_haspressure = "pipeworks.is_pressure_node"
-pipeworks.balance_pressure = function(pos, node)
+flowlogic.balance_pressure = function(pos, node)
 	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
 	-- check the pressure of all nearby nodes, and average it out.
 	-- for the moment, only balance neighbour nodes if it already has a pressure value.
@@ -84,7 +89,7 @@ end
 
 
 
-pipeworks.run_pump_intake = function(pos, node)
+flowlogic.run_pump_intake = function(pos, node)
 	-- try to absorb nearby water nodes, but only up to limit.
 	-- NB: check_for_liquids_v2 handles zero or negative from the following subtraction
 
@@ -103,7 +108,7 @@ end
 
 
 
-pipeworks.run_spigot_output = function(pos, node)
+flowlogic.run_spigot_output = function(pos, node)
 	-- try to output a water source node if there's enough pressure and space below.
 	local meta = minetest.get_meta(pos)
 	local currentpressure = meta:get_float(label_pressure)

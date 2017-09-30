@@ -23,7 +23,7 @@ minetest.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		pipeworks.balance_pressure(pos, node)
+		pipeworks.flowlogic.balance_pressure(pos, node)
 	end
 })
 
@@ -34,7 +34,7 @@ if pipeworks.enable_pipe_devices then
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			pipeworks.run_pump_intake(pos, node)
+			pipeworks.flowlogic.run_pump_intake(pos, node)
 		end
 	})
 
