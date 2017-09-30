@@ -89,12 +89,9 @@ end
 
 
 
-flowlogic.run_pump_intake = function(pos, node)
+flowlogic.run_pump_intake = function(pos, node, maxpressure)
 	-- try to absorb nearby water nodes, but only up to limit.
 	-- NB: check_for_liquids_v2 handles zero or negative from the following subtraction
-
-	local properties = pipeworks.flowables.inputs.list[node.name]
-	local maxpressure = properties.maxpressure
 
 	local meta = minetest.get_meta(pos)
 	local currentpressure = meta:get_float(label_pressure)

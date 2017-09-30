@@ -30,7 +30,7 @@ local register_abm_input = function(nodename, maxpressure)
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			pipeworks.flowlogic.run_pump_intake(pos, node)
+			pipeworks.flowlogic.run_pump_intake(pos, node, maxpressure)
 		end
 	})
 end
