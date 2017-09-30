@@ -17,15 +17,20 @@ if pipeworks.enable_pipes then
 	})
 end
 ]]
--- flowables.register.simple takes care of creating an array-like table of node names
-minetest.register_abm({
-	nodenames = pipeworks.flowables.list.simple_nodenames,
-	interval = 1,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		pipeworks.flowlogic.balance_pressure(pos, node)
-	end
-})
+
+local register_abm_balance = function(nodename)
+	minetest.register_abm({
+		nodenames = { nodename },
+		interval = 1,
+		chance = 1,
+		action = function(pos, node, active_object_count, active_object_count_wider)
+			pipeworks.flowlogic.balance_pressure(pos, node)
+		end
+	})
+end
+for nodename, _ in pairs(pipeworks.flowables.list.simple) do
+	register_abm_balance(nodename)
+end
 
 if pipeworks.enable_pipe_devices then
 	-- absorb water into pumps if it'll fit
