@@ -32,16 +32,22 @@ for nodename, _ in pairs(pipeworks.flowables.list.simple) do
 	register_abm_balance(nodename)
 end
 
-if pipeworks.enable_pipe_devices then
-	-- absorb water into pumps if it'll fit
+local register_abm_input = function(nodename, properties)
 	minetest.register_abm({
-		nodenames = pipeworks.flowables.inputs.nodenames,
+		nodenames = { nodename },
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
 			pipeworks.flowlogic.run_pump_intake(pos, node)
 		end
 	})
+end
+
+if pipeworks.enable_pipe_devices then
+	-- absorb water into pumps if it'll fit
+	for nodename, properties in pairs(pipeworks.flowables.inputs.list) do
+		register_abm_input(nodename, properties)
+	end
 
 	-- output water from spigots
 	-- add both "on/off" spigots so one can be used to indicate a certain level of fluid.
