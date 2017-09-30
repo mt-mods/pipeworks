@@ -16,7 +16,6 @@ local pipes_full_nodenames = pipeworks.pipes_full_nodenames
 local pipes_empty_nodenames = pipeworks.pipes_empty_nodenames
 
 local register = pipeworks.flowables.register
-local abmregister = pipeworks.flowlogic.abmregister
 
 
 
@@ -42,12 +41,7 @@ if pipeworks.enable_pipes then
 		register.simple(pump_on)
 		register.simple(spigot_on)
 		register.simple(spigot_off)
-		abmregister.balance(pump_off)
-		abmregister.balance(pump_on)
-		abmregister.balance(spigot_on)
-		abmregister.balance(spigot_off)
 
 		register.intake_simple(pump_on, thresholds.pump_pressure)
-		abmregister.input(pump_on, thresholds.pump_pressure)
 	end
 end

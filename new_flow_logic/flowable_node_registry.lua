@@ -1,6 +1,9 @@
 -- registration code for nodes under new flow logic
 -- written 2017 by thetaepsilon
 
+-- use for hooking up ABMs as nodes are registered
+local abmregister = pipeworks.flowlogic.abmregister
+
 pipeworks.flowables = {}
 pipeworks.flowables.list = {}
 pipeworks.flowables.list.all = {}
@@ -34,12 +37,13 @@ end
 -- Register a node as a simple flowable.
 -- Simple flowable nodes have no considerations for direction of flow;
 -- A cluster of adjacent simple flowables will happily average out in any direction.
--- This does *not* register the ABM, as that is done in register_flow_logic.lua;
--- this is so that the new flow logic can remain optional during development.
 register.simple = function(nodename)
 	insertbase(nodename)
 	pipeworks.flowables.list.simple[nodename] = true
 	table.insert(pipeworks.flowables.list.simple_nodenames, nodename)
+	if pipeworks.enable_new_flow_logic then
+		abmregister.balance(nodename)
+	end
 end
 
 local checkbase = function(nodename)
@@ -56,4 +60,7 @@ register.intake_simple = function(nodename, maxpressure)
 	checkbase(nodename)
 	pipeworks.flowables.inputs.list[nodename] = { maxpressure=maxpressure }
 	table.insert(pipeworks.flowables.inputs.nodenames, nodename)
+	if pipeworks.enable_new_flow_logic then
+		abmregister.input(nodename, maxpressure)
+	end
 end
