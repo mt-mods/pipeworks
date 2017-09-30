@@ -1,6 +1,26 @@
 Changelog
 ---------
 
+2017-09-27 (thetaepsilon)
+Start of new flow logic re-implementation.
+This mode is current *very* incomplete, and requires a per-world setting to enable.
+Adds a pressure value stored in all pipe node metadata, and a mechanism to balance it out with nearby nodes on ABM trigger.
+Currently, this inhibits the old behaviour when enabled, and (again WHEN ENABLED) breaks pretty much everything but normal pipes, spigots and pumps.
+For this reason it is far from being intended as the default for some time to come yet.
+What *does* work:
++ Pumps will try to take in water (and removes it!) as long as internal pressure does not exceed a threshold.
+	- a TODO is to make this pressure threshold configurable.
++ Pipes will balance this pressure between themselves, and will slowly average out over time.
++ Spigots will try to make the node beneath them a water source if the pressure is great enough and the existing node is flowing water or air.
+	- This is admittedly of fairly limited use with default water mechanics; those looking for more realistic mechanics might want to look at the dynamic_liquid mod, though that mod comes with it's own caveats (most notably drastic changes to previous worlds...).
+What *does not* work:
++ Flow sensors, valves. Valves in particular currently do not function as a barrier to water's path under the experimental logic.
+	- TODO: internal code to allow this to be overriden.
+
+
+
+*seems this hasn't been updated in a while*
+
 2013-01-13: Tubes can transport items now! Namely, I added Novatux/Nore's item 
 transport mod as a default part of this mod, to make tubes do something useful!
 Thanks to Nore and RealBadAngel for the code contributions!
