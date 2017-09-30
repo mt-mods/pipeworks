@@ -115,17 +115,18 @@ dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 
+local logicdir = "/new_flow_logic/"
 -- note that pipes still don't appear until registered in the files below this one, so can still be turned off
-dofile(pipeworks.modpath.."/flowable_node_registry.lua")
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
 
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
--- individual enable flags also checked in flowable_nodes_add_pipes.lua
+-- individual enable flags also checked in register_local_pipes.lua
 if pipeworks.enable_new_flow_logic then
-	dofile(pipeworks.modpath.."/new_flow_logic.lua")
-	dofile(pipeworks.modpath.."/register_flow_logic.lua")
-	dofile(pipeworks.modpath.."/flowable_nodes_add_pipes.lua")
+	dofile(pipeworks.modpath..logicdir.."abms.lua")
+	dofile(pipeworks.modpath..logicdir.."abm_register.lua")
+	dofile(pipeworks.modpath..logicdir.."register_local_pipes.lua")
 end
 
 if pipeworks.enable_redefines then
