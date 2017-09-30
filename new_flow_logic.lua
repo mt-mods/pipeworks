@@ -33,7 +33,7 @@ end
 -- and returns it so that the receptacle can update it's pressure values.
 -- this should ensure that water blocks aren't vanished from existance.
 -- will take care of zero or negative-valued limits.
-flowlogic.check_for_liquids_v2 = function(pos, limit)
+local check_for_liquids_v2 = function(pos, limit)
 	if not limit then
 		limit = 6
 	end
@@ -49,7 +49,7 @@ flowlogic.check_for_liquids_v2 = function(pos, limit)
 	end
 	return total
 end
-
+flowlogic.check_for_liquids_v2 = check_for_liquids_v2
 
 
 
@@ -100,7 +100,7 @@ flowlogic.run_pump_intake = function(pos, node)
 	local currentpressure = meta:get_float(label_pressure)
 	
 	local intake_limit = maxpressure - currentpressure
-	local actual_intake = pipeworks.check_for_liquids_v2(pos, intake_limit)
+	local actual_intake = check_for_liquids_v2(pos, intake_limit)
 	local newpressure = actual_intake + currentpressure
 	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
 	meta:set_float(label_pressure, newpressure)
