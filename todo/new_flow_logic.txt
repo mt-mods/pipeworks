@@ -1,0 +1,6 @@
+-- Per-world configuration of pump thresholds
+This should be relatively trivial to do, just a case of adding another property to the pipeworks global that can be set per-world with pipeworks_settings.txt.
+This does not appear to be that big a deal right now, as the internal threshold can always be changed.
+
+-- Internal code to the effect of "is_node_flowable()"
+This is basically to implement valves - currently the flow logic will happily balance pipes with neighbour nodes that just happen to have the pressure property in their metadata.
