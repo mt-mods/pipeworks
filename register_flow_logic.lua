@@ -3,6 +3,11 @@
 
 
 
+local register = {}
+pipeworks.flowlogic.abmregister = register
+
+
+
 -- note that checking for feature toggles (because otherwise certain pipes aren't define)
 -- is now done by flowable_nodes_add_pipes.lua
 --[[
@@ -28,6 +33,7 @@ local register_abm_balance = function(nodename)
 		end
 	})
 end
+register.balance = register_abm_balance
 for nodename, _ in pairs(pipeworks.flowables.list.simple) do
 	register_abm_balance(nodename)
 end
@@ -42,6 +48,7 @@ local register_abm_input = function(nodename, properties)
 		end
 	})
 end
+register.input = register_abm_input
 
 if pipeworks.enable_pipe_devices then
 	-- absorb water into pumps if it'll fit
