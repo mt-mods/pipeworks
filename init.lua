@@ -124,8 +124,8 @@ if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") 
 -- individual enable flags also checked in flowable_nodes_add_pipes.lua
 if pipeworks.enable_new_flow_logic then
 	dofile(pipeworks.modpath.."/new_flow_logic.lua")
-	dofile(pipeworks.modpath.."/flowable_nodes_add_pipes.lua")
 	dofile(pipeworks.modpath.."/register_flow_logic.lua")
+	dofile(pipeworks.modpath.."/flowable_nodes_add_pipes.lua")
 end
 
 if pipeworks.enable_redefines then
