@@ -51,7 +51,6 @@ local checkbase = function(nodename)
 end
 
 -- Register a node as a simple intake.
--- See new_flow_logic for the details of this.
 -- Expects node to be registered as a flowable (is present in flowables.list.all),
 -- so that water can move out of it.
 -- maxpressure is the maximum pipeline pressure that this node can drive.
@@ -61,6 +60,6 @@ register.intake_simple = function(nodename, maxpressure)
 	pipeworks.flowables.inputs.list[nodename] = { maxpressure=maxpressure }
 	table.insert(pipeworks.flowables.inputs.nodenames, nodename)
 	if pipeworks.enable_new_flow_logic then
-		abmregister.input(nodename, maxpressure)
+		abmregister.input(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
 	end
 end

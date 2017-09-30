@@ -24,13 +24,13 @@ register.balance = register_abm_balance
 
 -- register a node for the pump ABM.
 -- maxpressure is the maximum pressure that this pump can drive.
-local register_abm_input = function(nodename, maxpressure)
+local register_abm_input = function(nodename, maxpressure, intakefn)
 	minetest.register_abm({
 		nodenames = { nodename },
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			pipeworks.flowlogic.run_pump_intake(pos, node, maxpressure)
+			pipeworks.flowlogic.run_input(pos, node, maxpressure, intakefn)
 		end
 	})
 end

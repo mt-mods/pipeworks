@@ -31,12 +31,7 @@ end
 -- new version of liquid check
 -- accepts a limit parameter to only delete water blocks that the receptacle can accept,
 -- and returns it so that the receptacle can update it's pressure values.
--- this should ensure that water blocks aren't vanished from existance.
--- will take care of zero or negative-valued limits.
 local check_for_liquids_v2 = function(pos, limit)
-	if not limit then
-		limit = 6
-	end
 	local coords = make_coords_offsets(pos, false)
 	local total = 0
 	for index, tpos in ipairs(coords) do
@@ -89,15 +84,20 @@ end
 
 
 
-flowlogic.run_pump_intake = function(pos, node, maxpressure)
-	-- try to absorb nearby water nodes, but only up to limit.
-	-- NB: check_for_liquids_v2 handles zero or negative from the following subtraction
+flowlogic.run_input = function(pos, node, maxpressure, intakefn)
+	-- intakefn allows a given input node to define it's own intake logic.
+	-- this function will calculate the maximum amount of water that can be taken in;
+	-- the intakefn will be given this and is expected to return the actual absorption amount.
 
 	local meta = minetest.get_meta(pos)
 	local currentpressure = meta:get_float(label_pressure)
-	
 	local intake_limit = maxpressure - currentpressure
-	local actual_intake = check_for_liquids_v2(pos, intake_limit)
+	if intake_limit <= 0 then return end
+
+	local actual_intake = intakefn(pos, intake_limit)
+	if actual_intake <= 0 then return end
+	if actual_intake >= intake_limit then actual_intake = intake_limit end
+
 	local newpressure = actual_intake + currentpressure
 	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
 	meta:set_float(label_pressure, newpressure)
