@@ -3,14 +3,6 @@
 
 
 
--- global values and thresholds for water behaviour
--- TODO: add some way of setting this per-world
-local thresholds = {}
--- limit on pump pressure - will not absorb more than can be taken
-thresholds.pump_pressure = 2
-
-
-
 -- borrowed from above: might be useable to replace the above coords tables
 local make_coords_offsets = function(pos, include_base)
 	local coords = {
@@ -95,9 +87,14 @@ end
 pipeworks.run_pump_intake = function(pos, node)
 	-- try to absorb nearby water nodes, but only up to limit.
 	-- NB: check_for_liquids_v2 handles zero or negative from the following subtraction
+
+	local properties = pipeworks.flowables.inputs.list[node.name]
+	local maxpressure = properties.maxpressure
+
 	local meta = minetest.get_meta(pos)
 	local currentpressure = meta:get_float(label_pressure)
-	local intake_limit = thresholds.pump_pressure - currentpressure
+	
+	local intake_limit = maxpressure - currentpressure
 	local actual_intake = pipeworks.check_for_liquids_v2(pos, intake_limit)
 	local newpressure = actual_intake + currentpressure
 	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
