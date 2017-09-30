@@ -191,6 +191,16 @@ table.insert(pipes_full_nodenames,"pipeworks:valve_on_loaded")
 table.insert(pipes_full_nodenames,"pipeworks:entry_panel_loaded")
 table.insert(pipes_full_nodenames,"pipeworks:flow_sensor_loaded")
 
+pipeworks.pipes_full_nodenames = pipes_full_nodenames
+pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
+
+
+
+
+if not pipeworks.enable_new_flow_logic then
+-- sorry, no indents... it messes with the patchlogs too much
+
+
 minetest.register_abm({
 	nodenames = pipes_empty_nodenames,
 	interval = 1,
@@ -227,3 +237,6 @@ minetest.register_abm({
 	end
 })
 
+
+
+end

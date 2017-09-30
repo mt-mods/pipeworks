@@ -68,7 +68,7 @@ function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 			local placednode = string.gsub(itemstack:get_name(), "_loaded", "_empty")
 			placednode = string.gsub(placednode, "_on", "_off")
 
-			minetest.add_node(pos1, {name = placednode, param2 = fdir })
+			minetest.swap_node(pos1, {name = placednode, param2 = fdir })
 			pipeworks.scan_for_pipe_objects(pos1)
 
 			if not pipeworks.expect_infinite_stacks then
@@ -149,16 +149,17 @@ for s in ipairs(states) do
 		drop = "pipeworks:pump_off",
 		mesecons = {effector = {
 			action_on = function (pos, node)
-				minetest.add_node(pos,{name="pipeworks:pump_on", param2 = node.param2}) 
+				minetest.swap_node(pos,{name="pipeworks:pump_on", param2 = node.param2})
 			end,
 			action_off = function (pos, node)
-				minetest.add_node(pos,{name="pipeworks:pump_off", param2 = node.param2}) 
+				minetest.swap_node(pos,{name="pipeworks:pump_off", param2 = node.param2})
 			end
 		}},
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			local fdir = node.param2
-			minetest.add_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
+			minetest.swap_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
 		end,
+		-- FIXME - does this preserve metadata? need to look at this
 		on_rotate = screwdriver.rotate_simple
 	})
 	
@@ -188,15 +189,15 @@ for s in ipairs(states) do
 		drop = "pipeworks:valve_off_empty",
 		mesecons = {effector = {
 			action_on = function (pos, node)
-				minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
+				minetest.swap_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2})
 			end,
 			action_off = function (pos, node)
-				minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
+				minetest.swap_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2})
 			end
 		}},
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			local fdir = node.param2
-			minetest.add_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
+			minetest.swap_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
 		end,
 		on_rotate = pipeworks.fix_after_rotation
 	})
@@ -228,15 +229,15 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 	drop = "pipeworks:valve_off_empty",
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			minetest.add_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2}) 
+			minetest.swap_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2})
 		end,
 		action_off = function (pos, node)
-			minetest.add_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2}) 
+			minetest.swap_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2})
 		end
 	}},
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local fdir = node.param2
-		minetest.add_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
+		minetest.swap_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
 	end,
 	on_rotate = pipeworks.fix_after_rotation
 })
