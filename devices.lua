@@ -372,6 +372,15 @@ minetest.register_node(nodename_spigot_loaded, {
 	drop = "pipeworks:spigot",
 	on_rotate = pipeworks.fix_after_rotation
 })
+-- new flow logic does not currently distinguish between these two visual states.
+-- register both so existing flowing spigots continue to work (even if the visual doesn't match the spigot's behaviour).
+new_flow_logic_register.simple(nodename_spigot_empty)
+new_flow_logic_register.simple(nodename_spigot_loaded)
+local spigot_min = 1
+new_flow_logic_register.output(nodename_spigot_empty, spigot_min, pipeworks.flowlogic.helpers.output_spigot)
+new_flow_logic_register.output(nodename_spigot_loaded, spigot_min, pipeworks.flowlogic.helpers.output_spigot)
+
+
 
 -- sealed pipe entry/exit (horizontal pipe passing through a metal
 -- wall, for use in places where walls should look like they're airtight)
