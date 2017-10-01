@@ -115,7 +115,8 @@ end
 -- outputs water by trying to place water nodes nearby in the world.
 -- neighbours is a list of node offsets to try placing water in.
 -- this is a constructor function, returning another function which satisfies the output helper requirements.
-flowlogic.helpers.make_neighbour_output = function(neighbours)
+-- note that this does *not* take rotation into account.
+flowlogic.helpers.make_neighbour_output_fixed = function(neighbours)
 	return function(pos, node, currentpressure)
 		local taken = 0
 		for _, offset in pairs(neighbours) do
