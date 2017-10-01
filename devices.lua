@@ -129,7 +129,8 @@ for s in ipairs(states) do
 		dgroups = {snappy=3, pipe=1, not_in_creative_inventory=1}
 	end
 
-	minetest.register_node("pipeworks:pump_"..states[s], {
+	local pumpname = "pipeworks:pump_"..states[s]
+	minetest.register_node(pumpname, {
 		description = "Pump/Intake Module",
 		drawtype = "mesh",
 		mesh = "pipeworks_pump.obj",
@@ -162,8 +163,9 @@ for s in ipairs(states) do
 		-- FIXME - does this preserve metadata? need to look at this
 		on_rotate = screwdriver.rotate_simple
 	})
-	
-	minetest.register_node("pipeworks:valve_"..states[s].."_empty", {
+
+	local nodename_valve_empty = "pipeworks:valve_"..states[s].."_empty"
+	minetest.register_node(nodename_valve_empty, {
 		description = "Valve",
 		drawtype = "mesh",
 		mesh = "pipeworks_valve_"..states[s]..".obj",
@@ -203,7 +205,8 @@ for s in ipairs(states) do
 	})
 end
 
-minetest.register_node("pipeworks:valve_on_loaded", {
+local nodename_valve_loaded = "pipeworks:valve_on_loaded"
+minetest.register_node(nodename_valve_loaded, {
 	description = "Valve",
 	drawtype = "mesh",
 	mesh = "pipeworks_valve_on.obj",
@@ -244,6 +247,7 @@ minetest.register_node("pipeworks:valve_on_loaded", {
 
 -- grating
 
+-- FIXME: should this do anything useful in the new flow logic?
 minetest.register_node("pipeworks:grating", {
 	description = "Decorative grating",
 	tiles = {
@@ -276,7 +280,8 @@ minetest.register_node("pipeworks:grating", {
 
 -- outlet spigot
 
-minetest.register_node("pipeworks:spigot", {
+local nodename_spigot_empty = "pipeworks:spigot"
+minetest.register_node(nodename_spigot_empty, {
 	description = "Spigot outlet",
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot.obj",
@@ -306,7 +311,8 @@ minetest.register_node("pipeworks:spigot", {
 	on_rotate = pipeworks.fix_after_rotation
 })
 
-minetest.register_node("pipeworks:spigot_pouring", {
+local nodename_spigot_loaded = "pipeworks:spigot_pouring"
+minetest.register_node(nodename_spigot_loaded, {
 	description = "Spigot outlet",
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring.obj",
@@ -360,7 +366,8 @@ local panel_cbox = {
 	}
 }
 
-minetest.register_node("pipeworks:entry_panel_empty", {
+local nodename_panel_empty = "pipeworks:entry_panel_empty"
+minetest.register_node(nodename_panel_empty, {
 	description = "Airtight Pipe entry/exit",
 	drawtype = "mesh",
 	mesh = "pipeworks_entry_panel.obj",
@@ -379,7 +386,8 @@ minetest.register_node("pipeworks:entry_panel_empty", {
 	on_rotate = pipeworks.fix_after_rotation
 })
 
-minetest.register_node("pipeworks:entry_panel_loaded", {
+local nodename_panel_loaded = "pipeworks:entry_panel_loaded"
+minetest.register_node(nodename_panel_loaded, {
 	description = "Airtight Pipe entry/exit",
 	drawtype = "mesh",
 	mesh = "pipeworks_entry_panel.obj",
@@ -399,7 +407,8 @@ minetest.register_node("pipeworks:entry_panel_loaded", {
 	on_rotate = pipeworks.fix_after_rotation
 })
 
-minetest.register_node("pipeworks:flow_sensor_empty", {
+local nodename_sensor_empty = "pipeworks:flow_sensor_empty"
+minetest.register_node(nodename_sensor_empty, {
 	description = "Flow Sensor",
 	drawtype = "mesh",
 	mesh = "pipeworks_flow_sensor.obj",
@@ -437,7 +446,8 @@ minetest.register_node("pipeworks:flow_sensor_empty", {
 	on_rotate = pipeworks.fix_after_rotation
 })
 
-minetest.register_node("pipeworks:flow_sensor_loaded", {
+local nodename_sensor_loaded = "pipeworks:flow_sensor_loaded"
+minetest.register_node(nodename_sensor_loaded, {
 	description = "Flow sensor (on)",
 	drawtype = "mesh",
 	mesh = "pipeworks_flow_sensor.obj",
@@ -478,6 +488,7 @@ minetest.register_node("pipeworks:flow_sensor_loaded", {
 
 -- tanks
 
+-- TODO: these don't currently do anything under the new flow logic.
 for fill = 0, 10 do
 	local filldesc="empty"
 	local sgroups = {snappy=3, pipe=1, tankfill=fill+1}
@@ -548,7 +559,8 @@ end
 
 -- fountainhead
 
-minetest.register_node("pipeworks:fountainhead", {
+local nodename_fountain_empty = "pipeworks:fountainhead"
+minetest.register_node(nodename_fountain_empty, {
 	description = "Fountainhead",
 	drawtype = "mesh",
 	mesh = "pipeworks_fountainhead.obj",
@@ -581,7 +593,8 @@ minetest.register_node("pipeworks:fountainhead", {
 	on_rotate = false
 })
 
-minetest.register_node("pipeworks:fountainhead_pouring", {
+local nodename_fountain_loaded = "pipeworks:fountainhead_pouring"
+minetest.register_node(nodename_fountain_loaded, {
 	description = "Fountainhead",
 	drawtype = "mesh",
 	mesh = "pipeworks_fountainhead.obj",
