@@ -200,7 +200,6 @@ table.insert(pipes_empty_nodenames, valve_on)
 table.insert(pipes_empty_nodenames, valve_off)
 table.insert(pipes_empty_nodenames, entry_panel_empty)
 table.insert(pipes_empty_nodenames, flow_sensor_empty)
-new_flow_logic_register.simple(entry_panel_empty)
 new_flow_logic_register.simple(flow_sensor_empty)
 
 local valve_on_loaded = "pipeworks:valve_on_loaded"
@@ -209,7 +208,6 @@ local flow_sensor_loaded = "pipeworks:flow_sensor_loaded"
 table.insert(pipes_full_nodenames, valve_on_loaded)
 table.insert(pipes_full_nodenames, entry_panel_loaded)
 table.insert(pipes_full_nodenames, flow_sensor_loaded)
-new_flow_logic_register.simple(entry_panel_loaded)
 new_flow_logic_register.simple(flow_sensor_loaded)
 
 pipeworks.pipes_full_nodenames = pipes_full_nodenames

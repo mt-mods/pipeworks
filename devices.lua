@@ -433,6 +433,12 @@ minetest.register_node(nodename_panel_loaded, {
 	drop = "pipeworks:entry_panel_empty",
 	on_rotate = pipeworks.fix_after_rotation
 })
+-- FIXME requires-directionality
+-- TODO: AFAIK the two panels have no visual difference, so are redundant under new flow logic - alias?
+new_flow_logic_register.simple(nodename_panel_empty)
+new_flow_logic_register.simple(nodename_panel_loaded)
+
+
 
 local nodename_sensor_empty = "pipeworks:flow_sensor_empty"
 minetest.register_node(nodename_sensor_empty, {
