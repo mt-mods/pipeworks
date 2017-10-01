@@ -121,7 +121,9 @@ dofile(pipeworks.modpath.."/wielder.lua")
 
 local logicdir = "/new_flow_logic/"
 
--- note that even with these files the new flow logic is not yet default
+-- note that even with these files the new flow logic is not yet default.
+-- registration will take place but no actual ABMs/node logic will be installed,
+-- unless pipeworks.enable_new_flow_logic has been set.
 dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
 dofile(pipeworks.modpath..logicdir.."abms.lua")
 dofile(pipeworks.modpath..logicdir.."abm_register.lua")
@@ -130,10 +132,6 @@ dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
--- individual enable flags also checked in register_local_pipes.lua
-if pipeworks.enable_new_flow_logic then
-	dofile(pipeworks.modpath..logicdir.."register_local_pipes.lua")
-end
 
 if pipeworks.enable_redefines then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
