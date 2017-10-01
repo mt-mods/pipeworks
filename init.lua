@@ -118,9 +118,10 @@ dofile(pipeworks.modpath.."/wielder.lua")
 local logicdir = "/new_flow_logic/"
 
 -- note that even with these files the new flow logic is not yet default
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
 dofile(pipeworks.modpath..logicdir.."abms.lua")
 dofile(pipeworks.modpath..logicdir.."abm_register.lua")
-dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
