@@ -26,3 +26,16 @@ pipeworks.flowables.inputs.nodenames = {}
 pipeworks.flowables.outputs = {}
 pipeworks.flowables.outputs.list = {}
 -- not currently any nodenames arraylist for this one as it's not currently needed.
+
+
+
+-- checks if a given node can flow in a given direction.
+-- used to implement directional devices such as pumps,
+-- which only visually connect in a certain direction.
+-- node is the usual name + param structure.
+-- direction is an x/y/z vector of the flow direction;
+-- this function answers the question "can this node flow in this direction?"
+pipeworks.flowables.flow_check = function(node, direction)
+	minetest.log("warning", "pipeworks.flowables.flow_check() stub!")
+	return true
+end
