@@ -164,6 +164,7 @@ for s in ipairs(states) do
 		-- FIXME - does this preserve metadata? need to look at this
 		on_rotate = screwdriver.rotate_simple
 	})
+	-- FIXME: currently a simple flow device, but needs directionality checking
 	new_flow_logic_register.simple(pumpname)
 	if states[s] ~= "off" then
 		new_flow_logic_register.intake_simple(pumpname, 2)
@@ -208,6 +209,12 @@ for s in ipairs(states) do
 		end,
 		on_rotate = pipeworks.fix_after_rotation
 	})
+	-- only register flow logic for the "on" ABM.
+	-- this means that the off state automatically blocks flow by not participating in the balancing operation.
+	if states[s] ~= "off" then
+		-- FIXME: this still a simple device, directionality not honoured
+		new_flow_logic_register.simple(nodename_valve_empty)
+	end
 end
 
 local nodename_valve_loaded = "pipeworks:valve_on_loaded"
@@ -249,6 +256,12 @@ minetest.register_node(nodename_valve_loaded, {
 	end,
 	on_rotate = pipeworks.fix_after_rotation
 })
+-- register this the same as the on-but-empty variant, so existing nodes of this type work also.
+-- note that as new_flow_logic code does not distinguish empty/full in node states,
+-- right-clicking a "loaded" valve (becoming an off valve) then turning it on again will yield a on-but-empty valve,
+-- but the flow logic will still function.
+-- thus under new_flow_logic this serves as a kind of migration.
+new_flow_logic_register.simple(nodename_valve_loaded)
 
 -- grating
 
