@@ -29,6 +29,8 @@ end
 
 
 
+--local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
+
 -- new version of liquid check
 -- accepts a limit parameter to only delete water blocks that the receptacle can accept,
 -- and returns it so that the receptacle can update it's pressure values.
@@ -43,13 +45,12 @@ local check_for_liquids_v2 = function(pos, limit)
 			total = total + 1
 		end
 	end
+	--pipeworks.logger("check_for_liquids_v2@"..formatvec(pos).." total "..total)
 	return total
 end
 flowlogic.check_for_liquids_v2 = check_for_liquids_v2
 
 
-
---local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
 
 local label_pressure = "pipeworks.water_pressure"
 flowlogic.balance_pressure = function(pos, node)
@@ -100,8 +101,8 @@ flowlogic.run_input = function(pos, node, maxpressure, intakefn)
 	if intake_limit <= 0 then return end
 
 	local actual_intake = intakefn(pos, intake_limit)
+	--pipeworks.logger("run_input@"..formatvec(pos).." oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake)
 	if actual_intake <= 0 then return end
-	if actual_intake >= intake_limit then actual_intake = intake_limit end
 
 	local newpressure = actual_intake + currentpressure
 	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
