@@ -598,7 +598,6 @@ end
 
 -- fountainhead
 
--- TODO flow-logic-stub: fountainheads currently non-functional under new flow logic
 local nodename_fountain_empty = "pipeworks:fountainhead"
 minetest.register_node(nodename_fountain_empty, {
 	description = "Fountainhead",
@@ -668,6 +667,14 @@ minetest.register_node(nodename_fountain_loaded, {
 	drop = "pipeworks:fountainhead",
 	on_rotate = false
 })
+new_flow_logic_register.simple(nodename_fountain_empty)
+new_flow_logic_register.simple(nodename_fountain_loaded)
+local fountain_min = 1
+local fountainfn = pipeworks.flowlogic.helpers.make_neighbour_output({{x=0, y=1, z=0}})
+new_flow_logic_register.output(nodename_fountain_empty, fountain_min, fountainfn)
+new_flow_logic_register.output(nodename_fountain_loaded, fountain_min, fountainfn)
+
+
 
 minetest.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
 minetest.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")
