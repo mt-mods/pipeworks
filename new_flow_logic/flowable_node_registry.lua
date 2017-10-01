@@ -18,6 +18,11 @@ pipeworks.flowables.inputs = {}
 pipeworks.flowables.inputs.list = {}
 pipeworks.flowables.inputs.nodenames = {}
 
+-- outputs - takes pressure from pipes and update world to do something with it
+pipeworks.flowables.outputs = {}
+pipeworks.flowables.outputs.list = {}
+-- not currently any nodenames arraylist for this one as it's not currently needed.
+
 -- registration functions
 pipeworks.flowables.register = {}
 local register = pipeworks.flowables.register
@@ -63,3 +68,20 @@ register.intake_simple = function(nodename, maxpressure)
 		abmregister.input(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
 	end
 end
+
+-- Register a node as an output.
+-- Expects node to already be a flowable.
+-- threshold and outputfn are currently as documented for register_abm_output() in abm_register.lua.
+register.output = function(nodename, threshold, outputfn)
+	checkbase(nodename)
+	pipeworks.flowables.outputs.list[nodename] = { threshold=threshold, outputfn=outputfn }
+	if pipeworks.enable_new_flow_logic then
+		abmregister.output(nodename, maxpressure, outputfn)
+	end
+end
+
+-- TODOs here:
+-- The spigot's output behaviour (and possibly the fountain) could be abstracted out into a "simple output" of sorts,
+-- which tries to place water nodes around it.
+-- possibly this could be given a helper function to determine which faces a node should try,
+-- to allow things like rotation or other param values determining "direction" to be respected.
