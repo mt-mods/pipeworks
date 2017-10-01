@@ -111,19 +111,23 @@ end
 
 
 
--- flowlogic output helper for spigots
--- tries to place a water block in the world beneath the spigot.
--- threshold checking is assumed to be handled by the node registration;
--- see register_local_pipes.lua for the pipeworks default spigot.
-flowlogic.helpers.output_spigot = function(pos, node, currentpressure)
-	local taken = 0
-	local below = {x=pos.x, y=pos.y-1, z=pos.z}
-	local name = minetest.get_node(below).name
-	if (name == "air") or (name == "default:water_flowing") then
-		minetest.set_node(below, {name="default:water_source"})
-		taken = taken + 1
+-- flowlogic output helper implementation:
+-- outputs water by trying to place water nodes nearby in the world.
+-- neighbours is a list of node offsets to try placing water in.
+-- this is a constructor function, returning another function which satisfies the output helper requirements.
+flowlogic.helpers.make_neighbour_output = function(neighbours)
+	return function(pos, node, currentpressure)
+		local taken = 0
+		for _, offset in pairs(neighbours) do
+			local npos = vector.add(pos, offset)
+			local name = minetest.get_node(npos).name
+			if (name == "air") or (name == "default:water_flowing") then
+				minetest.swap_node(npos, {name="default:water_source"})
+				taken = taken + 1
+			end
+		end
+		return taken
 	end
-	return taken
 end
 
 
@@ -143,21 +147,5 @@ flowlogic.run_output = function(pos, node, threshold, outputfn)
 		local newpressure = currentpressure - takenpressure
 		if newpressure < 0 then currentpressure = 0 end
 		meta:set_float(label_pressure, newpressure)
-	end
-end
-
-
-
-flowlogic.run_spigot_output = function(pos, node)
-	-- try to output a water source node if there's enough pressure and space below.
-	local meta = minetest.get_meta(pos)
-	local currentpressure = meta:get_float(label_pressure)
-	if currentpressure > 1 then
-		local below = {x=pos.x, y=pos.y-1, z=pos.z}
-		local name = minetest.get_node(below).name
-		if (name == "air") or (name == "default:water_flowing") then
-			minetest.set_node(below, {name="default:water_source"})
-			meta:set_float(label_pressure, currentpressure - 1)
-		end
 	end
 end

@@ -377,8 +377,9 @@ minetest.register_node(nodename_spigot_loaded, {
 new_flow_logic_register.simple(nodename_spigot_empty)
 new_flow_logic_register.simple(nodename_spigot_loaded)
 local spigot_min = 1
-new_flow_logic_register.output(nodename_spigot_empty, spigot_min, pipeworks.flowlogic.helpers.output_spigot)
-new_flow_logic_register.output(nodename_spigot_loaded, spigot_min, pipeworks.flowlogic.helpers.output_spigot)
+local outputfn = pipeworks.flowlogic.helpers.make_neighbour_output({{x=0, y=-1, z=0}})
+new_flow_logic_register.output(nodename_spigot_empty, spigot_min, outputfn)
+new_flow_logic_register.output(nodename_spigot_loaded, spigot_min, outputfn)
 
 
 
