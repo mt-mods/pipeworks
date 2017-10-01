@@ -6,7 +6,11 @@
 local register = {}
 pipeworks.flowlogic.abmregister = register
 
+local flowlogic = pipeworks.flowlogic
 
+-- A possible DRY violation here...
+-- DISCUSS: should it be possible later on to raise the the rate of ABMs, or lower the chance?
+-- Currently all the intervals and chances are hardcoded below.
 
 -- register a node name for the pressure balancing ABM.
 -- currently this only exists as a per-node function to allow nodes to be registered outside pipeworks.
@@ -16,7 +20,7 @@ local register_abm_balance = function(nodename)
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			pipeworks.flowlogic.balance_pressure(pos, node)
+			flowlogic.balance_pressure(pos, node)
 		end
 	})
 end
@@ -31,11 +35,27 @@ local register_abm_input = function(nodename, maxpressure, intakefn)
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
-			pipeworks.flowlogic.run_input(pos, node, maxpressure, intakefn)
+			flowlogic.run_input(pos, node, maxpressure, intakefn)
 		end
 	})
 end
 register.input = register_abm_input
+
+-- register a node for the output ABM.
+-- threshold determines the minimum pressure, over which outputfn is called.
+-- outputfn is then given the current pressure, and returns the pressure relieved by the output process.
+-- outputfn is expected to update environment, nearby world etc. as appropriate for the node.
+local register_abm_output = function(nodename, threshold, outputfn)
+	minetest.register_abm({
+		nodenames = { nodename },
+		interval = 1,
+		chance = 1,
+		action = function(pos, node, active_object_count, active_object_count_wider)
+			flowlogic.run_output(pos, node, threshold, outputfn)
+		end
+	})
+end
+register.output = register_abm_output
 
 -- old spigot ABM code, not yet migrated
 --[[
