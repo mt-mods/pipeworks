@@ -94,6 +94,10 @@ function pipeworks.replace_name(tbl,tr,name)
 	return ntbl
 end
 
+pipeworks.logger = function(msg)
+	print("[pipeworks] "..msg)
+end
+
 -------------------------------------------
 -- Load the various other parts of the mod
 

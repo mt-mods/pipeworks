@@ -22,6 +22,12 @@ local insertbase = function(nodename)
 	-- table.insert(pipeworks.flowables.list.nodenames, nodename)
 end
 
+local regwarning = function(kind, nodename)
+	local tail = ""
+	if pipeworks.enable_new_flow_logic then tail = " but new_flow_logic not enabled" end
+	pipeworks.logger("[pipeworks] "..kind.." flow logic registry requested for "..nodename..tail)
+end
+
 -- Register a node as a simple flowable.
 -- Simple flowable nodes have no considerations for direction of flow;
 -- A cluster of adjacent simple flowables will happily average out in any direction.
@@ -32,6 +38,7 @@ register.simple = function(nodename)
 	if pipeworks.enable_new_flow_logic then
 		abmregister.balance(nodename)
 	end
+	regwarning("simple", nodename)
 end
 
 local checkbase = function(nodename)
@@ -50,6 +57,7 @@ register.intake_simple = function(nodename, maxpressure)
 	if pipeworks.enable_new_flow_logic then
 		abmregister.input(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
 	end
+	regwarning("simple intake", nodename)
 end
 
 -- Register a node as an output.
@@ -61,6 +69,7 @@ register.output = function(nodename, threshold, outputfn)
 	if pipeworks.enable_new_flow_logic then
 		abmregister.output(nodename, threshold, outputfn)
 	end
+	regwarning("output node", nodename)
 end
 
 -- TODOs here:
