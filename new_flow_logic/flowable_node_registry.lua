@@ -76,7 +76,7 @@ register.output = function(nodename, threshold, outputfn)
 	checkbase(nodename)
 	pipeworks.flowables.outputs.list[nodename] = { threshold=threshold, outputfn=outputfn }
 	if pipeworks.enable_new_flow_logic then
-		abmregister.output(nodename, maxpressure, outputfn)
+		abmregister.output(nodename, threshold, outputfn)
 	end
 end
 
