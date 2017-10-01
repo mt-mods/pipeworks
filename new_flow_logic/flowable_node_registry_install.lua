@@ -24,8 +24,8 @@ end
 
 local regwarning = function(kind, nodename)
 	local tail = ""
-	if pipeworks.enable_new_flow_logic then tail = " but new_flow_logic not enabled" end
-	pipeworks.logger("[pipeworks] "..kind.." flow logic registry requested for "..nodename..tail)
+	if not pipeworks.enable_new_flow_logic then tail = " but new_flow_logic not enabled" end
+	pipeworks.logger(kind.." flow logic registry requested for "..nodename..tail)
 end
 
 -- Register a node as a simple flowable.

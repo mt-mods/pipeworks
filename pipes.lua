@@ -5,6 +5,8 @@ local REGISTER_COMPATIBILITY = true
 local pipes_empty_nodenames = {}
 local pipes_full_nodenames = {}
 
+local new_flow_logic_register = pipeworks.flowables.register
+
 local vti = {4, 3, 2, 1, 6, 5}
 local cconnects = {{}, {1}, {1, 2}, {1, 3}, {1, 3, 5}, {1, 2, 3}, {1, 2, 3, 5}, {1, 2, 3, 4}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5, 6}}
 for index, connects in ipairs(cconnects) do
@@ -116,8 +118,12 @@ for index, connects in ipairs(cconnects) do
 		on_rotate = false
 	})
 	
-	table.insert(pipes_empty_nodenames, "pipeworks:pipe_"..index.."_empty")
-	table.insert(pipes_full_nodenames,  "pipeworks:pipe_"..index.."_loaded")
+	local emptypipe = "pipeworks:pipe_"..index.."_empty"
+	local fullpipe = "pipeworks:pipe_"..index.."_loaded"
+	table.insert(pipes_empty_nodenames, emptypipe)
+	table.insert(pipes_full_nodenames, fullpipe)
+	new_flow_logic_register.simple(emptypipe)
+	new_flow_logic_register.simple(fullpipe)
 end
 
 
@@ -182,14 +188,31 @@ if REGISTER_COMPATIBILITY then
 	})
 end
 
-table.insert(pipes_empty_nodenames,"pipeworks:valve_on_empty")
-table.insert(pipes_empty_nodenames,"pipeworks:valve_off_empty")
-table.insert(pipes_empty_nodenames,"pipeworks:entry_panel_empty")
-table.insert(pipes_empty_nodenames,"pipeworks:flow_sensor_empty")
+-- appropriate registration for both old and new flow logic follows
 
-table.insert(pipes_full_nodenames,"pipeworks:valve_on_loaded")
-table.insert(pipes_full_nodenames,"pipeworks:entry_panel_loaded")
-table.insert(pipes_full_nodenames,"pipeworks:flow_sensor_loaded")
+-- FIXME/TODO: these aren't really "simple", they have directionality.
+local valve_on = "pipeworks:valve_on_empty"
+local valve_off = "pipeworks:valve_off_empty"
+local entry_panel_empty = "pipeworks:entry_panel_empty"
+local flow_sensor_empty = "pipeworks:flow_sensor_empty"
+table.insert(pipes_empty_nodenames, valve_on)
+table.insert(pipes_empty_nodenames, valve_off)
+table.insert(pipes_empty_nodenames, entry_panel_empty)
+table.insert(pipes_empty_nodenames, flow_sensor_empty)
+new_flow_logic_register.simple(valve_on)
+-- don't register valve_off, automatically makes it block flow in the new logic
+new_flow_logic_register.simple(entry_panel_empty)
+new_flow_logic_register.simple(flow_sensor_empty)
+
+local valve_on_loaded = "pipeworks:valve_on_loaded"
+local entry_panel_loaded = "pipeworks:entry_panel_loaded"
+local flow_sensor_loaded = "pipeworks:flow_sensor_loaded"
+table.insert(pipes_full_nodenames, valve_on_loaded)
+table.insert(pipes_full_nodenames, entry_panel_loaded)
+table.insert(pipes_full_nodenames, flow_sensor_loaded)
+new_flow_logic_register.simple(valve_on_loaded)
+new_flow_logic_register.simple(entry_panel_loaded)
+new_flow_logic_register.simple(flow_sensor_loaded)
 
 pipeworks.pipes_full_nodenames = pipes_full_nodenames
 pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
@@ -198,7 +221,7 @@ pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
 
 
 if not pipeworks.enable_new_flow_logic then
--- sorry, no indents... it messes with the patchlogs too much
+
 
 
 minetest.register_abm({
