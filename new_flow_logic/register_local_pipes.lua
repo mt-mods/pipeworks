@@ -28,11 +28,9 @@ local spigot_on = "pipeworks:spigot_pouring"
 if pipeworks.enable_pipes then
 	for _, pipe in ipairs(pipes_full_nodenames) do
 		register.simple(pipe)
-		abmregister.balance(pipe)
 	end
 	for _, pipe in ipairs(pipes_empty_nodenames) do
 		register.simple(pipe)
-		abmregister.balance(pipe)
 	end
 
 	if pipeworks.enable_pipe_devices then
