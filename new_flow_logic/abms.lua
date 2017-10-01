@@ -49,8 +49,9 @@ flowlogic.check_for_liquids_v2 = check_for_liquids_v2
 
 
 
+--local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
+
 local label_pressure = "pipeworks.water_pressure"
-local label_haspressure = "pipeworks.is_pressure_node"
 flowlogic.balance_pressure = function(pos, node)
 	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
 	-- check the pressure of all nearby nodes, and average it out.
@@ -60,16 +61,19 @@ flowlogic.balance_pressure = function(pos, node)
 	-- unconditionally include self in nodes to average over
 	local meta = minetest.get_meta(pos)
 	local currentpressure = meta:get_float(label_pressure)
-	meta:set_int(label_haspressure, 1)
 	local connections = { meta }
 	local totalv = currentpressure
 	local totalc = 1
 
 	-- then handle neighbours, but if not a pressure node don't consider them at all
 	for _, npos in ipairs(make_coords_offsets(pos, false)) do
+		local nodename = minetest.get_node(npos).name
 		local neighbour = minetest.get_meta(npos)
-		local haspressure = (neighbour:get_int(label_haspressure) ~= 0)
+		-- for now, just check if it's in the simple table.
+		-- TODO: the "can flow from" logic in flowable_node_registry.lua
+		local haspressure = (pipeworks.flowables.list.simple[nodename])
 		if haspressure then
+			--pipeworks.logger("balance_pressure @ "..formatvec(pos).." "..nodename.." "..formatvec(npos).." added to neighbour set")
 			local n = neighbour:get_float(label_pressure)
 			table.insert(connections, neighbour)
 			totalv = totalv + n
