@@ -22,8 +22,9 @@ local register_abm_balance = function(nodename)
 end
 register.balance = register_abm_balance
 
--- register a node for the pump ABM.
--- maxpressure is the maximum pressure that this pump can drive.
+-- register a node for the input ABM.
+-- intakefn is run on the node to determine how much water can be taken (and update it's environment accordingly).
+-- maxpressure is the maximum pressure that this input can drive, beyond which pressure will not be raised.
 local register_abm_input = function(nodename, maxpressure, intakefn)
 	minetest.register_abm({
 		nodenames = { nodename },
