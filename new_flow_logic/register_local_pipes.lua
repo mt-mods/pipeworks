@@ -40,12 +40,12 @@ if pipeworks.enable_pipes then
 	]]
 
 	if pipeworks.enable_pipe_devices then
-		register.simple(pump_off)
-		register.simple(pump_on)
+		--register.simple(pump_off)
+		--register.simple(pump_on)
 		register.simple(spigot_on)
 		register.simple(spigot_off)
 
-		register.intake_simple(pump_on, thresholds.pump_pressure)
+		--register.intake_simple(pump_on, thresholds.pump_pressure)
 		-- TODO: the code doesn't currently care if the spigot is the visually flowing node or not.
 		-- So some mechanism to register on/off states would be nice
 		register.output(spigot_off, thresholds.spigot_min, flowlogic.helpers.output_spigot)

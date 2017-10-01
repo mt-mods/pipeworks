@@ -1,3 +1,4 @@
+local new_flow_logic_register = pipeworks.flowables.register
 
 -- rotation handlers
 
@@ -163,6 +164,10 @@ for s in ipairs(states) do
 		-- FIXME - does this preserve metadata? need to look at this
 		on_rotate = screwdriver.rotate_simple
 	})
+	new_flow_logic_register.simple(pumpname)
+	if states[s] ~= "off" then
+		new_flow_logic_register.intake_simple(pumpname, 2)
+	end
 
 	local nodename_valve_empty = "pipeworks:valve_"..states[s].."_empty"
 	minetest.register_node(nodename_valve_empty, {

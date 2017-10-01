@@ -195,6 +195,7 @@ local valve_on = "pipeworks:valve_on_empty"
 local valve_off = "pipeworks:valve_off_empty"
 local entry_panel_empty = "pipeworks:entry_panel_empty"
 local flow_sensor_empty = "pipeworks:flow_sensor_empty"
+-- XXX: why aren't these in devices.lua!?
 table.insert(pipes_empty_nodenames, valve_on)
 table.insert(pipes_empty_nodenames, valve_off)
 table.insert(pipes_empty_nodenames, entry_panel_empty)
