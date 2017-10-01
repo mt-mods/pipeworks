@@ -4,6 +4,7 @@
 
 
 local flowlogic = {}
+flowlogic.helpers = {}
 pipeworks.flowlogic = flowlogic
 
 
@@ -101,6 +102,43 @@ flowlogic.run_input = function(pos, node, maxpressure, intakefn)
 	local newpressure = actual_intake + currentpressure
 	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
 	meta:set_float(label_pressure, newpressure)
+end
+
+
+
+-- flowlogic output helper for spigots
+-- tries to place a water block in the world beneath the spigot.
+-- threshold checking is assumed to be handled by the node registration;
+-- see register_local_pipes.lua for the pipeworks default spigot.
+flowlogic.helpers.output_spigot = function(pos, node, currentpressure)
+	local taken = 0
+	local below = {x=pos.x, y=pos.y-1, z=pos.z}
+	local name = minetest.get_node(below).name
+	if (name == "air") or (name == "default:water_flowing") then
+		minetest.set_node(below, {name="default:water_source"})
+		taken = taken + 1
+	end
+	return taken
+end
+
+
+
+flowlogic.run_output = function(pos, node, threshold, outputfn)
+	-- callback for output devices.
+	-- takes care of checking a minimum pressure value and updating the node metadata.
+	-- the outputfn is provided the current pressure and returns the pressure "taken".
+	-- as an example, using this with the above spigot function,
+	-- the spigot function tries to output a water source if it will fit in the world.
+	local meta = minetest.get_meta(pos)
+	-- sometimes I wonder if meta:get_* returning default values would ever be problematic.
+	-- though here it doesn't matter, an uninit'd node returns 0, which is fine for a new, empty node.
+	local currentpressure = meta:get_float(label_pressure)
+	if currentpressure > threshold then
+		local takenpressure = outputfn(pos, node, currentpressure)
+		local newpressure = currentpressure - takenpressure
+		if newpressure < 0 then currentpressure = 0 end
+		meta:set_float(label_pressure, newpressure)
+	end
 end
 
 
