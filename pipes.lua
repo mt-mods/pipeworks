@@ -188,9 +188,8 @@ if REGISTER_COMPATIBILITY then
 	})
 end
 
--- appropriate registration for both old and new flow logic follows
 
--- FIXME/TODO: these aren't really "simple", they have directionality.
+
 local valve_on = "pipeworks:valve_on_empty"
 local valve_off = "pipeworks:valve_off_empty"
 local entry_panel_empty = "pipeworks:entry_panel_empty"
@@ -200,7 +199,6 @@ table.insert(pipes_empty_nodenames, valve_on)
 table.insert(pipes_empty_nodenames, valve_off)
 table.insert(pipes_empty_nodenames, entry_panel_empty)
 table.insert(pipes_empty_nodenames, flow_sensor_empty)
-new_flow_logic_register.simple(flow_sensor_empty)
 
 local valve_on_loaded = "pipeworks:valve_on_loaded"
 local entry_panel_loaded = "pipeworks:entry_panel_loaded"
@@ -208,7 +206,6 @@ local flow_sensor_loaded = "pipeworks:flow_sensor_loaded"
 table.insert(pipes_full_nodenames, valve_on_loaded)
 table.insert(pipes_full_nodenames, entry_panel_loaded)
 table.insert(pipes_full_nodenames, flow_sensor_loaded)
-new_flow_logic_register.simple(flow_sensor_loaded)
 
 pipeworks.pipes_full_nodenames = pipes_full_nodenames
 pipeworks.pipes_empty_nodenames = pipes_empty_nodenames

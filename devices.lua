@@ -518,10 +518,15 @@ minetest.register_node(nodename_sensor_loaded, {
 	mesecons = pipereceptor_on,
 	on_rotate = pipeworks.fix_after_rotation
 })
+-- FIXME requires-directionality
+new_flow_logic_register.simple(nodename_sensor_empty)
+new_flow_logic_register.simple(nodename_sensor_loaded)
+
+
 
 -- tanks
 
--- TODO: these don't currently do anything under the new flow logic.
+-- TODO flow-logic-stub: these don't currently do anything under the new flow logic.
 for fill = 0, 10 do
 	local filldesc="empty"
 	local sgroups = {snappy=3, pipe=1, tankfill=fill+1}
@@ -592,6 +597,7 @@ end
 
 -- fountainhead
 
+-- TODO flow-logic-stub: fountainheads currently non-functional under new flow logic
 local nodename_fountain_empty = "pipeworks:fountainhead"
 minetest.register_node(nodename_fountain_empty, {
 	description = "Fountainhead",
