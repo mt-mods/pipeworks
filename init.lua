@@ -103,6 +103,11 @@ end
 -------------------------------------------
 -- Load the various other parts of the mod
 
+-- early auto-detection for finite water mode if not explicitly disabled
+if pipeworks.toggles.finite_water == nil then
+	dofile(pipeworks.modpath.."/autodetect-finite-water.lua")
+end
+
 dofile(pipeworks.modpath.."/common.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
