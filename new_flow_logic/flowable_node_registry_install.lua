@@ -24,7 +24,7 @@ end
 
 local regwarning = function(kind, nodename)
 	local tail = ""
-	if not pipeworks.enable_new_flow_logic then tail = " but new_flow_logic not enabled" end
+	if not pipeworks.toggles.pressure_logic then tail = " but pressure logic not enabled" end
 	pipeworks.logger(kind.." flow logic registry requested for "..nodename..tail)
 end
 
@@ -35,7 +35,7 @@ register.simple = function(nodename)
 	insertbase(nodename)
 	pipeworks.flowables.list.simple[nodename] = true
 	table.insert(pipeworks.flowables.list.simple_nodenames, nodename)
-	if pipeworks.enable_new_flow_logic then
+	if pipeworks.toggles.pressure_logic then
 		abmregister.balance(nodename)
 	end
 	regwarning("simple", nodename)
@@ -54,7 +54,7 @@ register.intake_simple = function(nodename, maxpressure)
 	checkbase(nodename)
 	pipeworks.flowables.inputs.list[nodename] = { maxpressure=maxpressure }
 	table.insert(pipeworks.flowables.inputs.nodenames, nodename)
-	if pipeworks.enable_new_flow_logic then
+	if pipeworks.toggles.pressure_logic then
 		abmregister.input(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
 	end
 	regwarning("simple intake", nodename)
@@ -66,7 +66,7 @@ end
 register.output = function(nodename, threshold, outputfn)
 	checkbase(nodename)
 	pipeworks.flowables.outputs.list[nodename] = { threshold=threshold, outputfn=outputfn }
-	if pipeworks.enable_new_flow_logic then
+	if pipeworks.toggles.pressure_logic then
 		abmregister.output(nodename, threshold, outputfn)
 	end
 	regwarning("output node", nodename)

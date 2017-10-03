@@ -17,14 +17,16 @@ dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
 
 
+-- please add any new feature toggles to be a flag in this table...
+pipeworks.toggles = {}
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
 local worldsettingsfile = io.open(worldsettingspath, "r")
 if worldsettingsfile then
 	worldsettingsfile:close()
 	dofile(worldsettingspath)
 end
-if pipeworks.enable_new_flow_logic then
-	minetest.log("warning", "pipeworks new_flow_logic is WIP and incomplete!")
+if pipeworks.toggles.pressure_logic then
+	minetest.log("warning", "pipeworks pressure-based logic is WIP and incomplete!")
 end
 
 -- Random variables
@@ -123,7 +125,7 @@ local logicdir = "/new_flow_logic/"
 
 -- note that even with these files the new flow logic is not yet default.
 -- registration will take place but no actual ABMs/node logic will be installed,
--- unless pipeworks.enable_new_flow_logic has been set.
+-- unless the toggle flag is specifically enabled in the per-world settings flag.
 dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
 dofile(pipeworks.modpath..logicdir.."abms.lua")
 dofile(pipeworks.modpath..logicdir.."abm_register.lua")

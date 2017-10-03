@@ -213,7 +213,7 @@ pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
 
 
 
-if not pipeworks.enable_new_flow_logic then
+if not pipeworks.toggles.pressure_logic then
 
 
 
