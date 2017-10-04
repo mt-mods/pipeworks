@@ -25,7 +25,7 @@ end
 local regwarning = function(kind, nodename)
 	local tail = ""
 	if not pipeworks.toggles.pressure_logic then tail = " but pressure logic not enabled" end
-	pipeworks.logger(kind.." flow logic registry requested for "..nodename..tail)
+	--pipeworks.logger(kind.." flow logic registry requested for "..nodename..tail)
 end
 
 -- Register a node as a simple flowable.
