@@ -45,20 +45,40 @@ local checkbase = function(nodename)
 	if not checkexists(nodename) then error("pipeworks.flowables node doesn't exist as a flowable!") end
 end
 
--- Register a node as a simple intake.
+local duplicateerr = function(kind, nodename) error(kind.." duplicate registration for "..nodename) end
+
+
+
+-- Registers a node as a fluid intake.
+-- intakefn is used to determine the water that can be taken in a node-specific way.
 -- Expects node to be registered as a flowable (is present in flowables.list.all),
 -- so that water can move out of it.
--- maxpressure is the maximum pipeline pressure that this node can drive.
+-- maxpressure is the maximum pipeline pressure that this node can drive;
+-- if the input's node exceeds this the callback is not run.
 -- possible WISHME here: technic-driven high-pressure pumps
-register.intake_simple = function(nodename, maxpressure)
+register.intake = function(nodename, maxpressure, intakefn)
+	-- check for duplicate registration of this node
+	local list = pipeworks.flowables.inputs.list
 	checkbase(nodename)
-	pipeworks.flowables.inputs.list[nodename] = { maxpressure=maxpressure }
+	if list[nodename] then duplicateerr("pipeworks.flowables.inputs", nodename) end
+	list[nodename] = { maxpressure=maxpressure, intakefn=intakefn }
 	table.insert(pipeworks.flowables.inputs.nodenames, nodename)
 	if pipeworks.toggles.pressure_logic then
-		abmregister.input(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
+		abmregister.input(nodename, maxpressure, intakefn)
 	end
-	regwarning("simple intake", nodename)
+	regwarning("intake", nodename)
 end
+
+
+
+-- Register a node as a simple intake:
+-- tries to absorb water source nodes from it's surroundings.
+-- may exceed limit slightly due to needing to absorb whole nodes.
+register.intake_simple = function(nodename, maxpressure)
+	register.intake(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
+end
+
+
 
 -- Register a node as an output.
 -- Expects node to already be a flowable.
