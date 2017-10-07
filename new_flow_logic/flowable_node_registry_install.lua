@@ -79,12 +79,17 @@ register.output = function(nodename, upper, lower, outputfn)
 	regwarning("output node", nodename)
 end
 
--- TODOs here:
--- The spigot's output behaviour (and possibly the fountain) could be abstracted out into a "simple output" of sorts,
--- which tries to place water nodes around it.
--- possibly this could be given a helper function to determine which faces a node should try,
--- to allow things like rotation or other param values determining "direction" to be respected.
+-- register a simple output:
+-- drains pressure by attempting to place water in nearby nodes,
+-- which can be set by passing a list of offset vectors.
+-- will attempt to drain as many whole nodes as there are positions in the offset list.
 -- for meanings of upper and lower, see register.output() above.
+-- non-finite mode:
+--	above upper pressure: places water sources as appropriate, keeps draining pressure.
+--	below lower presssure: removes it's neighbour water sources.
+-- finite mode:
+--	same as for above pressure in non-finite mode,
+--	but only drains pressure when water source nodes are actually placed.
 register.output_simple = function(nodename, upper, lower, neighbours)
 	local outputfn = pipeworks.flowlogic.helpers.make_neighbour_output_fixed(neighbours)
 	register.output(nodename, upper, lower, outputfn)
