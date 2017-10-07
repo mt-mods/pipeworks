@@ -1,2 +1,0 @@
--- Internal code to the effect of "is_node_flowable()"
-This is basically to implement valves - currently the flow logic will happily balance pipes with neighbour nodes that just happen to have the pressure property in their metadata.
