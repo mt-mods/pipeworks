@@ -81,6 +81,7 @@ flowlogic.run = function(pos, node)
 	-- get the current pressure value.
 	local nodepressure = get_pressure_access(pos)
 	local currentpressure = nodepressure.get()
+	local oldpressure = currentpressure
 
 	-- if node is an input: run intake phase
 	local inputdef = pipeworks.flowables.inputs.list[nodename]
@@ -100,6 +101,7 @@ flowlogic.run = function(pos, node)
 			pos,
 			node,
 			currentpressure,
+			oldpressure,
 			outputdef,
 			finitemode)
 	end
@@ -213,7 +215,7 @@ end
 
 
 
-flowlogic.run_output = function(pos, node, currentpressure, outputdef, finitemode)
+flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputdef, finitemode)
 	-- processing step for water output devices.
 	-- takes care of checking a minimum pressure value and updating the resulting pressure level
 	-- the outputfn is provided the current pressure and returns the pressure "taken".
