@@ -79,6 +79,10 @@ register.output = function(nodename, upper, lower, outputfn)
 	if pipeworks.toggles.pressure_logic then
 		abmregister.output(nodename, lower, outputfn)
 	end
+	-- output ABM now part of main flow logic ABM to preserve ordering.
+	-- note that because outputs have to be a flowable first
+	-- (and the installation of the flow logic ABM is conditional),
+	-- registered output nodes for new_flow_logic is also still conditional on the enable flag.
 	regwarning("output node", nodename)
 end
 
