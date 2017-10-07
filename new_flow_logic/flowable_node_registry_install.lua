@@ -36,7 +36,7 @@ register.simple = function(nodename)
 	pipeworks.flowables.list.simple[nodename] = true
 	table.insert(pipeworks.flowables.list.simple_nodenames, nodename)
 	if pipeworks.toggles.pressure_logic then
-		abmregister.balance(nodename)
+		abmregister.flowlogic(nodename)
 	end
 	regwarning("simple", nodename)
 end

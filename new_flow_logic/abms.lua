@@ -65,17 +65,30 @@ local get_pressure_access = function(pos)
 	}
 end
 
-flowlogic.balance_pressure = function(pos, node)
-	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
-	-- check the pressure of all nearby nodes, and average it out.
-	-- for the moment, only balance neighbour nodes if it already has a pressure value.
-	-- XXX: maybe this could be used to add fluid behaviour to other mod's nodes too?
 
-	-- unconditionally include self in nodes to average over
-	local pressure = get_pressure_access(pos)
-	local currentpressure = pressure.get()
+
+flowlogic.run = function(pos, node)
+	-- get the current pressure value.
+	local nodepressure = get_pressure_access(pos)
+	local currentpressure = nodepressure.get()
+
+	-- balance pressure with neighbours
+	currentpressure = flowlogic.balance_pressure(pos, node, currentpressure)
+
+	-- set the new pressure
+	nodepressure.set(currentpressure)
+end
+
+
+
+flowlogic.balance_pressure = function(pos, node, currentpressure)
+	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
+	-- check the pressure of all nearby flowable nodes, and average it out.
+
 	-- pressure handles to average over
-	local connections = { pressure }
+	local connections = {}
+	-- unconditionally include self in nodes to average over.
+	-- result of averaging will be returned as new pressure for main flow logic callback
 	local totalv = currentpressure
 	local totalc = 1
 
@@ -99,6 +112,8 @@ flowlogic.balance_pressure = function(pos, node)
 	for _, target in ipairs(connections) do
 		target.set(average)
 	end
+
+	return average
 end
 
 

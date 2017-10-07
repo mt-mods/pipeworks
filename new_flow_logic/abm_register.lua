@@ -16,7 +16,7 @@ local flowlogic = pipeworks.flowlogic
 
 -- register node list for the main logic function.
 -- see flowlogic.run() in abms.lua.
---[[
+
 local register_flowlogic_abm = function(nodename)
 	minetest.register_abm({
 		nodenames = { nodename },
@@ -27,12 +27,13 @@ local register_flowlogic_abm = function(nodename)
 		end
 	})
 end
-]]
+register.flowlogic = register_flowlogic_abm
 
 
 
 -- register a node name for the pressure balancing ABM.
 -- currently this only exists as a per-node function to allow nodes to be registered outside pipeworks.
+--[[
 local register_abm_balance = function(nodename)
 	minetest.register_abm({
 		nodenames = { nodename },
@@ -44,6 +45,7 @@ local register_abm_balance = function(nodename)
 	})
 end
 register.balance = register_abm_balance
+]]
 
 -- register a node for the input ABM.
 -- intakefn is run on the node to determine how much water can be taken (and update it's environment accordingly).
