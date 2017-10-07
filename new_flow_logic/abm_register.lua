@@ -66,6 +66,7 @@ register.input = register_abm_input
 -- threshold determines the minimum pressure, over which outputfn is called.
 -- outputfn is then given the current pressure, and returns the pressure relieved by the output process.
 -- outputfn is expected to update environment, nearby world etc. as appropriate for the node.
+--[[
 local register_abm_output = function(nodename, threshold, outputfn)
 	minetest.register_abm({
 		nodenames = { nodename },
@@ -77,6 +78,7 @@ local register_abm_output = function(nodename, threshold, outputfn)
 	})
 end
 register.output = register_abm_output
+]]
 
 -- old spigot ABM code, not yet migrated
 --[[

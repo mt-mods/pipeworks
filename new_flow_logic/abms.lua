@@ -68,12 +68,25 @@ end
 
 
 flowlogic.run = function(pos, node)
+	local nodename = node.name
 	-- get the current pressure value.
 	local nodepressure = get_pressure_access(pos)
 	local currentpressure = nodepressure.get()
 
 	-- balance pressure with neighbours
 	currentpressure = flowlogic.balance_pressure(pos, node, currentpressure)
+
+	-- if node is an output: run output phase
+	local output = pipeworks.flowables.outputs.list[nodename]
+	if output then
+		currentpressure = flowlogic.run_output(
+			pos,
+			node,
+			currentpressure,
+			output.upper,
+			output.lower,
+			output.outputfn)
+	end
 
 	-- set the new pressure
 	nodepressure.set(currentpressure)
@@ -176,20 +189,18 @@ end
 
 
 
-flowlogic.run_output = function(pos, node, threshold, outputfn)
-	-- callback for output devices.
-	-- takes care of checking a minimum pressure value and updating the node metadata.
+flowlogic.run_output = function(pos, node, currentpressure, upper, lower, outputfn)
+	-- processing step for water output devices.
+	-- takes care of checking a minimum pressure value and updating the resulting pressure level
 	-- the outputfn is provided the current pressure and returns the pressure "taken".
 	-- as an example, using this with the above spigot function,
 	-- the spigot function tries to output a water source if it will fit in the world.
-	local meta = minetest.get_meta(pos)
-	-- sometimes I wonder if meta:get_* returning default values would ever be problematic.
-	-- though here it doesn't matter, an uninit'd node returns 0, which is fine for a new, empty node.
-	local currentpressure = meta:get_float(label_pressure)
-	if currentpressure > threshold then
+	local result = currentpressure
+	if currentpressure > lower then
 		local takenpressure = outputfn(pos, node, currentpressure)
 		local newpressure = currentpressure - takenpressure
-		if newpressure < 0 then currentpressure = 0 end
-		meta:set_float(label_pressure, newpressure)
+		if newpressure < 0 then newpressure = 0 end
+		result = newpressure
 	end
+	return result
 end

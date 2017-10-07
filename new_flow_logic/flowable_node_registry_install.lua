@@ -75,10 +75,7 @@ register.output = function(nodename, upper, lower, outputfn)
 		error("pipeworks.flowables.outputs duplicate registration!")
 	end
 	checkbase(nodename)
-	pipeworks.flowables.outputs.list[nodename] = { threshold=threshold, outputfn=outputfn }
-	if pipeworks.toggles.pressure_logic then
-		abmregister.output(nodename, lower, outputfn)
-	end
+	pipeworks.flowables.outputs.list[nodename] = { upper=upper, lower=lower, outputfn=outputfn }
 	-- output ABM now part of main flow logic ABM to preserve ordering.
 	-- note that because outputs have to be a flowable first
 	-- (and the installation of the flow logic ABM is conditional),
