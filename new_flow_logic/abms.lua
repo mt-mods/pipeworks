@@ -224,11 +224,16 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 	local upper = outputdef.upper
 	local lower = outputdef.lower
 	local result = currentpressure
-	if currentpressure > lower then
+	local threshold = nil
+	if finitemode then threshold = lower else threshold = upper end
+	if currentpressure > threshold then
 		local takenpressure = outputdef.outputfn(pos, node, currentpressure, finitemode)
 		local newpressure = currentpressure - takenpressure
 		if newpressure < 0 then newpressure = 0 end
 		result = newpressure
+	end
+	if (not finitemode) and (currentpressure < lower) and (oldpressure > lower) then
+		outputdef.cleanupfn(pos, node, currentpressure)
 	end
 	return result
 end
