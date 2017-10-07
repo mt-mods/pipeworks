@@ -377,9 +377,9 @@ minetest.register_node(nodename_spigot_loaded, {
 new_flow_logic_register.simple(nodename_spigot_empty)
 new_flow_logic_register.simple(nodename_spigot_loaded)
 local spigot_min = 1
-local outputfn = pipeworks.flowlogic.helpers.make_neighbour_output_fixed({{x=0, y=-1, z=0}})
-new_flow_logic_register.output(nodename_spigot_empty, spigot_min, outputfn)
-new_flow_logic_register.output(nodename_spigot_loaded, spigot_min, outputfn)
+local spigot_neighbours={{x=0, y=-1, z=0}}
+new_flow_logic_register.output_simple(nodename_spigot_empty, spigot_min, spigot_neighbours)
+new_flow_logic_register.output_simple(nodename_spigot_loaded, spigot_min, spigot_neighbours)
 
 
 
@@ -670,9 +670,9 @@ minetest.register_node(nodename_fountain_loaded, {
 new_flow_logic_register.simple(nodename_fountain_empty)
 new_flow_logic_register.simple(nodename_fountain_loaded)
 local fountain_min = 1
-local fountainfn = pipeworks.flowlogic.helpers.make_neighbour_output_fixed({{x=0, y=1, z=0}})
-new_flow_logic_register.output(nodename_fountain_empty, fountain_min, fountainfn)
-new_flow_logic_register.output(nodename_fountain_loaded, fountain_min, fountainfn)
+local fountain_neighbours={{x=0, y=1, z=0}}
+new_flow_logic_register.output_simple(nodename_fountain_empty, fountain_min, fountain_neighbours)
+new_flow_logic_register.output_simple(nodename_fountain_loaded, fountain_min, fountain_neighbours)
 
 
 

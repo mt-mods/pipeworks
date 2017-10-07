@@ -77,3 +77,7 @@ end
 -- which tries to place water nodes around it.
 -- possibly this could be given a helper function to determine which faces a node should try,
 -- to allow things like rotation or other param values determining "direction" to be respected.
+register.output_simple = function(nodename, threshold, neighbours)
+	local outputfn = pipeworks.flowlogic.helpers.make_neighbour_output_fixed(neighbours)
+	register.output(nodename, threshold, outputfn)
+end
