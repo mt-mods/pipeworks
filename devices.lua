@@ -166,8 +166,9 @@ for s in ipairs(states) do
 	})
 	-- FIXME: currently a simple flow device, but needs directionality checking
 	new_flow_logic_register.simple(pumpname)
+	local pump_drive = 4
 	if states[s] ~= "off" then
-		new_flow_logic_register.intake_simple(pumpname, 2)
+		new_flow_logic_register.intake_simple(pumpname, pump_drive)
 	end
 
 	local nodename_valve_empty = "pipeworks:valve_"..states[s].."_empty"
