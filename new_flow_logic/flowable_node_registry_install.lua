@@ -71,6 +71,9 @@ end
 -- if finite mode is on, upper is ignored and lower is used to determine whether to run outputfn;
 -- cleanupfn is ignored in this mode as finite mode assumes something causes water to move itself.
 register.output = function(nodename, upper, lower, outputfn)
+	if pipeworks.flowables.outputs.list[nodename] then
+		error("pipeworks.flowables.outputs duplicate registration!")
+	end
 	checkbase(nodename)
 	pipeworks.flowables.outputs.list[nodename] = { threshold=threshold, outputfn=outputfn }
 	if pipeworks.toggles.pressure_logic then
