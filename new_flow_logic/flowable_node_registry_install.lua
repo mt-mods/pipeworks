@@ -86,12 +86,17 @@ end
 -- the upper and lower difference acts as a hysteresis to try and avoid "gaps" in the flow.
 -- if finite mode is on, upper is ignored and lower is used to determine whether to run outputfn;
 -- cleanupfn is ignored in this mode as finite mode assumes something causes water to move itself.
-register.output = function(nodename, upper, lower, outputfn)
+register.output = function(nodename, upper, lower, outputfn, cleanupfn)
 	if pipeworks.flowables.outputs.list[nodename] then
 		error("pipeworks.flowables.outputs duplicate registration!")
 	end
 	checkbase(nodename)
-	pipeworks.flowables.outputs.list[nodename] = { upper=upper, lower=lower, outputfn=outputfn }
+	pipeworks.flowables.outputs.list[nodename] = {
+		upper=upper,
+		lower=lower,
+		outputfn=outputfn,
+		cleanupfn=cleanupfn,
+	}
 	-- output ABM now part of main flow logic ABM to preserve ordering.
 	-- note that because outputs have to be a flowable first
 	-- (and the installation of the flow logic ABM is conditional),
@@ -112,5 +117,6 @@ end
 --	but only drains pressure when water source nodes are actually placed.
 register.output_simple = function(nodename, upper, lower, neighbours)
 	local outputfn = pipeworks.flowlogic.helpers.make_neighbour_output_fixed(neighbours)
-	register.output(nodename, upper, lower, outputfn)
+	local cleanupfn = pipeworks.flowlogic.helpers.make_neighbour_cleanup_fixed(neighbours)
+	register.output(nodename, upper, lower, outputfn, cleanupfn)
 end
