@@ -178,9 +178,18 @@ flowlogic.helpers.make_neighbour_output_fixed = function(neighbours)
 		for _, offset in pairs(neighbours) do
 			local npos = vector.add(pos, offset)
 			local name = minetest.get_node(npos).name
-			if (name == "air") or (name == "default:water_flowing") then
+			if currentpressure < 1 then break end
+			-- take pressure anyway in non-finite mode, even if node is water source already.
+			-- in non-finite mode, pressure has to be sustained to keep the sources there.
+			-- so in non-finite mode, placing water is dependent on the target node;
+			-- draining pressure is not.
+			local canplace = (name == "air") or (name == "default:water_flowing")
+			if canplace then
 				minetest.swap_node(npos, {name="default:water_source"})
+			end
+			if (not finitemode) or canplace then
 				taken = taken + 1
+				currentpressure = currentpressure - 1
 			end
 		end
 		return taken
