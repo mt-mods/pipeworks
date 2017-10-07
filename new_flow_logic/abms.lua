@@ -93,15 +93,13 @@ flowlogic.run = function(pos, node)
 	currentpressure = flowlogic.balance_pressure(pos, node, currentpressure)
 
 	-- if node is an output: run output phase
-	local output = pipeworks.flowables.outputs.list[nodename]
-	if output then
+	local outputdef = pipeworks.flowables.outputs.list[nodename]
+	if outputdef then
 		currentpressure = flowlogic.run_output(
 			pos,
 			node,
 			currentpressure,
-			output.upper,
-			output.lower,
-			output.outputfn)
+			outputdef)
 	end
 
 	-- set the new pressure
@@ -204,15 +202,17 @@ end
 
 
 
-flowlogic.run_output = function(pos, node, currentpressure, upper, lower, outputfn)
+flowlogic.run_output = function(pos, node, currentpressure, outputdef)
 	-- processing step for water output devices.
 	-- takes care of checking a minimum pressure value and updating the resulting pressure level
 	-- the outputfn is provided the current pressure and returns the pressure "taken".
 	-- as an example, using this with the above spigot function,
 	-- the spigot function tries to output a water source if it will fit in the world.
+	local upper = outputdef.upper
+	local lower = outputdef.lower
 	local result = currentpressure
 	if currentpressure > lower then
-		local takenpressure = outputfn(pos, node, currentpressure)
+		local takenpressure = outputdef.outputfn(pos, node, currentpressure)
 		local newpressure = currentpressure - takenpressure
 		if newpressure < 0 then newpressure = 0 end
 		result = newpressure
