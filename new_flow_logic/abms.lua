@@ -53,6 +53,18 @@ flowlogic.check_for_liquids_v2 = check_for_liquids_v2
 
 
 local label_pressure = "pipeworks.water_pressure"
+local get_pressure_access = function(pos)
+	local metaref = minetest.get_meta(pos)
+	return {
+		get = function()
+			return metaref:get_float(label_pressure)
+		end,
+		set = function(v)
+			metaref:set_float(label_pressure, v)
+		end
+	}
+end
+
 flowlogic.balance_pressure = function(pos, node)
 	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
 	-- check the pressure of all nearby nodes, and average it out.
@@ -60,22 +72,23 @@ flowlogic.balance_pressure = function(pos, node)
 	-- XXX: maybe this could be used to add fluid behaviour to other mod's nodes too?
 
 	-- unconditionally include self in nodes to average over
-	local meta = minetest.get_meta(pos)
-	local currentpressure = meta:get_float(label_pressure)
-	local connections = { meta }
+	local pressure = get_pressure_access(pos)
+	local currentpressure = pressure.get()
+	-- pressure handles to average over
+	local connections = { pressure }
 	local totalv = currentpressure
 	local totalc = 1
 
 	-- then handle neighbours, but if not a pressure node don't consider them at all
 	for _, npos in ipairs(make_coords_offsets(pos, false)) do
 		local nodename = minetest.get_node(npos).name
-		local neighbour = minetest.get_meta(npos)
 		-- for now, just check if it's in the simple table.
 		-- TODO: the "can flow from" logic in flowable_node_registry.lua
 		local haspressure = (pipeworks.flowables.list.simple[nodename])
 		if haspressure then
+			local neighbour = get_pressure_access(npos)
 			--pipeworks.logger("balance_pressure @ "..formatvec(pos).." "..nodename.." "..formatvec(npos).." added to neighbour set")
-			local n = neighbour:get_float(label_pressure)
+			local n = neighbour.get()
 			table.insert(connections, neighbour)
 			totalv = totalv + n
 			totalc = totalc + 1
@@ -83,8 +96,8 @@ flowlogic.balance_pressure = function(pos, node)
 	end
 
 	local average = totalv / totalc
-	for _, targetmeta in ipairs(connections) do
-		targetmeta:set_float(label_pressure, average)
+	for _, target in ipairs(connections) do
+		target.set(average)
 	end
 end
 
