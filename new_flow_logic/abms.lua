@@ -131,6 +131,21 @@ flowlogic.helpers.make_neighbour_output_fixed = function(neighbours)
 	end
 end
 
+-- complementary function to the above when using non-finite mode:
+-- removes water sources from neighbor positions when the output is "off" due to lack of pressure.
+flowlogic.helpers.make_neighbour_cleanup_fixed = function(neighbours)
+	return function(pos, node, currentpressure)
+		-- FIXME - this would indiscriminately take blocks while under-pressure, not just one time?
+		for _, offset in pairs(neighbours) do
+			local npos = vector.add(pos, offset)
+			local name = minetest.get_node(npos).name
+			if (name == "default:water_source") then
+				minetest.remove_node(pos)
+			end
+		end
+	end
+end
+
 
 
 flowlogic.run_output = function(pos, node, threshold, outputfn)
