@@ -1,0 +1,11 @@
+-- Directionality code
+Currently, only "simple" flowable nodes exist, and they will always equalise pressure with all six neighbours.
+A more sophisticated  behaviour for this would be flowable node registration with some kind of custom callback, such that water can only flow into or out of these nodes in certain directions.
+This would enable devices such as the airtight panels, sensor tubes and valves to have correct flow behaviour.
+
+-- ABM ordering for event-driven "dropped below threshold" events
+For the non-finite liquid mode, cleanup handlers are invoked continuously while pressure is below a certain amount.
+This could potentially mean that a below-pressure output node such as a spigot could potentially keep deleting the water source node beneath it, even when one is placed there afterwards by a player say.
+Furthermore, attempting to fix this with a "previous pressure" metadata variable is of little use, as the output code is current run in a separate ABM - so the correct sequencing of events cannot be guaranteed.
+Therefore, the current code needs revising such that a node's output (or input) handlers are invoked from the main flow logic ABM, in order to ensure correct ordering.
+This would also allow the code to compare old and new pressure, and invoke the cleanup handler *only once* if the pressure has dropped from above to below the threshold, and not continuously.
