@@ -50,6 +50,7 @@ register.balance = register_abm_balance
 -- register a node for the input ABM.
 -- intakefn is run on the node to determine how much water can be taken (and update it's environment accordingly).
 -- maxpressure is the maximum pressure that this input can drive, beyond which pressure will not be raised.
+--[[
 local register_abm_input = function(nodename, maxpressure, intakefn)
 	minetest.register_abm({
 		nodenames = { nodename },
@@ -61,6 +62,7 @@ local register_abm_input = function(nodename, maxpressure, intakefn)
 	})
 end
 register.input = register_abm_input
+]]
 
 -- register a node for the output ABM.
 -- threshold determines the minimum pressure, over which outputfn is called.

@@ -62,10 +62,6 @@ register.intake = function(nodename, maxpressure, intakefn)
 	checkbase(nodename)
 	if list[nodename] then duplicateerr("pipeworks.flowables.inputs", nodename) end
 	list[nodename] = { maxpressure=maxpressure, intakefn=intakefn }
-	table.insert(pipeworks.flowables.inputs.nodenames, nodename)
-	if pipeworks.toggles.pressure_logic then
-		abmregister.input(nodename, maxpressure, intakefn)
-	end
 	regwarning("intake", nodename)
 end
 

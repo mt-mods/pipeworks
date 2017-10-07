@@ -66,12 +66,28 @@ local get_pressure_access = function(pos)
 end
 
 
+-- logging is unreliable when something is crashing...
+local nilexplode = function(caller, label, value)
+	if value == nil then
+		error(caller..": "..label.." was nil")
+	end
+end
+
+
 
 flowlogic.run = function(pos, node)
 	local nodename = node.name
 	-- get the current pressure value.
 	local nodepressure = get_pressure_access(pos)
 	local currentpressure = nodepressure.get()
+
+	-- if node is an input: run intake phase
+	local inputdef = pipeworks.flowables.inputs.list[nodename]
+	if inputdef then
+		currentpressure = flowlogic.run_input(pos, node, currentpressure, inputdef)
+		--debuglog("post-intake currentpressure is "..currentpressure)
+		--nilexplode("run()", "currentpressure", currentpressure)
+	end
 
 	-- balance pressure with neighbours
 	currentpressure = flowlogic.balance_pressure(pos, node, currentpressure)
@@ -131,23 +147,22 @@ end
 
 
 
-flowlogic.run_input = function(pos, node, maxpressure, intakefn)
+flowlogic.run_input = function(pos, node, currentpressure, inputdef)
 	-- intakefn allows a given input node to define it's own intake logic.
 	-- this function will calculate the maximum amount of water that can be taken in;
 	-- the intakefn will be given this and is expected to return the actual absorption amount.
 
-	local meta = minetest.get_meta(pos)
-	local currentpressure = meta:get_float(label_pressure)
+	local maxpressure = inputdef.maxpressure
 	local intake_limit = maxpressure - currentpressure
-	if intake_limit <= 0 then return end
+	if intake_limit <= 0 then return currentpressure end
 
-	local actual_intake = intakefn(pos, intake_limit)
+	local actual_intake = inputdef.intakefn(pos, intake_limit)
 	--pipeworks.logger("run_input@"..formatvec(pos).." oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake)
-	if actual_intake <= 0 then return end
+	if actual_intake <= 0 then return currentpressure end
 
 	local newpressure = actual_intake + currentpressure
-	-- debuglog("oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
-	meta:set_float(label_pressure, newpressure)
+	--debuglog("run_input() end, oldpressure "..currentpressure.." intake_limit "..intake_limit.." actual_intake "..actual_intake.." newpressure "..newpressure)
+	return newpressure
 end
 
 
