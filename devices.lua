@@ -376,10 +376,11 @@ minetest.register_node(nodename_spigot_loaded, {
 -- register both so existing flowing spigots continue to work (even if the visual doesn't match the spigot's behaviour).
 new_flow_logic_register.simple(nodename_spigot_empty)
 new_flow_logic_register.simple(nodename_spigot_loaded)
-local spigot_min = 1
+local spigot_upper = 1.5
+local spigot_lower = 1.0
 local spigot_neighbours={{x=0, y=-1, z=0}}
-new_flow_logic_register.output_simple(nodename_spigot_empty, spigot_min, spigot_neighbours)
-new_flow_logic_register.output_simple(nodename_spigot_loaded, spigot_min, spigot_neighbours)
+new_flow_logic_register.output_simple(nodename_spigot_empty, spigot_upper, spigot_lower, spigot_neighbours)
+new_flow_logic_register.output_simple(nodename_spigot_loaded, spigot_upper, spigot_lower, spigot_neighbours)
 
 
 
@@ -669,10 +670,11 @@ minetest.register_node(nodename_fountain_loaded, {
 })
 new_flow_logic_register.simple(nodename_fountain_empty)
 new_flow_logic_register.simple(nodename_fountain_loaded)
-local fountain_min = 1
+local fountain_upper = 1.5
+local fountain_lower = 1.0
 local fountain_neighbours={{x=0, y=1, z=0}}
-new_flow_logic_register.output_simple(nodename_fountain_empty, fountain_min, fountain_neighbours)
-new_flow_logic_register.output_simple(nodename_fountain_loaded, fountain_min, fountain_neighbours)
+new_flow_logic_register.output_simple(nodename_fountain_empty, fountain_upper, fountain_lower, fountain_neighbours)
+new_flow_logic_register.output_simple(nodename_fountain_loaded, fountain_upper, fountain_lower, fountain_neighbours)
 
 
 

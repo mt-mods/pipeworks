@@ -62,12 +62,19 @@ end
 
 -- Register a node as an output.
 -- Expects node to already be a flowable.
--- threshold and outputfn are currently as documented for register_abm_output() in abm_register.lua.
-register.output = function(nodename, threshold, outputfn)
+-- upper and lower thresholds have different meanings depending on whether finite liquid mode is in effect.
+-- if not (the default unless auto-detected),
+-- nodes above their upper threshold have their outputfn invoked (and pressure deducted),
+-- nodes between upper and lower are left idle,
+-- and nodes below lower have their cleanup fn invoked (to say remove water sources).
+-- the upper and lower difference acts as a hysteresis to try and avoid "gaps" in the flow.
+-- if finite mode is on, upper is ignored and lower is used to determine whether to run outputfn;
+-- cleanupfn is ignored in this mode as finite mode assumes something causes water to move itself.
+register.output = function(nodename, upper, lower, outputfn)
 	checkbase(nodename)
 	pipeworks.flowables.outputs.list[nodename] = { threshold=threshold, outputfn=outputfn }
 	if pipeworks.toggles.pressure_logic then
-		abmregister.output(nodename, threshold, outputfn)
+		abmregister.output(nodename, lower, outputfn)
 	end
 	regwarning("output node", nodename)
 end
@@ -77,7 +84,8 @@ end
 -- which tries to place water nodes around it.
 -- possibly this could be given a helper function to determine which faces a node should try,
 -- to allow things like rotation or other param values determining "direction" to be respected.
-register.output_simple = function(nodename, threshold, neighbours)
+-- for meanings of upper and lower, see register.output() above.
+register.output_simple = function(nodename, upper, lower, neighbours)
 	local outputfn = pipeworks.flowlogic.helpers.make_neighbour_output_fixed(neighbours)
-	register.output(nodename, threshold, outputfn)
+	register.output(nodename, upper, lower, outputfn)
 end
