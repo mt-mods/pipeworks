@@ -3,15 +3,13 @@ Currently, only "simple" flowable nodes exist, and they will always equalise pre
 A more sophisticated  behaviour for this would be flowable node registration with some kind of custom callback, such that water can only flow into or out of these nodes in certain directions.
 This would enable devices such as the airtight panels, sensor tubes and valves to have correct flow behaviour.
 
--- ABM ordering for event-driven "dropped below threshold" events
-For the non-finite liquid mode, cleanup handlers are invoked continuously while pressure is below a certain amount.
-This could potentially mean that a below-pressure output node such as a spigot could potentially keep deleting the water source node beneath it, even when one is placed there afterwards by a player say.
-Furthermore, attempting to fix this with a "previous pressure" metadata variable is of little use, as the output code is current run in a separate ABM - so the correct sequencing of events cannot be guaranteed.
-Therefore, the current code needs revising such that a node's output (or input) handlers are invoked from the main flow logic ABM, in order to ensure correct ordering.
-This would also allow the code to compare old and new pressure, and invoke the cleanup handler *only once* if the pressure has dropped from above to below the threshold, and not continuously.
+-- Implement clean-up functionality for output nodes in non-finite mode
+register.output() needs to be equipped with an extra "cleanerfn" argument, which is saved into the node's output table entry.
+When the pressure level falls below the lower level in non-finite mode, this function would be called by run_output() to e.g. remove a created water source.
+Additionally, the outputfn needs to be equipped with a flag to convey the finite mode, so that in non-finite mode the outputfn will drain pressure continuously until the pressure falls below the threshold.
 
 -- Automated switching between node variants based on pressure thresholds
-When the ABM ordering is complete, an additional callback which would be useful is a "node changer" callback, to switch between variations of a pipe depending on pressure level.
+Within flowlogic.run(), an additional hook which would be useful is a "node changer" callback, to switch between variations of a pipe depending on pressure level.
 For regular pipes, this is mostly aesthetic, as the empty/loaded variants of the pipes have different texures.
 However, the flow sensor is currently a broken device under the new flow logic, as there is nothing to switch this device between the "on" and "off" state - in order to produce a mesecons output, separate nodes are required due to mesecon's API being limited to only on/off for a given node, with no facility for a callback function which could e.g. inspect pressure metadata.
 To make this work, a new registry table would be needed to check if a flowable node has this property.
