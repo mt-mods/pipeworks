@@ -173,7 +173,7 @@ end
 -- this is a constructor function, returning another function which satisfies the output helper requirements.
 -- note that this does *not* take rotation into account.
 flowlogic.helpers.make_neighbour_output_fixed = function(neighbours)
-	return function(pos, node, currentpressure)
+	return function(pos, node, currentpressure, finitemode)
 		local taken = 0
 		for _, offset in pairs(neighbours) do
 			local npos = vector.add(pos, offset)
@@ -214,7 +214,7 @@ flowlogic.run_output = function(pos, node, currentpressure, outputdef, finitemod
 	local lower = outputdef.lower
 	local result = currentpressure
 	if currentpressure > lower then
-		local takenpressure = outputdef.outputfn(pos, node, currentpressure)
+		local takenpressure = outputdef.outputfn(pos, node, currentpressure, finitemode)
 		local newpressure = currentpressure - takenpressure
 		if newpressure < 0 then newpressure = 0 end
 		result = newpressure
