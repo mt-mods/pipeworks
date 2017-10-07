@@ -9,3 +9,10 @@ This could potentially mean that a below-pressure output node such as a spigot c
 Furthermore, attempting to fix this with a "previous pressure" metadata variable is of little use, as the output code is current run in a separate ABM - so the correct sequencing of events cannot be guaranteed.
 Therefore, the current code needs revising such that a node's output (or input) handlers are invoked from the main flow logic ABM, in order to ensure correct ordering.
 This would also allow the code to compare old and new pressure, and invoke the cleanup handler *only once* if the pressure has dropped from above to below the threshold, and not continuously.
+
+-- Automated switching between node variants based on pressure thresholds
+When the ABM ordering is complete, an additional callback which would be useful is a "node changer" callback, to switch between variations of a pipe depending on pressure level.
+For regular pipes, this is mostly aesthetic, as the empty/loaded variants of the pipes have different texures.
+However, the flow sensor is currently a broken device under the new flow logic, as there is nothing to switch this device between the "on" and "off" state - in order to produce a mesecons output, separate nodes are required due to mesecon's API being limited to only on/off for a given node, with no facility for a callback function which could e.g. inspect pressure metadata.
+To make this work, a new registry table would be needed to check if a flowable node has this property.
+In terms of ordering, this callback should be run after outputs have been processed.
