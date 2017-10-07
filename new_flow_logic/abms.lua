@@ -75,6 +75,7 @@ end
 
 
 
+local finitemode = pipeworks.toggles.finite_water
 flowlogic.run = function(pos, node)
 	local nodename = node.name
 	-- get the current pressure value.
@@ -99,7 +100,8 @@ flowlogic.run = function(pos, node)
 			pos,
 			node,
 			currentpressure,
-			outputdef)
+			outputdef,
+			finitemode)
 	end
 
 	-- set the new pressure
@@ -202,7 +204,7 @@ end
 
 
 
-flowlogic.run_output = function(pos, node, currentpressure, outputdef)
+flowlogic.run_output = function(pos, node, currentpressure, outputdef, finitemode)
 	-- processing step for water output devices.
 	-- takes care of checking a minimum pressure value and updating the resulting pressure level
 	-- the outputfn is provided the current pressure and returns the pressure "taken".
