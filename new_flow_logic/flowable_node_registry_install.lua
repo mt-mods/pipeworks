@@ -147,8 +147,11 @@ local simple_transitions = pipeworks.flowables.transitions.simple
 
 register.transition_simple_set = function(nodeset)
 	local set = {}
-	for nodename, value in pairs(nodeset) do
-		if type(nodename) ~= "string" then simpleseterror("nodename key "..tostring(nodename).."was not a string!") end
+	for index, element in ipairs(nodeset) do
+		if type(element) ~= "table" then simpleseterror("element "..tostring(index).." in nodeset was not table!") end
+		local nodename = element[1]
+		local value = element[2]
+		if type(nodename) ~= "string" then simpleseterror("nodename "..tostring(nodename).."was not a string!") end
 		if type(value) ~= "number" then simpleseterror("pressure value "..tostring(value).."was not a number!") end
 		insert_transition_base(nodename)
 		if simple_transitions[nodename] then duplicateerr("simple transition set", nodename) end
@@ -159,7 +162,7 @@ register.transition_simple_set = function(nodeset)
 
 	-- sort pressure values, smallest first
 	local smallest_first = function(a, b)
-		return a.value < b.value
+		return a.threshold < b.threshold
 	end
 	table.sort(set, smallest_first)
 
