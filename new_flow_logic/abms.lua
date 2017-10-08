@@ -29,7 +29,7 @@ end
 
 
 
---local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
+local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
 
 -- new version of liquid check
 -- accepts a limit parameter to only delete water blocks that the receptacle can accept,
@@ -104,6 +104,13 @@ flowlogic.run = function(pos, node)
 			oldpressure,
 			outputdef,
 			finitemode)
+	end
+
+	-- if node has pressure transitions: determine new node
+	if pipeworks.flowables.transitions.list[nodename] then
+		local newnode = flowlogic.run_transition(node, currentpressure)
+		--pipeworks.logger("flowlogic.run()@"..formatvec(pos).." transition, new node name = "..dump(newnode).." pressure "..tostring(currentpressure))
+		minetest.swap_node(pos, newnode)
 	end
 
 	-- set the new pressure
@@ -238,5 +245,47 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 		--pipeworks.logger("flowlogic.run_output() invoking cleanup currentpressure="..tostring(currentpressure))
 		outputdef.cleanupfn(pos, node, currentpressure)
 	end
+	return result
+end
+
+
+
+-- determine which node to switch to based on current pressure
+flowlogic.run_transition = function(node, currentpressure)
+	local simplesetdef = pipeworks.flowables.transitions.simple[node.name]
+	local result = node
+	local found = false
+
+	-- simple transition sets: assumes all nodes in the set share param values.
+	if simplesetdef then
+		-- assumes that the set has been checked to contain at least one element...
+		local nodename_prev = simplesetdef[1].nodename
+		local result_nodename = node.name
+
+		for index, element in ipairs(simplesetdef) do
+			-- find the highest element that is below the current pressure.
+			local threshold = element.threshold
+			if threshold > currentpressure then
+				result_nodename = nodename_prev
+				found = true
+				break
+			end
+			nodename_prev = element.nodename
+		end
+
+		-- use last element if no threshold is greater than current pressure
+		if not found then
+			result_nodename = nodename_prev
+			found = true
+		end
+
+		-- preserve param1/param2 values
+		result = { name=result_nodename, param1=node.param1, param2=node.param2 }
+	end
+
+	if not found then
+		pipeworks.logger("flowlogic.run_transition() BUG no transition definitions found! nodename="..nodename.." currentpressure="..tostring(currentpressure))
+	end
+
 	return result
 end
