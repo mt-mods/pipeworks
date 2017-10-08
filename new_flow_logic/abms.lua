@@ -111,6 +111,7 @@ flowlogic.run = function(pos, node)
 		local newnode = flowlogic.run_transition(node, currentpressure)
 		--pipeworks.logger("flowlogic.run()@"..formatvec(pos).." transition, new node name = "..dump(newnode).." pressure "..tostring(currentpressure))
 		minetest.swap_node(pos, newnode)
+		flowlogic.run_transition_post(pos, newnode)
 	end
 
 	-- set the new pressure
@@ -288,4 +289,27 @@ flowlogic.run_transition = function(node, currentpressure)
 	end
 
 	return result
+end
+
+-- post-update hook for run_transition
+-- among other things, updates mesecons if present.
+-- node here means the new node, returned from run_transition() above
+flowlogic.run_transition_post = function(pos, node)
+	local mesecons_def = minetest.registered_nodes[node.name].mesecons
+	local mesecons_rules = pipeworks.flowables.transitions.mesecons[node.name]
+	if minetest.global_exists("mesecon") and (mesecons_def ~= nil) and mesecons_rules then
+		if type(mesecons_def) ~= "table" then
+			pipeworks.logger("flowlogic.run_transition_post() BUG mesecons def for "..node.name.."not a table: got "..tostring(mesecons_def))
+		else
+			local receptor = mesecons_def.receptor
+			if receptor then
+				local state = receptor.state
+				if state == mesecon.state.on then
+					mesecon.receptor_on(pos, mesecons_rules)
+				elseif state == mesecon.state.off then
+					mesecon.receptor_off(pos, mesecons_rules)
+				end
+			end
+		end
+	end
 end

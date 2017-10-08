@@ -145,8 +145,9 @@ local simpleseterror = function(msg)
 end
 local simple_transitions = pipeworks.flowables.transitions.simple
 
-register.transition_simple_set = function(nodeset)
+register.transition_simple_set = function(nodeset, extras)
 	local set = {}
+	if extras == nil then extras = {} end
 
 	local length = #nodeset
 	if length < 2 then simpleseterror("nodeset needs at least two elements!") end
@@ -174,5 +175,14 @@ register.transition_simple_set = function(nodeset)
 	for _, element in ipairs(set) do
 		--pipeworks.logger("register.transition_simple_set() after sort: nodename "..element.nodename.." value "..tostring(element.threshold))
 		simple_transitions[element.nodename] = set
+	end
+
+	-- handle extra options
+	-- if mesecons rules table was passed, set for each node
+	if extras.mesecons then
+		local mesecons_rules = pipeworks.flowables.transitions.mesecons
+		for _, element in ipairs(set) do
+			mesecons_rules[element.nodename] = extras.mesecons
+		end
 	end
 end

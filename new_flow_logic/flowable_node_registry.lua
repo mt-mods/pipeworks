@@ -32,6 +32,7 @@ pipeworks.flowables.outputs.list = {}
 pipeworks.flowables.transitions = {}
 pipeworks.flowables.transitions.list = {}	-- master list
 pipeworks.flowables.transitions.simple = {}	-- nodes that change based purely on pressure
+pipeworks.flowables.transitions.mesecons = {}	-- table of mesecons rules to apply on transition
 
 
 
