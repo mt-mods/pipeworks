@@ -3,10 +3,11 @@ Currently, only "simple" flowable nodes exist, and they will always equalise pre
 A more sophisticated  behaviour for this would be flowable node registration with some kind of custom callback, such that water can only flow into or out of these nodes in certain directions.
 This would enable devices such as the airtight panels, sensor tubes and valves to have correct flow behaviour.
 
--- Implement clean-up functionality for output nodes in non-finite mode
-register.output() needs to be equipped with an extra "cleanerfn" argument, which is saved into the node's output table entry.
-When the pressure level falls below the lower level in non-finite mode, this function would be called by run_output() to e.g. remove a created water source.
-Additionally, the outputfn needs to be equipped with a flag to convey the finite mode, so that in non-finite mode the outputfn will drain pressure continuously until the pressure falls below the threshold.
+-- (may not be possible) stop removing water nodes that were not placed by outputs when off
+In non-finite mode, spigots and fountainheads will vanish water sources in their output positions, even if those output nodes did not place them there.
+This is annoying though not game-breaking in non-finite mode, where water sources can at least be easily replenished.
+Fixing this would require some kind of metadata marker on water nodes placed by spigots and fountains, such that only water sources placed while the device is "on" are removed when it is "off".
+It is debateable whether existing water sources should be marked for removal when the device turns on again.
 
 -- Automated switching between node variants based on pressure thresholds
 Within flowlogic.run(), an additional hook which would be useful is a "node changer" callback, to switch between variations of a pipe depending on pressure level.
