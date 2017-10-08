@@ -1,6 +1,18 @@
 Changelog
 ---------
 
+2017-10-08 (thetaepsilon)
+A lot more of the new flow logic work.
+There are two sub-modes of this now,  non-finite and finite mode.
+Non-finite mode most closely resembles "classic mode", whereas finite mode is more intended for use with mods such as dynamic_liquids which enable water sources to move themselves.
+Everything that was functional in classic mode more or less works correctly now.
+Still TODO:
++ Flow directionality - things like flow sensors and airtight panels will flow in directions that don't make sense from their visuals.
+Possible feature requests:
++ Making tanks and gratings do something useful.
+
+
+
 2017-09-27 (thetaepsilon)
 Start of new flow logic re-implementation.
 This mode is current *very* incomplete, and requires a per-world setting to enable.
