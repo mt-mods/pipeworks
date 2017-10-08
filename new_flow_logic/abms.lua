@@ -202,12 +202,13 @@ end
 -- removes water sources from neighbor positions when the output is "off" due to lack of pressure.
 flowlogic.helpers.make_neighbour_cleanup_fixed = function(neighbours)
 	return function(pos, node, currentpressure)
-		-- FIXME - this would indiscriminately take blocks while under-pressure, not just one time?
+		--pipeworks.logger("neighbour_cleanup_fixed@"..formatvec(pos))
 		for _, offset in pairs(neighbours) do
 			local npos = vector.add(pos, offset)
 			local name = minetest.get_node(npos).name
 			if (name == "default:water_source") then
-				minetest.remove_node(pos)
+				--pipeworks.logger("neighbour_cleanup_fixed removing "..formatvec(npos))
+				minetest.remove_node(npos)
 			end
 		end
 	end
@@ -221,6 +222,7 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 	-- the outputfn is provided the current pressure and returns the pressure "taken".
 	-- as an example, using this with the above spigot function,
 	-- the spigot function tries to output a water source if it will fit in the world.
+	--pipeworks.logger("flowlogic.run_output() pos "..formatvec(pos).." old -> currentpressure "..tostring(oldpressure).." "..tostring(currentpressure).." finitemode "..tostring(finitemode))
 	local upper = outputdef.upper
 	local lower = outputdef.lower
 	local result = currentpressure
@@ -232,7 +234,8 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 		if newpressure < 0 then newpressure = 0 end
 		result = newpressure
 	end
-	if (not finitemode) and (currentpressure < lower) and (oldpressure > lower) then
+	if (not finitemode) and (currentpressure < lower) and (oldpressure < lower) then
+		--pipeworks.logger("flowlogic.run_output() invoking cleanup currentpressure="..tostring(currentpressure))
 		outputdef.cleanupfn(pos, node, currentpressure)
 	end
 	return result
