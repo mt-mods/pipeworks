@@ -8,10 +8,3 @@ In non-finite mode, spigots and fountainheads will vanish water sources in their
 This is annoying though not game-breaking in non-finite mode, where water sources can at least be easily replenished.
 Fixing this would require some kind of metadata marker on water nodes placed by spigots and fountains, such that only water sources placed while the device is "on" are removed when it is "off".
 It is debateable whether existing water sources should be marked for removal when the device turns on again.
-
--- Automated switching between node variants based on pressure thresholds
-Within flowlogic.run(), an additional hook which would be useful is a "node changer" callback, to switch between variations of a pipe depending on pressure level.
-For regular pipes, this is mostly aesthetic, as the empty/loaded variants of the pipes have different texures.
-However, the flow sensor is currently a broken device under the new flow logic, as there is nothing to switch this device between the "on" and "off" state - in order to produce a mesecons output, separate nodes are required due to mesecon's API being limited to only on/off for a given node, with no facility for a callback function which could e.g. inspect pressure metadata.
-To make this work, a new registry table would be needed to check if a flowable node has this property.
-In terms of ordering, this callback should be run after outputs have been processed.
