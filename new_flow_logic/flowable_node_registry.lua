@@ -27,6 +27,12 @@ pipeworks.flowables.outputs = {}
 pipeworks.flowables.outputs.list = {}
 -- not currently any nodenames arraylist for this one as it's not currently needed.
 
+-- nodes with registered node transitions
+-- nodes will be switched depending on pressure level
+pipeworks.flowables.transitions = {}
+pipeworks.flowables.transitions.list = {}	-- master list
+pipeworks.flowables.transitions.simple = {}	-- nodes that change based purely on pressure
+
 
 
 -- checks if a given node can flow in a given direction.

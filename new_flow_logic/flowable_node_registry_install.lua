@@ -120,3 +120,53 @@ register.output_simple = function(nodename, upper, lower, neighbours)
 	local cleanupfn = pipeworks.flowlogic.helpers.make_neighbour_cleanup_fixed(neighbours)
 	register.output(nodename, upper, lower, outputfn, cleanupfn)
 end
+
+
+
+-- common base checking for transition nodes
+-- ensures the node has only been registered once as a transition.
+local transition_list = pipeworks.flowables.transitions.list
+local insert_transition_base = function(nodename)
+	checkbase(nodename)
+	if transition_list[nodename] then duplicateerr("base transition", nodename) end
+	transition_list[nodename] = true
+end
+
+
+
+-- register a simple transition set.
+-- expects a table with nodenames as keys and threshold pressures as values.
+-- internally, the table is sorted by value, and when one of these nodes needs to transition,
+-- the table is searched starting from the lowest (even if it's value is non-zero),
+-- until a value is found which is higher than or equal to the current node pressure.
+-- ex. nodeset = { ["mod:level_0"] = 0, ["mod:level_1"] = 1, --[[ ... ]] }
+local simpleseterror = function(msg)
+	error("register.transition_simple_set(): "..msg)
+end
+local simple_transitions = pipeworks.flowables.transitions.simple
+
+register.transition_simple_set = function(nodeset)
+	local set = {}
+	for nodename, value in pairs(nodeset) do
+		if type(nodename) ~= "string" then simpleseterror("nodename key "..tostring(nodename).."was not a string!") end
+		if type(value) ~= "number" then simpleseterror("pressure value "..tostring(value).."was not a number!") end
+		insert_transition_base(nodename)
+		if simple_transitions[nodename] then duplicateerr("simple transition set", nodename) end
+		-- assigning set to table is done separately below
+
+		table.insert(set, { nodename=nodename, threshold=value })
+	end
+
+	-- sort pressure values, smallest first
+	local smallest_first = function(a, b)
+		return a.value < b.value
+	end
+	table.sort(set, smallest_first)
+
+	-- individual registration of each node, all sharing this set,
+	-- so each node in the set will transition to the correct target node.
+	for _, element in ipairs(set) do
+		--pipeworks.logger("register.transition_simple_set() after sort: nodename "..element.nodename.." value "..tostring(element.threshold))
+		simple_transitions[element.nodename] = set
+	end
+end
