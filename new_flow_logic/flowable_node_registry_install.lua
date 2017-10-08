@@ -147,6 +147,9 @@ local simple_transitions = pipeworks.flowables.transitions.simple
 
 register.transition_simple_set = function(nodeset)
 	local set = {}
+
+	local length = #nodeset
+	if length < 2 then simpleseterror("nodeset needs at least two elements!") end
 	for index, element in ipairs(nodeset) do
 		if type(element) ~= "table" then simpleseterror("element "..tostring(index).." in nodeset was not table!") end
 		local nodename = element[1]
