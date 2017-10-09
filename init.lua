@@ -17,14 +17,16 @@ dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
 
 
+-- please add any new feature toggles to be a flag in this table...
+pipeworks.toggles = {}
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
 local worldsettingsfile = io.open(worldsettingspath, "r")
 if worldsettingsfile then
 	worldsettingsfile:close()
 	dofile(worldsettingspath)
 end
-if pipeworks.enable_new_flow_logic then
-	minetest.log("warning", "pipeworks new_flow_logic is WIP and incomplete!")
+if pipeworks.toggles.pressure_logic then
+	minetest.log("warning", "pipeworks pressure-based logic is WIP and incomplete!")
 end
 
 -- Random variables
@@ -94,8 +96,17 @@ function pipeworks.replace_name(tbl,tr,name)
 	return ntbl
 end
 
+pipeworks.logger = function(msg)
+	print("[pipeworks] "..msg)
+end
+
 -------------------------------------------
 -- Load the various other parts of the mod
+
+-- early auto-detection for finite water mode if not explicitly disabled
+if pipeworks.toggles.finite_water == nil then
+	dofile(pipeworks.modpath.."/autodetect-finite-water.lua")
+end
 
 dofile(pipeworks.modpath.."/common.lua")
 dofile(pipeworks.modpath.."/models.lua")
@@ -115,14 +126,19 @@ dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 
+local logicdir = "/new_flow_logic/"
+
+-- note that even with these files the new flow logic is not yet default.
+-- registration will take place but no actual ABMs/node logic will be installed,
+-- unless the toggle flag is specifically enabled in the per-world settings flag.
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
+dofile(pipeworks.modpath..logicdir.."abms.lua")
+dofile(pipeworks.modpath..logicdir.."abm_register.lua")
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
+
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
--- individual enable flags also checked in register_flow_logic.lua
-if pipeworks.enable_new_flow_logic then
-	dofile(pipeworks.modpath.."/new_flow_logic.lua")
-	dofile(pipeworks.modpath.."/register_flow_logic.lua")
-end
 
 if pipeworks.enable_redefines then
 	dofile(pipeworks.modpath.."/compat-chests.lua")

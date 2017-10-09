@@ -1,0 +1,10 @@
+-- Directionality code
+Currently, only "simple" flowable nodes exist, and they will always equalise pressure with all six neighbours.
+A more sophisticated  behaviour for this would be flowable node registration with some kind of custom callback, such that water can only flow into or out of these nodes in certain directions.
+This would enable devices such as the airtight panels, sensor tubes and valves to have correct flow behaviour.
+
+-- (may not be possible) stop removing water nodes that were not placed by outputs when off
+In non-finite mode, spigots and fountainheads will vanish water sources in their output positions, even if those output nodes did not place them there.
+This is annoying though not game-breaking in non-finite mode, where water sources can at least be easily replenished.
+Fixing this would require some kind of metadata marker on water nodes placed by spigots and fountains, such that only water sources placed while the device is "on" are removed when it is "off".
+It is debateable whether existing water sources should be marked for removal when the device turns on again.
