@@ -20,8 +20,16 @@ local function set_wielder_formspec(data, meta)
 end
 
 local can_tool_dig_node = function(nodename, toolcaps, toolname)
-	pipeworks.logger("can_tool_dig_node() STUB nodename="..tostring(nodename).." toolname="..tostring(toolname).." toolcaps: "..dump(toolcaps))
-	return true
+	--pipeworks.logger("can_tool_dig_node() STUB nodename="..tostring(nodename).." toolname="..tostring(toolname).." toolcaps: "..dump(toolcaps))
+	-- brief documentation of minetest.get_dig_params() as it's not yet documented in lua_api.txt:
+	-- takes two arguments, a node's block groups and a tool's capabilities,
+	-- both as they appear in their respective definitions.
+	-- returns a table with the following fields:
+	-- diggable: boolean, can this tool dig this node at all
+	-- time: float, time needed to dig with this tool
+	-- wear: int, number of wear points to inflict on the item
+	local nodegroups = minetest.registered_nodes[nodename].groups
+	return minetest.get_dig_params(nodegroups, toolcaps).diggable
 end
 
 local function wielder_on(data, wielder_pos, wielder_node)
@@ -368,6 +376,8 @@ if pipeworks.enable_node_breaker then
 				if can_tool_dig_node(under_node.name, wieldstack:get_tool_capabilities(), wieldstack:get_name()) then
 					on_dig(pointed_thing.under, under_node, virtplayer)
 					wieldstack = virtplayer:get_wielded_item()
+				else
+					--pipeworks.logger(dname.."couldn't dig node!")
 				end
 			end
 			local wieldname = wieldstack:get_name()
