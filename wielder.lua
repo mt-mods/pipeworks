@@ -29,7 +29,15 @@ local can_tool_dig_node = function(nodename, toolcaps, toolname)
 	-- time: float, time needed to dig with this tool
 	-- wear: int, number of wear points to inflict on the item
 	local nodegroups = minetest.registered_nodes[nodename].groups
-	return minetest.get_dig_params(nodegroups, toolcaps).diggable
+	local diggable = minetest.get_dig_params(nodegroups, toolcaps).diggable
+	if not diggable then
+		-- a pickaxe can't actually dig leaves based on it's groups alone,
+		-- but a player holding one can - the game seems to fall back to the hand.
+		-- fall back to checking the hand's properties if the tool isn't the correct one.
+		local hand_caps = minetest.registered_items[""].tool_capabilities
+		diggable = minetest.get_dig_params(nodegroups, hand_caps)
+	end
+	return diggable
 end
 
 local function wielder_on(data, wielder_pos, wielder_node)
