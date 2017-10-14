@@ -401,9 +401,9 @@ if pipeworks.enable_node_breaker then
 	minetest.register_craft({
 		output = "pipeworks:nodebreaker_off",
 		recipe = {
-			{ "group:wood",    "default:pick_mese", "group:wood"    },
+			{ "pipeworks:gear", "pipeworks:gear",   "pipeworks:gear"    },
 			{ "default:stone", "mesecons:piston",   "default:stone" },
-			{ "default:stone", "mesecons:mesecon",  "default:stone" },
+			{ "group:wood",    "mesecons:mesecon",  "group:wood" },
 		}
 	})
 	-- aliases for when someone had technic installed, but then uninstalled it but not pipeworks
