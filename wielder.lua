@@ -19,6 +19,11 @@ local function set_wielder_formspec(data, meta)
 	meta:set_string("infotext", data.description)
 end
 
+local can_tool_dig_node = function(nodename, toolcaps, toolname)
+	pipeworks.logger("can_tool_dig_node() STUB nodename="..tostring(nodename).." toolname="..tostring(toolname).." toolcaps: "..dump(toolcaps))
+	return true
+end
+
 local function wielder_on(data, wielder_pos, wielder_node)
 	data.fixup_node(wielder_pos, wielder_node)
 	if wielder_node.name ~= data.name_base.."_off" then return end
@@ -293,7 +298,7 @@ if pipeworks.enable_node_breaker then
 		wield_inv_height = 1,
 		can_dig_nonempty_wield_inv = true,
 		ghost_inv_name = "ghost_pick",
-		ghost_tool = "default:pick_mese",
+		ghost_tool = ":",	-- hand by default
 		fixup_node = function (pos, node)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
@@ -346,17 +351,24 @@ if pipeworks.enable_node_breaker then
 		masquerade_as_owner = true,
 		sneak = false,
 		act = function(virtplayer, pointed_thing)
+			--local dname = "nodebreaker.act() "
 			local wieldstack = virtplayer:get_wielded_item()
 			local oldwieldstack = ItemStack(wieldstack)
 			local on_use = (minetest.registered_items[wieldstack:get_name()] or {}).on_use
 			if on_use then
+				--pipeworks.logger(dname.."invoking on_use "..tostring(on_use))
 				wieldstack = on_use(wieldstack, virtplayer, pointed_thing) or wieldstack
 				virtplayer:set_wielded_item(wieldstack)
 			else
 				local under_node = minetest.get_node(pointed_thing.under)
 				local on_dig = (minetest.registered_nodes[under_node.name] or {on_dig=minetest.node_dig}).on_dig
-				on_dig(pointed_thing.under, under_node, virtplayer)
-				wieldstack = virtplayer:get_wielded_item()
+				-- check that the current tool is capable of destroying the target node.
+				-- if we can't, don't dig, and leave the wield stack unchanged.
+				-- note that wieldstack:get_tool_capabilities() returns hand properties if the item has none of it's own.
+				if can_tool_dig_node(under_node.name, wieldstack:get_tool_capabilities(), wieldstack:get_name()) then
+					on_dig(pointed_thing.under, under_node, virtplayer)
+					wieldstack = virtplayer:get_wielded_item()
+				end
 			end
 			local wieldname = wieldstack:get_name()
 			if wieldname == oldwieldstack:get_name() then
