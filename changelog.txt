@@ -1,6 +1,14 @@
 Changelog
 ---------
 
+2017-10-14 (thetaepsilon, VanessaE)
+Node breakers have been updated to not have a tool by default, and determine if the node that they are trying to break can be dug with the tool in it's inventory slot.
+The crafting recipe for the node breakers has been updated, using a new gear crafting item that requires iron instead of mese, which should be a more accessible cost in most cases.
+Existing node breakers in worlds will get their mese pick back if their slot is empty via LBM - the mese pick will show up in the inventory slot so you can reclaim your hard-earned mese crystals.
+Gear item texture and updated node breaker textures provided by VanessaE.
+
+
+
 2017-10-08 (thetaepsilon)
 A lot more of the new flow logic work.
 There are two sub-modes of this now,  non-finite and finite mode.
