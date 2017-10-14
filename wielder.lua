@@ -302,14 +302,17 @@ end
 
 if pipeworks.enable_node_breaker then
 	local data
+	-- see after end of data table for other use of these variables
+	local name_base = "pipeworks:nodebreaker"
+	local wield_inv_name = "pick"
 	data = {
-		name_base = "pipeworks:nodebreaker",
+		name_base = name_base,
 		description = "Node Breaker",
 		texture_base = "pipeworks_nodebreaker",
 		texture_stateful = { top = true, bottom = true, side2 = true, side1 = true, front = true },
 		tube_connect_sides = { top=1, bottom=1, left=1, right=1, back=1 },
 		tube_permit_anteroposterior_insert = false,
-		wield_inv_name = "pick",
+		wield_inv_name = wield_inv_name,
 		wield_inv_width = 1,
 		wield_inv_height = 1,
 		can_dig_nonempty_wield_inv = true,
@@ -421,6 +424,20 @@ if pipeworks.enable_node_breaker then
 	minetest.register_alias("technic:node_breaker_on", "pipeworks:nodebreaker_on")
 	-- turn legacy auto-tree-taps into node breakers
 	dofile(pipeworks.modpath.."/legacy.lua")
+
+	-- register LBM for transition to cheaper node breakers
+	local lbm_id = "pipeworks:refund_node_breaker_pick"
+	minetest.register_lbm({
+		name = lbm_id,
+		label = "Give back mese pick for pre-transition node breakers",
+		run_at_every_load = false,
+		nodenames = { name_base.."_on", name_base.."_off" },
+		action = function(pos, node)
+			pipeworks.logger(lbm_id.." entry, nodename="..node.name)
+			local invref = minetest.get_meta(pos):get_inventory()
+			invref:add_item(wield_inv_name, ItemStack("default:pick_mese"))
+		end
+	})
 end
 
 if pipeworks.enable_deployer then
