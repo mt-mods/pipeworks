@@ -131,8 +131,17 @@ flowlogic.balance_pressure = function(pos, node, currentpressure)
 	local totalv = currentpressure
 	local totalc = 1
 
+	-- get list of node neighbours.
+	-- if this node is directional and only flows on certain sides,
+	-- invoke the callback to retrieve the set.
+	-- for simple flowables this is just an auto-gen'd list of all six possible neighbours.
+	local candidates = {}
+	if pipeworks.flowables.list.simple[node.name] then
+		candidates = make_coords_offsets(pos, false)
+	end
+
 	-- then handle neighbours, but if not a pressure node don't consider them at all
-	for _, npos in ipairs(make_coords_offsets(pos, false)) do
+	for _, npos in ipairs(candidates) do
 		local nodename = minetest.get_node(npos).name
 		-- for now, just check if it's in the simple table.
 		-- TODO: the "can flow from" logic in flowable_node_registry.lua
