@@ -1,4 +1,4 @@
--- Directionality code
+-- Directionality code (in progress)
 Currently, only "simple" flowable nodes exist, and they will always equalise pressure with all six neighbours.
 A more sophisticated  behaviour for this would be flowable node registration with some kind of custom callback, such that water can only flow into or out of these nodes in certain directions.
 This would enable devices such as the airtight panels, sensor tubes and valves to have correct flow behaviour.
