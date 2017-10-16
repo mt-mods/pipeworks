@@ -115,7 +115,7 @@ local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,fromi
 			local stack = frominv:get_stack(frominvname, spos)
 			local doRemove = stack:get_count()
 			if fromtube.can_remove then
-				doRemove = fromtube.can_remove(frompos, fromnode, stack, dir)
+				doRemove = fromtube.can_remove(frompos, fromnode, stack, dir, frominvname, spos)
 			elseif fromdef.allow_metadata_inventory_take then
 				doRemove = fromdef.allow_metadata_inventory_take(frompos, frominvname,spos, stack, fakePlayer)
 			end
@@ -146,7 +146,7 @@ local function grabAndFire(data,slotseq_mode,exmatch_mode,filtmeta,frominv,fromi
 				end
 				if fromtube.remove_items then
 					-- it could be the entire stack...
-					item = fromtube.remove_items(frompos, fromnode, stack, dir, count)
+					item = fromtube.remove_items(frompos, fromnode, stack, dir, count, frominvname, spos)
 				else
 					item = stack:take_item(count)
 					frominv:set_stack(frominvname, spos, stack)
