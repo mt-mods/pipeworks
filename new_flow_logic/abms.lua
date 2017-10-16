@@ -23,6 +23,16 @@ local make_coords_offsets = function(pos, include_base)
 	return coords
 end
 
+-- create positions from list of offsets
+-- see in use of directional flow logic below
+local apply_coords_offsets = function(pos, offsets)
+	local result = {}
+	for index, offset in ipairs(offsets) do
+		table.insert(result, vector.add(pos, offset))
+	end
+	return result
+end
+
 
 
 -- local debuglog = function(msg) print("## "..msg) end
@@ -138,6 +148,13 @@ flowlogic.balance_pressure = function(pos, node, currentpressure)
 	local candidates = {}
 	if pipeworks.flowables.list.simple[node.name] then
 		candidates = make_coords_offsets(pos, false)
+	else
+		-- directional flowables: call the callback to get the list
+		local directional = pipeworks.flowables.list.directional[node.name]
+		if directional then
+			local offsets = directional.neighbourfn(node)
+			candidates = apply_coords_offsets(pos, offsets)
+		end
 	end
 
 	-- then handle neighbours, but if not a pressure node don't consider them at all
