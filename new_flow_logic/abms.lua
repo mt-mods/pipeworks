@@ -131,7 +131,7 @@ end
 
 
 flowlogic.balance_pressure = function(pos, node, currentpressure)
-	-- debuglog("balance_pressure() "..node.name.." at "..pos.x.." "..pos.y.." "..pos.z)
+	-- local dname = "flowlogic.balance_pressure()@"..formatvec(pos).." "
 	-- check the pressure of all nearby flowable nodes, and average it out.
 
 	-- pressure handles to average over
@@ -152,6 +152,7 @@ flowlogic.balance_pressure = function(pos, node, currentpressure)
 		-- directional flowables: call the callback to get the list
 		local directional = pipeworks.flowables.list.directional[node.name]
 		if directional then
+			--pipeworks.logger(dname.."invoking neighbourfn")
 			local offsets = directional.neighbourfn(node)
 			candidates = apply_coords_offsets(pos, offsets)
 		end
