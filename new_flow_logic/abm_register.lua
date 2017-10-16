@@ -12,6 +12,7 @@ local flowlogic = pipeworks.flowlogic
 local register_flowlogic_abm = function(nodename)
 	if pipeworks.toggles.pressure_logic then
 		minetest.register_abm({
+			label = "pipeworks new_flow_logic run",
 			nodenames = { nodename },
 			interval = 1,
 			chance = 1,
