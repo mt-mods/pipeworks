@@ -17,6 +17,14 @@ pipeworks.flowables.list.all = {}
 pipeworks.flowables.list.simple = {}
 pipeworks.flowables.list.simple_nodenames = {}
 
+-- directional flowables - can only flow on certain sides
+-- format per entry is a table with the following fields:
+-- neighbourfn: function(node),
+--	called to determine which nodes to consider as neighbours.
+--	can be used to e.g. inspect the node's param values for facedir etc.
+--	returns: array of vector offsets to look for possible neighbours in
+pipeworks.flowables.list.directional = {}
+
 -- simple intakes - try to absorb any adjacent water nodes
 pipeworks.flowables.inputs = {}
 pipeworks.flowables.inputs.list = {}

@@ -20,6 +20,9 @@ local insertbase = function(nodename)
 	if checkexists(nodename) then error("pipeworks.flowables duplicate registration!") end
 	pipeworks.flowables.list.all[nodename] = true
 	-- table.insert(pipeworks.flowables.list.nodenames, nodename)
+	if pipeworks.toggles.pressure_logic then
+		abmregister.flowlogic(nodename)
+	end
 end
 
 local regwarning = function(kind, nodename)
@@ -35,11 +38,18 @@ register.simple = function(nodename)
 	insertbase(nodename)
 	pipeworks.flowables.list.simple[nodename] = true
 	table.insert(pipeworks.flowables.list.simple_nodenames, nodename)
-	if pipeworks.toggles.pressure_logic then
-		abmregister.flowlogic(nodename)
-	end
 	regwarning("simple", nodename)
 end
+
+-- Register a node as a directional flowable:
+-- has a helper function which determines which nodes to consider valid neighbours.
+register.directional = function(nodename, neighbourfn)
+	insertbase(nodename)
+	pipeworks.flowables.list.directional[nodename] = { neighbourfn = neighbourfn }
+	regwarning("directional", nodename)
+end
+
+
 
 local checkbase = function(nodename)
 	if not checkexists(nodename) then error("pipeworks.flowables node doesn't exist as a flowable!") end
