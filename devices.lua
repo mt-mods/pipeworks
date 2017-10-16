@@ -161,11 +161,10 @@ for s in ipairs(states) do
 			local fdir = node.param2
 			minetest.swap_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
 		end,
-		-- FIXME - does this preserve metadata? need to look at this
 		on_rotate = screwdriver.rotate_simple
 	})
-	-- FIXME: currently a simple flow device, but needs directionality checking
-	new_flow_logic_register.simple(pumpname)
+	-- FIXME: this currently assumes that pumps can only rotate around the fixed axis pointing Y+.
+	new_flow_logic_register.directional(pumpname, function(node) return { {x=0,y=1,z=0} } end)
 	local pump_drive = 4
 	if states[s] ~= "off" then
 		new_flow_logic_register.intake_simple(pumpname, pump_drive)
