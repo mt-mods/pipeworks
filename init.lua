@@ -126,7 +126,7 @@ dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 
-local logicdir = "/new_flow_logic/"
+local logicdir = "/pressure_logic/"
 
 -- note that even with these files the new flow logic is not yet default.
 -- registration will take place but no actual ABMs/node logic will be installed,
