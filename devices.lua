@@ -163,12 +163,21 @@ for s in ipairs(states) do
 		end,
 		on_rotate = screwdriver.rotate_simple
 	})
+
 	-- FIXME: this currently assumes that pumps can only rotate around the fixed axis pointing Y+.
-	new_flow_logic_register.directional(pumpname, function(node) return { {x=0,y=1,z=0} } end)
+	-- TODO: these directionality functions should be behind a helper so the fountainhead can use something similar.
+	local upwards = {x=0,y=1,z=0}
+	local neighbourfn = function(node) return { upwards } end
+	local directionfn = function(node, direction)
+		return vector.equals(direction, upwards)
+	end
+	new_flow_logic_register.directional(pumpname, neighbourfn, directionfn)
 	local pump_drive = 4
 	if states[s] ~= "off" then
 		new_flow_logic_register.intake_simple(pumpname, pump_drive)
 	end
+
+
 
 	local nodename_valve_empty = "pipeworks:valve_"..states[s].."_empty"
 	minetest.register_node(nodename_valve_empty, {
