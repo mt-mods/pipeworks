@@ -148,7 +148,20 @@ local get_neighbour_positions = function(pos, node)
 		end
 	end
 
-	return candidates
+	-- then, check each possible neighbour to see if they can be reached from this node.
+	-- for now, just check if it's in the simple table.
+	-- TODO: will need to add a single-face direction checking function for directional nodes
+	local connections = {}
+	for index, npos in ipairs(candidates) do
+		local nodename = minetest.get_node(npos).name
+		local is_simple = (pipeworks.flowables.list.simple[nodename])
+		if is_simple then
+			local neighbour = get_pressure_access(npos)
+			table.insert(connections, neighbour)
+		end
+	end
+	
+	return connections
 end
 
 
@@ -164,24 +177,14 @@ flowlogic.balance_pressure = function(pos, node, currentpressure)
 	local totalv = currentpressure
 	local totalc = 1
 
-	local candidates = get_neighbour_positions(pos, node)
+	local connections = get_neighbour_positions(pos, node)
 
-	-- then handle neighbours, but if not a pressure node don't consider them at all
-	for _, npos in ipairs(candidates) do
-		local nodename = minetest.get_node(npos).name
-		-- for now, just check if it's in the simple table.
-		-- TODO: the "can flow from" logic in flowable_node_registry.lua
-		local haspressure = (pipeworks.flowables.list.simple[nodename])
-		if haspressure then
-			local neighbour = get_pressure_access(npos)
-			--pipeworks.logger("balance_pressure @ "..formatvec(pos).." "..nodename.." "..formatvec(npos).." added to neighbour set")
-			local n = neighbour.get()
-			table.insert(connections, neighbour)
-			totalv = totalv + n
-			totalc = totalc + 1
-		end
+	-- for each neighbour, add neighbour's pressure to the total to balance out
+	for _, neighbour in ipairs(connections) do
+		local n = neighbour.get()
+		totalv = totalv + n
+		totalc = totalc + 1
 	end
-
 	local average = totalv / totalc
 	for _, target in ipairs(connections) do
 		target.set(average)
