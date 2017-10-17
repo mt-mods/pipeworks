@@ -130,17 +130,7 @@ end
 
 
 
-flowlogic.balance_pressure = function(pos, node, currentpressure)
-	-- local dname = "flowlogic.balance_pressure()@"..formatvec(pos).." "
-	-- check the pressure of all nearby flowable nodes, and average it out.
-
-	-- pressure handles to average over
-	local connections = {}
-	-- unconditionally include self in nodes to average over.
-	-- result of averaging will be returned as new pressure for main flow logic callback
-	local totalv = currentpressure
-	local totalc = 1
-
+local get_neighbour_positions = function(pos, node)
 	-- get list of node neighbours.
 	-- if this node is directional and only flows on certain sides,
 	-- invoke the callback to retrieve the set.
@@ -157,6 +147,24 @@ flowlogic.balance_pressure = function(pos, node, currentpressure)
 			candidates = apply_coords_offsets(pos, offsets)
 		end
 	end
+
+	return candidates
+end
+
+
+
+flowlogic.balance_pressure = function(pos, node, currentpressure)
+	-- local dname = "flowlogic.balance_pressure()@"..formatvec(pos).." "
+	-- check the pressure of all nearby flowable nodes, and average it out.
+
+	-- pressure handles to average over
+	local connections = {}
+	-- unconditionally include self in nodes to average over.
+	-- result of averaging will be returned as new pressure for main flow logic callback
+	local totalv = currentpressure
+	local totalc = 1
+
+	local candidates = get_neighbour_positions(pos, node)
 
 	-- then handle neighbours, but if not a pressure node don't consider them at all
 	for _, npos in ipairs(candidates) do
