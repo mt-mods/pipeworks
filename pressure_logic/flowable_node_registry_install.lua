@@ -43,9 +43,12 @@ end
 
 -- Register a node as a directional flowable:
 -- has a helper function which determines which nodes to consider valid neighbours.
-register.directional = function(nodename, neighbourfn)
+register.directional = function(nodename, neighbourfn, directionfn)
 	insertbase(nodename)
-	pipeworks.flowables.list.directional[nodename] = { neighbourfn = neighbourfn }
+	pipeworks.flowables.list.directional[nodename] = {
+		neighbourfn = neighbourfn,
+		directionfn = directionfn
+	}
 	regwarning("directional", nodename)
 end
 

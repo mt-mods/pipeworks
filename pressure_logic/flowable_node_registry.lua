@@ -23,6 +23,16 @@ pipeworks.flowables.list.simple_nodenames = {}
 --	called to determine which nodes to consider as neighbours.
 --	can be used to e.g. inspect the node's param values for facedir etc.
 --	returns: array of vector offsets to look for possible neighbours in
+-- directionfn: function(node, vector):
+--	can this node flow in this direction?
+--	called in the context of another node to check the matching entry returned by neighbourfn.
+-- for every offset vector returned by neighbourfn,
+-- the node at that absolute position is checked.
+-- if that node is also a directional flowable,
+-- then that node's vector is passed to that node's directionfn
+-- (inverted, so that directionfn sees a vector pointing out from it back to the origin node).
+-- if directionfn agrees that the neighbour node can currently flow in that direction,
+-- the neighbour is to participate in pressure balancing.
 pipeworks.flowables.list.directional = {}
 
 -- simple intakes - try to absorb any adjacent water nodes
@@ -41,16 +51,3 @@ pipeworks.flowables.transitions = {}
 pipeworks.flowables.transitions.list = {}	-- master list
 pipeworks.flowables.transitions.simple = {}	-- nodes that change based purely on pressure
 pipeworks.flowables.transitions.mesecons = {}	-- table of mesecons rules to apply on transition
-
-
-
--- checks if a given node can flow in a given direction.
--- used to implement directional devices such as pumps,
--- which only visually connect in a certain direction.
--- node is the usual name + param structure.
--- direction is an x/y/z vector of the flow direction;
--- this function answers the question "can this node flow in this direction?"
-pipeworks.flowables.flow_check = function(node, direction)
-	minetest.log("warning", "pipeworks.flowables.flow_check() stub!")
-	return true
-end
