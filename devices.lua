@@ -674,8 +674,8 @@ minetest.register_node(nodename_fountain_loaded, {
 	drop = "pipeworks:fountainhead",
 	on_rotate = false
 })
-new_flow_logic_register.simple(nodename_fountain_empty)
-new_flow_logic_register.simple(nodename_fountain_loaded)
+new_flow_logic_register.directional_vertical_fixed(nodename_fountain_empty, false)
+new_flow_logic_register.directional_vertical_fixed(nodename_fountain_loaded, false)
 local fountain_upper = 1.0
 local fountain_lower = 1.0
 local fountain_neighbours={{x=0, y=1, z=0}}
