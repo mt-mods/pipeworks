@@ -165,13 +165,7 @@ for s in ipairs(states) do
 	})
 
 	-- FIXME: this currently assumes that pumps can only rotate around the fixed axis pointing Y+.
-	-- TODO: these directionality functions should be behind a helper so the fountainhead can use something similar.
-	local upwards = {x=0,y=1,z=0}
-	local neighbourfn = function(node) return { upwards } end
-	local directionfn = function(node, direction)
-		return vector.equals(direction, upwards)
-	end
-	new_flow_logic_register.directional(pumpname, neighbourfn, directionfn)
+	new_flow_logic_register.directional_vertical_fixed(pumpname, true)
 	local pump_drive = 4
 	if states[s] ~= "off" then
 		new_flow_logic_register.intake_simple(pumpname, pump_drive)

@@ -52,6 +52,20 @@ register.directional = function(nodename, neighbourfn, directionfn)
 	regwarning("directional", nodename)
 end
 
+-- register a node as a directional flowable that can only flow through either the top or bottom side.
+-- used for fountainheads (bottom side) and pumps (top side).
+-- this is in world terms, not facedir relative!
+register.directional_vertical_fixed = function(nodename, topside)
+	local y
+	if topside then y = 1 else y = -1 end
+	local side = { x=0, y=y, z=0 }
+	local neighbourfn = function(node) return { side } end
+	local directionfn = function(node, direction)
+		return vector.equals(direction, side)
+	end
+	register.directional(nodename, neighbourfn, directionfn)
+end
+
 
 
 local checkbase = function(nodename)
