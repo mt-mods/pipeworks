@@ -131,6 +131,7 @@ local simple_neighbour_offsets = {
 		{x= 0,y= 0,z= 1},
 }
 local get_neighbour_positions = function(pos, node)
+	-- local dname = "get_neighbour_positions@"..formatvec(pos).." "
 	-- get list of node neighbours.
 	-- if this node is directional and only flows on certain sides,
 	-- invoke the callback to retrieve the set.
@@ -149,8 +150,6 @@ local get_neighbour_positions = function(pos, node)
 	end
 
 	-- then, check each possible neighbour to see if they can be reached from this node.
-	-- for now, just check if it's in the simple table.
-	-- TODO: will need to add a single-face direction checking function for directional nodes
 	local connections = {}
 	for index, offset in ipairs(candidates) do
 		local npos = vector.add(pos, offset)
@@ -160,6 +159,20 @@ local get_neighbour_positions = function(pos, node)
 		if is_simple then
 			local n = get_pressure_access(npos)
 			table.insert(connections, n)
+		else
+			-- if target node is also directional, check if it agrees it can flow in that direction
+			local directional = pipeworks.flowables.list.directional[nodename]
+			if directional then
+				--pipeworks.logger(dname.."directionality test for offset "..formatvec(offset))
+				local towards_origin = vector.multiply(offset, -1)
+				--pipeworks.logger(dname.."vector passed to directionfn: "..formatvec(towards_origin))
+				local result = directional.directionfn(node, towards_origin)
+				--pipeworks.logger(dname.."result: "..tostring(result))
+				if result then
+					local n = get_pressure_access(npos)
+					table.insert(connections, n)
+				end
+			end
 		end
 	end
 
