@@ -154,14 +154,15 @@ local get_neighbour_positions = function(pos, node)
 	local connections = {}
 	for index, offset in ipairs(candidates) do
 		local npos = vector.add(pos, offset)
-		local nodename = minetest.get_node(npos).name
+		local neighbour = minetest.get_node(npos)
+		local nodename = neighbour.name
 		local is_simple = (pipeworks.flowables.list.simple[nodename])
 		if is_simple then
-			local neighbour = get_pressure_access(npos)
-			table.insert(connections, neighbour)
+			local n = get_pressure_access(npos)
+			table.insert(connections, n)
 		end
 	end
-	
+
 	return connections
 end
 
