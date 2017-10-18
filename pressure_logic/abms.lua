@@ -23,16 +23,6 @@ local make_coords_offsets = function(pos, include_base)
 	return coords
 end
 
--- create positions from list of offsets
--- see in use of directional flow logic below
-local apply_coords_offsets = function(pos, offsets)
-	local result = {}
-	for index, offset in ipairs(offsets) do
-		table.insert(result, vector.add(pos, offset))
-	end
-	return result
-end
-
 
 
 -- local debuglog = function(msg) print("## "..msg) end
@@ -40,6 +30,8 @@ end
 
 
 local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
+
+
 
 -- new version of liquid check
 -- accepts a limit parameter to only delete water blocks that the receptacle can accept,
@@ -130,6 +122,14 @@ end
 
 
 
+local simple_neighbour_offsets = {
+		{x=0, y=-1,z= 0},
+		{x=0, y= 1,z= 0},
+		{x=-1,y= 0,z= 0},
+		{x= 1,y= 0,z= 0},
+		{x= 0,y= 0,z=-1},
+		{x= 0,y= 0,z= 1},
+}
 local get_neighbour_positions = function(pos, node)
 	-- get list of node neighbours.
 	-- if this node is directional and only flows on certain sides,
@@ -137,14 +137,14 @@ local get_neighbour_positions = function(pos, node)
 	-- for simple flowables this is just an auto-gen'd list of all six possible neighbours.
 	local candidates = {}
 	if pipeworks.flowables.list.simple[node.name] then
-		candidates = make_coords_offsets(pos, false)
+		candidates = simple_neighbour_offsets
 	else
 		-- directional flowables: call the callback to get the list
 		local directional = pipeworks.flowables.list.directional[node.name]
 		if directional then
 			--pipeworks.logger(dname.."invoking neighbourfn")
 			local offsets = directional.neighbourfn(node)
-			candidates = apply_coords_offsets(pos, offsets)
+			candidates = offsets
 		end
 	end
 
@@ -152,7 +152,8 @@ local get_neighbour_positions = function(pos, node)
 	-- for now, just check if it's in the simple table.
 	-- TODO: will need to add a single-face direction checking function for directional nodes
 	local connections = {}
-	for index, npos in ipairs(candidates) do
+	for index, offset in ipairs(candidates) do
+		local npos = vector.add(pos, offset)
 		local nodename = minetest.get_node(npos).name
 		local is_simple = (pipeworks.flowables.list.simple[nodename])
 		if is_simple then
