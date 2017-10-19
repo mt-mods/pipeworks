@@ -1,10 +1,3 @@
--- Directionality code (in progress)
-The flowable node class for directional nodes now exists and is hooked up in the code for determining valid neighbours in the flowable node ABM routines.
-Pumps have been converted to this as part of the testing.
-However, currently only the "raw" registration for this is available, and the pump definition registers it's own callback routines.
-Helpers need to be added to flowable_node_registry_install.lua to abstract away the expression of which nodes can flow which ways - valves, flow sensors, spigots and entry panels, for instance, all currently rotate the same way using an upwards facedir, so a helper for these nodes would prevent code duplication.
-
-
 -- (may not be possible) stop removing water nodes that were not placed by outputs when off
 In non-finite mode, spigots and fountainheads will vanish water sources in their output positions, even if those output nodes did not place them there.
 This is annoying though not game-breaking in non-finite mode, where water sources can at least be easily replenished.
