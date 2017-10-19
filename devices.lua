@@ -215,8 +215,7 @@ for s in ipairs(states) do
 	-- only register flow logic for the "on" ABM.
 	-- this means that the off state automatically blocks flow by not participating in the balancing operation.
 	if states[s] ~= "off" then
-		-- FIXME: this still a simple device, directionality not honoured
-		new_flow_logic_register.simple(nodename_valve_empty)
+		new_flow_logic_register.directional_horizonal_rotate(nodename_valve_empty)
 	end
 end
 
@@ -264,7 +263,7 @@ minetest.register_node(nodename_valve_loaded, {
 -- right-clicking a "loaded" valve (becoming an off valve) then turning it on again will yield a on-but-empty valve,
 -- but the flow logic will still function.
 -- thus under new_flow_logic this serves as a kind of migration.
-new_flow_logic_register.simple(nodename_valve_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_valve_loaded)
 
 -- grating
 
@@ -438,10 +437,9 @@ minetest.register_node(nodename_panel_loaded, {
 	drop = "pipeworks:entry_panel_empty",
 	on_rotate = pipeworks.fix_after_rotation
 })
--- FIXME requires-directionality
 -- TODO: AFAIK the two panels have no visual difference, so are redundant under new flow logic - alias?
-new_flow_logic_register.simple(nodename_panel_empty)
-new_flow_logic_register.simple(nodename_panel_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_panel_empty)
+new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded)
 
 
 
