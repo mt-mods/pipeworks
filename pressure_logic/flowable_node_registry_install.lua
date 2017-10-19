@@ -69,34 +69,39 @@ end
 -- register a node as a directional flowable whose accepting sides depends upon param2 rotation.
 -- used for entry panels, valves, flow sensors and spigots,
 -- whose facing axis is always upwards and can only rotate horizontally.
-local iseastwest = function(node)
-	local data = node.param2
-	local rotation = data % 4
-	-- rotation 0 and 2 is the same axis, as is 1 and 3.
-	-- 0-3 starts at north and proceeds clockwise.
-	local axis = rotation % 2
-	--pipeworks.logger("iseastwest() rotation="..tostring(rotation).." axis="..tostring(axis))
-	return (axis == 1)
-end
-register.directional_horizonal_rotate = function(nodename)
-	local north = {x= 0,y= 0,z= 1}
-	local south = {x= 0,y= 0,z=-1}
-	local east =  {x= 1,y= 0,z= 0}
-	local west =  {x=-1,y= 0,z= 0}
-	local neighbourfn = function(node)
-		if iseastwest(node) then
-			return { east, west }
+register.directional_horizonal_rotate = function(nodename, doubleended)
+	local rotations = {
+		{x= 0,y= 0,z= 1},
+		{x= 1,y= 0,z= 0},
+		{x= 0,y= 0,z=-1},
+		{x=-1,y= 0,z= 0},
+	}
+	local getends = function(node)
+		--local dname = "horizontal rotate getends() "
+		local param2 = node.param2
+		-- the sole end of the spigot points in the direction the rotation bits suggest
+		-- also note to self: lua arrays start at one...
+		local mainend = (param2 % 4) + 1
+		-- use modulus wrap-around to find other end for straight-run devices like the valve
+		local otherend = ((param2 + 2) % 4) + 1
+		local mainrot = rotations[mainend]
+		--pipeworks.logger(dname.."mainrot: "..dump(mainrot))
+		local result
+		if doubleended then
+			result = { mainrot, rotations[otherend] }
 		else
-			return { north, south }
+			result = { mainrot }
 		end
+		--pipeworks.logger(dname.."result: "..dump(result))
+		return result
+	end
+	local neighbourfn = function(node)
+		return getends(node)
 	end
 	local directionfn = function(node, direction)
 		local result = false
-		if iseastwest(node) then
-			--pipeworks.logger("horizontal rotate directionfn() eastwest=true")
-			result = vector.equals(direction, east) or vector.equals(direction, west)
-		else
-			result = vector.equals(direction, north) or vector.equals(direction, south)
+		for index, endvec in ipairs(getends(node)) do
+			if vector.equals(direction, endvec) then result = true end
 		end
 		return result
 	end

@@ -215,7 +215,7 @@ for s in ipairs(states) do
 	-- only register flow logic for the "on" ABM.
 	-- this means that the off state automatically blocks flow by not participating in the balancing operation.
 	if states[s] ~= "off" then
-		new_flow_logic_register.directional_horizonal_rotate(nodename_valve_empty)
+		new_flow_logic_register.directional_horizonal_rotate(nodename_valve_empty, true)
 	end
 end
 
@@ -263,7 +263,7 @@ minetest.register_node(nodename_valve_loaded, {
 -- right-clicking a "loaded" valve (becoming an off valve) then turning it on again will yield a on-but-empty valve,
 -- but the flow logic will still function.
 -- thus under new_flow_logic this serves as a kind of migration.
-new_flow_logic_register.directional_horizonal_rotate(nodename_valve_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_valve_loaded, true)
 
 -- grating
 
@@ -438,8 +438,8 @@ minetest.register_node(nodename_panel_loaded, {
 	on_rotate = pipeworks.fix_after_rotation
 })
 -- TODO: AFAIK the two panels have no visual difference, so are redundant under new flow logic - alias?
-new_flow_logic_register.directional_horizonal_rotate(nodename_panel_empty)
-new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_panel_empty, true)
+new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded, true)
 
 
 
@@ -521,8 +521,8 @@ minetest.register_node(nodename_sensor_loaded, {
 	mesecons = pipereceptor_on,
 	on_rotate = pipeworks.fix_after_rotation
 })
-new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_empty)
-new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_empty, true)
+new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_loaded, true)
 -- activate flow sensor at roughly half the pressure pumps drive pipes
 local sensor_pressure_set = { { nodename_sensor_empty, 0.0 }, { nodename_sensor_loaded, 1.0 } }
 new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pipeworks.mesecons_rules })
