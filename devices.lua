@@ -376,8 +376,8 @@ minetest.register_node(nodename_spigot_loaded, {
 })
 -- new flow logic does not currently distinguish between these two visual states.
 -- register both so existing flowing spigots continue to work (even if the visual doesn't match the spigot's behaviour).
-new_flow_logic_register.simple(nodename_spigot_empty)
-new_flow_logic_register.simple(nodename_spigot_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_spigot_empty, false)
+new_flow_logic_register.directional_horizonal_rotate(nodename_spigot_loaded, false)
 local spigot_upper = 1.0
 local spigot_lower = 1.0
 local spigot_neighbours={{x=0, y=-1, z=0}}
