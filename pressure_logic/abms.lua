@@ -166,7 +166,7 @@ local get_neighbour_positions = function(pos, node)
 				--pipeworks.logger(dname.."directionality test for offset "..formatvec(offset))
 				local towards_origin = vector.multiply(offset, -1)
 				--pipeworks.logger(dname.."vector passed to directionfn: "..formatvec(towards_origin))
-				local result = directional.directionfn(node, towards_origin)
+				local result = directional.directionfn(neighbour, towards_origin)
 				--pipeworks.logger(dname.."result: "..tostring(result))
 				if result then
 					local n = get_pressure_access(npos)
