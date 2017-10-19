@@ -523,9 +523,8 @@ minetest.register_node(nodename_sensor_loaded, {
 	mesecons = pipereceptor_on,
 	on_rotate = pipeworks.fix_after_rotation
 })
--- FIXME requires-directionality
-new_flow_logic_register.simple(nodename_sensor_empty)
-new_flow_logic_register.simple(nodename_sensor_loaded)
+new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_empty)
+new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_loaded)
 -- activate flow sensor at roughly half the pressure pumps drive pipes
 local sensor_pressure_set = { { nodename_sensor_empty, 0.0 }, { nodename_sensor_loaded, 1.0 } }
 new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pipeworks.mesecons_rules })
