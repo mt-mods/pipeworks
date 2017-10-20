@@ -26,7 +26,7 @@ if worldsettingsfile then
 	dofile(worldsettingspath)
 end
 if pipeworks.toggles.pressure_logic then
-	minetest.log("warning", "pipeworks pressure-based logic is WIP and incomplete!")
+	minetest.log("warning", "pipeworks pressure logic mode comes with caveats and differences in behaviour, you have been warned!")
 end
 
 -- Random variables
