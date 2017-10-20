@@ -20,14 +20,14 @@ local insertbase = function(nodename)
 	if checkexists(nodename) then error("pipeworks.flowables duplicate registration!") end
 	pipeworks.flowables.list.all[nodename] = true
 	-- table.insert(pipeworks.flowables.list.nodenames, nodename)
-	if pipeworks.toggles.pressure_logic then
+	if pipeworks.toggles.pipe_mode == "pressure" then
 		abmregister.flowlogic(nodename)
 	end
 end
 
 local regwarning = function(kind, nodename)
 	local tail = ""
-	if not pipeworks.toggles.pressure_logic then tail = " but pressure logic not enabled" end
+	if pipeworks.toggles.pipe_mode ~= "pressure" then tail = " but pressure logic not enabled" end
 	--pipeworks.logger(kind.." flow logic registry requested for "..nodename..tail)
 end
 

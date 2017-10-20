@@ -15,17 +15,13 @@ pipeworks.modpath = minetest.get_modpath("pipeworks")
 
 dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
-
-
--- please add any new feature toggles to be a flag in this table...
-pipeworks.toggles = {}
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
 local worldsettingsfile = io.open(worldsettingspath, "r")
 if worldsettingsfile then
 	worldsettingsfile:close()
 	dofile(worldsettingspath)
 end
-if pipeworks.toggles.pressure_logic then
+if pipeworks.toggles.pipe_mode == "pressure" then
 	minetest.log("warning", "pipeworks pressure logic mode comes with caveats and differences in behaviour, you have been warned!")
 end
 

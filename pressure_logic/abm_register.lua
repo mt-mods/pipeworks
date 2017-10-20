@@ -10,7 +10,7 @@ local flowlogic = pipeworks.flowlogic
 -- see flowlogic.run() in abms.lua.
 
 local register_flowlogic_abm = function(nodename)
-	if pipeworks.toggles.pressure_logic then
+	if pipeworks.toggles.pipe_mode == "pressure" then
 		minetest.register_abm({
 			label = "pipeworks new_flow_logic run",
 			nodenames = { nodename },

@@ -213,7 +213,7 @@ pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
 
 
 
-if not pipeworks.toggles.pressure_logic then
+if pipeworks.toggles.pipe_mode == "classic" then
 
 
 
