@@ -1,5 +1,8 @@
 local new_flow_logic_register = pipeworks.flowables.register
 
+local polys = ""
+if pipeworks.enable_lowpoly then polys = "_lowpoly" end
+
 -- rotation handlers
 
 function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
@@ -134,7 +137,7 @@ for s in ipairs(states) do
 	minetest.register_node(pumpname, {
 		description = "Pump/Intake Module",
 		drawtype = "mesh",
-		mesh = "pipeworks_pump.obj",
+		mesh = "pipeworks_pump"..polys..".obj",
 		tiles = { "pipeworks_pump_"..states[s]..".png" },
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -177,7 +180,7 @@ for s in ipairs(states) do
 	minetest.register_node(nodename_valve_empty, {
 		description = "Valve",
 		drawtype = "mesh",
-		mesh = "pipeworks_valve_"..states[s]..".obj",
+		mesh = "pipeworks_valve_"..states[s]..polys..".obj",
 		tiles = { "pipeworks_valve.png" },
 		sunlight_propagates = true,
 		paramtype = "light",
@@ -223,7 +226,7 @@ local nodename_valve_loaded = "pipeworks:valve_on_loaded"
 minetest.register_node(nodename_valve_loaded, {
 	description = "Valve",
 	drawtype = "mesh",
-	mesh = "pipeworks_valve_on.obj",
+	mesh = "pipeworks_valve_on"..polys..".obj",
 	tiles = { "pipeworks_valve.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -304,7 +307,7 @@ local nodename_spigot_empty = "pipeworks:spigot"
 minetest.register_node(nodename_spigot_empty, {
 	description = "Spigot outlet",
 	drawtype = "mesh",
-	mesh = "pipeworks_spigot.obj",
+	mesh = "pipeworks_spigot"..polys..".obj",
 	tiles = { "pipeworks_spigot.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -335,7 +338,7 @@ local nodename_spigot_loaded = "pipeworks:spigot_pouring"
 minetest.register_node(nodename_spigot_loaded, {
 	description = "Spigot outlet",
 	drawtype = "mesh",
-	mesh = "pipeworks_spigot_pouring.obj",
+	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
 		{
 			name = "default_water_flowing_animated.png",
@@ -401,7 +404,7 @@ local nodename_panel_empty = "pipeworks:entry_panel_empty"
 minetest.register_node(nodename_panel_empty, {
 	description = "Airtight Pipe entry/exit",
 	drawtype = "mesh",
-	mesh = "pipeworks_entry_panel.obj",
+	mesh = "pipeworks_entry_panel"..polys..".obj",
 	tiles = { "pipeworks_entry_panel.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -421,7 +424,7 @@ local nodename_panel_loaded = "pipeworks:entry_panel_loaded"
 minetest.register_node(nodename_panel_loaded, {
 	description = "Airtight Pipe entry/exit",
 	drawtype = "mesh",
-	mesh = "pipeworks_entry_panel.obj",
+	mesh = "pipeworks_entry_panel"..polys..".obj",
 	tiles = { "pipeworks_entry_panel.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -447,7 +450,7 @@ local nodename_sensor_empty = "pipeworks:flow_sensor_empty"
 minetest.register_node(nodename_sensor_empty, {
 	description = "Flow Sensor",
 	drawtype = "mesh",
-	mesh = "pipeworks_flow_sensor.obj",
+	mesh = "pipeworks_flow_sensor"..polys..".obj",
 	tiles = { "pipeworks_flow_sensor_off.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -486,7 +489,7 @@ local nodename_sensor_loaded = "pipeworks:flow_sensor_loaded"
 minetest.register_node(nodename_sensor_loaded, {
 	description = "Flow sensor (on)",
 	drawtype = "mesh",
-	mesh = "pipeworks_flow_sensor.obj",
+	mesh = "pipeworks_flow_sensor"..polys..".obj",
 	tiles = { "pipeworks_flow_sensor_on.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -606,7 +609,7 @@ local nodename_fountain_empty = "pipeworks:fountainhead"
 minetest.register_node(nodename_fountain_empty, {
 	description = "Fountainhead",
 	drawtype = "mesh",
-	mesh = "pipeworks_fountainhead.obj",
+	mesh = "pipeworks_fountainhead"..polys..".obj",
 	tiles = { "pipeworks_fountainhead.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -640,7 +643,7 @@ local nodename_fountain_loaded = "pipeworks:fountainhead_pouring"
 minetest.register_node(nodename_fountain_loaded, {
 	description = "Fountainhead",
 	drawtype = "mesh",
-	mesh = "pipeworks_fountainhead.obj",
+	mesh = "pipeworks_fountainhead"..polys..".obj",
 	tiles = { "pipeworks_fountainhead.png" },
 	sunlight_propagates = true,
 	paramtype = "light",

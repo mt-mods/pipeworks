@@ -4,6 +4,7 @@ local prefix = "pipeworks_"
 
 local settings = {
 	enable_pipes = true,
+	enable_lowpoly = false,
 	enable_autocrafter = true,
 	enable_deployer = true,
 	enable_dispenser = true,
@@ -25,7 +26,6 @@ local settings = {
 	enable_lua_tube = true,
 	enable_cyclic_mode = true,
 	drop_on_routing_fail = false,
-
 	delete_item_on_clearobject = true,
 }
 

@@ -7,6 +7,9 @@ local pipes_full_nodenames = {}
 
 local new_flow_logic_register = pipeworks.flowables.register
 
+local polys = ""
+if pipeworks.enable_lowpoly then polys = "_lowpoly" end
+
 local vti = {4, 3, 2, 1, 6, 5}
 local cconnects = {{}, {1}, {1, 2}, {1, 3}, {1, 3, 5}, {1, 2, 3}, {1, 2, 3, 5}, {1, 2, 3, 4}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5, 6}}
 for index, connects in ipairs(cconnects) do
@@ -49,10 +52,10 @@ for index, connects in ipairs(cconnects) do
 		outimg_l = { "pipeworks_pipe_3_loaded.png" }
 	end
 
-	local mesh = "pipeworks_pipe_"..index..".obj"
+	local mesh = "pipeworks_pipe_"..index..polys..".obj"
 
 	if index == 1 then
-		mesh = "pipeworks_pipe_3.obj"
+		mesh = "pipeworks_pipe_3"..polys..".obj"
 	end
 
 	minetest.register_node("pipeworks:pipe_"..index.."_empty", {
