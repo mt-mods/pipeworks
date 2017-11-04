@@ -159,6 +159,18 @@ function pipeworks.scan_pipe_surroundings(pos)
 		pzp = f or pzp
 	end
 
+-- ...straight-only pipe...
+
+	local match,a,b,c,d,e,f = pipeworks.get_axis_dir(nodetable, "pipeworks:straight_pipe")
+	if match then
+		pxm = a or pxm
+		pxp = b or pxp
+		pym = c or pym
+		pyp = d or pyp
+		pzm = e or pzm
+		pzp = f or pzp
+	end
+
 -- ... other nodes
 
 	local def_left   = minetest.registered_nodes[nxp.name] -- the node that {pos} is to the left of (not the

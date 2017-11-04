@@ -682,7 +682,58 @@ local fountain_neighbours={{x=0, y=1, z=0}}
 new_flow_logic_register.output_simple(nodename_fountain_empty, fountain_upper, fountain_lower, fountain_neighbours)
 new_flow_logic_register.output_simple(nodename_fountain_loaded, fountain_upper, fountain_lower, fountain_neighbours)
 
+local sp_cbox = {
+	type = "fixed",
+	fixed = {
+		{ -2/16, -2/16, -8/16, 2/16, 2/16, 8/16 }
+	}
+}
 
+local nodename_sp_empty = "pipeworks:straight_pipe_empty"
+minetest.register_node(nodename_sp_empty, {
+	description = "Straight-only Pipe",
+	drawtype = "mesh",
+	mesh = "pipeworks_straight_pipe"..polys..".obj",
+	tiles = { "pipeworks_straight_pipe_empty.png" },
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	on_place = pipeworks.rotate_on_place,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	selection_box = sp_cbox,
+	collision_box = sp_cbox,
+	on_rotate = pipeworks.fix_after_rotation
+})
+
+local nodename_sp_loaded = "pipeworks:straight_pipe_loaded"
+minetest.register_node(nodename_sp_loaded, {
+	description = "Straight-only Pipe",
+	drawtype = "mesh",
+	mesh = "pipeworks_straight_pipe"..polys..".obj",
+	tiles = { "pipeworks_straight_pipe_loaded.png" },
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},
+	sounds = default.node_sound_wood_defaults(),
+	walkable = true,
+	on_place = pipeworks.rotate_on_place,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	selection_box = sp_cbox,
+	collision_box = sp_cbox,
+	drop = "pipeworks:straight_pipe_empty",
+	on_rotate = pipeworks.fix_after_rotation
+})
+
+new_flow_logic_register.directional_horizonal_rotate(nodename_sp_empty, true)
+new_flow_logic_register.directional_horizonal_rotate(nodename_sp_loaded, true)
+
+-- Other misc stuff
 
 minetest.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
 minetest.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")

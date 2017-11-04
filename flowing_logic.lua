@@ -44,7 +44,8 @@ pipeworks.check_for_inflows = function(pos,node)
 				source = minetest.get_meta(coords[i]):get_string("source")
 				if source == minetest.pos_to_string(pos) then break end
 			end
-			if string.find(name, "valve") or string.find(name, "sensor") then
+			if string.find(name, "valve") or string.find(name, "sensor")
+			  or string.find(name, "straight_pipe") or string.find(name, "panel") then
 
 				if ((i == 3 or i == 4) and minetest.facedir_to_dir(testnode.param2).x ~= 0)
 				  or ((i == 5 or i == 6) and minetest.facedir_to_dir(testnode.param2).z ~= 0)

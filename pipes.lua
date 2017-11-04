@@ -191,34 +191,31 @@ if REGISTER_COMPATIBILITY then
 	})
 end
 
-
-
 local valve_on = "pipeworks:valve_on_empty"
 local valve_off = "pipeworks:valve_off_empty"
 local entry_panel_empty = "pipeworks:entry_panel_empty"
 local flow_sensor_empty = "pipeworks:flow_sensor_empty"
+local sp_empty = "pipeworks:straight_pipe_empty"
 -- XXX: why aren't these in devices.lua!?
 table.insert(pipes_empty_nodenames, valve_on)
 table.insert(pipes_empty_nodenames, valve_off)
 table.insert(pipes_empty_nodenames, entry_panel_empty)
 table.insert(pipes_empty_nodenames, flow_sensor_empty)
+table.insert(pipes_empty_nodenames, sp_empty)
 
 local valve_on_loaded = "pipeworks:valve_on_loaded"
 local entry_panel_loaded = "pipeworks:entry_panel_loaded"
 local flow_sensor_loaded = "pipeworks:flow_sensor_loaded"
+local sp_loaded = "pipeworks:straight_pipe_loaded"
 table.insert(pipes_full_nodenames, valve_on_loaded)
 table.insert(pipes_full_nodenames, entry_panel_loaded)
 table.insert(pipes_full_nodenames, flow_sensor_loaded)
+table.insert(pipes_full_nodenames, sp_loaded)
 
 pipeworks.pipes_full_nodenames = pipes_full_nodenames
 pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
 
-
-
-
 if pipeworks.toggles.pipe_mode == "classic" then
-
-
 
 minetest.register_abm({
 	nodenames = pipes_empty_nodenames,
