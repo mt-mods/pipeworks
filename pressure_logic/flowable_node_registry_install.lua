@@ -67,8 +67,8 @@ register.directional_vertical_fixed = function(nodename, topside)
 end
 
 -- register a node as a directional flowable whose accepting sides depends upon param2 rotation.
--- used for entry panels, valves, flow sensors and spigots,
--- whose facing axis is always upwards and can only rotate horizontally.
+-- used for entry panels, valves, flow sensors and spigots.
+-- this is mostly for legacy reasons and SHOULD NOT BE USED IN NEW CODE.
 register.directional_horizonal_rotate = function(nodename, doubleended)
 	local rotations = {
 		{x= 0,y= 0,z= 1},
@@ -79,6 +79,12 @@ register.directional_horizonal_rotate = function(nodename, doubleended)
 	local getends = function(node)
 		--local dname = "horizontal rotate getends() "
 		local param2 = node.param2
+		-- the pipeworks nodes use a fixed value for vertical facing nodes
+		-- if that is detected, just return that directly.
+		if param2 == 17 then
+			return {{x=0,y=1,z=0}, {x=0,y=-1,z=0}}
+		end
+
 		-- the sole end of the spigot points in the direction the rotation bits suggest
 		-- also note to self: lua arrays start at one...
 		local mainend = (param2 % 4) + 1
