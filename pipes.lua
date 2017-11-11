@@ -36,12 +36,10 @@ for index, connects in ipairs(cconnects) do
 	
 	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1}
 	local pipedesc = "Pipe segement".." "..dump(connects).."... You hacker, you."
-	local image = nil
 
 	if #connects == 0 then
 		pgroups = {snappy = 3, tube = 1}
 		pipedesc = "Pipe segment"
-		image = "pipeworks_pipe_inv.png"
 	end
 	
 	local outimg_e = { "pipeworks_pipe_plain.png" }
@@ -64,8 +62,6 @@ for index, connects in ipairs(cconnects) do
 		mesh = mesh,
 		tiles = outimg_e,
 		sunlight_propagates = true,
-		inventory_image = image,
-		wield_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
@@ -138,8 +134,6 @@ if REGISTER_COMPATIBILITY then
 		drawtype = "airlike",
 		sunlight_propagates = true,
 		paramtype = "light",
-		inventory_image = "pipeworks_pipe_inv.png",
-		wield_image = "pipeworks_pipe_inv.png",
 		description = "Pipe Segment (legacy)",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
 		drop = "pipeworks:pipe_1_empty",
@@ -153,7 +147,6 @@ if REGISTER_COMPATIBILITY then
 		drawtype = "airlike",
 		sunlight_propagates = true,
 		paramtype = "light",
-		inventory_image = "pipeworks_pipe_inv.png",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
