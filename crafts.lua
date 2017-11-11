@@ -10,6 +10,13 @@ minetest.register_craft( {
 })
 
 minetest.register_craft( {
+        output = "pipeworks:straight_pipe_empty 3",
+        recipe = {
+                { "pipeworks:pipe_1_empty", "pipeworks:pipe_1_empty", "pipeworks:pipe_1_empty" },
+        },
+})
+
+minetest.register_craft( {
         output = "pipeworks:spigot 3",
         recipe = {
                 { "pipeworks:pipe_1_empty", "" },
