@@ -197,6 +197,12 @@ minetest.register_entity("pipeworks:color_entity", {
 	on_activate = luaentity.on_activate,
 })
 
+-- see below for usage:
+-- determine if go_next returned a multi-mode set.
+local is_multimode = function(v)
+	return (type(v) == "table") and (v.__multimode)
+end
+
 luaentity.register_entity("pipeworks:tubed_item", {
 	itemstring = '',
 	item_entity = nil,
@@ -297,6 +303,15 @@ luaentity.register_entity("pipeworks:tubed_item", {
 					self:setpos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
 					self:setvelocity(velocity)
 				end
+			elseif is_multimode(multimode) then
+				-- create new stacks according to returned data.
+				local s = self.start_pos
+				for _, split in ipairs(multimode) do
+					pipeworks.tube_inject_item(s, s, split.velocity, split.itemstack, self.owner)
+				end
+				-- remove ourself now the splits are sent
+				self:remove()
+				return
 			end
 
 			if new_velocity and not vector.equals(velocity, new_velocity) then
