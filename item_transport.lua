@@ -100,6 +100,11 @@ local function go_next(pos, velocity, stack, owner)
 	vel.speed = speed
 
 	crunch_tube(pos, cnode, cmeta)
+	-- cycling of outputs:
+	-- an integer counter is kept in each pipe's metadata,
+	-- which allows tracking which output was previously chosen.
+	-- note reliance on get_int returning 0 for uninitialised.
+	local cycledir = cmeta:get_int("tubedir")
 
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
@@ -132,7 +137,9 @@ local function go_next(pos, velocity, stack, owner)
 		return false, nil, nil
 	end
 
-	local n = (cmeta:get_int("tubedir") % (#next_positions)) + 1
+	local n = (cycledir % (#next_positions)) + 1
+	-- if not using output cycling,
+	-- don't update the field so it stays the same for the next item.
 	if pipeworks.enable_cyclic_mode then
 		cmeta:set_int("tubedir", n)
 	end
