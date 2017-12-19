@@ -70,47 +70,24 @@ end
 
 
 
--- function called by the on_step callback of the pipeworks tube luaentity.
--- the routine is passed the current node position, velocity, itemstack,
--- and owner name.
--- returns three values:
--- * a boolean "found destination" status;
--- * a new velocity vector that the tubed item should use, or nil if not found;
--- * a "multi-mode" data table (or nil if N/A) where a stack was split apart.
---	if this is not nil, the luaentity spawns new tubed items for each new fragment stack,
---	then deletes itself (i.e. the original item stack).
-local function go_next(pos, velocity, stack, owner)
+-- compatibility behaviour for the existing can_go() callbacks,
+-- which can only specify a list of possible positions.
+local function go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
 	local next_positions = {}
 	local max_priority = 0
-	local cnode = minetest.get_node(pos)
-	local cmeta = minetest.get_meta(pos)
 	local can_go
-	local speed = math.abs(velocity.x + velocity.y + velocity.z)
-	if speed == 0 then
-		speed = 1
-	end
-	local vel = {x = velocity.x/speed, y = velocity.y/speed, z = velocity.z/speed,speed=speed}
-	if speed >= 4.1 then
-		speed = 4
-	elseif speed >= 1.1 then
-		speed = speed - 0.1
-	else
-		speed = 1
-	end
-	vel.speed = speed
-
-	crunch_tube(pos, cnode, cmeta)
-	-- cycling of outputs:
-	-- an integer counter is kept in each pipe's metadata,
-	-- which allows tracking which output was previously chosen.
-	-- note reliance on get_int returning 0 for uninitialised.
-	local cycledir = cmeta:get_int("tubedir")
 
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
 	else
 		can_go = pipeworks.notvel(adjlist, vel)
 	end
+	-- can_go() is expected to return an array-like table of candidate offsets.
+	-- for each one, look at the node at that offset and determine if it can accept the item.
+	-- also note the prioritisation:
+	-- if any tube is found with a greater priority than previously discovered,
+	-- then the valid positions are reset and and subsequent positions under this are skipped.
+	-- this has the effect of allowing only equal priorities to co-exist.
 	for _, vect in ipairs(can_go) do
 		local npos = vector.add(pos, vect)
 		pipeworks.load_position(npos)
@@ -133,18 +110,66 @@ local function go_next(pos, velocity, stack, owner)
 		end
 	end
 
+	-- indicate not found if no valid rules were picked up,
+	-- and don't change the counter.
 	if not next_positions[1] then
-		return false, nil, nil
+		return cycledir, false, nil, nil
 	end
 
+	-- otherwise rotate to the next output direction and return that
 	local n = (cycledir % (#next_positions)) + 1
+	local new_velocity = vector.multiply(next_positions[n].vect, vel.speed)
+	return n, true, new_velocity, nil
+end
+
+
+
+
+-- function called by the on_step callback of the pipeworks tube luaentity.
+-- the routine is passed the current node position, velocity, itemstack,
+-- and owner name.
+-- returns three values:
+-- * a boolean "found destination" status;
+-- * a new velocity vector that the tubed item should use, or nil if not found;
+-- * a "multi-mode" data table (or nil if N/A) where a stack was split apart.
+--	if this is not nil, the luaentity spawns new tubed items for each new fragment stack,
+--	then deletes itself (i.e. the original item stack).
+local function go_next(pos, velocity, stack, owner)
+	local cnode = minetest.get_node(pos)
+	local cmeta = minetest.get_meta(pos)
+	local speed = math.abs(velocity.x + velocity.y + velocity.z)
+	if speed == 0 then
+		speed = 1
+	end
+	local vel = {x = velocity.x/speed, y = velocity.y/speed, z = velocity.z/speed,speed=speed}
+	if speed >= 4.1 then
+		speed = 4
+	elseif speed >= 1.1 then
+		speed = speed - 0.1
+	else
+		speed = 1
+	end
+	vel.speed = speed
+
+	crunch_tube(pos, cnode, cmeta)
+	-- cycling of outputs:
+	-- an integer counter is kept in each pipe's metadata,
+	-- which allows tracking which output was previously chosen.
+	-- note reliance on get_int returning 0 for uninitialised.
+	local cycledir = cmeta:get_int("tubedir")
+
+	-- pulled out and factored out into go_next_compat() above.
+	-- n is the new value of the cycle counter.
+	-- XXX: this probably needs cleaning up after being split out,
+	-- seven args is a bit too many
+	local n, found, new_velocity, multimode = go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
+
 	-- if not using output cycling,
 	-- don't update the field so it stays the same for the next item.
 	if pipeworks.enable_cyclic_mode then
 		cmeta:set_int("tubedir", n)
 	end
-	local new_velocity = vector.multiply(next_positions[n].vect, vel.speed)
-	return true, new_velocity, nil
+	return found, new_velocity, multimode
 end
 
 
