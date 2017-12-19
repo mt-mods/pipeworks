@@ -89,6 +89,9 @@ local function go_next(pos, velocity, stack, owner)
 		speed = 1
 	end
 	vel.speed = speed
+
+	crunch_tube(pos, cnode, cmeta)
+
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
 	else
@@ -115,8 +118,6 @@ local function go_next(pos, velocity, stack, owner)
 			end
 		end
 	end
-
-	crunch_tube(pos, cnode, cmeta)
 
 	if not next_positions[1] then
 		return false, nil
