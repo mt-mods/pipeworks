@@ -70,6 +70,15 @@ end
 
 
 
+-- function called by the on_step callback of the pipeworks tube luaentity.
+-- the routine is passed the current node position, velocity, itemstack,
+-- and owner name.
+-- returns three values:
+-- * a boolean "found destination" status;
+-- * a new velocity vector that the tubed item should use, or nil if not found;
+-- * a "multi-mode" data table (or nil if N/A) where a stack was split apart.
+--	if this is not nil, the luaentity spawns new tubed items for each new fragment stack,
+--	then deletes itself (i.e. the original item stack).
 local function go_next(pos, velocity, stack, owner)
 	local next_positions = {}
 	local max_priority = 0
@@ -120,7 +129,7 @@ local function go_next(pos, velocity, stack, owner)
 	end
 
 	if not next_positions[1] then
-		return false, nil
+		return false, nil, nil
 	end
 
 	local n = (cmeta:get_int("tubedir") % (#next_positions)) + 1
@@ -128,8 +137,10 @@ local function go_next(pos, velocity, stack, owner)
 		cmeta:set_int("tubedir", n)
 	end
 	local new_velocity = vector.multiply(next_positions[n].vect, vel.speed)
-	return true, new_velocity
+	return true, new_velocity, nil
 end
+
+
 
 minetest.register_entity("pipeworks:tubed_item", {
 	initial_properties = {
