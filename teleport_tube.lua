@@ -4,7 +4,7 @@ local tp_tube_db = nil -- nil forces a read
 local tp_tube_db_version = 2.0
 
 local function hash(pos)
-	return string.format("%d", minetest.hash_node_position(pos))
+	return string.format("%.30g", minetest.hash_node_position(pos))
 end
 
 local function save_tube_db()
