@@ -50,6 +50,11 @@ local function read_tube_db()
 	return tp_tube_db
 end
 
+-- debug formatter for coordinates used below
+local fmt = function(pos)
+	return pos.x..", "..pos.y..", "..pos.z
+end
+
 -- updates or adds a tube
 local function set_tube(pos, channel, can_receive)
 	local tubes = tp_tube_db or read_tube_db()
@@ -63,6 +68,19 @@ local function set_tube(pos, channel, can_receive)
 	end
 
 	-- we haven't found any tp tube to update, so lets add it
+	-- but sanity check that the hash has not already been inserted.
+	-- if so, complain very loudly and refuse the update so the player knows something is amiss.
+	-- to catch regressions of https://github.com/minetest-mods/pipeworks/issues/166
+	local existing = tp_tube_db[hash]
+	if  existing ~= nil then
+		local e = "error"
+		minetest.log(e, "pipeworks teleport tube update refused due to position hash collision")
+		minetest.log(e, "collided hash: "..hash)
+		minetest.log(e, "tried-to-place tube: "..fmt(pos))
+		minetest.log(e, "existing tube: "..fmt(existing))
+		return
+	end
+
 	tp_tube_db[hash] = {x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive}
 	save_tube_db()
 end
