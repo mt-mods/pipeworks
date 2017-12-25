@@ -731,8 +731,17 @@ for white  = 0, 1 do
 			connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1},
 			priority = 50,
 			can_go = function(pos, node, velocity, stack)
+				local src = {name = nil}
+				-- add color of the incoming tube explicitly; referring to rules, in case they change later
+				for color, rule in pairs(rules) do
+					if (-velocity.x == rule.x and -velocity.y == rule.y and -velocity.z == rule.z) then
+						src.name = rule.name
+						break
+					end
+				end
 				local succ, msg = run(pos, {
 					type = "item",
+					pin = src,
 					itemstring = stack:to_string(),
 					item = stack:to_table(),
 					velocity = velocity,
