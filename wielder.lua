@@ -99,6 +99,8 @@ local function wielder_on(data, wielder_pos, wielder_node)
 		get_look_dir = delay(vector.multiply(dir, -1)),
 		get_look_pitch = delay(pitch),
 		get_look_yaw = delay(yaw),
+		get_look_horizontal = delay(yaw),
+		get_look_vertical = delay(pitch),
 		get_player_control = delay({ jump=false, right=false, left=false, LMB=false, RMB=false, sneak=data.sneak, aux1=false, down=false, up=false }),
 		get_player_control_bits = delay(data.sneak and 64 or 0),
 		get_player_name = delay(data.masquerade_as_owner and wielder_meta:get_string("owner") or ":pipeworks:"..minetest.pos_to_string(wielder_pos)),
