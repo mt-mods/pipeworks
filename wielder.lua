@@ -28,7 +28,11 @@ local can_tool_dig_node = function(nodename, toolcaps, toolname)
 	-- diggable: boolean, can this tool dig this node at all
 	-- time: float, time needed to dig with this tool
 	-- wear: int, number of wear points to inflict on the item
-	local nodegroups = minetest.registered_nodes[nodename].groups
+	local nodedef = minetest.registered_nodes[nodename]
+	-- don't explode due to nil def in event of unknown node!
+	if (nodedef == nil) then return false end
+
+	local nodegroups = nodedef.groups
 	local diggable = minetest.get_dig_params(nodegroups, toolcaps).diggable
 	if not diggable then
 		-- a pickaxe can't actually dig leaves based on it's groups alone,
