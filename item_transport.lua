@@ -13,7 +13,7 @@ function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner)
 	local obj = luaentity.add_entity(pos, "pipeworks:tubed_item")
 	obj:set_item(stack:to_string())
 	obj.start_pos = vector.new(start_pos)
-	obj:setvelocity(velocity)
+	obj:set_velocity(velocity)
 	obj.owner = owner
 	--obj:set_color("red") -- todo: this is test-only code
 	return obj
@@ -207,7 +207,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 			textures = {stack:get_name()}
 		})
 		local def = stack:get_definition()
-		self.object:setyaw((def and def.type == "node") and 0 or math.pi * 0.25)
+		self.object:set_yaw((def and def.type == "node") and 0 or math.pi * 0.25)
 	end,
 
 	get_staticdata = luaentity.get_staticdata,
@@ -220,7 +220,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 			return
 		end
 		local item = minetest.deserialize(staticdata)
-		pipeworks.tube_inject_item(self.object:getpos(), item.start_pos, item.velocity, item.itemstring)
+		pipeworks.tube_inject_item(self.object:get_pos(), item.start_pos, item.velocity, item.itemstring)
 		self.object:remove()
 	end,
 })
@@ -293,15 +293,15 @@ luaentity.register_entity("pipeworks:tubed_item", {
 	end,
 
 	on_step = function(self, dtime)
-		local pos = self:getpos()
+		local pos = self:get_pos()
 		if self.start_pos == nil then
 			self.start_pos = vector.round(pos)
-			self:setpos(pos)
+			self:set_pos(pos)
 		end
 
 		local stack = ItemStack(self.itemstring)
 
-		local velocity = self:getvelocity()
+		local velocity = self:get_velocity()
 
 		local moved = false
 		local speed = math.abs(velocity.x + velocity.y + velocity.z)
@@ -331,8 +331,8 @@ luaentity.register_entity("pipeworks:tubed_item", {
 				return
 			end
 			velocity = vector.multiply(velocity, -1)
-			self:setpos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
-			self:setvelocity(velocity)
+			self:set_pos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
+			self:set_velocity(velocity)
 			self:set_item(leftover:to_string())
 			return
 		end
@@ -350,13 +350,13 @@ luaentity.register_entity("pipeworks:tubed_item", {
 					-- compatible with Minetest 0.4.13.
 					-- Using item_drop here makes Minetest 0.4.13 crash.
 					local dropped_item = minetest.add_item(self.start_pos, stack)
-					dropped_item:setvelocity(vector.multiply(velocity, 5))
+					dropped_item:set_velocity(vector.multiply(velocity, 5))
 					self:remove()
 					return
 				else
 					velocity = vector.multiply(velocity, -1)
-					self:setpos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
-					self:setvelocity(velocity)
+					self:set_pos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
+					self:set_velocity(velocity)
 				end
 			elseif is_multimode(multimode) then
 				-- create new stacks according to returned data.
@@ -371,8 +371,8 @@ luaentity.register_entity("pipeworks:tubed_item", {
 
 			if new_velocity and not vector.equals(velocity, new_velocity) then
 				local nvelr = math.abs(new_velocity.x + new_velocity.y + new_velocity.z)
-				self:setpos(vector.add(self.start_pos, vector.multiply(new_velocity, (moved_by - 1) / nvelr)))
-				self:setvelocity(new_velocity)
+				self:set_pos(vector.add(self.start_pos, vector.multiply(new_velocity, (moved_by - 1) / nvelr)))
+				self:set_velocity(new_velocity)
 			end
 		end
 	end
@@ -388,11 +388,11 @@ if minetest.get_modpath("mesecons_mvps") then
 		end
 		for id, entity in pairs(luaentity.entities) do
 			if entity.name == "pipeworks:tubed_item" then
-				local pos = entity:getpos()
+				local pos = entity:get_pos()
 				local rpos = vector.round(pos)
 				local dir = moved[minetest.hash_node_position(rpos)]
 				if dir then
-					entity:setpos(vector.add(pos, dir))
+					entity:set_pos(vector.add(pos, dir))
 					entity.start_pos = vector.add(entity.start_pos, dir)
 				end
 			end
