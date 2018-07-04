@@ -186,13 +186,13 @@ local entitydef_default = {
 			self:_add_attached(id)
 		end
 	end,
-	getid = function(self)
+	get_id = function(self)
 		return self._id
 	end,
-	getpos = function(self)
+	get_pos = function(self)
 		return vector.new(self._pos)
 	end,
-	setpos = function(self, pos)
+	set_pos = function(self, pos)
 		self._pos = vector.new(pos)
 		--for _, entity in pairs(self._attached_entities) do
 		--	if entity.entity then
@@ -205,20 +205,20 @@ local entitydef_default = {
 			master_def.entity:set_pos(vector.add(self._pos, master_def.offset))
 		end
 	end,
-	getvelocity = function(self)
+	get_velocity = function(self)
 		return vector.new(self._velocity)	
 	end,
-	setvelocity = function(self, velocity)
+	set_velocity = function(self, velocity)
 		self._velocity = vector.new(velocity)
 		local master = self._attached_entities_master
 		if master then
 			self._attached_entities[master].entity:set_velocity(self._velocity)
 		end
 	end,
-	getacceleration = function(self)
+	get_acceleration = function(self)
 		return vector.new(self._acceleration)
 	end,
-	setacceleration = function(self, acceleration)
+	set_acceleration = function(self, acceleration)
 		self._acceleration = vector.new(acceleration)
 		local master = self._attached_entities_master
 		if master then
