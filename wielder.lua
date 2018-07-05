@@ -53,11 +53,10 @@ local function wielder_on(data, wielder_pos, wielder_node)
 	local wielder_meta = minetest.get_meta(wielder_pos)
 	local inv = wielder_meta:get_inventory()
 	local wield_inv_name = data.wield_inv_name
-	local wieldindex, wieldstack
+	local wieldindex
 	for i, stack in ipairs(inv:get_list(wield_inv_name)) do
 		if not stack:is_empty() then
 			wieldindex = i
-			wieldstack = stack
 			break
 		end
 	end
@@ -66,7 +65,6 @@ local function wielder_on(data, wielder_pos, wielder_node)
 		wield_inv_name = data.ghost_inv_name
 		inv:set_stack(wield_inv_name, 1, ItemStack(data.ghost_tool))
 		wieldindex = 1
-		wieldstack = inv:get_stack(wield_inv_name, 1)
 	end
 	local dir = minetest.facedir_to_dir(wielder_node.param2)
 	-- under/above is currently intentionally left switched
@@ -98,73 +96,20 @@ local function wielder_on(data, wielder_pos, wielder_node)
 		yaw = 0
 		pitch = math.pi/2
 	end
-	local virtplayer = {
-		get_inventory_formspec = delay(wielder_meta:get_string("formspec")),
-		get_look_dir = delay(vector.multiply(dir, -1)),
-		get_look_pitch = delay(pitch),
-		get_look_yaw = delay(yaw),
-		get_look_horizontal = delay(yaw),
-		get_look_vertical = delay(pitch),
-		get_player_control = delay({ jump=false, right=false, left=false, LMB=false, RMB=false, sneak=data.sneak, aux1=false, down=false, up=false }),
-		get_player_control_bits = delay(data.sneak and 64 or 0),
-		get_player_name = delay(data.masquerade_as_owner and wielder_meta:get_string("owner") or ":pipeworks:"..minetest.pos_to_string(wielder_pos)),
-		is_player = delay(true),
-		is_fake_player = true,
-		set_inventory_formspec = delay(),
-		getpos = delay(vector.subtract(wielder_pos, assumed_eye_pos)),
-		get_hp = delay(20),
-		get_inventory = delay(inv),
-		get_wielded_item = delay(wieldstack),
-		get_wield_index = delay(wieldindex),
-		get_wield_list = delay(wield_inv_name),
-		moveto = delay(),
-		punch = delay(),
-		remove = delay(),
-		right_click = delay(),
-		setpos = delay(),
-		set_hp = delay(),
-		set_properties = delay(),
-		set_wielded_item = function(self, item)
-			wieldstack = item
-			inv:set_stack(wield_inv_name, wieldindex, item)
-		end,
-		set_animation = delay(),
-		set_attach = delay(),
-		set_detach = delay(),
-		set_bone_position = delay(),
-		hud_change = delay(),
-		get_breath = delay(11),
-		-- TODO "implement" all these
-		-- set_armor_groups
-		-- get_armor_groups
-		-- get_animation
-		-- get_attach
-		-- get_bone_position
-		-- get_properties
-		-- get_player_velocity
-		-- set_look_pitch
-		-- set_look_yaw
-		-- set_breath
-		-- set_physics_override
-		-- get_physics_override
-		-- hud_add
-		-- hud_remove
-		-- hud_get
-		-- hud_set_flags
-		-- hud_get_flags
-		-- hud_set_hotbar_itemcount
-		-- hud_get_hotbar_itemcount
-		-- hud_set_hotbar_image
-		-- hud_get_hotbar_image
-		-- hud_set_hotbar_selected_image
-		-- hud_get_hotbar_selected_image
-		-- hud_replace_builtin
-		-- set_sky
-		-- get_sky
-		-- override_day_night_ratio
-		-- get_day_night_ratio
-		-- set_local_animation
-	}
+	local virtplayer = pipeworks.create_fake_player({
+		name = data.masquerade_as_owner and wielder_meta:get_string("owner")
+			or ":pipeworks:" .. minetest.pos_to_string(wielder_pos),
+		formspec = wielder_meta:get_string("formspec"),
+		look_dir = vector.multiply(dir, -1),
+		look_pitch = pitch,
+		look_yaw = yaw,
+		sneak = data.sneak,
+		position = vector.subtract(wielder_pos, assumed_eye_pos),
+		inventory = inv,
+		wield_index = wieldindex,
+		wield_list = wield_inv_name
+	})
+
 	local pointed_thing = { type="node", under=under_pos, above=above_pos }
 	data.act(virtplayer, pointed_thing)
 	if data.eject_drops then

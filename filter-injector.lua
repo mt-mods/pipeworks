@@ -167,12 +167,9 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local filtmeta = minetest.get_meta(filtpos)
 	local filtinv = filtmeta:get_inventory()
 	local owner = filtmeta:get_string("owner")
-	local fakePlayer = {
-		get_player_name = delay(owner),
-		is_fake_player = ":pipeworks",
-		get_wielded_item = delay(ItemStack(nil)),
-		is_player = delay(true)
-	} -- TODO: use a mechanism as the wielder one
+	local fakePlayer = pipeworks.create_fake_player({
+		name = owner
+	})
 	local dir = pipeworks.facedir_to_right_dir(filtnode.param2)
 	local frompos = vector.subtract(filtpos, dir)
 	local fromnode = minetest.get_node(frompos)
