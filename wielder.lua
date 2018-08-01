@@ -331,12 +331,25 @@ if pipeworks.enable_node_breaker then
 				virtplayer:set_wielded_item(wieldstack)
 			else
 				local under_node = minetest.get_node(pointed_thing.under)
-				local on_dig = (minetest.registered_nodes[under_node.name] or {on_dig=minetest.node_dig}).on_dig
-				-- check that the current tool is capable of destroying the target node.
+				local def = minetest.registered_nodes[under_node.name]
+				if not def then
+					-- do not dig an unknown node
+					return
+				end
+				-- check that the current tool is capable of destroying the
+				-- target node.
 				-- if we can't, don't dig, and leave the wield stack unchanged.
-				-- note that wieldstack:get_tool_capabilities() returns hand properties if the item has none of it's own.
-				if can_tool_dig_node(under_node.name, wieldstack:get_tool_capabilities(), wieldstack:get_name()) then
-					on_dig(pointed_thing.under, under_node, virtplayer)
+				-- note that wieldstack:get_tool_capabilities() returns hand
+				-- properties if the item has none of it's own.
+				if can_tool_dig_node(under_node.name,
+						wieldstack:get_tool_capabilities(),
+						wieldstack:get_name()) then
+					def.on_dig(pointed_thing.under, under_node, virtplayer)
+					local sound = def.sounds and def.sounds.dug
+					if sound then
+						minetest.sound_play(sound.name,
+							{pos=pointed_thing.under, gain=sound.gain})
+					end
 					wieldstack = virtplayer:get_wielded_item()
 				else
 					--pipeworks.logger(dname.."couldn't dig node!")
