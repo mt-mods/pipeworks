@@ -350,8 +350,10 @@ luaentity.register_entity("pipeworks:tubed_item", {
 					-- compatible with Minetest 0.4.13.
 					-- Using item_drop here makes Minetest 0.4.13 crash.
 					local dropped_item = minetest.add_item(self.start_pos, stack)
-					dropped_item:set_velocity(vector.multiply(velocity, 5))
-					self:remove()
+					if dropped_item then
+						dropped_item:set_velocity(vector.multiply(velocity, 5))
+						self:remove()
+					end
 					return
 				else
 					velocity = vector.multiply(velocity, -1)
