@@ -161,6 +161,7 @@ if pipeworks.enable_one_way_tube then
 		},
 		after_place_node = pipeworks.after_place,
 		after_dig_node = pipeworks.after_dig,
+		on_rotate = pipeworks.on_rotate,
 	})
 	minetest.register_craft({
 		output = "pipeworks:one_way_tube 2",
