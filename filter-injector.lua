@@ -383,6 +383,7 @@ for _, data in ipairs({
 			pipeworks.after_place(pos)
 		end,
 		after_dig_node = pipeworks.after_dig,
+		on_rotate = pipeworks.on_rotate,
 		allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 			if not pipeworks.may_configure(pos, player) then
 				return 0
