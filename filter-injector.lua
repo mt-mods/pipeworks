@@ -473,18 +473,18 @@ end
 minetest.register_craft( {
 	output = "pipeworks:filter 2",
 	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "group:stick", "default:mese_crystal", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
+	        { "group:stick", "default:mese_crystal", "basic_materials:plastic_sheet" },
+	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
 	},
 })
 
 minetest.register_craft( {
 	output = "pipeworks:mese_filter 2",
 	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-	        { "group:stick", "default:mese", "homedecor:plastic_sheeting" },
-	        { "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
+	        { "group:stick", "default:mese", "basic_materials:plastic_sheet" },
+	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
 	},
 })
 
@@ -492,9 +492,9 @@ if minetest.get_modpath("digilines") then
 	minetest.register_craft( {
 		output = "pipeworks:digiline_filter 2",
 		recipe = {
-			{ "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" },
-			{ "group:stick", "digilines:wire_std_00000000", "homedecor:plastic_sheeting" },
-			{ "default:steel_ingot", "default:steel_ingot", "homedecor:plastic_sheeting" }
+			{ "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
+			{ "group:stick", "digilines:wire_std_00000000", "basic_materials:plastic_sheet" },
+			{ "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
 		},
 	})
 end
