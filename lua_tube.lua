@@ -37,6 +37,23 @@ local rules = {
 	white  = {x =  0, y =  0, z =  1, name = "white"},
 }
 
+local digiline_rules_luatube = {
+	{x=0,  y=0,  z=-1},
+	{x=1,  y=0,  z=0},
+	{x=-1, y=0,  z=0},
+	{x=0,  y=0,  z=1},
+	{x=1,  y=1,  z=0},
+	{x=1,  y=-1, z=0},
+	{x=-1, y=1,  z=0},
+	{x=-1, y=-1, z=0},
+	{x=0,  y=1,  z=1},
+	{x=0,  y=-1, z=1},
+	{x=0,  y=1,  z=-1},
+	{x=0,  y=-1, z=-1},
+	-- vertical connectivity
+	{x=0,  y=1,  z=0},
+	{x=0,  y=-1, z=0},
+}
 
 ------------------
 -- Action stuff --
@@ -303,7 +320,7 @@ local function get_digiline_send(pos)
 		end
 
 		minetest.after(0, function()
-			digilines.receptor_send(pos, digiline.rules.default, channel, msg)
+			digilines.receptor_send(pos, digiline_rules_luatube, channel, msg)
 		end)
 		return true
 	end
@@ -540,7 +557,10 @@ local digiline = {
 		action = function(pos, node, channel, msg)
 			run(pos, {type = "digiline", channel = channel, msg = msg})
 		end
-	}
+	},
+	wire = {
+		rules = pipeworks.digilines_rules
+	},
 }
 local function on_receive_fields(pos, form_name, fields, sender)
 	if not fields.program then

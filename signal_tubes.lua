@@ -102,7 +102,10 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 					receptor = {},
 					effector = {
 						action = function(pos,node,channel,msg) end
-					}
+					},
+					wire = {
+						rules = pipeworks.digilines_rules
+					},
 				},
 			},
 	})
