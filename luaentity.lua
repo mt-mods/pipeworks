@@ -46,6 +46,11 @@ local function read_entities()
 end
 
 local function write_entities()
+	if not luaentity.entities then
+		-- This can happen if crashing on startup, causing another error that
+		-- masks the original one. Return gracefully in that case instead.
+		return
+	end
 	for _, entity in pairs(luaentity.entities) do
 		setmetatable(entity, nil)
 		for _, attached in pairs(entity._attached_entities) do
