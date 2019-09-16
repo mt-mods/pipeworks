@@ -6,6 +6,7 @@ local craft_time = 1
 local function count_index(invlist)
 	local index = {}
 	for _, stack in pairs(invlist) do
+		stack = ItemStack(stack)
 		if not stack:is_empty() then
 			local stack_name = stack:get_name()
 			index[stack_name] = (index[stack_name] or 0) + stack:get_count()
@@ -25,26 +26,102 @@ local function get_craft(pos, inventory, hash)
 	local hash = hash or minetest.hash_node_position(pos)
 	local craft = autocrafterCache[hash]
 	if not craft then
-		local recipe = inventory:get_list("recipe")
-		local output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = recipe})
+		local example_recipe = inventory:get_list("recipe")
+		local output, decremented_input = minetest.get_craft_result({method = "normal", width = 3, items = example_recipe})
+		local recipe = example_recipe
+		if output and not output.item:is_empty() then
+			recipe = minetest.get_craft_recipe(output.item:get_name()).items or example_recipe
+		end
+
 		craft = {recipe = recipe, consumption=count_index(recipe), output = output, decremented_input = decremented_input}
 		autocrafterCache[hash] = craft
 	end
 	return craft
 end
 
+-- From a consumption table with groups and an inventory index, build
+-- a consumption table without groups
+local function calculate_consumption(inv_index, consumption_with_groups)
+	inv_index = table.copy(inv_index)
+	consumption_with_groups = table.copy(consumption_with_groups)
+
+	local consumption = {}
+	local groups = {}
+
+	-- First consume all non-group requirements
+	-- This is done to avoid consuming a non-group item which is also in a group
+	for key, count in pairs(consumption_with_groups) do
+		if key:sub(1, 6) == "group:" then
+			groups[#groups + 1] = key:sub(7, #key)
+		else
+			if not inv_index[key] or inv_index[key] < count then
+				return nil
+			end
+
+			consumption[key] = (consumption[key] or 0) + count
+			consumption_with_groups[key] = consumption_with_groups[key] - count
+			assert(consumption_with_groups[key] == 0)
+			consumption_with_groups[key] = nil
+			inv_index[key] = inv_index[key] - count
+			assert(inv_index[key] >= 0)
+		end
+	end
+
+	-- Next, resolve groups using the remaining items in the inventory
+	if #groups > 0 then
+		for itemname, count in pairs(inv_index) do
+			if count > 0 then
+				local def = minetest.registered_items[itemname]
+				local item_groups = def and def.groups or {}
+				for i=1, #groups do
+					local group = groups[i]
+					local groupname = "group:" .. group
+					if item_groups[group] >= 1 and consumption_with_groups[groupname] > 0 then
+						local take = math.min(count, consumption_with_groups[groupname])
+						consumption_with_groups[groupname] = consumption_with_groups[groupname] - take
+						assert(consumption_with_groups[groupname] >= 0)
+						consumption[itemname] = (consumption[itemname] or 0) + take
+						inv_index[itemname] = inv_index[itemname] - take
+						assert(inv_index[itemname] >= 0)
+					end
+				end
+			end
+		end
+	end
+
+	-- Finally, check everything has been consumed
+	for key, count in pairs(consumption_with_groups) do
+		if count > 0 then
+			return nil
+		end
+	end
+
+	return consumption
+end
+
 local function autocraft(inventory, craft)
-	if not craft then return false end
+	if not craft then
+		return false
+	end
 	local output_item = craft.output.item
 
 	-- check if we have enough room in dst
-	if not inventory:room_for_item("dst", output_item) then	return false end
-	local consumption = craft.consumption
+	if not inventory:room_for_item("dst", output_item) then
+		return false
+	end
+
+	-- get required items and index inventory
 	local inv_index = count_index(inventory:get_list("src"))
+	local consumption = calculate_consumption(inv_index, craft.consumption)
+	if not consumption then
+		return false
+	end
+
 	-- check if we have enough material available
 	for itemname, number in pairs(consumption) do
 		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
+
 	-- consume material
 	for itemname, number in pairs(consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
