@@ -706,7 +706,9 @@ minetest.register_node(nodename_sp_empty, {
 	end,
 	selection_box = sp_cbox,
 	collision_box = sp_cbox,
-	on_rotate = pipeworks.fix_after_rotation
+	on_rotate = pipeworks.fix_after_rotation,
+	check_for_pole = pipeworks.check_for_vert_pipe,
+	check_for_horiz_pole = pipeworks.check_for_horiz_pipe
 })
 
 local nodename_sp_loaded = "pipeworks:straight_pipe_loaded"
@@ -727,7 +729,9 @@ minetest.register_node(nodename_sp_loaded, {
 	selection_box = sp_cbox,
 	collision_box = sp_cbox,
 	drop = "pipeworks:straight_pipe_empty",
-	on_rotate = pipeworks.fix_after_rotation
+	on_rotate = pipeworks.fix_after_rotation,
+	check_for_pole = pipeworks.check_for_vert_pipe,
+	check_for_horiz_pole = pipeworks.check_for_horiz_pipe
 })
 
 new_flow_logic_register.directional_horizonal_rotate(nodename_sp_empty, true)

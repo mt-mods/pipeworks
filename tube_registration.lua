@@ -116,7 +116,10 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 			end
 			minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 			pipeworks.scan_for_tube_objects(pos)
-		end
+		end,
+		check_for_pole = pipeworks.check_for_vert_tube,
+		check_for_horiz_pole = pipeworks.check_for_horiz_tube,
+		tubenumber = tonumber(tname)
 	}
 	if style == "6d" then
 		nodedef.paramtype2 = "facedir"

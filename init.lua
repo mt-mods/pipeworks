@@ -102,6 +102,10 @@ if pipeworks.toggles.finite_water == nil then
 	dofile(pipeworks.modpath.."/autodetect-finite-water.lua")
 end
 
+if minetest.get_modpath("signs_lib") then
+	dofile(pipeworks.modpath.."/signs_compat.lua")
+end
+
 dofile(pipeworks.modpath.."/common.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
