@@ -68,8 +68,6 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	if not fromdef then return end
 	local fromtube = fromdef.tube
 	local input_special_cases = {
-		["technic:mv_furnace"] = "dst",
-		["technic:mv_furnace_active"] = "dst",
 		["technic:mv_electric_furnace"] = "dst",
 		["technic:mv_electric_furnace_active"] = "dst",
 		["technic:mv_alloy_furnace"] = "dst",
@@ -84,7 +82,13 @@ local function punch_filter(data, filtpos, filtnode, msg)
 		["technic:mv_grinder_active"] = "dst",
 		["technic:tool_workshop"] = "src",
 		["technic:mv_freezer"] = "dst",
-		["technic:mv_freezer_active"] = "dst"
+		["technic:mv_freezer_active"] = "dst",
+		["technic:hv_electric_furnace"] = "dst",
+		["technic:hv_electric_furnace_active"] = "dst",
+		["technic:hv_compressor"] = "dst",
+		["technic:hv_compressor_active"] = "dst",
+		["technic:hv_grinder"] = "dst",
+		["technic:hv_grinder_active"] = "dst"
 	}
 
 	-- make sure there's something appropriate to inject the item into
