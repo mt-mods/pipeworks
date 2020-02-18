@@ -1,4 +1,5 @@
 -- This file supplies the various kinds of pneumatic tubes
+local S = minetest.get_translator("pipeworks")
 
 local tubenodes = {}
 pipeworks.tubenodes = tubenodes
@@ -56,7 +57,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 	end
 
 	local tgroups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory = 1}
-	local tubedesc = string.format("%s %s... You hacker, you.", desc, dump(connects))
+	local tubedesc = string.format("%s %s", desc, dump(connects))
 	local iimg = plain[1]
 	local wscale = {x = 1, y = 1, z = 1}
 
@@ -197,7 +198,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 				wield_image = inv,
 				paramtype = "light",
 				sunlight_propagates = true,
-				description = "Pneumatic tube segment (legacy)",
+				description = S("Pneumatic tube segment (legacy)"),
 				after_place_node = pipeworks.after_place,
 				groups = {not_in_creative_inventory = 1, tube_to_update = 1, tube = 1},
 				tube = {connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1}},

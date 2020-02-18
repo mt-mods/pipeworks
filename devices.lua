@@ -1,3 +1,4 @@
+local S = minetest.get_translator("pipeworks")
 local new_flow_logic_register = pipeworks.flowables.register
 
 local polys = ""
@@ -135,7 +136,7 @@ for s in ipairs(states) do
 
 	local pumpname = "pipeworks:pump_"..states[s]
 	minetest.register_node(pumpname, {
-		description = "Pump/Intake Module",
+		description = S("Pump/Intake Module"),
 		drawtype = "mesh",
 		mesh = "pipeworks_pump"..polys..".obj",
 		tiles = { "pipeworks_pump_"..states[s]..".png" },
@@ -178,7 +179,7 @@ for s in ipairs(states) do
 
 	local nodename_valve_empty = "pipeworks:valve_"..states[s].."_empty"
 	minetest.register_node(nodename_valve_empty, {
-		description = "Valve",
+		description = S("Valve"),
 		drawtype = "mesh",
 		mesh = "pipeworks_valve_"..states[s]..polys..".obj",
 		tiles = { "pipeworks_valve.png" },
@@ -224,7 +225,7 @@ end
 
 local nodename_valve_loaded = "pipeworks:valve_on_loaded"
 minetest.register_node(nodename_valve_loaded, {
-	description = "Valve",
+	description = S("Valve"),
 	drawtype = "mesh",
 	mesh = "pipeworks_valve_on"..polys..".obj",
 	tiles = { "pipeworks_valve.png" },
@@ -272,7 +273,7 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_valve_loaded, true
 
 -- FIXME: should this do anything useful in the new flow logic?
 minetest.register_node("pipeworks:grating", {
-	description = "Decorative grating",
+	description = S("Decorative grating"),
 	tiles = {
 		"pipeworks_grating_top.png",
 		"pipeworks_grating_sides.png",
@@ -305,7 +306,7 @@ minetest.register_node("pipeworks:grating", {
 
 local nodename_spigot_empty = "pipeworks:spigot"
 minetest.register_node(nodename_spigot_empty, {
-	description = "Spigot outlet",
+	description = S("Spigot outlet"),
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot"..polys..".obj",
 	tiles = { "pipeworks_spigot.png" },
@@ -336,7 +337,7 @@ minetest.register_node(nodename_spigot_empty, {
 
 local nodename_spigot_loaded = "pipeworks:spigot_pouring"
 minetest.register_node(nodename_spigot_loaded, {
-	description = "Spigot outlet",
+	description = S("Spigot outlet"),
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
@@ -402,7 +403,7 @@ local panel_cbox = {
 
 local nodename_panel_empty = "pipeworks:entry_panel_empty"
 minetest.register_node(nodename_panel_empty, {
-	description = "Airtight Pipe entry/exit",
+	description = S("Airtight Pipe entry/exit"),
 	drawtype = "mesh",
 	mesh = "pipeworks_entry_panel"..polys..".obj",
 	tiles = { "pipeworks_entry_panel.png" },
@@ -422,7 +423,7 @@ minetest.register_node(nodename_panel_empty, {
 
 local nodename_panel_loaded = "pipeworks:entry_panel_loaded"
 minetest.register_node(nodename_panel_loaded, {
-	description = "Airtight Pipe entry/exit",
+	description = S("Airtight Pipe entry/exit"),
 	drawtype = "mesh",
 	mesh = "pipeworks_entry_panel"..polys..".obj",
 	tiles = { "pipeworks_entry_panel.png" },
@@ -448,7 +449,7 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded, true
 
 local nodename_sensor_empty = "pipeworks:flow_sensor_empty"
 minetest.register_node(nodename_sensor_empty, {
-	description = "Flow Sensor",
+	description = S("Flow Sensor"),
 	drawtype = "mesh",
 	mesh = "pipeworks_flow_sensor"..polys..".obj",
 	tiles = { "pipeworks_flow_sensor_off.png" },
@@ -487,7 +488,7 @@ minetest.register_node(nodename_sensor_empty, {
 
 local nodename_sensor_loaded = "pipeworks:flow_sensor_loaded"
 minetest.register_node(nodename_sensor_loaded, {
-	description = "Flow sensor (on)",
+	description = S("Flow sensor (on)"),
 	drawtype = "mesh",
 	mesh = "pipeworks_flow_sensor"..polys..".obj",
 	tiles = { "pipeworks_flow_sensor_on.png" },
@@ -536,18 +537,18 @@ new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pi
 
 -- TODO flow-logic-stub: these don't currently do anything under the new flow logic.
 for fill = 0, 10 do
-	local filldesc="empty"
+	local filldesc=S("empty")
 	local sgroups = {snappy=3, pipe=1, tankfill=fill+1}
 	local image = nil
 
 	if fill ~= 0 then
-		filldesc=fill.."0% full"
+		filldesc=S("@1% full", 10*fill)
 		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1}
 		image = "pipeworks_storage_tank_fittings.png"
 	end
 
 	minetest.register_node("pipeworks:expansion_tank_"..fill, {
-		description = "Expansion Tank ("..filldesc..")... You hacker, you.",
+		description = S("Expansion Tank (@1)", filldesc),
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_fittings.png",
@@ -575,7 +576,7 @@ for fill = 0, 10 do
 	})
 
 	minetest.register_node("pipeworks:storage_tank_"..fill, {
-		description = "Fluid Storage Tank ("..filldesc..")",
+		description = S("Fluid Storage Tank (@1)", filldesc),
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
 			"pipeworks_storage_tank_fittings.png",
@@ -607,7 +608,7 @@ end
 
 local nodename_fountain_empty = "pipeworks:fountainhead"
 minetest.register_node(nodename_fountain_empty, {
-	description = "Fountainhead",
+	description = S("Fountainhead"),
 	drawtype = "mesh",
 	mesh = "pipeworks_fountainhead"..polys..".obj",
 	tiles = { "pipeworks_fountainhead.png" },
@@ -641,7 +642,7 @@ minetest.register_node(nodename_fountain_empty, {
 
 local nodename_fountain_loaded = "pipeworks:fountainhead_pouring"
 minetest.register_node(nodename_fountain_loaded, {
-	description = "Fountainhead",
+	description = S("Fountainhead"),
 	drawtype = "mesh",
 	mesh = "pipeworks_fountainhead"..polys..".obj",
 	tiles = { "pipeworks_fountainhead.png" },
@@ -691,7 +692,7 @@ local sp_cbox = {
 
 local nodename_sp_empty = "pipeworks:straight_pipe_empty"
 minetest.register_node(nodename_sp_empty, {
-	description = "Straight-only Pipe",
+	description = S("Straight-only Pipe"),
 	drawtype = "mesh",
 	mesh = "pipeworks_straight_pipe"..polys..".obj",
 	tiles = { "pipeworks_straight_pipe_empty.png" },
@@ -713,7 +714,7 @@ minetest.register_node(nodename_sp_empty, {
 
 local nodename_sp_loaded = "pipeworks:straight_pipe_loaded"
 minetest.register_node(nodename_sp_loaded, {
-	description = "Straight-only Pipe",
+	description = S("Straight-only Pipe"),
 	drawtype = "mesh",
 	mesh = "pipeworks_straight_pipe"..polys..".obj",
 	tiles = { "pipeworks_straight_pipe_loaded.png" },

@@ -1,4 +1,5 @@
 -- This file supplies the steel pipes
+local S = minetest.get_translator("pipeworks")
 
 local REGISTER_COMPATIBILITY = true
 
@@ -35,11 +36,11 @@ for index, connects in ipairs(cconnects) do
 	end
 	
 	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1}
-	local pipedesc = "Pipe segement".." "..dump(connects).."... You hacker, you."
+	local pipedesc = S("Pipe Segment").." "..dump(connects)
 
 	if #connects == 0 then
 		pgroups = {snappy = 3, tube = 1}
-		pipedesc = "Pipe segment"
+		pipedesc = S("Pipe Segment")
 	end
 	
 	local outimg_e = { "pipeworks_pipe_plain.png" }
@@ -140,7 +141,7 @@ if REGISTER_COMPATIBILITY then
 		drawtype = "airlike",
 		sunlight_propagates = true,
 		paramtype = "light",
-		description = "Pipe Segment (legacy)",
+		description = S("Pipe Segment (legacy)"),
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)

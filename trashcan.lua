@@ -1,5 +1,6 @@
+local S = minetest.get_translator("pipeworks")
 minetest.register_node("pipeworks:trashcan", {
-	description = "Trash Can", 
+	description = S("Trash Can"), 
 	drawtype = "normal", 
 	tiles = {
 		"pipeworks_trashcan_bottom.png",
@@ -22,7 +23,7 @@ minetest.register_node("pipeworks:trashcan", {
 		meta:set_string("formspec",
 				"size[8,7]"..
 				"item_image[0,0;1,1;pipeworks:trashcan]"..
-				"label[1,0;Trash Can]"..
+				"label[1,0;"..S("Trash Can").."]"..
 				"list[context;trash;3.5,1;1,1;]"..
 				default.gui_bg..
 				default.gui_bg_img..
@@ -30,7 +31,7 @@ minetest.register_node("pipeworks:trashcan", {
 				default.get_hotbar_bg(0,3) ..
 				"list[current_player;main;0,3;8,4;]" ..
 				"listring[]")
-		meta:set_string("infotext", "Trash Can")
+		meta:set_string("infotext", S("Trash Can"))
 		meta:get_inventory():set_size("trash", 1)
 	end, 
 	after_place_node = pipeworks.after_place,
