@@ -24,7 +24,7 @@
 -- use too much memory from the sandbox.
 -- You can add more functions to the environment
 -- (see where local env is defined)
--- Something nice to play is is appending minetest.env to it.
+-- Something nice to play is appending minetest.env to it.
 
 local BASENAME = "pipeworks:lua_tube"
 

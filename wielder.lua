@@ -1,3 +1,4 @@
+local S = minetest.get_translator("pipeworks")
 local assumed_eye_pos = vector.new(0, 1.5, 0)
 
 local function vector_copy(v)
@@ -259,7 +260,7 @@ if pipeworks.enable_node_breaker then
 	local wield_inv_name = "pick"
 	data = {
 		name_base = name_base,
-		description = "Node Breaker",
+		description = S("Node Breaker"),
 		texture_base = "pipeworks_nodebreaker",
 		texture_stateful = { top = true, bottom = true, side2 = true, side1 = true, front = true },
 		tube_connect_sides = { top=1, bottom=1, left=1, right=1, back=1 },
@@ -408,7 +409,7 @@ end
 if pipeworks.enable_deployer then
 	register_wielder({
 		name_base = "pipeworks:deployer",
-		description = "Deployer",
+		description = S("Deployer"),
 		texture_base = "pipeworks_deployer",
 		texture_stateful = { front = true },
 		tube_connect_sides = { back=1 },
@@ -441,7 +442,7 @@ end
 if pipeworks.enable_dispenser then
 	register_wielder({
 		name_base = "pipeworks:dispenser",
-		description = "Dispenser",
+		description = S("Dispenser"),
 		texture_base = "pipeworks_dispenser",
 		texture_stateful = { front = true },
 		tube_connect_sides = { back=1 },

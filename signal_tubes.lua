@@ -1,7 +1,8 @@
+local S = minetest.get_translator("pipeworks")
 if pipeworks.enable_detector_tube then
 	local detector_tube_step = 5 * tonumber(minetest.settings:get("dedicated_server_step"))
 	pipeworks.register_tube("pipeworks:detector_tube_on", {
-			description = "Detecting Pneumatic Tube Segment on (you hacker you)",
+			description = S("Detecting Pneumatic Tube Segment on"),
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
@@ -40,7 +41,7 @@ if pipeworks.enable_detector_tube then
 			},
 	})
 	pipeworks.register_tube("pipeworks:detector_tube_off", {
-			description = "Detecting Pneumatic Tube Segment",
+			description = S("Detecting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
@@ -70,7 +71,7 @@ end
 local digiline_enabled = minetest.get_modpath("digilines") ~= nil
 if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 	pipeworks.register_tube("pipeworks:digiline_detector_tube", {
-			description = "Digiline Detecting Pneumatic Tube Segment",
+			description = S("Digiline Detecting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_digiline_detector_tube_inv.png",
 			plain = { "pipeworks_digiline_detector_tube_plain.png" },
 			node_def = {
@@ -87,9 +88,9 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 					local meta = minetest.get_meta(pos)
 					meta:set_string("formspec",
 						"size[8.6,2.2]"..
-						"field[0.6,0.6;8,1;channel;Channel:;${channel}]"..
+						"field[0.6,0.6;8,1;channel;"..S("Channel")..";${channel}]"..
 						"image[0.3,1.3;1,1;pipeworks_digiline_detector_tube_inv.png]"..
-						"label[1.6,1.2;Digiline Detecting Tube]"
+						"label[1.6,1.2;"..S("Digiline Detecting Tube").."]"
 					)
 				end,
 				on_receive_fields = function(pos, formname, fields, sender)
@@ -122,7 +123,7 @@ end
 
 if pipeworks.enable_conductor_tube then
 	pipeworks.register_tube("pipeworks:conductor_tube_off", {
-			description = "Conducting Pneumatic Tube Segment",
+			description = S("Conducting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_conductor_tube_inv.png",
 			short = "pipeworks_conductor_tube_short.png",
 			plain = { "pipeworks_conductor_tube_plain.png" },
@@ -136,7 +137,7 @@ if pipeworks.enable_conductor_tube then
 			},
 	})
 	pipeworks.register_tube("pipeworks:conductor_tube_on", {
-			description = "Conducting Pneumatic Tube Segment on (you hacker you)",
+			description = S("Conducting Pneumatic Tube Segment on"),
 			inventory_image = "pipeworks_conductor_tube_inv.png",
 			short = "pipeworks_conductor_tube_short.png",
 			plain = { "pipeworks_conductor_tube_on_plain.png" },
@@ -160,7 +161,7 @@ end
 
 if digiline_enabled and pipeworks.enable_digiline_conductor_tube then
 	pipeworks.register_tube("pipeworks:digiline_conductor_tube", {
-		description = "Digiline Conducting Pneumatic Tube Segment",
+		description = S("Digiline Conducting Pneumatic Tube Segment"),
 		inventory_image = "pipeworks_tube_inv.png^pipeworks_digiline_conductor_tube_inv.png",
 		short = "pipeworks_tube_short.png^pipeworks_digiline_conductor_tube_short.png",
 		plain = {"pipeworks_tube_plain.png^pipeworks_digiline_conductor_tube_plain.png"},
@@ -178,7 +179,7 @@ end
 if digiline_enabled and pipeworks.enable_digiline_conductor_tube and
 		pipeworks.enable_conductor_tube then
 	pipeworks.register_tube("pipeworks:mesecon_and_digiline_conductor_tube_off", {
-		description = "Mesecon and Digiline Conducting Pneumatic Tube Segment",
+		description = S("Mesecon and Digiline Conducting Pneumatic Tube Segment"),
 		inventory_image = "pipeworks_conductor_tube_inv.png^pipeworks_digiline_conductor_tube_inv.png",
 		short = "pipeworks_conductor_tube_short.png^pipeworks_digiline_conductor_tube_short.png",
 		plain = {"pipeworks_conductor_tube_plain.png^pipeworks_digiline_conductor_tube_plain.png"},
@@ -195,7 +196,7 @@ if digiline_enabled and pipeworks.enable_digiline_conductor_tube and
 		},
 	})
 	pipeworks.register_tube("pipeworks:mesecon_and_digiline_conductor_tube_on", {
-		description = "Mesecon and Digiline Conducting Pneumatic Tube Segment on (you hacker you)",
+		description = S("Mesecon and Digiline Conducting Pneumatic Tube Segment on"),
 		inventory_image = "pipeworks_conductor_tube_inv.png^pipeworks_digiline_conductor_tube_inv.png",
 		short = "pipeworks_conductor_tube_short.png^pipeworks_digiline_conductor_tube_short.png",
 		plain = {"pipeworks_conductor_tube_on_plain.png^pipeworks_digiline_conductor_tube_plain.png"},

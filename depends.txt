@@ -1,7 +1,0 @@
-default
-basic_materials
-screwdriver
-mesecons?
-mesecons_mvps?
-digilines?
-signs_lib?

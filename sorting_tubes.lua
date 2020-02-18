@@ -1,3 +1,4 @@
+local S = minetest.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
 if pipeworks.enable_mese_tube then
@@ -55,7 +56,7 @@ if pipeworks.enable_mese_tube then
 	end
 
 	pipeworks.register_tube("pipeworks:mese_tube", {
-			description = "Sorting Pneumatic Tube Segment",
+			description = S("Sorting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_mese_tube_inv.png",
 			noctr = {"pipeworks_mese_tube_noctr_1.png", "pipeworks_mese_tube_noctr_2.png", "pipeworks_mese_tube_noctr_3.png",
 				"pipeworks_mese_tube_noctr_4.png", "pipeworks_mese_tube_noctr_5.png", "pipeworks_mese_tube_noctr_6.png"},
@@ -107,7 +108,7 @@ if pipeworks.enable_mese_tube then
 						inv:set_size("line"..tostring(i), 6*1)
 					end
 					update_formspec(pos)
-					meta:set_string("infotext", "Sorting pneumatic tube")
+					meta:set_string("infotext", S("Sorting pneumatic tube"))
 				end,
 				on_punch = update_formspec,
 				on_receive_fields = function(pos, formname, fields, sender)

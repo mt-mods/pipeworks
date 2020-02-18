@@ -61,7 +61,7 @@ local crunch_tube = function(pos, cnode, cmeta)
 		local itemcount = tube_item_count[h] or 0
 		if itemcount > max_tube_limit then
 			cmeta:set_string("the_tube_was", minetest.serialize(cnode))
-			print("[Pipeworks] Warning - a tube at "..minetest.pos_to_string(pos).." broke due to too many items ("..itemcount..")")
+			pipeworks.logger("Warning - a tube at "..minetest.pos_to_string(pos).." broke due to too many items ("..itemcount..")")
 			minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 			pipeworks.scan_for_tube_objects(pos)
 		end
