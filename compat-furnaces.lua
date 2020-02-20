@@ -255,7 +255,7 @@ local function furnace_node_timer(pos, elapsed)
 		minetest.get_node_timer(pos):stop()
 	end
 
-	local infotext = active.." "..DS("(Item: @2; Fuel: @3)", item_state, fuel_state)
+	local infotext = active.." "..DS("(Item: @1; Fuel: @2)", item_state, fuel_state)
 
 	--
 	-- Set meta values
