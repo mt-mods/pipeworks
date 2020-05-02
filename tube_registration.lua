@@ -58,7 +58,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 
 	local tgroups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory = 1}
 	local tubedesc = string.format("%s %s", desc, dump(connects))
-	local iimg = plain[1]
+	local iimg = type(plain[1]) == "table" and plain[1].name or plain[1]
 	local wscale = {x = 1, y = 1, z = 1}
 
 	if #connects == 0 then
