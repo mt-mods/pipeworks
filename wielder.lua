@@ -40,7 +40,7 @@ local can_tool_dig_node = function(nodename, toolcaps, toolname)
 		-- but a player holding one can - the game seems to fall back to the hand.
 		-- fall back to checking the hand's properties if the tool isn't the correct one.
 		local hand_caps = minetest.registered_items[""].tool_capabilities
-		diggable = minetest.get_dig_params(nodegroups, hand_caps)
+		diggable = minetest.get_dig_params(nodegroups, hand_caps).diggable
 	end
 	return diggable
 end
