@@ -25,7 +25,7 @@ end
 -- both optional w/ sensible defaults and fallback to normal allow_* function
 -- XXX: possibly change insert_object to insert_item
 
-local adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
+local default_adjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
 
 function pipeworks.notvel(tbl, vel)
 	local tbl2={}
@@ -80,6 +80,9 @@ local function go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
 	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
 		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
 	else
+		local adjlist_string = minetest.get_meta(pos):get_string("adjlist")
+		local adjlist = minetest.deserialize(adjlist_string) or default_adjlist -- backward compat: if not found, use old behavior: all directions
+
 		can_go = pipeworks.notvel(adjlist, vel)
 	end
 	-- can_go() is expected to return an array-like table of candidate offsets.
