@@ -389,6 +389,27 @@ minetest.register_node("pipeworks:autocrafter", {
 						end
 					end
 					after_recipe_change(pos,inv)
+				elseif msg == "get_recipe" then
+					local meta = minetest.get_meta(pos)
+					local inv = meta:get_inventory()
+					local recipe = {}
+					for y=0,2,1 do
+						local row = {}
+						for x=1,3,1 do
+							local slot = y*3+x
+							table.insert(row, inv:get_stack("recipe",slot):get_name())
+						end
+						table.insert(recipe, row)
+					end
+					local setchan = meta:get_string("channel")
+					local output = inv:get_stack("output", 1)
+					digiline:receptor_send(pos, digiline.rules.default, setchan, {
+						recipe = recipe,
+						result = {
+							name = output:get_name(),
+							count = output:get_count(),
+						}
+					  })
 				elseif msg == "off" then
 					update_meta(meta, false)
 					minetest.get_node_timer(pos):stop()
