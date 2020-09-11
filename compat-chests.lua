@@ -77,10 +77,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					pipeworks.after_place(pos)
 				end)
 				minetest.sound_play(sound, {gain = 0.3, pos = pos, max_hear_distance = 10})
-			end
-
-			-- Pipeworks Switch
-			if pipeworks.may_configure(pos, player) and not fields.quit then
+			elseif pipeworks.may_configure(pos, player) then
+				-- Pipeworks Switch
 				fs_helpers.on_receive_fields(pos, fields)
 				minetest.show_formspec(player:get_player_name(), "pipeworks:chest_formspec", get_chest_formspec(pos))
 			end
