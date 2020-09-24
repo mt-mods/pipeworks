@@ -71,8 +71,8 @@ function pipeworks.may_configure(pos, player)
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get_string("owner")
 
-	if owner ~= "" then -- wielders and filters
-		return owner == name
+	if owner ~= "" and owner == name then -- wielders and filters
+		return true
 	end
 	return not minetest.is_protected(pos, name)
 end
