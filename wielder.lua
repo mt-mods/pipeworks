@@ -378,7 +378,7 @@ if pipeworks.enable_node_breaker then
 	minetest.register_craft({
 		output = "pipeworks:nodebreaker_off",
 		recipe = {
-			{ "pipeworks:gear", "pipeworks:gear",   "pipeworks:gear"    },
+			{ "basic_materials:gear_steel", "basic_materials:gear_steel",   "basic_materials:gear_steel"    },
 			{ "default:stone", "mesecons:piston",   "default:stone" },
 			{ "group:wood",    "mesecons:mesecon",  "group:wood" },
 		}
