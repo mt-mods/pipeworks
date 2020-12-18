@@ -340,6 +340,8 @@ local move_entities_globalstep_part2 = function(dtime)
 			entity._velocity = master_entity:get_velocity()
 			entity._acceleration = master_entity:get_acceleration()
 		else
+			entity._velocity = entity._velocity or vector.new(0,0,0)
+			entity._acceleration = entity._acceleration or vector.new(0,0,0)
 			entity._pos = vector.add(vector.add(
 				entity._pos,
 				vector.multiply(entity._velocity, dtime)),
