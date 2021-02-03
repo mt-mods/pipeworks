@@ -29,7 +29,7 @@ end
 
 
 
-local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
+--~ local formatvec = function(vec) local sep="," return "("..tostring(vec.x)..sep..tostring(vec.y)..sep..tostring(vec.z)..")" end
 
 
 
@@ -69,11 +69,13 @@ end
 
 
 -- logging is unreliable when something is crashing...
+--[[
 local nilexplode = function(caller, label, value)
 	if value == nil then
 		error(caller..": "..label.." was nil")
 	end
 end
+--]]
 
 
 
@@ -185,13 +187,12 @@ flowlogic.balance_pressure = function(pos, node, currentpressure)
 	-- local dname = "flowlogic.balance_pressure()@"..formatvec(pos).." "
 	-- check the pressure of all nearby flowable nodes, and average it out.
 
-	-- pressure handles to average over
-	local connections = {}
 	-- unconditionally include self in nodes to average over.
 	-- result of averaging will be returned as new pressure for main flow logic callback
 	local totalv = currentpressure
 	local totalc = 1
 
+	-- pressure handles to average over
 	local connections = get_neighbour_positions(pos, node)
 
 	-- for each neighbour, add neighbour's pressure to the total to balance out
@@ -287,7 +288,7 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 	local upper = outputdef.upper
 	local lower = outputdef.lower
 	local result = currentpressure
-	local threshold = nil
+	local threshold
 	if finitemode then threshold = lower else threshold = upper end
 	if currentpressure > threshold then
 		local takenpressure = outputdef.outputfn(pos, node, currentpressure, finitemode)

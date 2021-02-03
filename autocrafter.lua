@@ -106,7 +106,6 @@ local function after_recipe_change(pos, inventory)
 		inventory:set_stack("output", 1, "")
 		return
 	end
-	local recipe_changed = false
 	local recipe = inventory:get_list("recipe")
 
 	local hash = minetest.hash_node_position(pos)

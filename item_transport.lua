@@ -194,6 +194,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 
 	from_data = function(self, itemstring)
 		local stack = ItemStack(itemstring)
+		--[[
 		local itemtable = stack:to_table()
 		local itemname = nil
 		if itemtable then
@@ -205,6 +206,7 @@ minetest.register_entity("pipeworks:tubed_item", {
 			item_texture = minetest.registered_items[itemname].inventory_image
 			item_type = minetest.registered_items[itemname].type
 		end
+		--]]
 		self.object:set_properties({
 			is_visible = true,
 			textures = {stack:get_name()}

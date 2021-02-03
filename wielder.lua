@@ -1,10 +1,6 @@
 local S = minetest.get_translator("pipeworks")
 local assumed_eye_pos = vector.new(0, 1.5, 0)
 
-local function vector_copy(v)
-	return { x = v.x, y = v.y, z = v.z }
-end
-
 local function delay(x)
 	return (function() return x end)
 end
@@ -353,7 +349,7 @@ if pipeworks.enable_node_breaker then
 							{pos=pointed_thing.under, gain=sound.gain})
 					end
 					wieldstack = virtplayer:get_wielded_item()
-				else
+				--~ else
 					--pipeworks.logger(dname.."couldn't dig node!")
 				end
 			end

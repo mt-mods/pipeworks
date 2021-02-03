@@ -26,8 +26,8 @@ local insertbase = function(nodename)
 end
 
 local regwarning = function(kind, nodename)
-	local tail = ""
-	if pipeworks.toggles.pipe_mode ~= "pressure" then tail = " but pressure logic not enabled" end
+	--~ local tail = ""
+	--~ if pipeworks.toggles.pipe_mode ~= "pressure" then tail = " but pressure logic not enabled" end
 	--pipeworks.logger(kind.." flow logic registry requested for "..nodename..tail)
 end
 
