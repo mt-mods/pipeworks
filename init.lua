@@ -6,8 +6,6 @@
 
 pipeworks = {}
 
-local DEBUG = false
-
 pipeworks.worldpath = minetest.get_worldpath()
 pipeworks.modpath = minetest.get_modpath("pipeworks")
 local S = minetest.get_translator("pipeworks")

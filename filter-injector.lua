@@ -1,10 +1,6 @@
 local S = minetest.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
-local function delay(x)
-	return (function() return x end)
-end
-
 local function set_filter_infotext(data, meta)
 	local infotext = S("@1 Filter-Injector", data.wise_desc)
 	if meta:get_int("slotseq_mode") == 2 then

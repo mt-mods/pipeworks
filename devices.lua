@@ -10,7 +10,7 @@ function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
 
 	if string.find(node.name, "spigot") then new_param2 = new_param2 % 4 end
 
-	newnode = string.gsub(node.name, "_on", "_off")
+	local newnode = string.gsub(node.name, "_on", "_off")
 	minetest.swap_node(pos, { name = newnode, param2 = new_param2 })
 	pipeworks.scan_for_pipe_objects(pos)
 
@@ -20,7 +20,7 @@ end
 function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 
 	local playername = placer:get_player_name()
-	if not minetest.is_protected(pointed_thing.under, playername) 
+	if not minetest.is_protected(pointed_thing.under, playername)
 	   and not minetest.is_protected(pointed_thing.above, playername) then
 
 		local node = minetest.get_node(pointed_thing.under)
@@ -36,9 +36,7 @@ function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 			local under = pointed_thing.under
 			local fdir = minetest.dir_to_facedir(placer:get_look_dir())
 			local undernode = minetest.get_node(under)
-			local abovenode = minetest.get_node(above)
 			local uname = undernode.name
-			local aname = abovenode.name
 			local isabove = (above.x == under.x) and (above.z == under.z) and (pitch > 0)
 			local pos1 = above
 
@@ -105,6 +103,7 @@ if minetest.get_modpath("mesecons") then
 	}
 end
 
+--[[
 local pipes_devicelist = {
 	"pump",
 	"valve",
@@ -120,14 +119,15 @@ local pipes_devicelist = {
 	"storage_tank_9",
 	"storage_tank_10"
 }
+--]]
 
 -- Now define the nodes.
 
 local states = { "on", "off" }
-local dgroups = ""
 
 for s in ipairs(states) do
 
+	local dgroups
 	if states[s] == "off" then
 		dgroups = {snappy=3, pipe=1}
 	else
@@ -465,7 +465,7 @@ minetest.register_node(nodename_sensor_empty, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_off(pos, rules) 
+			mesecon.receptor_off(pos, rules)
 		end
 	end,
 	selection_box = {
@@ -504,7 +504,7 @@ minetest.register_node(nodename_sensor_loaded, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_on(pos, rules) 
+			mesecon.receptor_on(pos, rules)
 		end
 	end,
 	selection_box = {
@@ -626,7 +626,7 @@ minetest.register_node(nodename_fountain_empty, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_on(pos, rules) 
+			mesecon.receptor_on(pos, rules)
 		end
 	end,
 	selection_box = {
@@ -661,7 +661,7 @@ minetest.register_node(nodename_fountain_loaded, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_on(pos, rules) 
+			mesecon.receptor_on(pos, rules)
 		end
 	end,
 	selection_box = {
