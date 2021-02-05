@@ -187,11 +187,11 @@ for s in ipairs(states) do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		selection_box = {
-	             	type = "fixed",
+			type = "fixed",
 			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		collision_box = {
-	             	type = "fixed",
+			type = "fixed",
 			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		groups = dgroups,
@@ -233,11 +233,11 @@ minetest.register_node(nodename_valve_loaded, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	selection_box = {
-             	type = "fixed",
+		type = "fixed",
 		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
 	collision_box = {
-             	type = "fixed",
+		type = "fixed",
 		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1},

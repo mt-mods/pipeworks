@@ -106,7 +106,7 @@ register.directional_horizonal_rotate = function(nodename, doubleended)
 	end
 	local directionfn = function(node, direction)
 		local result = false
-		for index, endvec in ipairs(getends(node)) do
+		for _, endvec in ipairs(getends(node)) do
 			if vector.equals(direction, endvec) then result = true end
 		end
 		return result

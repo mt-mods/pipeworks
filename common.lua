@@ -114,7 +114,7 @@ local fs_helpers = {}
 pipeworks.fs_helpers = fs_helpers
 function fs_helpers.on_receive_fields(pos, fields)
 	local meta = minetest.get_meta(pos)
-	for field, value in pairs(fields) do
+	for field in pairs(fields) do
 		if pipeworks.string_startswith(field, "fs_helpers_cycling:") then
 			local l = field:split(":")
 			local new_value = tonumber(l[2])

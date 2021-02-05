@@ -81,7 +81,7 @@ local function tube_autoroute(pos)
 	local basename = nodedef.basename
 	if nodedef.style == "old" then
 		local nsurround = ""
-		for i, n in ipairs(active) do
+		for _, n in ipairs(active) do
 			nsurround = nsurround..n
 		end
 		nctr.name = basename.."_"..nsurround

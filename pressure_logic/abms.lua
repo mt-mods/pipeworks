@@ -39,7 +39,7 @@ end
 local check_for_liquids_v2 = function(pos, limit)
 	local coords = make_coords_offsets(pos, false)
 	local total = 0
-	for index, tpos in ipairs(coords) do
+	for _, tpos in ipairs(coords) do
 		if total >= limit then break end
 		local name = minetest.get_node(tpos).name
 		if name == "default:water_source" then
@@ -153,7 +153,7 @@ local get_neighbour_positions = function(pos, node)
 
 	-- then, check each possible neighbour to see if they can be reached from this node.
 	local connections = {}
-	for index, offset in ipairs(candidates) do
+	for _, offset in ipairs(candidates) do
 		local npos = vector.add(pos, offset)
 		local neighbour = minetest.get_node(npos)
 		local nodename = neighbour.name
@@ -317,7 +317,7 @@ flowlogic.run_transition = function(node, currentpressure)
 		local nodename_prev = simplesetdef[1].nodename
 		local result_nodename = node.name
 
-		for index, element in ipairs(simplesetdef) do
+		for _, element in ipairs(simplesetdef) do
 			-- find the highest element that is below the current pressure.
 			local threshold = element.threshold
 			if threshold > currentpressure then
