@@ -47,7 +47,7 @@ local function autocraft(inventory, craft)
 	end
 	-- consume material
 	for itemname, number in pairs(consumption) do
-		for i = 1, number do -- We have to do that since remove_item does not work if count > stack_max
+		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
 			inventory:remove_item("src", ItemStack(itemname))
 		end
 	end
@@ -73,7 +73,7 @@ local function run_autocrafter(pos, elapsed)
 		return false
 	end
 
-	for step = 1, math.floor(elapsed/craft_time) do
+	for _ = 1, math.floor(elapsed/craft_time) do
 		local continue = autocraft(inventory, craft)
 		if not continue then return false end
 	end

@@ -969,7 +969,7 @@ for white  = 0, 1 do
 			can_go = function(pos, node, velocity, stack)
 				local src = {name = nil}
 				-- add color of the incoming tube explicitly; referring to rules, in case they change later
-				for color, rule in pairs(rules) do
+				for _, rule in pairs(rules) do
 					if (-velocity.x == rule.x and -velocity.y == rule.y and -velocity.z == rule.z) then
 						src.name = rule.name
 						break

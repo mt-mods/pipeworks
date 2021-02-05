@@ -23,7 +23,7 @@ end
 local function migrate_tube_db()
 		local tmp_db = {}
 		tp_tube_db.version = nil
-		for key, val in pairs(tp_tube_db) do
+		for _, val in pairs(tp_tube_db) do
 			if(val.channel ~= "") then -- skip unconfigured tubes
 				tmp_db[hash(val)] = val
 			end
@@ -193,7 +193,7 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 						minetest.chat_send_player(sender_name, S("Sorry, channel '@1' is reserved for exclusive use by @2",
 							new_channel, name))
 						return
-				
+
 					--channels starting with '[name];' can be used by other players, but cannot be received from
 					elseif mode == ";" and (fields.cr1 or (can_receive ~= 0 and not fields.cr0)) then
 						minetest.chat_send_player(sender_name, S("Sorry, receiving from channel '@1' is reserved for @2",
