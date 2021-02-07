@@ -324,6 +324,7 @@ function luaentity.get_objects_inside_radius(pos, radius)
 			index = index + 1
 		end
 	end
+	return objects
 end
 
 local move_entities_globalstep_part2 = function(dtime)

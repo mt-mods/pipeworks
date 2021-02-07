@@ -993,7 +993,7 @@ for white  = 0, 1 do
 		on_blast = function(pos, intensity)
 			if not intensity or intensity > 1 + 3^0.5 then
 				minetest.remove_node(pos)
-				return {string.format("%s_%s", name, dropname)}
+				return
 			end
 			minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 			pipeworks.scan_for_tube_objects(pos)
@@ -1070,7 +1070,7 @@ minetest.register_node(BASENAME .. "_burnt", {
 	on_blast = function(pos, intensity)
 		if not intensity or intensity > 1 + 3^0.5 then
 			minetest.remove_node(pos)
-			return {string.format("%s_%s", name, dropname)}
+			return
 		end
 		minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 		pipeworks.scan_for_tube_objects(pos)

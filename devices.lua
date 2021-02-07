@@ -465,7 +465,7 @@ minetest.register_node(nodename_sensor_empty, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_off(pos, rules)
+			mesecon.receptor_off(pos, pipeworks.mesecons_rules)
 		end
 	end,
 	selection_box = {
@@ -504,7 +504,7 @@ minetest.register_node(nodename_sensor_loaded, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_on(pos, rules)
+			mesecon.receptor_on(pos, pipeworks.mesecons_rules)
 		end
 	end,
 	selection_box = {
@@ -626,7 +626,7 @@ minetest.register_node(nodename_fountain_empty, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_on(pos, rules)
+			mesecon.receptor_on(pos, pipeworks.mesecons_rules)
 		end
 	end,
 	selection_box = {
@@ -661,7 +661,7 @@ minetest.register_node(nodename_fountain_loaded, {
 	end,
 	on_construct = function(pos)
 		if mesecon then
-			mesecon.receptor_on(pos, rules)
+			mesecon.receptor_on(pos, pipeworks.mesecons_rules)
 		end
 	end,
 	selection_box = {

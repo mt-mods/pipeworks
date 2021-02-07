@@ -223,7 +223,7 @@ function pipeworks.create_fake_player(def, is_dynamic)
 				return self._inventory:set_stack(def.wield_list,
 					self._wield_index, item)
 			end
-			_wielded_item = ItemStack(item)
+			self._wielded_item = ItemStack(item)
 		end,
 		get_wielded_item = function(self, item)
 			if self._inventory and def.wield_list then
@@ -242,16 +242,17 @@ function pipeworks.create_fake_player(def, is_dynamic)
 		set_bone_position = delay(),
 		hud_change = delay(),
 	}
-	local _trash
 	-- Getter & setter functions
 	p.get_inventory_formspec, p.set_inventory_formspec
 		= get_set_wrap("formspec", is_dynamic)
 	p.get_breath, p.set_breath = get_set_wrap("breath", is_dynamic)
 	p.get_hp, p.set_hp = get_set_wrap("hp", is_dynamic)
 	p.get_pos, p.set_pos = get_set_wrap("pos", is_dynamic)
-	_trash, p.move_to = get_set_wrap("pos", is_dynamic)
 	p.get_wield_index, p.set_wield_index = get_set_wrap("wield_index", true)
 	p.get_properties, p.set_properties = get_set_wrap("properties", false)
+
+	-- For players, move_to and get_pos do the same
+	p.move_to = p.get_pos
 
 	-- Backwards compatibilty
 	p.getpos = p.get_pos
