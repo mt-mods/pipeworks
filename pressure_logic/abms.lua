@@ -339,7 +339,9 @@ flowlogic.run_transition = function(node, currentpressure)
 	end
 
 	if not found then
-		pipeworks.logger("flowlogic.run_transition() BUG no transition definitions found! nodename="..nodename.." currentpressure="..tostring(currentpressure))
+		pipeworks.logger("flowlogic.run_transition() BUG no transition " ..
+			"definitions found! node.name=" .. node.name ..
+			" currentpressure=" .. tostring(currentpressure))
 	end
 
 	return result

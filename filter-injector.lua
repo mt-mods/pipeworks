@@ -322,7 +322,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				end
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
-				local item1 = pipeworks.tube_inject_item(pos, start_pos, dir, item, fakePlayer:get_player_name())
+				pipeworks.tube_inject_item(pos, start_pos, dir, item,
+					fakePlayer:get_player_name())
 				return true -- only fire one item, please
 			end
 		end
