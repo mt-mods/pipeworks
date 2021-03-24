@@ -26,6 +26,11 @@ local texture_mt = {
 	end
 }
 
+-- This will remove any semi-transparent pixels
+-- because that is still buggy in Minetest, force this as default
+local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+	and "clip" or true
+
 local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, ends, short, inv, special, connects, style)
 	noctrs = noctrs or default_noctrs
 	setmetatable(noctrs, texture_mt)
@@ -82,6 +87,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		description = tubedesc,
 		drawtype = "nodebox",
 		tiles = outimgs,
+		use_texture_alpha = texture_alpha_mode,
 		sunlight_propagates = true,
 		inventory_image = iimg,
 		wield_image = iimg,
