@@ -113,6 +113,18 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 			connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1},
 			priority = 50
 		},
+		on_punch = function(pos, node, player, pointed)
+			local playername = player:get_player_name()
+			if minetest.is_protected(pos, playername) and not minetest.check_player_privs(playername, {protection_bypass=true}) then
+				return minetest.node_punch(pos, node, player, pointed)
+			end
+			if pipeworks.check_and_wear_hammer(player) then
+				local wieldname = player:get_wielded_item():get_name()
+				pipeworks.logger(string.format("%s struck a tube at %s with %s to break it.", playername, minetest.pos_to_string(pos), wieldname))
+				pipeworks.break_tube(pos)
+			end
+			return minetest.node_punch(pos, node, player, pointed)
+		end,
 		after_place_node = pipeworks.after_place,
 		after_dig_node = pipeworks.after_dig,
 		on_rotate = false,
