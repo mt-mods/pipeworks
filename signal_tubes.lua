@@ -1,4 +1,16 @@
 local S = minetest.get_translator("pipeworks")
+
+-- the minetest.after() calls below can sometimes trigger after a tube
+-- breaks, at which point item_exit() is no longer valid, so we have to make
+-- sure that there even IS a callback to run, first.
+
+local function after_break(pos)
+	local name = minetest.get_node(pos).name
+	if minetest.registered_nodes[name].item_exit then
+		minetest.registered_nodes[name].item_exit(pos)
+	end
+end
+
 if pipeworks.enable_detector_tube then
 	local detector_tube_step = 5 * tonumber(minetest.settings:get("dedicated_server_step"))
 	pipeworks.register_tube("pipeworks:detector_tube_on", {
@@ -12,7 +24,7 @@ if pipeworks.enable_detector_tube then
 						 local nitems = meta:get_int("nitems")+1
 						 meta:set_int("nitems", nitems)
 						 local saved_pos = vector.new(pos)
-						 minetest.after(detector_tube_step, minetest.registered_nodes[name].item_exit, saved_pos)
+						 minetest.after(detector_tube_step, after_break, saved_pos)
 						 return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 					end},
 				groups = {mesecon = 2, not_in_creative_inventory = 1},
@@ -36,7 +48,7 @@ if pipeworks.enable_detector_tube then
 					 meta:set_int("nitems", 1)
 					 local name = minetest.get_node(pos).name
 					 local saved_pos = vector.new(pos)
-					 minetest.after(detector_tube_step, minetest.registered_nodes[name].item_exit, saved_pos)
+					 minetest.after(detector_tube_step, after_break, pos)
 				end,
 			},
 	})
