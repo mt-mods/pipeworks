@@ -3,6 +3,10 @@
 # License: CC-by-SA 4.0
 # Author: Louis Royer <4259825-lroyer@users.noreply.gitlab.com>
 
+## generic interaction
+Set=Fixer
+Close=Fermer
+
 ## digilines interfacing
 Channel=Canal
 
@@ -86,11 +90,12 @@ Sorting pneumatic tube=Tuyau pneumatique triant
 
 ## teleport tube
 Receive=Reception
-channels are public by default=Les canaux sont publics par défaut
-use <player>:<channel> for fully private channels=Utilisez <joueur>:<canal> pour un canal entièrement privé
-use <player>;<channel> for private receivers=Utilisez <joueur>;<canal> pour une réception privée
+Channels are public by default=Les canaux sont publics par défaut
+Use <player>:<channel> for fully private channels=Utilisez <joueur>:<canal> pour un canal entièrement privé
+Use <player>;<channel> for private receivers=Utilisez <joueur>;<canal> pour une réception privée
 Teleporting Pneumatic Tube Segment=Segment de tuyau pneumatique téléporteur
-unconfigured Teleportation Tube=Tuyau téléporteur non-configuré
+Teleporting Tube=Tuyau pneumatique téléporteur
+Unconfigured Teleportation Tube=Tuyau téléporteur non-configuré
 Sorry, channel '@1' is reserved for exclusive use by @2=Désolé, le canal '@1' est réservé exclusivement à l’utilisateur @2.
 Sorry, receiving from channel '@1' is reserved for @2=Désolé, la réception depuis le canal '@1' est réservée pour @2.
 Teleportation Tube @1 on '@2'=Tuyau de téléportation @1 sur '@2'
@@ -102,7 +107,9 @@ Trash Can=Poubelle
 Pneumatic tube segment (legacy)=Segment de tuyau pneumatique (obsolète)
 
 ## vacuum tubes
+Radius=Rayon
 Vacuuming Pneumatic Tube Segment=Segment de tuyau pneumatique aspirant
+Adjustable Vacuuming Tube=Tuyau pneumatique aspirant réglable
 Adjustable Vacuuming Pneumatic Tube Segment=Segment de tuyau pneumatique aspirant réglable
 Adjustable Vacuuming Pneumatic Tube Segment (@1m)=Segment de tuyau pneumatique aspirant réglable (@1 m)
 

@@ -20,7 +20,6 @@ if pipeworks.enable_detector_tube then
 			node_def = {
 				tube = {can_go = function(pos, node, velocity, stack)
 						 local meta = minetest.get_meta(pos)
-						 local name = minetest.get_node(pos).name
 						 local nitems = meta:get_int("nitems")+1
 						 meta:set_int("nitems", nitems)
 						 local saved_pos = vector.new(pos)
@@ -46,8 +45,6 @@ if pipeworks.enable_detector_tube then
 				on_construct = function(pos)
 					 local meta = minetest.get_meta(pos)
 					 meta:set_int("nitems", 1)
-					 local name = minetest.get_node(pos).name
-					 local saved_pos = vector.new(pos)
 					 minetest.after(detector_tube_step, after_break, pos)
 				end,
 			},
@@ -99,13 +96,20 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 				on_construct = function(pos)
 					local meta = minetest.get_meta(pos)
 					meta:set_string("formspec",
-						"size[8.6,2.2]"..
-						"field[0.6,0.6;8,1;channel;"..S("Channel")..";${channel}]"..
-						"image[0.3,1.3;1,1;pipeworks_digiline_detector_tube_inv.png]"..
-						"label[1.6,1.2;"..S("Digiline Detecting Tube").."]"
+						"size[8.5,2.2]"..
+						"image[0.2,0;1,1;pipeworks_digiline_detector_tube_inv.png]"..
+						"label[1.2,0.2;"..S("Digiline Detecting Tube").."]"..
+						"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
+						"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
+						"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"
 					)
 				end,
 				on_receive_fields = function(pos, formname, fields, sender)
+					if (fields.quit and not fields.key_enter_field)
+					or (fields.key_enter_field ~= "channel" and not fields.set_channel)
+					or not pipeworks.may_configure(pos, sender) then
+						return
+					end
 					if fields.channel then
 						minetest.get_meta(pos):set_string("channel", fields.channel)
 					end

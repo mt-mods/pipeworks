@@ -40,22 +40,31 @@ if pipeworks.enable_mese_sand_tube then
 				on_construct = function(pos)
 					local meta = minetest.get_meta(pos)
 					meta:set_int("dist", 0)
-					meta:set_string("formspec", "size[2.1,0.8]"..
-							"image[0,0;1,1;pipeworks_mese_sand_tube_inv.png]"..
-							"field[1.3,0.4;1,1;dist;radius;${dist}]"..
-							default.gui_bg..
-							default.gui_bg_img)
+					meta:set_string("formspec",
+						"size[6.0,2.2]"..
+						"image[0.2,0;1,1;pipeworks_mese_sand_tube_inv.png]"..
+						"label[1.2,0.2;"..S("Adjustable Vacuuming Tube").."]"..
+						"field[0.5,1.6;2.1,1;dist;"..S("Radius")..";${dist}]"..
+						"button[2.3,1.3;1.5,1;set_dist;"..S("Set").."]"..
+						"button_exit[3.8,1.3;2,1;close;"..S("Close").."]"..
+						default.gui_bg..
+						default.gui_bg_img)
 					meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment"))
 				end,
 				on_receive_fields = function(pos,formname,fields,sender)
-					if not pipeworks.may_configure(pos, sender) then return end
+					if (fields.quit and not fields.key_enter_field)
+					or (fields.key_enter_field ~= "dist" and not fields.set_dist)
+					or not pipeworks.may_configure(pos, sender) then
+						return
+					end
+
 					local meta = minetest.get_meta(pos)
 					local dist = tonumber(fields.dist)
 					if dist then
 						dist = math.max(0, dist)
 						dist = math.min(8, dist)
 						meta:set_int("dist", dist)
-						meta:set_string("infotext", (S("Adjustable Vacuuming Pneumatic Tube Segment (@1m)", dist)))
+						meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment (@1m)", dist))
 					end
 				end,
 			},
