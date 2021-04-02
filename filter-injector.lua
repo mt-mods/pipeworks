@@ -14,17 +14,20 @@ local function set_filter_formspec(data, meta)
 
 	local formspec
 	if data.digiline then
-		formspec = "size[8,2.7]"..
-			"item_image[0,0;1,1;pipeworks:"..data.name.."]"..
-			"label[1,0;"..minetest.formspec_escape(itemname).."]"..
-			"field[0.3,1.5;8.0,1;channel;"..S("Channel")..";${channel}]"..
-			fs_helpers.cycling_button(meta, "button[0,2;4,1", "slotseq_mode",
+		formspec =
+			"size[8.5,3]"..
+			"item_image[0.2,0;1,1;pipeworks:"..data.name.."]"..
+			"label[1.2,0.2;"..minetest.formspec_escape(itemname).."]"..
+			"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
+			"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
+			fs_helpers.cycling_button(meta, "button[0.2,2.3;4.05,1", "slotseq_mode",
 				{S("Sequence slots by Priority"),
 				 S("Sequence slots Randomly"),
 				 S("Sequence slots by Rotation")})..
-			fs_helpers.cycling_button(meta, "button[4,2;4,1", "exmatch_mode",
+			fs_helpers.cycling_button(meta, "button[4.25,2.3;4.05,1", "exmatch_mode",
 				{S("Exact match - off"),
-				 S("Exact match - on")})
+				 S("Exact match - on")})..
+			"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"
 	else
 		local exmatch_button = ""
 		if data.stackwise then
@@ -425,10 +428,14 @@ for _, data in ipairs({
 		end
 
 		node.on_receive_fields = function(pos, formname, fields, sender)
-			if not pipeworks.may_configure(pos, sender) then return end
+			if (fields.quit and not fields.key_enter_field)
+			or not pipeworks.may_configure(pos, sender) then
+				return
+			end
+
 			fs_helpers.on_receive_fields(pos, fields)
 
-			if fields.channel then
+			if fields.channel and (fields.key_enter_field == "channel" or fields.set_channel) then
 				minetest.get_meta(pos):set_string("channel", fields.channel)
 			end
 

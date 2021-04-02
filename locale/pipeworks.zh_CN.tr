@@ -2,6 +2,10 @@
 # License: CC-by-SA 4.0
 # Author: pevernow <3450354617@qq.com>
 
+## generic interaction
+Set=
+Cancel=
+
 ## digilines interfacing
 Channel=频道
 
@@ -84,11 +88,12 @@ Sorting pneumatic tube=分类管道
 
 ## teleport tube
 Receive=接收
-channels are public by default=频道默认为公开
-use <player>:<channel> for fully private channels=将<player>:<channel>用于完全私人的频道
-use <player>;<channel> for private receivers=使用<player>;<channel>作为私人接收器
+Channels are public by default=频道默认为公开
+Use <player>:<channel> for fully private channels=将<player>:<channel>用于完全私人的频道
+Use <player>;<channel> for private receivers=使用<player>;<channel>作为私人接收器
 Teleporting Pneumatic Tube Segment=传送管道
-unconfigured Teleportation Tube=未配置的传送管道
+Teleporting Tube=
+Unconfigured Teleportation Tube=未配置的传送管道
 Sorry, channel '@1' is reserved for exclusive use by @2=抱歉，频道‘@1’保留供‘@2’专用
 Sorry, receiving from channel '@1' is reserved for @2=抱歉，从频道'@1'接收的内容已保留给'@2'
 Teleportation Tube @1 on '@2'=传送管'@1'在'@2'上
@@ -100,7 +105,9 @@ Trash Can=垃圾箱
 Pneumatic tube segment (legacy)=普通管道（旧式）
 
 ## vacuum tubes
+Radius=
 Vacuuming Pneumatic Tube Segment=拾取管道
+Adjustable Vacuuming Tube=
 Adjustable Vacuuming Pneumatic Tube Segment=高级拾取管道
 Adjustable Vacuuming Pneumatic Tube Segment (@1m)=高级拾取管道(@1m)
 

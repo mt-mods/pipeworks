@@ -31,7 +31,6 @@ end
 function pipeworks.check_and_wear_hammer(player)
 	local itemstack = player:get_wielded_item()
 	local wieldname = itemstack:get_name()
-	local playername = player:get_player_name()
 	if allowed_hammers[wieldname] then
 		itemstack:add_wear(1000)
 		player:set_wielded_item(itemstack)

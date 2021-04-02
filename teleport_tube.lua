@@ -127,16 +127,22 @@ end
 local function update_meta(meta, can_receive)
 	meta:set_int("can_receive", can_receive and 1 or 0)
 	local cr_state = can_receive and "on" or "off"
-	meta:set_string("formspec","size[8.6,2.2]"..
-			"field[0.6,0.6;7,1;channel;"..S("Channel")..";${channel}]"..
-			"label[7.3,0;"..S("Receive").."]"..
-			"image_button[7.3,0.3;1,0.6;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
-			"image[0.3,1.3;1,1;pipeworks_teleport_tube_inv.png]"..
-			"label[1.6,1.2;"..S("channels are public by default").."]" ..
-			"label[1.6,1.5;"..S("use <player>:<channel> for fully private channels").."]" ..
-			"label[1.6,1.8;"..S("use <player>\\;<channel> for private receivers").."]" ..
-			default.gui_bg..
-			default.gui_bg_img)
+	local itext = S("Channels are public by default").."\n"..
+		S("Use <player>:<channel> for fully private channels").."\n"..
+		S("Use <player>\\;<channel> for private receivers")
+
+	meta:set_string("formspec",
+		"size[8.5,3.5]"..
+		"image[0.2,o;1,1;pipeworks_teleport_tube_inv.png]"..
+		"label[1.2,0.2;"..S("Teleporting Tube").."]"..
+		"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
+		"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
+		"label[7.0,0;"..S("Receive").."]"..
+		"image_button[7.0,0.5;1,0.6;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
+		"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"..
+		"label[0.2,2.3;"..itext.."]"..
+		default.gui_bg..
+		default.gui_bg_img)
 end
 
 pipeworks.register_tube("pipeworks:teleport_tube", {
@@ -170,10 +176,11 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			update_meta(meta, true)
-			meta:set_string("infotext", S("unconfigured Teleportation Tube"))
+			meta:set_string("infotext", S("Unconfigured Teleportation Tube"))
 		end,
 		on_receive_fields = function(pos,formname,fields,sender)
 			if not fields.channel -- ignore escaping or clientside manipulation of the form
+			or (fields.quit and not fields.key_enter_field)
 			or not pipeworks.may_configure(pos, sender) then
 				return
 			end
@@ -207,7 +214,7 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 
 			-- was the channel changed?
 			local channel = meta:get_string("channel")
-			if new_channel ~= channel then
+			if new_channel ~= channel and (fields.key_enter_field == "channel" or fields.set_channel) then
 				channel = new_channel
 				meta:set_string("channel", channel)
 				dirty = true
@@ -233,7 +240,7 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 				else
 					-- remove empty channel tubes, to not have to search through them
 					remove_tube(pos)
-					meta:set_string("infotext", S("unconfigured Teleportation Tube"))
+					meta:set_string("infotext", S("Unconfigured Teleportation Tube"))
 				end
 			end
 		end,

@@ -3,6 +3,10 @@
 # License: CC-by-SA 4.0
 # Author:
 
+## generic interaction
+Set=
+Cancel=
+
 ## digilines interfacing
 Channel=
 
@@ -86,11 +90,12 @@ Sorting pneumatic tube=
 
 ## teleport tube
 Receive=
-channels are public by default=
-use <player>:<channel> for fully private channels=
-use <player>;<channel> for private receivers=
+Channels are public by default=
+Use <player>:<channel> for fully private channels=
+Use <player>;<channel> for private receivers=
 Teleporting Pneumatic Tube Segment=
-unconfigured Teleportation Tube=
+Teleporting Tube=
+Unconfigured Teleportation Tube=
 Sorry, channel '@1' is reserved for exclusive use by @2=
 Sorry, receiving from channel '@1' is reserved for @2=
 Teleportation Tube @1 on '@2'=
@@ -102,7 +107,9 @@ Trash Can=
 Pneumatic tube segment (legacy)=
 
 ## vacuum tubes
+Radius=
 Vacuuming Pneumatic Tube Segment=
+Adjustable Vacuuming Tube=
 Adjustable Vacuuming Pneumatic Tube Segment=
 Adjustable Vacuuming Pneumatic Tube Segment (@1m)=
 
