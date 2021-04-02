@@ -133,7 +133,7 @@ for index, connects in ipairs(cconnects) do
 	new_flow_logic_register.simple(emptypipe)
 	new_flow_logic_register.simple(fullpipe)
 end
-
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:pipe_1_empty"
 
 
 if REGISTER_COMPATIBILITY then

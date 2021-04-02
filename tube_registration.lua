@@ -200,6 +200,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 		end
 		end
 		end
+		pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = name.."_000000"
 	else
 		-- 6d tubes: uses only 10 nodes instead of 64, but the textures must be rotated
 		local cconnects = {{}, {1}, {1, 2}, {1, 3}, {1, 3, 5}, {1, 2, 3}, {1, 2, 3, 5}, {1, 2, 3, 4}, {1, 2, 3, 4, 5}, {1, 2, 3, 4, 5, 6}}
@@ -222,6 +223,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 				tube = {connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1}},
 				drop = name.."_1",
 			})
+			pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = name.."_1"
 			table.insert(tubenodes, cname)
 			for xm = 0, 1 do
 			for xp = 0, 1 do

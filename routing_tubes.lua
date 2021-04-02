@@ -193,6 +193,7 @@ if pipeworks.enable_one_way_tube then
 		check_for_pole = pipeworks.check_for_vert_tube,
 		check_for_horiz_pole = pipeworks.check_for_horiz_tube
 	})
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:one_way_tube"
 	minetest.register_craft({
 		output = "pipeworks:one_way_tube 2",
 		recipe = {

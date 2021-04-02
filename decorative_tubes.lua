@@ -28,6 +28,7 @@ minetest.register_node("pipeworks:steel_block_embedded_tube", {
 	after_dig_node = pipeworks.after_dig,
 	on_rotate = pipeworks.on_rotate,
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:steel_block_embedded_tube"
 
 minetest.register_craft( {
 	output = "pipeworks:steel_block_embedded_tube 1",
@@ -81,6 +82,7 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	after_dig_node = pipeworks.after_dig,
 	on_rotate = pipeworks.on_rotate,
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:steel_pane_embedded_tube"
 
 minetest.register_craft( {
 	output = "pipeworks:steel_pane_embedded_tube 1",

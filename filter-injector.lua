@@ -472,6 +472,7 @@ for _, data in ipairs({
 
 
 	minetest.register_node("pipeworks:"..data.name, node)
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:"..data.name
 end
 
 minetest.register_craft( {

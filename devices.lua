@@ -222,6 +222,8 @@ for s in ipairs(states) do
 		new_flow_logic_register.directional_horizonal_rotate(nodename_valve_empty, true)
 	end
 end
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:pump_off"
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:valve_off_empty"
 
 local nodename_valve_loaded = "pipeworks:valve_on_loaded"
 minetest.register_node(nodename_valve_loaded, {
@@ -301,6 +303,7 @@ minetest.register_node("pipeworks:grating", {
 	end,
 	on_rotate = false
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:grating"
 
 -- outlet spigot
 
@@ -378,6 +381,8 @@ minetest.register_node(nodename_spigot_loaded, {
 	drop = "pipeworks:spigot",
 	on_rotate = pipeworks.fix_after_rotation
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:spigot"
+
 -- new flow logic does not currently distinguish between these two visual states.
 -- register both so existing flowing spigots continue to work (even if the visual doesn't match the spigot's behaviour).
 new_flow_logic_register.directional_horizonal_rotate(nodename_spigot_empty, false)
@@ -441,6 +446,9 @@ minetest.register_node(nodename_panel_loaded, {
 	drop = "pipeworks:entry_panel_empty",
 	on_rotate = pipeworks.fix_after_rotation
 })
+
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:entry_panel_empty"
+
 -- TODO: AFAIK the two panels have no visual difference, so are redundant under new flow logic - alias?
 new_flow_logic_register.directional_horizonal_rotate(nodename_panel_empty, true)
 new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded, true)
@@ -525,6 +533,8 @@ minetest.register_node(nodename_sensor_loaded, {
 	mesecons = pipereceptor_on,
 	on_rotate = pipeworks.fix_after_rotation
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:flow_sensor_empty"
+
 new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_empty, true)
 new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_loaded, true)
 -- activate flow sensor at roughly half the pressure pumps drive pipes
@@ -603,6 +613,7 @@ for fill = 0, 10 do
 		on_rotate = false
 	})
 end
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:storage_tank_0"
 
 -- fountainhead
 
@@ -639,6 +650,7 @@ minetest.register_node(nodename_fountain_empty, {
 	},
 	on_rotate = false
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:fountainhead"
 
 local nodename_fountain_loaded = "pipeworks:fountainhead_pouring"
 minetest.register_node(nodename_fountain_loaded, {
@@ -734,6 +746,7 @@ minetest.register_node(nodename_sp_loaded, {
 	check_for_pole = pipeworks.check_for_vert_pipe,
 	check_for_horiz_pole = pipeworks.check_for_horiz_pipe
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:straight_pipe_empty"
 
 new_flow_logic_register.directional_horizonal_rotate(nodename_sp_empty, true)
 new_flow_logic_register.directional_horizonal_rotate(nodename_sp_loaded, true)
