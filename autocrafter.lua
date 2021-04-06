@@ -423,6 +423,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		},
 	},
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:autocrafter"
 
 minetest.register_craft( {
 	output = "pipeworks:autocrafter 2",

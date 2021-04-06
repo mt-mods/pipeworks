@@ -371,6 +371,7 @@ if pipeworks.enable_node_breaker then
 		eject_drops = true,
 	}
 	register_wielder(data)
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:nodebreaker_off"
 	minetest.register_craft({
 		output = "pipeworks:nodebreaker_off",
 		recipe = {
@@ -422,6 +423,7 @@ if pipeworks.enable_deployer then
 		end,
 		eject_drops = false,
 	})
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:deployer_off"
 	minetest.register_craft({
 		output = "pipeworks:deployer_off",
 		recipe = {
@@ -457,6 +459,7 @@ if pipeworks.enable_dispenser then
 		end,
 		eject_drops = false,
 	})
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:dispenser_off"
 	minetest.register_craft({
 		output = "pipeworks:dispenser_off",
 		recipe = {

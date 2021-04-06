@@ -5,6 +5,7 @@
 --
 
 pipeworks = {}
+pipeworks.ui_cat_tube_list = {}
 
 pipeworks.worldpath = minetest.get_worldpath()
 pipeworks.modpath = minetest.get_modpath("pipeworks")
@@ -147,5 +148,17 @@ if pipeworks.enable_lua_tube and
 end
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
+
+-- Unified Inventory categories integration
+
+if unified_inventory and unified_inventory.registered_categories then
+	if not unified_inventory.registered_categories["automation"] then
+		unified_inventory.register_category("automation", {
+			symbol = "pipeworks:lua_tube000000",
+			label = "Automation components"
+		})
+	end
+	unified_inventory.add_category_items("automation", pipeworks.ui_cat_tube_list)
+end
 
 minetest.log("info", "Pipeworks loaded!")

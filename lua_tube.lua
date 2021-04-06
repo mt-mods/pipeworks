@@ -981,6 +981,8 @@ end
 end
 end
 
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = BASENAME.."000000"
+
 ------------------------------------
 -- Overheated Lua controlled Tube --
 ------------------------------------

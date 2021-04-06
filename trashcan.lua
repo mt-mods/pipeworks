@@ -40,6 +40,7 @@ minetest.register_node("pipeworks:trashcan", {
 		minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 	end,
 })
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"
 
 minetest.register_craft({
 	output = "pipeworks:trashcan",
