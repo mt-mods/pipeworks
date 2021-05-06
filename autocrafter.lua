@@ -276,7 +276,10 @@ minetest.register_node("pipeworks:autocrafter", {
 		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
-		if not pipeworks.may_configure(pos, sender) then return end
+		if (fields.quit and not fields.key_enter_field)
+				or not pipeworks.may_configure(pos, sender) then
+			return
+		end
 		local meta = minetest.get_meta(pos)
 		if fields.on then
 			update_meta(meta, false)
