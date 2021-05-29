@@ -190,8 +190,9 @@ local function update_meta(meta, enabled)
 			"listring[context;dst]" ..
 			"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
-		fs = fs.."field[1,3.5;4,1;channel;"..S("Channel")..";${channel}]"
-		fs = fs.."button_exit[5,3.2;2,1;save;"..S("Save").."]"
+		fs = fs.."field[0.3,3.5;4.5,1;channel;"..S("Channel")..";${channel}]"..
+			"button[4.5,3.2;1.5,1;set_channel;"..S("Set").."]"..
+			"button_exit[6,3.2;2,1;close;"..S("Close").."]"
 	end
 	meta:set_string("formspec",fs)
 
@@ -276,7 +277,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
-		if (fields.quit and not fields.key_enter_field)
+		if not fields.channel or (fields.quit and not fields.key_enter_field)
 				or not pipeworks.may_configure(pos, sender) then
 			return
 		end
@@ -288,8 +289,9 @@ minetest.register_node("pipeworks:autocrafter", {
 			if update_meta(meta, true) then
 				start_crafter(pos)
 			end
-		elseif fields.save then
-			meta:set_string("channel",fields.channel)
+		end
+		if fields.channel then
+			meta:set_string("channel", fields.channel)
 		end
 	end,
 	can_dig = function(pos, player)
