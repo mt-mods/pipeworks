@@ -4,6 +4,9 @@ local filename=minetest.get_worldpath() .. "/teleport_tubes"
 local tp_tube_db = nil -- nil forces a read
 local tp_tube_db_version = 2.0
 
+-- cached rceiver list: hash(pos) => {receivers}
+local cache = {}
+
 local function hash(pos)
 	return string.format("%.30g", minetest.hash_node_position(pos))
 end
@@ -18,6 +21,8 @@ local function save_tube_db()
 	else
 		error(err)
 	end
+	-- reset tp-tube cache
+	cache = {}
 end
 
 local function migrate_tube_db()
@@ -101,6 +106,12 @@ local function read_node_with_vm(pos)
 end
 
 local function get_receivers(pos, channel)
+	local hash = minetest.hash_node_position(pos)
+	if cache[hash] then
+		-- re-use cached result
+		return cache[hash]
+	end
+
 	local tubes = tp_tube_db or read_tube_db()
 	local receivers = {}
 	local dirty = false
@@ -121,6 +132,8 @@ local function get_receivers(pos, channel)
 	if dirty then
 		save_tube_db()
 	end
+	-- cache the result for next time
+	cache[hash] = receivers
 	return receivers
 end
 
