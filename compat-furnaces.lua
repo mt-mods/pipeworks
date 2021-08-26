@@ -189,8 +189,26 @@ local function furnace_node_timer(pos, elapsed)
 					fuel_totaltime = 0
 					src_time = 0
 				else
-					-- Take fuel from fuel list
-					inv:set_stack("fuel", 1, afterfuel.items[1])
+					print(afterfuel.items[1]:to_string())
+					-- prevent blocking of fuel inventory (for automatization mods)
+					local is_fuel = minetest.get_craft_result({method = "fuel", width = 1, items = {afterfuel.items[1]:to_string()}})
+					if is_fuel.time == 0 then
+						table.insert(fuel.replacements, afterfuel.items[1])
+						inv:set_stack("fuel", 1, "")
+					else
+						-- Take fuel from fuel list
+						inv:set_stack("fuel", 1, afterfuel.items[1])
+					end
+					-- Put replacements in dst list or drop them on the furnace.
+					local replacements = fuel.replacements
+					if replacements[1] then
+						local leftover = inv:add_item("dst", replacements[1])
+						if not leftover:is_empty() then
+							local above = vector.new(pos.x, pos.y + 1, pos.z)
+							local drop_pos = minetest.find_node_near(above, 1, {"air"}) or above
+							minetest.item_drop(replacements[1], nil, drop_pos)
+						end
+					end
 					update = true
 					fuel_totaltime = fuel.time + (fuel_time - fuel_totaltime)
 					src_time = src_time + elapsed
