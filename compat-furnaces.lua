@@ -189,7 +189,6 @@ local function furnace_node_timer(pos, elapsed)
 					fuel_totaltime = 0
 					src_time = 0
 				else
-					print(afterfuel.items[1]:to_string())
 					-- prevent blocking of fuel inventory (for automatization mods)
 					local is_fuel = minetest.get_craft_result({method = "fuel", width = 1, items = {afterfuel.items[1]:to_string()}})
 					if is_fuel.time == 0 then
