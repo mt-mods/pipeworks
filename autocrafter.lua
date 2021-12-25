@@ -277,7 +277,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
-		if not fields.channel or (fields.quit and not fields.key_enter_field)
+		if (fields.quit and not fields.key_enter_field)
 				or not pipeworks.may_configure(pos, sender) then
 			return
 		end
