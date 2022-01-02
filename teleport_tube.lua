@@ -287,5 +287,7 @@ pipeworks.tptube = {
 	hash = hash,
 	save_tube_db = save_tube_db,
 	get_db = function() return tp_tube_db or read_tube_db() end,
+	set_tube = set_tube,
+	update_meta = update_meta,
 	tp_tube_db_version = tp_tube_db_version
 }
