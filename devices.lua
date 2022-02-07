@@ -1,6 +1,8 @@
 local S = minetest.get_translator("pipeworks")
 local new_flow_logic_register = pipeworks.flowables.register
 
+local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+
 local polys = ""
 if pipeworks.enable_lowpoly then polys = "_lowpoly" end
 
@@ -142,6 +144,7 @@ for s in ipairs(states) do
 		drawtype = "mesh",
 		mesh = "pipeworks_pump"..polys..".obj",
 		tiles = { "pipeworks_pump_"..states[s]..".png" },
+		use_texture_alpha = texture_alpha_mode and "clip" or true,
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = dgroups,
@@ -286,6 +289,7 @@ minetest.register_node("pipeworks:grating", {
 		"pipeworks_grating_sides.png",
 		"pipeworks_grating_sides.png"
 	},
+	use_texture_alpha = texture_alpha_mode and "clip" or true,
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
@@ -357,6 +361,7 @@ minetest.register_node(nodename_spigot_loaded, {
 		},
 		{ name = "pipeworks_spigot.png" }
 	},
+	use_texture_alpha = texture_alpha_mode and "blend" or true,
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
