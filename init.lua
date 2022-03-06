@@ -11,6 +11,16 @@ pipeworks.worldpath = minetest.get_worldpath()
 pipeworks.modpath = minetest.get_modpath("pipeworks")
 local S = minetest.get_translator("pipeworks")
 
+pipeworks.liquids = {}
+pipeworks.liquids.water = {
+	source = minetest.registered_nodes["mapgen_water_source"].name,
+	flowing = minetest.registered_nodes["mapgen_water_source"].liquid_alternative_flowing
+}
+pipeworks.liquids.river_water = {
+	source = minetest.registered_nodes["mapgen_river_water_source"].name,
+	flowing = minetest.registered_nodes["mapgen_river_water_source"].liquid_alternative_flowing
+}
+
 dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
