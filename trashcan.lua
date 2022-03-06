@@ -25,10 +25,6 @@ minetest.register_node("pipeworks:trashcan", {
 				"item_image[0,0;1,1;pipeworks:trashcan]"..
 				"label[1,0;"..S("Trash Can").."]"..
 				"list[context;trash;3.5,1;1,1;]"..
-				default.gui_bg..
-				default.gui_bg_img..
-				default.gui_slots..
-				default.get_hotbar_bg(0,3) ..
 				"list[current_player;main;0,3;8,4;]" ..
 				"listring[]")
 		meta:set_string("infotext", S("Trash Can"))

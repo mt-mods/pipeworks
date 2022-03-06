@@ -183,7 +183,7 @@ function pipeworks.create_fake_player(def, is_dynamic)
 		is_player = delay(true),
 		is_fake_player = true,
 
-		_formspec = def.formspec or default.gui_survival_form,
+		_formspec = def.formspec or "size[8,8.5]label[1,1;404 formspec not found]",
 		_hp = def.hp or 20,
 		_breath = 11,
 		_pos = def.position and table.copy(def.position) or vector.new(),

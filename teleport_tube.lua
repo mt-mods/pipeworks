@@ -153,9 +153,7 @@ local function update_meta(meta, can_receive)
 		"label[7.0,0;"..S("Receive").."]"..
 		"image_button[7.0,0.5;1,0.6;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
 		"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"..
-		"label[0.2,2.3;"..itext.."]"..
-		default.gui_bg..
-		default.gui_bg_img)
+		"label[0.2,2.3;"..itext.."]")
 end
 
 pipeworks.register_tube("pipeworks:teleport_tube", {
