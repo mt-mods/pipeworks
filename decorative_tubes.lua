@@ -34,15 +34,6 @@ minetest.register_node("pipeworks:steel_block_embedded_tube", {
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:steel_block_embedded_tube"
 
-minetest.register_craft( {
-	output = "pipeworks:steel_block_embedded_tube 1",
-	recipe = {
-		{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
-		{ "default:steel_ingot", "pipeworks:tube_1", "default:steel_ingot" },
-		{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" }
-	},
-})
-
 local pane_box = {
 	type = "fixed",
 	fixed = {
@@ -89,12 +80,3 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	on_rotate = pipeworks.on_rotate,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:steel_pane_embedded_tube"
-
-minetest.register_craft( {
-	output = "pipeworks:steel_pane_embedded_tube 1",
-	recipe = {
-		{ "", "default:steel_ingot", "" },
-		{ "", "pipeworks:tube_1", "" },
-		{ "", "default:steel_ingot", "" }
-	},
-})

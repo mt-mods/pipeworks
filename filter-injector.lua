@@ -484,35 +484,6 @@ for _, data in ipairs({
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:"..data.name
 end
 
-minetest.register_craft( {
-	output = "pipeworks:filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
-	        { "group:stick", "default:mese_crystal", "basic_materials:plastic_sheet" },
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:mese_filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
-	        { "group:stick", "default:mese", "basic_materials:plastic_sheet" },
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
-	},
-})
-
-if minetest.get_modpath("digilines") then
-	minetest.register_craft( {
-		output = "pipeworks:digiline_filter 2",
-		recipe = {
-			{ "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
-			{ "group:stick", "digilines:wire_std_00000000", "basic_materials:plastic_sheet" },
-			{ "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
-		},
-	})
-end
-
 --[[
 In the past the filter-injectors had real items in their inventories. This code
 puts them to the input to the filter-injector if possible. Else the items are

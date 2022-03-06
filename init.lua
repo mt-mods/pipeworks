@@ -124,7 +124,6 @@ dofile(pipeworks.modpath.."/autoplace_tubes.lua")
 dofile(pipeworks.modpath.."/luaentity.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
-dofile(pipeworks.modpath.."/crafts.lua")
 dofile(pipeworks.modpath.."/tube_registration.lua")
 dofile(pipeworks.modpath.."/routing_tubes.lua")
 dofile(pipeworks.modpath.."/sorting_tubes.lua")
@@ -157,6 +156,8 @@ if pipeworks.enable_lua_tube and
 		(minetest.get_modpath("mesecons") or minetest.get_modpath("digilines")) then
 	dofile(pipeworks.modpath.."/lua_tube.lua")
 end
+
+dofile(pipeworks.modpath.."/crafts.lua")
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 

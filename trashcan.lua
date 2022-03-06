@@ -37,12 +37,3 @@ minetest.register_node("pipeworks:trashcan", {
 	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"
-
-minetest.register_craft({
-	output = "pipeworks:trashcan",
-	recipe = {
-		{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-		{ "default:steel_ingot", "", "default:steel_ingot" },
-		{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
-	},
-})
