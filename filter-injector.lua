@@ -377,7 +377,9 @@ for _, data in ipairs({
 		paramtype2 = "facedir",
 		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, mesecon = 2},
 		legacy_facedir_simple = true,
-		--sounds = default.node_sound_wood_defaults(),
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			set_filter_formspec(data, meta)
