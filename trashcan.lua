@@ -10,7 +10,7 @@ minetest.register_node("pipeworks:trashcan", {
 		"pipeworks_trashcan_side.png",
 		"pipeworks_trashcan_side.png",
 	},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1},
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4},
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			return ItemStack("")

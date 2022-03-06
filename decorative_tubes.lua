@@ -14,7 +14,7 @@ minetest.register_node("pipeworks:steel_block_embedded_tube", {
 		},
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1},
+	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2},
 	legacy_facedir_simple = true,
 	_sound_def = {
         key = "node_sound_stone_defaults",
@@ -70,7 +70,7 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	collision_box = pane_box,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1},
+	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2},
 	legacy_facedir_simple = true,
 	_sound_def = {
         key = "node_sound_stone_defaults",
