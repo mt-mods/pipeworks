@@ -179,10 +179,6 @@ local function update_meta(meta, enabled)
 			"image_button[3,2;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
 			"list[context;src;0,4.5;8,3;]"..
 			"list[context;dst;4,0;4,3;]"..
-			default.gui_bg..
-			default.gui_bg_img..
-			default.gui_slots..
-			default.get_hotbar_bg(0,8) ..
 			"list[current_player;main;0,8;8,4;]" ..
 			"listring[current_player;main]"..
 			"listring[context;src]" ..
