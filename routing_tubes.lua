@@ -178,7 +178,7 @@ if pipeworks.enable_one_way_tube then
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
 		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1},
-		sounds = default.node_sound_wood_defaults(),
+		--sounds = default.node_sound_wood_defaults(),
 		tube = {
 			connect_sides = {left = 1, right = 1},
 			can_go = function(pos, node, velocity, stack)

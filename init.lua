@@ -137,7 +137,7 @@ dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
 if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
 if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
-if pipeworks.enable_redefines then
+if pipeworks.enable_redefines and minetest.get_modpath("default") then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
 	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end

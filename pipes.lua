@@ -76,7 +76,7 @@ for index, connects in ipairs(cconnects) do
 			fixed = outsel
 		},
 		groups = pgroups,
-		sounds = default.node_sound_metal_defaults(),
+		--sounds = default.node_sound_metal_defaults(),
 		walkable = true,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
@@ -110,7 +110,7 @@ for index, connects in ipairs(cconnects) do
 			fixed = outsel
 		},
 		groups = pgroups,
-		sounds = default.node_sound_metal_defaults(),
+		--sounds = default.node_sound_metal_defaults(),
 		walkable = true,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
