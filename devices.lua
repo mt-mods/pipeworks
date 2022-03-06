@@ -350,15 +350,7 @@ minetest.register_node(nodename_spigot_loaded, {
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
-		{
-			name = "default_water_flowing_animated.png",
-			animation = {
-				type = "vertical_frames",
-				aspect_w = 16,
-				aspect_h = 16,
-				length = 0.8,
-			},
-		},
+		minetest.registered_nodes[pipeworks.liquids.water.source].tiles[1],
 		{ name = "pipeworks_spigot.png" }
 	},
 	use_texture_alpha = texture_alpha_mode and "blend" or true,
