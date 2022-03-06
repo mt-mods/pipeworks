@@ -1,14 +1,16 @@
 local S = minetest.get_translator("pipeworks")
 
 local straight = function(pos, node, velocity, stack) return {velocity} end
+local steel_tex = "[combine:16x16^[noalpha^[colorize:#D3D3D3"
+if minetest.get_modpath("default") then steel_tex = "default_steel_block.png" end
 
 minetest.register_node("pipeworks:steel_block_embedded_tube", {
 	description = S("Airtight steelblock embedded tube"),
 	tiles = {
-		"default_steel_block.png", "default_steel_block.png",
-		"default_steel_block.png", "default_steel_block.png",
-		"default_steel_block.png^pipeworks_tube_connection_metallic.png",
-		"default_steel_block.png^pipeworks_tube_connection_metallic.png",
+		steel_tex, steel_tex,
+		steel_tex, steel_tex,
+		steel_tex .. "^pipeworks_tube_connection_metallic.png",
+		steel_tex .. "^pipeworks_tube_connection_metallic.png",
 		},
 	paramtype = "light",
 	paramtype2 = "facedir",
