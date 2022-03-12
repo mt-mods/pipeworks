@@ -2,6 +2,8 @@ local materials = {
 	dirt = "default:dirt",
 	sand = "default:sand",
 	desert_stone = "default:desert_stone",
+	desert_sand = "default:desert_sand",
+	chest = "default:chest",
 	gravel = "default:gravel",
 	copper_ingot = "default:copper_ingot",
 	steel_ingot = "default:steel_ingot",
@@ -50,6 +52,8 @@ elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
 		dirt = "fl_topsoil:dirt",
 		sand = "fl_stone:sand",
 		desert_stone = "fl_stone:desert_stone",
+		desert_sand = "fl_stone:desert_sand",
+		chest = "fl_storage:wood_chest",
 		gravel = "fl_topsoil:gravel",
 		steel_ingot = "fl_ores:iron_ingot",
 		gold_ingot = "fl_ores:gold_ingot",
@@ -360,5 +364,38 @@ if pipeworks.enable_mese_sand_tube then
 			materials.mese_crystal_fragment,
 			materials.mese_crystal_fragment,
 		},
+	})
+end
+
+if pipeworks.enable_deployer then
+	minetest.register_craft({
+		output = "pipeworks:deployer_off",
+		recipe = {
+			{ "group:wood",    "default:chest",    "group:wood"    },
+			{ materials.stone, "mesecons:piston",  materials.stone },
+			{ materials.stone, "mesecons:mesecon", materials.stone },
+		}
+	})
+end
+
+if pipeworks.enable_dispenser then
+	minetest.register_craft({
+		output = "pipeworks:dispenser_off",
+		recipe = {
+			{ materials.desert_sand, materials.chest,    materials.desert_sand },
+			{ materials.stone,       "mesecons:piston",  materials.stone       },
+			{ materials.stone,       "mesecons:mesecon", materials.stone      },
+		}
+	})
+end
+
+if pipeworks.enable_node_breaker then
+	minetest.register_craft({
+		output = "pipeworks:nodebreaker_off",
+		recipe = {
+			{ "basic_materials:gear_steel", "basic_materials:gear_steel",   "basic_materials:gear_steel"    },
+			{ materials.stone, "mesecons:piston",   materials.stone },
+			{ "group:wood",    "mesecons:mesecon",  "group:wood" },
+		}
 	})
 end
