@@ -261,3 +261,47 @@ minetest.register_craft({
 		{ materials.steel_ingot, materials.steel_ingot, materials.steel_ingot },
 	},
 })
+
+if pipeworks.enable_priority_tube then
+	minetest.register_craft( {
+		output = "pipeworks:priority_tube_1 6",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ materials.gold_ingot, "", materials.gold_ingot },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+end
+
+if pipeworks.enable_accelerator_tube then
+	minetest.register_craft( {
+		output = "pipeworks:accelerator_tube_1 2",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ materials.mese_crystal_fragment, materials.steel_ingot, materials.mese_crystal_fragment },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+end
+
+if pipeworks.enable_crossing_tube then
+	minetest.register_craft( {
+		output = "pipeworks:crossing_tube_1 5",
+		recipe = {
+			{ "", "pipeworks:tube_1", "" },
+			{ "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
+			{ "", "pipeworks:tube_1", "" }
+		},
+	})
+end
+
+if pipeworks.enable_one_way_tube then
+	minetest.register_craft({
+		output = "pipeworks:one_way_tube 2",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ "group:stick", materials.mese_crystal, "basic_materials:plastic_sheet" },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+end
