@@ -14,10 +14,10 @@ local materials = {
 
 if minetest.get_modpath("mcl_core") then
 	materials = {
-		stone = "fl_stone:stone",
-		desert_stone = "fl_stone:desert_stone",
-		desert_sand = "fl_stone:desert_sand",
-		chest = "default:chest",
+		stone = "mcl_core:stone",
+		desert_stone = "mcl_core:sandstone2",
+		desert_sand = "mcl_core:sand",
+		chest = "mcl_chests:chest_small",
 		steel_ingot = "mcl_core:iron_ingot",
 		gold_ingot = "mcl_core:gold_ingot",
         mese = "default:mese",
