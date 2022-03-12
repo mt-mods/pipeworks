@@ -67,27 +67,6 @@ if pipeworks.enable_mese_sand_tube then
 				end,
 			},
 	})
-
-	minetest.register_craft( {
-		output = "pipeworks:mese_sand_tube_1 2",
-		recipe = {
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{"group:sand",                 "default:mese_crystal",       "group:sand" },
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
-
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_sand_tube_1",
-		recipe = {
-			"pipeworks:sand_tube_1",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
-	})
 end
 
 local function vacuum(pos, radius)

@@ -260,14 +260,6 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 		end
 	},
 })
-minetest.register_craft( {
-	output = "pipeworks:teleport_tube_1 2",
-	recipe = {
-	        { "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-	        { "default:desert_stone", "default:mese", "default:desert_stone" },
-	        { "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-	},
-})
 
 if minetest.get_modpath("mesecons_mvps") ~= nil then
 	mesecon.register_on_mvps_move(function(moved_nodes)

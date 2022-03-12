@@ -163,25 +163,4 @@ if pipeworks.enable_mese_tube then
 				end,
 			},
 	})
-
-	minetest.register_craft( {
-		output = "pipeworks:mese_tube_000000 2",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "", "default:mese_crystal", "" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
-
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_tube_000000",
-		recipe = {
-			"pipeworks:tube_1",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
-	})
 end

@@ -1,6 +1,7 @@
 local materials = {
 	dirt = "default:dirt",
 	sand = "default:sand",
+	desert_stone = "default:desert_stone",
 	gravel = "default:gravel",
 	copper_ingot = "default:copper_ingot",
 	steel_ingot = "default:steel_ingot",
@@ -48,6 +49,7 @@ elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
 	materials = {
 		dirt = "fl_topsoil:dirt",
 		sand = "fl_stone:sand",
+		desert_stone = "fl_stone:desert_stone",
 		gravel = "fl_topsoil:gravel",
 		steel_ingot = "fl_ores:iron_ingot",
 		gold_ingot = "fl_ores:gold_ingot",
@@ -262,6 +264,15 @@ minetest.register_craft({
 	},
 })
 
+minetest.register_craft( {
+	output = "pipeworks:teleport_tube_1 2",
+	recipe = {
+	        { "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+	        { materials.desert_stone, materials.mese, materials.desert_stone },
+	        { "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+	},
+})
+
 if pipeworks.enable_priority_tube then
 	minetest.register_craft( {
 		output = "pipeworks:priority_tube_1 6",
@@ -302,6 +313,52 @@ if pipeworks.enable_one_way_tube then
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
 			{ "group:stick", materials.mese_crystal, "basic_materials:plastic_sheet" },
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+end
+
+if pipeworks.enable_mese_tube then
+	minetest.register_craft( {
+		output = "pipeworks:mese_tube_000000 2",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ "", materials.mese_crystal, "" },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:mese_tube_000000",
+		recipe = {
+			"pipeworks:tube_1",
+			materials.mese_crystal,
+			materials.mese_crystal,
+			materials.mese_crystal,
+			materials.mese_crystal,
+		},
+	})
+end
+
+if pipeworks.enable_mese_sand_tube then
+	minetest.register_craft( {
+		output = "pipeworks:mese_sand_tube_1 2",
+		recipe = {
+			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{"group:sand",                 materials.mese_crystal,       "group:sand" },
+			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:mese_sand_tube_1",
+		recipe = {
+			"pipeworks:sand_tube_1",
+			materials.mese_crystal_fragment,
+			materials.mese_crystal_fragment,
+			materials.mese_crystal_fragment,
+			materials.mese_crystal_fragment,
 		},
 	})
 end
