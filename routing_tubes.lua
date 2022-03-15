@@ -106,14 +106,6 @@ if pipeworks.enable_priority_tube then
 				tube = { priority = 150 } -- higher than tubedevices (100)
 			},
 	})
-	minetest.register_craft( {
-		output = "pipeworks:priority_tube_1 6",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "default:gold_ingot", "", "default:gold_ingot" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
 end
 
 if pipeworks.enable_accelerator_tube then
@@ -131,14 +123,6 @@ if pipeworks.enable_accelerator_tube then
 					end}
 			},
 	})
-	minetest.register_craft( {
-		output = "pipeworks:accelerator_tube_1 2",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
 end
 
 if pipeworks.enable_crossing_tube then
@@ -152,14 +136,6 @@ if pipeworks.enable_crossing_tube then
 			node_def = {
 				tube = {can_go = function(pos, node, velocity, stack) return {velocity} end }
 			},
-	})
-	minetest.register_craft( {
-		output = "pipeworks:crossing_tube_1 5",
-		recipe = {
-			{ "", "pipeworks:tube_1", "" },
-			{ "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
-			{ "", "pipeworks:tube_1", "" }
-		},
 	})
 end
 
@@ -178,7 +154,9 @@ if pipeworks.enable_one_way_tube then
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
 		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1},
-		sounds = default.node_sound_wood_defaults(),
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
 		tube = {
 			connect_sides = {left = 1, right = 1},
 			can_go = function(pos, node, velocity, stack)
@@ -197,12 +175,4 @@ if pipeworks.enable_one_way_tube then
 		check_for_horiz_pole = pipeworks.check_for_horiz_tube
 	})
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:one_way_tube"
-	minetest.register_craft({
-		output = "pipeworks:one_way_tube 2",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "group:stick", "default:mese_crystal", "basic_materials:plastic_sheet" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
 end

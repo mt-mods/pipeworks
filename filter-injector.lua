@@ -377,7 +377,9 @@ for _, data in ipairs({
 		paramtype2 = "facedir",
 		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, mesecon = 2},
 		legacy_facedir_simple = true,
-		sounds = default.node_sound_wood_defaults(),
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			set_filter_formspec(data, meta)
@@ -480,35 +482,6 @@ for _, data in ipairs({
 
 	minetest.register_node("pipeworks:"..data.name, node)
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:"..data.name
-end
-
-minetest.register_craft( {
-	output = "pipeworks:filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
-	        { "group:stick", "default:mese_crystal", "basic_materials:plastic_sheet" },
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
-	},
-})
-
-minetest.register_craft( {
-	output = "pipeworks:mese_filter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
-	        { "group:stick", "default:mese", "basic_materials:plastic_sheet" },
-	        { "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
-	},
-})
-
-if minetest.get_modpath("digilines") then
-	minetest.register_craft( {
-		output = "pipeworks:digiline_filter 2",
-		recipe = {
-			{ "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" },
-			{ "group:stick", "digilines:wire_std_00000000", "basic_materials:plastic_sheet" },
-			{ "default:steel_ingot", "default:steel_ingot", "basic_materials:plastic_sheet" }
-		},
-	})
 end
 
 --[[

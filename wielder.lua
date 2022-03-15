@@ -184,7 +184,9 @@ local function register_wielder(data)
 			paramtype2 = "facedir",
 			tubelike = 1,
 			groups = groups,
-			sounds = default.node_sound_stone_defaults(),
+			_sound_def = {
+				key = "node_sound_stone_defaults",
+			},
 			drop = data.name_base.."_off",
 			on_construct = function(pos)
 				local meta = minetest.get_meta(pos)
@@ -372,14 +374,6 @@ if pipeworks.enable_node_breaker then
 	}
 	register_wielder(data)
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:nodebreaker_off"
-	minetest.register_craft({
-		output = "pipeworks:nodebreaker_off",
-		recipe = {
-			{ "basic_materials:gear_steel", "basic_materials:gear_steel",   "basic_materials:gear_steel"    },
-			{ "default:stone", "mesecons:piston",   "default:stone" },
-			{ "group:wood",    "mesecons:mesecon",  "group:wood" },
-		}
-	})
 	-- aliases for when someone had technic installed, but then uninstalled it but not pipeworks
 	minetest.register_alias("technic:nodebreaker_off", "pipeworks:nodebreaker_off")
 	minetest.register_alias("technic:nodebreaker_on", "pipeworks:nodebreaker_on")
@@ -424,14 +418,6 @@ if pipeworks.enable_deployer then
 		eject_drops = false,
 	})
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:deployer_off"
-	minetest.register_craft({
-		output = "pipeworks:deployer_off",
-		recipe = {
-			{ "group:wood",    "default:chest",    "group:wood"    },
-			{ "default:stone", "mesecons:piston",  "default:stone" },
-			{ "default:stone", "mesecons:mesecon", "default:stone" },
-		}
-	})
 	-- aliases for when someone had technic installed, but then uninstalled it but not pipeworks
 	minetest.register_alias("technic:deployer_off", "pipeworks:deployer_off")
 	minetest.register_alias("technic:deployer_on", "pipeworks:deployer_on")
@@ -460,12 +446,4 @@ if pipeworks.enable_dispenser then
 		eject_drops = false,
 	})
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:dispenser_off"
-	minetest.register_craft({
-		output = "pipeworks:dispenser_off",
-		recipe = {
-			{ "default:desert_sand", "default:chest",    "default:desert_sand" },
-			{ "default:stone",       "mesecons:piston",  "default:stone"       },
-			{ "default:stone",       "mesecons:mesecon", "default:stone"       },
-		}
-	})
 end

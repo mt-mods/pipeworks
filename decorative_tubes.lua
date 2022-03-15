@@ -1,20 +1,24 @@
 local S = minetest.get_translator("pipeworks")
 
 local straight = function(pos, node, velocity, stack) return {velocity} end
+local steel_tex = "[combine:16x16^[noalpha^[colorize:#D3D3D3"
+if minetest.get_modpath("default") then steel_tex = "default_steel_block.png" end
 
 minetest.register_node("pipeworks:steel_block_embedded_tube", {
 	description = S("Airtight steelblock embedded tube"),
 	tiles = {
-		"default_steel_block.png", "default_steel_block.png",
-		"default_steel_block.png", "default_steel_block.png",
-		"default_steel_block.png^pipeworks_tube_connection_metallic.png",
-		"default_steel_block.png^pipeworks_tube_connection_metallic.png",
+		steel_tex, steel_tex,
+		steel_tex, steel_tex,
+		steel_tex .. "^pipeworks_tube_connection_metallic.png",
+		steel_tex .. "^pipeworks_tube_connection_metallic.png",
 		},
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1},
+	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2},
 	legacy_facedir_simple = true,
-	sounds = default.node_sound_stone_defaults(),
+	_sound_def = {
+        key = "node_sound_stone_defaults",
+    },
 	tube = {
 		connect_sides = {front = 1, back = 1,},
 		priority = 50,
@@ -29,15 +33,6 @@ minetest.register_node("pipeworks:steel_block_embedded_tube", {
 	on_rotate = pipeworks.on_rotate,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:steel_block_embedded_tube"
-
-minetest.register_craft( {
-	output = "pipeworks:steel_block_embedded_tube 1",
-	recipe = {
-		{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
-		{ "default:steel_ingot", "pipeworks:tube_1", "default:steel_ingot" },
-		{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" }
-	},
-})
 
 local pane_box = {
 	type = "fixed",
@@ -66,9 +61,11 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	collision_box = pane_box,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1},
+	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2},
 	legacy_facedir_simple = true,
-	sounds = default.node_sound_stone_defaults(),
+	_sound_def = {
+        key = "node_sound_stone_defaults",
+    },
 	tube = {
 		connect_sides = {front = 1, back = 1,},
 		priority = 50,
@@ -83,12 +80,3 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	on_rotate = pipeworks.on_rotate,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:steel_pane_embedded_tube"
-
-minetest.register_craft( {
-	output = "pipeworks:steel_pane_embedded_tube 1",
-	recipe = {
-		{ "", "default:steel_ingot", "" },
-		{ "", "pipeworks:tube_1", "" },
-		{ "", "default:steel_ingot", "" }
-	},
-})

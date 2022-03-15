@@ -865,7 +865,7 @@ for white  = 0, 1 do
 	tiles[3] = tiles[3]..tiles_on_off.R270:format(white == 1 and "on" or "off");
 	tiles[4] = tiles[4]..tiles_on_off.R_90:format(white == 1 and "on" or "off");
 
-	local groups = {snappy = 3, tube = 1, tubedevice = 1, overheat = 1}
+	local groups = {snappy = 3, tube = 1, tubedevice = 1, overheat = 1, dig_generic = 4}
 	if red + blue + yellow + green + black + white ~= 0 then
 		groups.not_in_creative_inventory = 1
 	end
@@ -918,7 +918,9 @@ for white  = 0, 1 do
 		node_box = node_box,
 		on_construct = reset_meta,
 		on_receive_fields = on_receive_fields,
-		sounds = default.node_sound_wood_defaults(),
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
 		mesecons = mesecons,
 		digiline = digiline,
 		-- Virtual portstates are the ports that
@@ -1021,14 +1023,16 @@ minetest.register_node(BASENAME .. "_burnt", {
 	is_burnt = true,
 	paramtype = "light",
 	is_ground_content = false,
-	groups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory=1},
+	groups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory=1, dig_generic = 4},
 	drop = BASENAME.."000000",
 	sunlight_propagates = true,
 	selection_box = selection_box,
 	node_box = node_box,
 	on_construct = reset_meta,
 	on_receive_fields = on_receive_fields,
-	sounds = default.node_sound_wood_defaults(),
+	_sound_def = {
+        key = "node_sound_wood_defaults",
+    },
 	virtual_portstates = {red = false, blue = false, yellow = false,
 		green = false, black = false, white = false},
 	mesecons = {

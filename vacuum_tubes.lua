@@ -46,9 +46,7 @@ if pipeworks.enable_mese_sand_tube then
 						"label[1.2,0.2;"..S("Adjustable Vacuuming Tube").."]"..
 						"field[0.5,1.6;2.1,1;dist;"..S("Radius")..";${dist}]"..
 						"button[2.3,1.3;1.5,1;set_dist;"..S("Set").."]"..
-						"button_exit[3.8,1.3;2,1;close;"..S("Close").."]"..
-						default.gui_bg..
-						default.gui_bg_img)
+						"button_exit[3.8,1.3;2,1;close;"..S("Close").."]")
 					meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment"))
 				end,
 				on_receive_fields = function(pos,formname,fields,sender)
@@ -68,27 +66,6 @@ if pipeworks.enable_mese_sand_tube then
 					end
 				end,
 			},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:mese_sand_tube_1 2",
-		recipe = {
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{"group:sand",                 "default:mese_crystal",       "group:sand" },
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
-
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_sand_tube_1",
-		recipe = {
-			"pipeworks:sand_tube_1",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
 	})
 end
 

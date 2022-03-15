@@ -27,7 +27,9 @@ if not minetest.get_modpath("auto_tree_tap") and
 		is_ground_content = true,
 		paramtype2 = "facedir",
 		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, not_in_creative_inventory=1 },
-		sounds = default.node_sound_stone_defaults(),
+		_sound_def = {
+			key = "node_sound_stone_defaults",
+		},
 		tube = {connect_sides={back=1}},
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)

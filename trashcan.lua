@@ -10,7 +10,7 @@ minetest.register_node("pipeworks:trashcan", {
 		"pipeworks_trashcan_side.png",
 		"pipeworks_trashcan_side.png",
 	},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1},
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4},
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			return ItemStack("")
@@ -25,10 +25,6 @@ minetest.register_node("pipeworks:trashcan", {
 				"item_image[0,0;1,1;pipeworks:trashcan]"..
 				"label[1,0;"..S("Trash Can").."]"..
 				"list[context;trash;3.5,1;1,1;]"..
-				default.gui_bg..
-				default.gui_bg_img..
-				default.gui_slots..
-				default.get_hotbar_bg(0,3) ..
 				"list[current_player;main;0,3;8,4;]" ..
 				"listring[]")
 		meta:set_string("infotext", S("Trash Can"))
@@ -41,12 +37,3 @@ minetest.register_node("pipeworks:trashcan", {
 	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"
-
-minetest.register_craft({
-	output = "pipeworks:trashcan",
-	recipe = {
-		{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-		{ "default:steel_ingot", "", "default:steel_ingot" },
-		{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
-	},
-})

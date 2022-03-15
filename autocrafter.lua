@@ -179,10 +179,6 @@ local function update_meta(meta, enabled)
 			"image_button[3,2;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
 			"list[context;src;0,4.5;8,3;]"..
 			"list[context;dst;4,0;4,3;]"..
-			default.gui_bg..
-			default.gui_bg_img..
-			default.gui_slots..
-			default.get_hotbar_bg(0,8) ..
 			"list[current_player;main;0,8;8,4;]" ..
 			"listring[current_player;main]"..
 			"listring[context;src]" ..
@@ -252,7 +248,7 @@ minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1},
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1},
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
@@ -428,12 +424,3 @@ minetest.register_node("pipeworks:autocrafter", {
 	},
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:autocrafter"
-
-minetest.register_craft( {
-	output = "pipeworks:autocrafter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
-	        { "basic_materials:plastic_sheet", "default:steel_ingot", "basic_materials:plastic_sheet" },
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
-	},
-})
