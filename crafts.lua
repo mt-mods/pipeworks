@@ -283,10 +283,10 @@ if pipeworks.enable_mese_tube then
 		output = "pipeworks:mese_tube_000000",
 		recipe = {
 			"pipeworks:tube_1",
-			materials.mese_crystal,
-			materials.mese_crystal,
-			materials.mese_crystal,
-			materials.mese_crystal,
+			materials.mese_crystal_fragment,
+			materials.mese_crystal_fragment,
+			materials.mese_crystal_fragment,
+			materials.mese_crystal_fragment,
 		},
 	})
 end
