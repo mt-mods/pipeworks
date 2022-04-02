@@ -6,7 +6,7 @@ local def = table.copy(minetest.registered_nodes["default:furnace"])
 
 local tube_entry = "^pipeworks_tube_connection_stony.png"
 
-local groups = table.copy(def.groups)
+local groups = def.groups
 groups["tubedevice"] = 1
 groups["tubedevice_receiver"] = 1
 local groups_active = table.copy(groups)
