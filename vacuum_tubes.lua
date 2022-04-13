@@ -40,8 +40,13 @@ if pipeworks.enable_mese_sand_tube then
 				on_construct = function(pos)
 					local meta = minetest.get_meta(pos)
 					meta:set_int("dist", 0)
+					local prepend = ""
+					if minetest.get_modpath("i3") then
+						prepend = "no_prepend[]bgcolor[black;neither]background9[0,0;6.0,2.2;i3_bg_full.png;false;10]"
+					end
 					meta:set_string("formspec",
 						"size[6.0,2.2]"..
+						prepend ..
 						"image[0.2,0;1,1;pipeworks_mese_sand_tube_inv.png]"..
 						"label[1.2,0.2;"..S("Adjustable Vacuuming Tube").."]"..
 						"field[0.5,1.6;2.1,1;dist;"..S("Radius")..";${dist}]"..
