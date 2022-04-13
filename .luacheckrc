@@ -19,6 +19,7 @@ read_globals = {
 
 	-- mods
 	"default", "mesecon", "digiline",
-	"screwdriver", "unified_inventory"
+	"screwdriver", "unified_inventory",
+	"i3",
 
 }

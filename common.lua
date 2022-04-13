@@ -143,6 +143,32 @@ function fs_helpers.cycling_button(meta, base, meta_name, values)
 	return base..";"..(texture_name and texture_name..";" or "")..field..";"..minetest.formspec_escape(text)..(addopts and ";"..addopts or "").."]"
 end
 
+function fs_helpers.get_inv(y)
+	local fs = {}
+	if minetest.get_modpath("i3") then
+		local inv_x = i3.settings.legacy_inventory and 0.75 or 0.22
+		local inv_y = (y + 0.4) or 6.9
+		local size, spacing = 1, 0.1
+		local hotbar_len = i3.settings.hotbar_len
+
+		table.insert(fs, "style_type[box;colors=#77777710,#77777710,#777,#777]")
+
+		for i = 0, hotbar_len - 1 do
+			table.insert(fs, "box["..(i * size + inv_x + (i * spacing))..","..inv_y..";"..size..","..size..";]")
+		end
+
+		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
+		table.insert(fs, "list[current_player;main;"..inv_x..","..inv_y..";"..hotbar_len..",1;]")
+
+		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
+		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(i3.settings.inv_size / hotbar_len)..";"..hotbar_len.."]")
+	else
+		table.insert(fs, "list[current_player;main;0.22,"..y..";8,4;]")
+	end
+
+	return table.concat(fs, "")
+end
+
 ---------
 -- Env --
 ---------

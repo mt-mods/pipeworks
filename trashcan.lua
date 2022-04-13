@@ -20,13 +20,22 @@ minetest.register_node("pipeworks:trashcan", {
 	},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
+		local prepend = ""
+		if minetest.get_modpath("i3") then
+			prepend = "no_prepend[]bgcolor[black;neither]background9[0,0;10.2,9;i3_bg_full.png;false;10]"
+		end
 		meta:set_string("formspec",
-				"size[8,7]"..
-				"item_image[0,0;1,1;pipeworks:trashcan]"..
-				"label[1,0;"..S("Trash Can").."]"..
-				"list[context;trash;3.5,1;1,1;]"..
-				"list[current_player;main;0,3;8,4;]" ..
-				"listring[]")
+			"formspec_version[2]" ..
+			"size[10.2,9]"..
+			prepend ..
+			"item_image[0.5,0.5;1,1;pipeworks:trashcan]"..
+			"label[1.5,1;"..S("Trash Can").."]"..
+			"list[context;trash;4.5,2;1,1;]"..
+			--"list[current_player;main;0,3;8,4;]" ..
+			pipeworks.fs_helpers.get_inv(4)..
+			"listring[context;trash]"..
+			"listring[current_player;main]"
+		)
 		meta:set_string("infotext", S("Trash Can"))
 		meta:get_inventory():set_size("trash", 1)
 	end,
