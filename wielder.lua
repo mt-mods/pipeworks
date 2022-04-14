@@ -6,13 +6,28 @@ local function delay(x)
 end
 
 local function set_wielder_formspec(data, meta)
+	local size = "10.2,"..(7+data.wield_inv_height)
+	local list_background = ""
+		if minetest.get_modpath("i3") then
+			list_background = "style_type[box;colors=#666]"
+			for i=0, data.wield_inv_height-1 do
+				for j=0, data.wield_inv_width-1 do
+					list_background = list_background .. "box[".. ((10-data.wield_inv_width)*0.5)+(i*1.25) ..",".. 1+(j*1.25) ..";1,1;]"
+				end
+			end
+		end
 	meta:set_string("formspec",
-			"size[8,"..(6+data.wield_inv_height)..";]"..
-			"item_image[0,0;1,1;"..data.name_base.."_off]"..
-			"label[1,0;"..minetest.formspec_escape(data.description).."]"..
-			"list[current_name;"..minetest.formspec_escape(data.wield_inv_name)..";"..((8-data.wield_inv_width)*0.5)..",1;"..data.wield_inv_width..","..data.wield_inv_height..";]"..
-			"list[current_player;main;0,"..(2+data.wield_inv_height)..";8,4;]" ..
-			"listring[]")
+		"formspec_version[2]" ..
+		"size["..size.."]"..
+		pipeworks.fs_helpers.get_prepends(size)..
+		"item_image[0.5,0.5;1,1;"..data.name_base.."_off]"..
+		"label[1.5,1;"..minetest.formspec_escape(data.description).."]"..
+		list_background ..
+		"list[current_name;"..minetest.formspec_escape(data.wield_inv_name)..";"..((10-data.wield_inv_width)*0.5)..",1;"..data.wield_inv_width..","..data.wield_inv_height..";]"..
+		pipeworks.fs_helpers.get_inv((2+data.wield_inv_height))
+		--"list[current_player;main;0,"..(2+data.wield_inv_height)..";8,4;]" ..
+		--"listring[]"
+	)
 	meta:set_string("infotext", data.description)
 end
 

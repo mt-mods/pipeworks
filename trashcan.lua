@@ -21,12 +21,17 @@ minetest.register_node("pipeworks:trashcan", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local size = "10.2,9"
+		local list_background = ""
+		if minetest.get_modpath("i3") then
+			list_background = "style_type[box;colors=#666]box[4.5,2;1,1;]"
+		end
 		meta:set_string("formspec",
 			"formspec_version[2]" ..
 			"size["..size.."]"..
 			pipeworks.fs_helpers.get_prepends(size) ..
 			"item_image[0.5,0.5;1,1;pipeworks:trashcan]"..
 			"label[1.5,1;"..S("Trash Can").."]"..
+			list_background..
 			"list[context;trash;4.5,2;1,1;]"..
 			--"list[current_player;main;0,3;8,4;]" ..
 			pipeworks.fs_helpers.get_inv(4)..

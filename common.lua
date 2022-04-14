@@ -160,6 +160,13 @@ function fs_helpers.get_inv(y)
 		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
 		table.insert(fs, "list[current_player;main;"..inv_x..","..inv_y..";"..hotbar_len..",1;]")
 
+		table.insert(fs, "style_type[box;colors=#666]")
+		for i=0, 2 do
+			for j=0, (i3.settings.legacy_inventory and 7 or 8) do
+				table.insert(fs, "box["..0.2+(j*0.1)+(j*size)..","..(inv_y+size+spacing+0.05)+(i*0.1)+(i*size)..";"..size..","..size..";]")
+			end
+		end
+
 		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
 		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(i3.settings.inv_size / hotbar_len)..";"..hotbar_len.."]")
 	else
@@ -170,13 +177,19 @@ function fs_helpers.get_inv(y)
 end
 
 function fs_helpers.get_prepends(size)
-	local prepend = ""
+	local prepend = {}
 
 	if minetest.get_modpath("i3") then
-		prepend = "no_prepend[]bgcolor[black;neither]background9[0,0;"..size..";i3_bg_full.png;false;10]style_type[button;border=false;bgimg=[combine:16x16^[noalpha^[colorize:#6b6b6b]"
+		prepend = {
+			"no_prepend[]",
+			"bgcolor[black;neither]",
+			"background9[0,0;"..size..";i3_bg_full.png;false;10]",
+			"style_type[button;border=false;bgimg=[combine:16x16^[noalpha^[colorize:#6b6b6b]",
+			"listcolors[#0000;#ffffff20]"
+		}
 	end
 
-	return prepend
+	return table.concat(prepend, "")
 end
 
 ---------
