@@ -143,9 +143,10 @@ local function update_meta(meta, can_receive)
 	local itext = S("Channels are public by default").."\n"..
 		S("Use <player>:<channel> for fully private channels").."\n"..
 		S("Use <player>\\;<channel> for private receivers")
-
+	local size = "8.5,3.5"
 	meta:set_string("formspec",
-		"size[8.5,3.5]"..
+		"size["..size.."]"..
+		pipeworks.fs_helpers.get_prepends(size) ..
 		"image[0.2,o;1,1;pipeworks_teleport_tube_inv.png]"..
 		"label[1.2,0.2;"..S("Teleporting Tube").."]"..
 		"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
