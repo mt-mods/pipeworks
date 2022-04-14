@@ -143,18 +143,19 @@ local function update_meta(meta, can_receive)
 	local itext = S("Channels are public by default").."\n"..
 		S("Use <player>:<channel> for fully private channels").."\n"..
 		S("Use <player>\\;<channel> for private receivers")
-	local size = "8.5,3.5"
+	local size = "8.5,4"
 	meta:set_string("formspec",
+		"formspec_version[2]"..
 		"size["..size.."]"..
 		pipeworks.fs_helpers.get_prepends(size) ..
-		"image[0.2,o;1,1;pipeworks_teleport_tube_inv.png]"..
-		"label[1.2,0.2;"..S("Teleporting Tube").."]"..
-		"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
-		"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
-		"label[7.0,0;"..S("Receive").."]"..
-		"image_button[7.0,0.5;1,0.6;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
-		"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"..
-		"label[0.2,2.3;"..itext.."]")
+		"image[0.5,o;1,1;pipeworks_teleport_tube_inv.png]"..
+		"label[1.5,0.5;"..S("Teleporting Tube").."]"..
+		"field[0.5,1.6;4.6,0.75;channel;"..S("Channel")..";${channel}]"..
+		"button[4.8,1.6;1.5,0.75;set_channel;"..S("Set").."]"..
+		"label[7.0,0.5;"..S("Receive").."]"..
+		"image_button[7.0,0.75;1,0.6;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
+		"button_exit[6.3,1.6;2,0.75;close;"..S("Close").."]"..
+		"label[0.5,2.7;"..itext.."]")
 end
 
 pipeworks.register_tube("pipeworks:teleport_tube", {
