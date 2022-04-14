@@ -169,6 +169,16 @@ function fs_helpers.get_inv(y)
 	return table.concat(fs, "")
 end
 
+function fs_helpers.get_prepends(size)
+	local prepend = ""
+
+	if minetest.get_modpath("i3") then
+		prepend = "no_prepend[]bgcolor[black;neither]background9[0,0;"..size..";i3_bg_full.png;false;10]style_type[button;border=false;bgimg=[combine:16x16^[noalpha^[colorize:#6b6b6b]"
+	end
+
+	return prepend
+end
+
 ---------
 -- Env --
 ---------
