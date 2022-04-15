@@ -172,19 +172,43 @@ end
 local function update_meta(meta, enabled)
 	local state = enabled and "on" or "off"
 	meta:set_int("enabled", enabled and 1 or 0)
-	local fs = 	"size[8,12]"..
-			"list[context;recipe;0,0;3,3;]"..
-			"image[3,1;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]"..
-			"list[context;output;3,1;1,1;]"..
-			"image_button[3,2;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
-			"list[context;src;0,4.5;8,3;]"..
-			"list[context;dst;4,0;4,3;]"..
-			"list[current_player;main;0,8;8,4;]" ..
-			"listring[current_player;main]"..
-			"listring[context;src]" ..
-			"listring[current_player;main]"..
-			"listring[context;dst]" ..
-			"listring[current_player;main]"
+	local list_backgrounds = ""
+	if minetest.get_modpath("i3") then
+		list_backgrounds = "style_type[box;colors=#666]"
+		for i=0, 2 do
+			for j=0, 2 do
+				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 0.22+(j*1.25) ..";1,1;]"
+			end
+		end
+		for i=0, 3 do
+			for j=0, 2 do
+				list_backgrounds = list_backgrounds .. "box[".. 5.28+(i*1.25) ..",".. 0.22+(j*1.25) ..";1,1;]"
+			end
+		end
+		for i=0, 7 do
+			for j=0, 2 do
+				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 4.5+(j*1.25) ..";1,1;]"
+			end
+		end
+	end
+	local size = "10.2,14"
+	local fs =
+		"formspec_version[2]"..
+		"size["..size.."]"..
+		pipeworks.fs_helpers.get_prepends(size)..
+		list_backgrounds..
+		"list[context;recipe;0.22,0.22;3,3;]"..
+		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]"..
+		"list[context;output;4,1.45;1,1;]"..
+		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
+		"list[context;dst;5.28,0.22;4,3;]"..
+		"list[context;src;0.22,4.5;8,3;]"..
+		pipeworks.fs_helpers.get_inv(9)..
+		"listring[current_player;main]"..
+		"listring[context;src]" ..
+		"listring[current_player;main]"..
+		"listring[context;dst]" ..
+		"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
 		fs = fs.."field[0.3,3.5;4.5,1;channel;"..S("Channel")..";${channel}]"..
 			"button[4.5,3.2;1.5,1;set_channel;"..S("Set").."]"..
