@@ -32,22 +32,35 @@ local function set_filter_formspec(data, meta)
 		local exmatch_button = ""
 		if data.stackwise then
 			exmatch_button =
-				fs_helpers.cycling_button(meta, "button[4,3.5;4,1", "exmatch_mode",
+				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4,1", "exmatch_mode",
 					{S("Exact match - off"),
 					 S("Exact match - on")})
 		end
-
-		formspec = "size[8,8.5]"..
-			"item_image[0,0;1,1;pipeworks:"..data.name.."]"..
-			"label[1,0;"..minetest.formspec_escape(itemname).."]"..
-			"label[0,1;"..S("Prefer item types:").."]"..
-			"list[context;main;0,1.5;8,2;]"..
-			fs_helpers.cycling_button(meta, "button[0,3.5;4,1", "slotseq_mode",
+		local size = "10.2,11"
+		local list_backgrounds = ""
+		if minetest.get_modpath("i3") then
+			list_backgrounds = "style_type[box;colors=#666]"
+			for i=0, 7 do
+				for j=0, 1 do
+					list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 1.75+(j*1.25) ..";1,1;]"
+				end
+			end
+		end
+		formspec =
+			"formspec_version[2]"..
+			"size["..size.."]"..
+			pipeworks.fs_helpers.get_prepends(size)..
+			"item_image[0.22,0.22;1,1;pipeworks:"..data.name.."]"..
+			"label[1.22,0.72;"..minetest.formspec_escape(itemname).."]"..
+			"label[0.22,1.5;"..S("Prefer item types:").."]"..
+			list_backgrounds..
+			"list[context;main;0.22,1.75;8,2;]"..
+			fs_helpers.cycling_button(meta, "button[0.22,4.5;4,1", "slotseq_mode",
 				{S("Sequence slots by Priority"),
 				 S("Sequence slots Randomly"),
 				 S("Sequence slots by Rotation")})..
 			exmatch_button..
-			"list[current_player;main;0,4.5;8,4;]" ..
+			pipeworks.fs_helpers.get_inv(6)..
 			"listring[]"
 	end
 	meta:set_string("formspec", formspec)
@@ -65,8 +78,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local fromnode = minetest.get_node(frompos)
 	if not fromnode then return end
 	local fromdef = minetest.registered_nodes[fromnode.name]
-	if not fromdef then return end
-	local fromtube = fromdef.tube
+	if not fromdef or not fromdef.tube then return end
+	local fromtube = table.copy(fromdef.tube)
 	local input_special_cases = {
 		["technic:mv_electric_furnace"] = "dst",
 		["technic:mv_electric_furnace_active"] = "dst",
