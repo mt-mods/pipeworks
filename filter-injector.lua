@@ -66,7 +66,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	if not fromnode then return end
 	local fromdef = minetest.registered_nodes[fromnode.name]
 	if not fromdef then return end
-	local fromtube = fromdef.tube
+	local fromtube = table.copy(fromdef.tube)
 	local input_special_cases = {
 		["technic:mv_electric_furnace"] = "dst",
 		["technic:mv_electric_furnace_active"] = "dst",
