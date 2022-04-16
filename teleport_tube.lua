@@ -150,7 +150,7 @@ local function update_meta(meta, can_receive)
 		pipeworks.fs_helpers.get_prepends(size) ..
 		"image[0.5,o;1,1;pipeworks_teleport_tube_inv.png]"..
 		"label[1.5,0.5;"..S("Teleporting Tube").."]"..
-		"field[0.5,1.6;4.6,0.75;channel;"..S("Channel")..";${channel}]"..
+		"field[0.5,1.6;4.3,0.75;channel;"..S("Channel")..";${channel}]"..
 		"button[4.8,1.6;1.5,0.75;set_channel;"..S("Set").."]"..
 		"label[7.0,0.5;"..S("Receive").."]"..
 		"image_button[7.0,0.75;1,0.6;pipeworks_button_" .. cr_state .. ".png;cr" .. (can_receive and 0 or 1) .. ";;;false;pipeworks_button_interm.png]"..
