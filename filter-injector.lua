@@ -32,7 +32,7 @@ local function set_filter_formspec(data, meta)
 		local exmatch_button = ""
 		if data.stackwise then
 			exmatch_button =
-				fs_helpers.cycling_button(meta, "button[4,3.5;4,1", "exmatch_mode",
+				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4,1", "exmatch_mode",
 					{S("Exact match - off"),
 					 S("Exact match - on")})
 		end
