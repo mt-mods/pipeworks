@@ -27,6 +27,7 @@ local settings = {
 	enable_cyclic_mode = true,
 	drop_on_routing_fail = false,
 	delete_item_on_clearobject = true,
+	use_real_entities = true,
 }
 
 pipeworks.toggles = {}
