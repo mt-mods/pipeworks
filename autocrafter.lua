@@ -187,7 +187,7 @@ local function update_meta(meta, enabled)
 		end
 		for i=0, 7 do
 			for j=0, 2 do
-				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 4.5+(j*1.25) ..";1,1;]"
+				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 5+(j*1.25) ..";1,1;]"
 			end
 		end
 	end
@@ -202,7 +202,7 @@ local function update_meta(meta, enabled)
 		"list[context;output;4,1.45;1,1;]"..
 		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
 		"list[context;dst;5.28,0.22;4,3;]"..
-		"list[context;src;0.22,4.5;8,3;]"..
+		"list[context;src;0.22,5;8,3;]"..
 		pipeworks.fs_helpers.get_inv(9)..
 		"listring[current_player;main]"..
 		"listring[context;src]" ..
@@ -210,9 +210,9 @@ local function update_meta(meta, enabled)
 		"listring[context;dst]" ..
 		"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
-		fs = fs.."field[0.3,3.5;4.5,1;channel;"..S("Channel")..";${channel}]"..
-			"button[4.5,3.2;1.5,1;set_channel;"..S("Set").."]"..
-			"button_exit[6,3.2;2,1;close;"..S("Close").."]"
+		fs = fs.."field[0.22,4.1;4.5,0.75;channel;"..S("Channel")..";${channel}]"..
+			"button[5,4.1;1.5,0.75;set_channel;"..S("Set").."]"..
+			"button_exit[6.8,4.1;2,0.75;close;"..S("Close").."]"
 	end
 	meta:set_string("formspec",fs)
 
