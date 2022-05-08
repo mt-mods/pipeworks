@@ -58,7 +58,7 @@ pipeworks.button_on    = {text="", texture="pipeworks_button_on.png",  addopts="
 pipeworks.button_base  = "image_button[0,4.3;1,0.6"
 pipeworks.button_label = "label[0.9,4.31;"..S("Allow splitting incoming stacks from tubes").."]"
 
-if pipeworks.enable_opaque_tubes then
+if pipeworks.tube_transparency == "opaque" then
 	pipeworks.tube_texture_alpha_mode = minetest.features.use_texture_alpha_string_modes and "opaque" or false
 else
 	-- This will remove any semi-transparent pixels

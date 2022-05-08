@@ -1,9 +1,6 @@
 #Enable pipes.
 pipeworks_enable_pipes (Enable Pipes) bool true
 
-#Enables concealment of tube contents using black texture backgrounds.
-pipeworks_enable_opaque_tubes (Enable Opaque Tubes) bool false
-
 #Enable autocrafter.
 pipeworks_enable_autocrafter (Enable Autocrafter) bool true
 
@@ -78,6 +75,12 @@ pipeworks_drop_on_routing_fail (Drop On Routing Fail) bool false
 
 #Delete item on clearobject.
 pipeworks_delete_item_on_clearobject (Delete Item On Clearobject) bool true
+
+#Tube transparency:
+#- transparent: Contents of tubes are visible.
+#- opaque: Contents of tubes are hidden by black walls.
+#- auto: Tubes are transparent only if the use of real visible entities for tube items is enabled.
+pipeworks_tube_transparency (Tube Transparency) enum auto transparent,opaque,auto
 
 #Use real visible entities in tubes within active areas.
 pipeworks_use_real_entities (Use real entities) bool true

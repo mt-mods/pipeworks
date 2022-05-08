@@ -5,7 +5,6 @@ local prefix = "pipeworks_"
 local settings = {
 	enable_pipes = true,
 	enable_lowpoly = false,
-	enable_opaque_tubes = false,
 	enable_autocrafter = true,
 	enable_deployer = true,
 	enable_dispenser = true,
@@ -28,6 +27,7 @@ local settings = {
 	enable_cyclic_mode = true,
 	drop_on_routing_fail = false,
 	delete_item_on_clearobject = true,
+	tube_transparency = "auto",
 	use_real_entities = true,
 }
 
@@ -69,6 +69,10 @@ for name, value in pairs(settings) do
 			pipeworks[name] = value
 		end
 	else
-		pipeworks[name] = value
+		pipeworks[name] = minetest.settings:get(prefix..name) or value
 	end
+end
+
+if pipeworks.tube_transparency == "auto" then
+	pipeworks.tube_transparency = pipeworks.use_real_entities and "transparent" or "opaque"
 end
