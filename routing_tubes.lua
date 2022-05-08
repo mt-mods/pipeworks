@@ -139,15 +139,12 @@ if pipeworks.enable_crossing_tube then
 	})
 end
 
-local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
-	and "clip" or true
-
 if pipeworks.enable_one_way_tube then
 	minetest.register_node("pipeworks:one_way_tube", {
 		description = S("One way tube"),
 		tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
 			"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
-		use_texture_alpha = texture_alpha_mode,
+		use_texture_alpha = pipeworks.tube_texture_alpha_mode,
 		paramtype2 = "facedir",
 		drawtype = "nodebox",
 		paramtype = "light",

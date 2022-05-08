@@ -1,6 +1,9 @@
 #Enable pipes.
 pipeworks_enable_pipes (Enable Pipes) bool true
 
+#Enables concealment of tube contents using black texture backgrounds.
+pipeworks_enable_opaque_tubes (Enable Opaque Tubes) bool false
+
 #Enable autocrafter.
 pipeworks_enable_autocrafter (Enable Autocrafter) bool true
 

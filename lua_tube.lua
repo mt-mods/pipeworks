@@ -821,9 +821,6 @@ local tiles_on_off = {
 	R270 = "^(pipeworks_lua_tube_port_%s.png^[transformR270)"
 }
 
-local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
-	and "clip" or true
-
 for red    = 0, 1 do -- 0 = off  1 = on
 for blue   = 0, 1 do
 for yellow = 0, 1 do
@@ -908,7 +905,7 @@ for white  = 0, 1 do
 		description = "Lua controlled Tube",
 		drawtype = "nodebox",
 		tiles = tiles,
-		use_texture_alpha = texture_alpha_mode,
+		use_texture_alpha = pipeworks.tube_texture_alpha_mode,
 		paramtype = "light",
 		is_ground_content = false,
 		groups = groups,
@@ -1019,7 +1016,7 @@ tiles_burnt[4] = tiles_burnt[4].."^(pipeworks_lua_tube_port_burnt.png^[transform
 minetest.register_node(BASENAME .. "_burnt", {
 	drawtype = "nodebox",
 	tiles = tiles_burnt,
-	use_texture_alpha = texture_alpha_mode,
+	use_texture_alpha = pipeworks.tube_texture_alpha_mode,
 	is_burnt = true,
 	paramtype = "light",
 	is_ground_content = false,

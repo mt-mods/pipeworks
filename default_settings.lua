@@ -5,6 +5,7 @@ local prefix = "pipeworks_"
 local settings = {
 	enable_pipes = true,
 	enable_lowpoly = false,
+	enable_opaque_tubes = false,
 	enable_autocrafter = true,
 	enable_deployer = true,
 	enable_dispenser = true,
