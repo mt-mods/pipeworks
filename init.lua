@@ -69,6 +69,33 @@ function pipeworks.fix_image_names(table, replacement)
 	return outtable
 end
 
+if pipeworks.use_real_entities then
+	function pipeworks.make_tube_tile(tile)
+		return tile
+	end
+else
+	local function overlay_tube_texture(texture)
+		-- It seems "pipeworks_opaque.png^(%s)" won't work due to the lack of texture scaling.
+		return ("(%s)^pipeworks_opaque.png^(%s)"):format(texture, texture)
+	end
+
+	function pipeworks.make_tube_tile(tile)
+		if type(tile) == "string" then
+			return overlay_tube_texture(tile)
+		else
+			tile = table.copy(tile)
+			if tile.color then
+				-- Won't work 100% of the time, but good enough.
+				tile.name = tile.name .. "^[multiply:" .. minetest.colorspec_to_colorstring(tile.color)
+				tile.color = nil
+			end
+			tile.name = overlay_tube_texture(tile.name)
+			tile.backface_culling = nil -- The texture is opaque
+			return tile
+		end
+	end
+end
+
 function pipeworks.add_node_box(t, b)
 	if not t or not b then return end
 	for i in ipairs(b)
