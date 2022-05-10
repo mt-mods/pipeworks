@@ -70,8 +70,8 @@ function pipeworks.fix_image_names(table, replacement)
 end
 
 local function overlay_tube_texture(texture)
-	-- It seems "pipeworks_opaque.png^(%s)" won't work due to the lack of texture scaling.
-	return ("(%s)^pipeworks_opaque.png^(%s)"):format(texture, texture)
+	-- The texture appears the first time to be colorized as the opaque background.
+	return ("(%s)^[noalpha^[colorize:#dadada^(%s)"):format(texture, texture)
 end
 
 function pipeworks.make_tube_tile(tile)
