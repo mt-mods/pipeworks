@@ -69,6 +69,29 @@ function pipeworks.fix_image_names(table, replacement)
 	return outtable
 end
 
+local function overlay_tube_texture(texture)
+	-- The texture appears the first time to be colorized as the opaque background.
+	return ("(%s)^[noalpha^[colorize:#dadada^(%s)"):format(texture, texture)
+end
+
+function pipeworks.make_tube_tile(tile)
+	if pipeworks.use_real_entities then
+		return tile
+	elseif type(tile) == "string" then
+		return overlay_tube_texture(tile)
+	else
+		tile = table.copy(tile)
+		if tile.color then
+			-- Won't work 100% of the time, but good enough.
+			tile.name = tile.name .. "^[multiply:" .. minetest.colorspec_to_colorstring(tile.color)
+			tile.color = nil
+		end
+		tile.name = overlay_tube_texture(tile.name)
+		tile.backface_culling = nil -- The texture is opaque
+		return tile
+	end
+end
+
 function pipeworks.add_node_box(t, b)
 	if not t or not b then return end
 	for i in ipairs(b)
