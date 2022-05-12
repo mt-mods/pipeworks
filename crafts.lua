@@ -9,6 +9,7 @@ local materials = {
 	mese = "default:mese",
 	mese_crystal = "default:mese_crystal",
 	mese_crystal_fragment = "default:mese_crystal_fragment",
+	teleporter = "default:mese",
 	glass = "default:glass",
 }
 
@@ -23,6 +24,7 @@ if minetest.get_modpath("mcl_core") then
 		mese = "default:mese",
 		mese_crystal = "default:mese_crystal",
 		mese_crystal_fragment = "mesecons:redstone",
+		teleporter = "default:mese",
 		-- Use iron where no equivalent
 		copper_ingot = "mcl_core:iron_ingot",
 		glass = "default:glass",
@@ -38,24 +40,29 @@ elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
 		mese = "fl_ores:iron_ingot",
 		mese_crystal = "fl_ores:iron_ingot",
 		mese_crystal_fragment = "fl_ores:iron_ingot",
+		teleporter = "fl_ores:iron_ingot",
 		copper_ingot = "fl_ores:copper_ingot",
 		glass = "fl_glass:framed_glass",
 	}
 elseif minetest.get_modpath("hades_core") then
 	materials = {
 		stone = "hades_core:stone",
-		desert_stone = "hades_core:desert_stone",
-		desert_sand = "hades_core:desert_sand",
-		chest = "hades_core:chest";
+		desert_stone = "hades_core:stone_baked",
+		desert_sand = "hades_core:volcanic_sand",
+		chest = "hades_chests:chest";
 		steel_ingot = "hades_core:steel_ingot",
 		gold_ingot = "hades_core:gold_ingot",
 		mese = "hades_core:mese",
 		mese_crystal = "hades_core:mese_crystal",
 		mese_crystal_fragment = "hades_core:mese_crystal_fragment",
+		teleporter = "hades_materials:teleporter_device",
 		copper_ingot = "hades_core:copper_ingot",
 		tin_ingot = "hades_core:tin_ingot",
-		glass = "default:glass",
+		glass = "hades_core:glass",
 	}
+  if minetest.get_modpath("hades_default") then
+		materials.desert_sand = "hades_default:desert_sand"
+  end
 end
 
 -- Crafting recipes for pipes
@@ -219,7 +226,7 @@ minetest.register_craft( {
 	output = "pipeworks:teleport_tube_1 2",
 	recipe = {
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ materials.desert_stone, materials.mese, materials.desert_stone },
+			{ materials.desert_stone, materials.teleporter, materials.desert_stone },
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
 	},
 })
@@ -318,7 +325,7 @@ if pipeworks.enable_deployer then
 	minetest.register_craft({
 		output = "pipeworks:deployer_off",
 		recipe = {
-			{ "group:wood",	"default:chest",	"group:wood"	},
+			{ "group:wood",	materials.chest,	"group:wood"	},
 			{ materials.stone, "mesecons:piston",  materials.stone },
 			{ materials.stone, "mesecons:mesecon", materials.stone },
 		}
