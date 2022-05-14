@@ -24,9 +24,9 @@ local function set_wielder_formspec(data, meta)
 		"label[1.5,1;"..minetest.formspec_escape(data.description).."]"..
 		list_background ..
 		"list[current_name;"..minetest.formspec_escape(data.wield_inv_name)..";"..((10-data.wield_inv_width)*0.5)..",1;"..data.wield_inv_width..","..data.wield_inv_height..";]"..
-		pipeworks.fs_helpers.get_inv((2+data.wield_inv_height))
-		--"list[current_player;main;0,"..(2+data.wield_inv_height)..";8,4;]" ..
-		--"listring[]"
+		pipeworks.fs_helpers.get_inv((2+data.wield_inv_height)) ..
+		"listring[context;main]" ..
+		"listring[current_player;main]"
 	)
 	meta:set_string("infotext", data.description)
 end
