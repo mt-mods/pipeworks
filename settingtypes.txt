@@ -78,4 +78,9 @@ pipeworks_delete_item_on_clearobject (Delete Item On Clearobject) bool true
 
 #Use real visible entities in tubes within active areas.
 #When disabled, tubes are made opaque.
-pipeworks_use_real_entities (Use real entities) bool true
+pipeworks_use_real_entities (Use Real Entities) bool true
+
+#Target interval between tube entity steps.
+#A high value may cause issues with tube entity visuals.
+#A value 0.2 or above may cause issues with accelerator tubes.
+pipeworks_globalstep_interval (Globalstep Interval) float 0 0 1
