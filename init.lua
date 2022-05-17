@@ -32,8 +32,8 @@ end
 if pipeworks.toggles.pipe_mode == "pressure" then
 	minetest.log("warning", "pipeworks pressure logic mode comes with caveats and differences in behaviour, you have been warned!")
 end
-if pipeworks.globalstep_interval >= 0.2 and pipeworks.enable_accelerator_tube then
-	minetest.log("warning", "pipeworks accelerator tubes will not entirely work with a globalstep interval 0.2 or above.")
+if pipeworks.entity_update_interval >= 0.2 and pipeworks.enable_accelerator_tube then
+	minetest.log("warning", "pipeworks accelerator tubes will not entirely work with an entity update interval 0.2 or above.")
 end
 
 -- Random variables

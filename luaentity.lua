@@ -383,7 +383,7 @@ local move_entities_globalstep_part2 = function(dtime)
 end
 
 -- dtime after which there is an update (or skip).
-local dtime_threshold = pipeworks.globalstep_interval
+local dtime_threshold = pipeworks.entity_update_interval
 -- Accumulated dtime since last update (or skip).
 local dtime_accum = 0
 -- Delayed dtime accumulated due to skipped updates.
@@ -410,8 +410,8 @@ minetest.register_globalstep(function(dtime)
 		dtime_delayed = 0
 	end
 
-	-- Tune the threshold so that the average interval is pipeworks.globalstep_interval.
-	dtime_threshold = math.max(dtime_threshold + (pipeworks.globalstep_interval - dtime_accum) / 10, 0)
+	-- Tune the threshold so that the average interval is pipeworks.entity_update_interval.
+	dtime_threshold = math.max(dtime_threshold + (pipeworks.entity_update_interval - dtime_accum) / 10, 0)
 
 	dtime_accum = 0
 end)

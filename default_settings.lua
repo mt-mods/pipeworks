@@ -28,7 +28,7 @@ local settings = {
 	drop_on_routing_fail = false,
 	delete_item_on_clearobject = true,
 	use_real_entities = true,
-	globalstep_interval = 0,
+	entity_update_interval = 0,
 }
 
 pipeworks.toggles = {}
