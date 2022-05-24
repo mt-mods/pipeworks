@@ -382,13 +382,36 @@ local move_entities_globalstep_part2 = function(dtime)
 	end
 end
 
-local handle_active_blocks_timer = 0.1
+-- dtime after which there is an update (or skip).
+local dtime_threshold = pipeworks.entity_update_interval
+-- Accumulated dtime since last update (or skip).
+local dtime_accum = 0
+-- Delayed dtime accumulated due to skipped updates.
+local dtime_delayed = 0
+local skip_update = false
 
 minetest.register_globalstep(function(dtime)
-	handle_active_blocks_timer = handle_active_blocks_timer + dtime
-	if dtime < 0.2 or handle_active_blocks_timer >= (dtime * 3) then
-		handle_active_blocks_timer = 0.1
-		move_entities_globalstep_part1(dtime)
-		move_entities_globalstep_part2(dtime)
+	if dtime >= 0.2 and dtime_delayed < 1 then
+		-- Reduce activity when the server is lagging.
+		skip_update = true
 	end
+
+	dtime_accum = dtime_accum + dtime
+	if dtime_accum < dtime_threshold then
+		return
+	end
+
+	if skip_update then
+		dtime_delayed = dtime_delayed + dtime_accum
+		skip_update = false
+	else
+		move_entities_globalstep_part1(dtime_accum + dtime_delayed)
+		move_entities_globalstep_part2(dtime_accum + dtime_delayed)
+		dtime_delayed = 0
+	end
+
+	-- Tune the threshold so that the average interval is pipeworks.entity_update_interval.
+	dtime_threshold = math.max(dtime_threshold + (pipeworks.entity_update_interval - dtime_accum) / 10, 0)
+
+	dtime_accum = 0
 end)
