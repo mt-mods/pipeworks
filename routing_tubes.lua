@@ -84,8 +84,12 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 				return
 			end
 			pipeworks.logger(log_msg.."            with "..wieldname.." to repair it.")
-			minetest.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
-			pipeworks.scan_for_tube_objects(pos)
+			if minetest.registered_nodes[was_node.name].on_repair then
+				minetest.registered_nodes[was_node.name].on_repair(pos, was_node, puncher)
+			else
+				minetest.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
+				pipeworks.scan_for_tube_objects(pos)
+			end
 		end
 	}
 })

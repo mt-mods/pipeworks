@@ -259,6 +259,18 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 		end,
 		on_destruct = function(pos)
 			remove_tube(pos)
+		end,
+		on_repair = function(pos, node)
+			local meta = minetest.get_meta(pos)
+			local channel = meta:get_string("channel")
+			minetest.swap_node(pos, { name = node.name, param2 = node.param2 })
+			pipeworks.scan_for_tube_objects(pos)
+			if channel ~= "" then
+				local can_receive = meta:get_int("can_receive")
+				set_tube(pos, channel, can_receive)
+				local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
+				meta:set_string("infotext", S("Teleportation Tube @1 on '@2'", cr_description, channel))
+			end
 		end
 	},
 })
