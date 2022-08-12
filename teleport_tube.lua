@@ -1,8 +1,9 @@
 local S = minetest.get_translator("pipeworks")
-local filename=minetest.get_worldpath() .. "/teleport_tubes"
+local filename=minetest.get_worldpath() .. "/teleport_tubes" -- Only used for backward-compat
+local storage=minetest.get_mod_storage()
 
 local tp_tube_db = nil -- nil forces a read
-local tp_tube_db_version = 2.0
+local tp_tube_db_version = 3.0
 
 -- cached rceiver list: hash(pos) => {receivers}
 local cache = {}
@@ -12,47 +13,81 @@ local function hash(pos)
 end
 
 local function save_tube_db()
-	local file, err = io.open(filename, "w")
-	if file then
-		tp_tube_db.version = tp_tube_db_version
-		file:write(minetest.serialize(tp_tube_db))
-		tp_tube_db.version = nil
-		io.close(file)
-	else
-		error(err)
-	end
 	-- reset tp-tube cache
 	cache = {}
+
+	local fields = {version = tp_tube_db_version}
+	for key, val in pairs(tp_tube_db) do
+		fields[key] = minetest.serialize(val)
+	end
+	storage:from_table({fields = fields})
+end
+
+local function save_tube_db_entry(hash)
+	-- reset tp-tube cache
+	cache = {}
+
+	local val = tp_tube_db[hash]
+	storage:set_string(hash, val and minetest.serialize(val) or "")
 end
 
 local function migrate_tube_db()
+	local old_version = tp_tube_db.version or 0
+	tp_tube_db.version = nil
+	if old_version < 2.0 then
 		local tmp_db = {}
-		tp_tube_db.version = nil
 		for _, val in pairs(tp_tube_db) do
 			if(val.channel ~= "") then -- skip unconfigured tubes
 				tmp_db[hash(val)] = val
 			end
 		end
 		tp_tube_db = tmp_db
-		save_tube_db()
+	end
+	save_tube_db()
 end
 
 local function read_tube_db()
-	local file = io.open(filename, "r")
-	if file ~= nil then
+	local file = not storage:contains("version") and io.open(filename, "r")
+	if not file then
+		tp_tube_db = {}
+
+		for key, val in pairs(storage:to_table().fields) do
+			if tonumber(key) then
+				tp_tube_db[key] = minetest.deserialize(val)
+			elseif key == "version" then
+				tp_tube_db[key] = tonumber(val)
+			else
+				error("Unknown field in teleport tube DB: " .. key)
+			end
+		end
+
+		if tp_tube_db.version == nil then
+			tp_tube_db.version = tp_tube_db_version
+			storage:set_string("version", tp_tube_db.version)
+		elseif tp_tube_db.version > tp_tube_db_version then
+			error("Cannot read teleport tube DB of version " .. tp_tube_db.version)
+		end
+	else
 		local file_content = file:read("*all")
 		io.close(file)
 
+		local backup_filename = filename .. ".bak"
+		pipeworks.logger("Moving teleport tube DB to mod storage from " .. filename)
+		pipeworks.logger("Backing up old file as " .. backup_filename)
+		assert(os.rename(filename, backup_filename))
+
 		if file_content and file_content ~= "" then
 			tp_tube_db = minetest.deserialize(file_content)
-			if(not tp_tube_db.version or tonumber(tp_tube_db.version) < tp_tube_db_version) then
-				migrate_tube_db()
-			end
-			tp_tube_db.version = nil -- we add it back when saving
-			return tp_tube_db -- we read sucessfully
+		else
+			tp_tube_db = {version = 2.0}
 		end
 	end
-	tp_tube_db = {}
+
+	if(not tp_tube_db.version or tonumber(tp_tube_db.version) < tp_tube_db_version) then
+		migrate_tube_db()
+	end
+	tp_tube_db.version = nil
+
 	return tp_tube_db
 end
 
@@ -69,7 +104,7 @@ local function set_tube(pos, channel, can_receive)
 	if tube then
 		tube.channel = channel
 		tube.cr = can_receive
-		save_tube_db()
+		save_tube_db_entry(hash)
 		return
 	end
 
@@ -88,13 +123,14 @@ local function set_tube(pos, channel, can_receive)
 	end
 
 	tp_tube_db[hash] = {x=pos.x,y=pos.y,z=pos.z,channel=channel,cr=can_receive}
-	save_tube_db()
+	save_tube_db_entry(hash)
 end
 
 local function remove_tube(pos)
 	local tubes = tp_tube_db or read_tube_db()
-	tubes[hash(pos)] = nil
-	save_tube_db()
+	local hash = hash(pos)
+	tubes[hash] = nil
+	save_tube_db_entry(hash)
 end
 
 local function read_node_with_vm(pos)
@@ -114,7 +150,6 @@ local function get_receivers(pos, channel)
 
 	local tubes = tp_tube_db or read_tube_db()
 	local receivers = {}
-	local dirty = false
 	for key, val in pairs(tubes) do
 		-- skip all non-receivers and the tube that it came from as early as possible, as this is called often
 		if (val.cr == 1 and val.channel == channel and (val.x ~= pos.x or val.y ~= pos.y or val.z ~= pos.z)) then
@@ -125,12 +160,9 @@ local function get_receivers(pos, channel)
 				table.insert(receivers, val)
 			else
 				tp_tube_db[key] = nil
-				dirty = true
+				save_tube_db_entry(key)
 			end
 		end
-	end
-	if dirty then
-		save_tube_db()
 	end
 	-- cache the result for next time
 	cache[hash] = receivers
@@ -290,6 +322,7 @@ end
 pipeworks.tptube = {
 	hash = hash,
 	save_tube_db = save_tube_db,
+	save_tube_db_entry = save_tube_db_entry,
 	get_db = function() return tp_tube_db or read_tube_db() end,
 	set_tube = set_tube,
 	update_meta = update_meta,
