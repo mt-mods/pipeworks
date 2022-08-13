@@ -20,3 +20,7 @@ This mod is a work in progress.
 
 Please note that owing to the nature of this mod, I have opted to use 64px 
 textures.  Anything less just looks terrible.
+
+The teleport tube database used to kept in a file named 'teleport_tubes'.
+The database is now kept in mod storage. The migration from 'teleport_tubes' is
+automatic. The old file is then kept around but is not used at all.
