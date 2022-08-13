@@ -55,7 +55,7 @@ local function read_tube_db()
 			if tonumber(key) then
 				tp_tube_db[key] = minetest.deserialize(val)
 			elseif key == "version" then
-				tp_tube_db[key] = tonumber(val)
+				tp_tube_db.version = tonumber(val)
 			else
 				error("Unknown field in teleport tube DB: " .. key)
 			end
