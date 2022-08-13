@@ -71,9 +71,15 @@ local function read_tube_db()
 		local file_content = file:read("*all")
 		io.close(file)
 
-		local backup_filename = filename .. ".bak"
 		pipeworks.logger("Moving teleport tube DB to mod storage from " .. filename)
+		local backup_filename = filename .. ".bak"
 		pipeworks.logger("Backing up old file as " .. backup_filename)
+		local backup_file = io.open(backup_filename, "r")
+		if backup_file then
+			io.close(backup_file)
+			error("Cannot back up teleport tube DB file " ..
+				"as a file already exists at " .. backup_filename)
+		end
 		assert(os.rename(filename, backup_filename))
 
 		if file_content and file_content ~= "" then
