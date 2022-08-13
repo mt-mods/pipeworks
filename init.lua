@@ -128,7 +128,7 @@ function pipeworks.replace_name(tbl,tr,name)
 end
 
 pipeworks.logger = function(msg)
-	print("[pipeworks] "..msg)
+	minetest.log("action", "[pipeworks] "..msg)
 end
 
 -------------------------------------------
