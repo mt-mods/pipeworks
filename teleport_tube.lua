@@ -71,6 +71,8 @@ local function read_tube_db()
 		local file_content = file:read("*all")
 		io.close(file)
 
+		pipeworks.logger("Moving teleport tube DB into mod storage from " .. filename)
+
 		if file_content and file_content ~= "" then
 			tp_tube_db = minetest.deserialize(file_content)
 		else
