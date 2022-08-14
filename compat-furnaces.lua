@@ -59,7 +59,7 @@ local override = {
 			end
 		end,
 		input_inventory = "dst",
-		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
+		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
 	},
 
 	after_place_node = pipeworks.after_place,
@@ -110,7 +110,7 @@ local override_active = {
 			end
 		end,
 		input_inventory = "dst",
-		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
+		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
 	},
 
 	after_place_node = pipeworks.after_place,
