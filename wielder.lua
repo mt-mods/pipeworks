@@ -336,6 +336,14 @@ if pipeworks.enable_node_breaker then
 		masquerade_as_owner = true,
 		sneak = false,
 		act = function(virtplayer, pointed_thing)
+			local player_name = virtplayer:get_player_name()
+			if (
+				minetest.is_protected(pointed_thing.above, player_name) or
+				minetest.is_protected(pointed_thing.under, player_name)
+			) then
+				return
+			end
+
 			--local dname = "nodebreaker.act() "
 			local wieldstack = virtplayer:get_wielded_item()
 			local oldwieldstack = ItemStack(wieldstack)
@@ -427,6 +435,14 @@ if pipeworks.enable_deployer then
 		masquerade_as_owner = true,
 		sneak = false,
 		act = function(virtplayer, pointed_thing)
+			local player_name = virtplayer:get_player_name()
+			if (
+				minetest.is_protected(pointed_thing.above, player_name) or
+				minetest.is_protected(pointed_thing.under, player_name)
+			) then
+				return
+			end
+
 			local wieldstack = virtplayer:get_wielded_item()
 			virtplayer:set_wielded_item((minetest.registered_items[wieldstack:get_name()] or {on_place=minetest.item_place}).on_place(wieldstack, virtplayer, pointed_thing) or wieldstack)
 		end,
