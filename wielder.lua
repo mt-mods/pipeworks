@@ -336,11 +336,7 @@ if pipeworks.enable_node_breaker then
 		masquerade_as_owner = true,
 		sneak = false,
 		act = function(virtplayer, pointed_thing)
-			local player_name = virtplayer:get_player_name()
-			if (
-				minetest.is_protected(pointed_thing.above, player_name) or
-				minetest.is_protected(pointed_thing.under, player_name)
-			) then
+			if minetest.is_protected(vector.add(virtplayer:get_pos(), assumed_eye_pos), virtplayer:get_player_name()) then
 				return
 			end
 
@@ -435,11 +431,7 @@ if pipeworks.enable_deployer then
 		masquerade_as_owner = true,
 		sneak = false,
 		act = function(virtplayer, pointed_thing)
-			local player_name = virtplayer:get_player_name()
-			if (
-				minetest.is_protected(pointed_thing.above, player_name) or
-				minetest.is_protected(pointed_thing.under, player_name)
-			) then
+			if minetest.is_protected(vector.add(virtplayer:get_pos(), assumed_eye_pos), virtplayer:get_player_name()) then
 				return
 			end
 
