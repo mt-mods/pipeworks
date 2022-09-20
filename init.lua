@@ -178,8 +178,7 @@ if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.g
 	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
 if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
-if pipeworks.enable_lua_tube and
-		(minetest.get_modpath("mesecons") or minetest.get_modpath("digilines")) then
+if pipeworks.enable_lua_tube and minetest.get_modpath("mesecons") then
 	dofile(pipeworks.modpath.."/lua_tube.lua")
 end
 
