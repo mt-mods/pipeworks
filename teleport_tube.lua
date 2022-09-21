@@ -3,7 +3,7 @@ local filename=minetest.get_worldpath() .. "/teleport_tubes" -- Only used for ba
 local storage=minetest.get_mod_storage()
 
 local tp_tube_db = nil -- nil forces a read
-local tp_tube_db_version = 3.0
+local tp_tube_db_version = 4
 
 -- cached rceiver list: hash(pos) => {receivers}
 local cache = {}
@@ -12,13 +12,29 @@ local function hash(pos)
 	return string.format("%.30g", minetest.hash_node_position(pos))
 end
 
+-- New entry format: <can receive (number)> ':' <channel (string)>
+
+local function serialize_tube_db_entry(entry)
+	return entry.cr .. ":" .. entry.channel
+end
+
+local function deserialize_tube_db_entry(hash, str)
+	local sep = str:find(":", 2, true)
+	if not sep then return minetest.deserialize(str) end
+	local cr = tonumber(str:sub(1, sep - 1))
+	if not cr then return minetest.deserialize(str) end
+	local channel = str:sub(sep + 1)
+	local pos = minetest.get_position_from_hash(tonumber(hash))
+	return {x = pos.x, y = pos.y, z = pos.z, cr = cr, channel = channel}
+end
+
 local function save_tube_db()
 	-- reset tp-tube cache
 	cache = {}
 
 	local fields = {version = tp_tube_db_version}
 	for key, val in pairs(tp_tube_db) do
-		fields[key] = minetest.serialize(val)
+		fields[key] = serialize_tube_db_entry(val)
 	end
 	storage:from_table({fields = fields})
 end
@@ -28,7 +44,7 @@ local function save_tube_db_entry(hash)
 	cache = {}
 
 	local val = tp_tube_db[hash]
-	storage:set_string(hash, val and minetest.serialize(val) or "")
+	storage:set_string(hash, val and serialize_tube_db_entry(val) or "")
 end
 
 local function migrate_tube_db()
@@ -53,7 +69,7 @@ local function read_tube_db()
 
 		for key, val in pairs(storage:to_table().fields) do
 			if tonumber(key) then
-				tp_tube_db[key] = minetest.deserialize(val)
+				tp_tube_db[key] = deserialize_tube_db_entry(key, val)
 			elseif key == "version" then
 				tp_tube_db.version = tonumber(val)
 			else
