@@ -157,14 +157,14 @@ local formspec = "formspec_version[2]size["..size.."]"..
 	"image[0.5,0.3;1,1;pipeworks_teleport_tube_inv.png]"..
 	"label[1.75,0.8;"..S("Teleporting Tube").."]"..
 	"field[0.5,1.7;5,0.8;channel;"..S("Channel")..";${channel}]"..
-	"button[5.5,1.7;2,0.8;save_channel;"..S("Save").."]"..
+	"button_exit[5.5,1.7;2,0.8;save;"..S("Save").."]"..
 	"label[6.5,0.6;"..S("Receive").."]"..
 	"label[0.5,2.8;"..help_text.."]"
 
 if has_digilines then
 	formspec = formspec..
 		"field[0.5,4.6;5,0.8;digiline_channel;"..S("Digiline Channel")..";${digiline_channel}]"..
-		"button[5.5,4.6;2,0.8;save_digiline_channel;"..S("Save").."]"
+		"button_exit[5.5,4.6;2,0.8;save;"..S("Save").."]"
 end
 
 local function update_meta(meta)
