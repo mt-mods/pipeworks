@@ -153,7 +153,6 @@ dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/tube_registration.lua")
 dofile(pipeworks.modpath.."/routing_tubes.lua")
 dofile(pipeworks.modpath.."/sorting_tubes.lua")
-dofile(pipeworks.modpath.."/vacuum_tubes.lua")
 dofile(pipeworks.modpath.."/signal_tubes.lua")
 dofile(pipeworks.modpath.."/decorative_tubes.lua")
 dofile(pipeworks.modpath.."/filter-injector.lua")
@@ -170,16 +169,27 @@ dofile(pipeworks.modpath..logicdir.."abms.lua")
 dofile(pipeworks.modpath..logicdir.."abm_register.lua")
 dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 
-if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
-if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
-if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
+if pipeworks.enable_pipes then
+	dofile(pipeworks.modpath.."/pipes.lua")
+end
+if pipeworks.enable_teleport_tube then
+	dofile(pipeworks.modpath.."/teleport_tube.lua")
+end
+if pipeworks.enable_pipe_devices then
+	dofile(pipeworks.modpath.."/devices.lua")
+end
 if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.get_modpath("hades_core")) then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
 	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
-if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
+if pipeworks.enable_autocrafter then
+	dofile(pipeworks.modpath.."/autocrafter.lua")
+end
 if pipeworks.enable_lua_tube and minetest.get_modpath("mesecons") then
 	dofile(pipeworks.modpath.."/lua_tube.lua")
+end
+if pipeworks.enable_sand_tube or pipeworks.enable_mese_sand_tube then
+	dofile(pipeworks.modpath.."/vacuum_tubes.lua")
 end
 
 dofile(pipeworks.modpath.."/crafts.lua")
