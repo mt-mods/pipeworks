@@ -298,6 +298,24 @@ if pipeworks.enable_mese_tube then
 	})
 end
 
+if pipeworks.enable_sand_tube then
+	minetest.register_craft( {
+		output = "pipeworks:sand_tube_1 2",
+		recipe = {
+			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet"},
+			{"group:sand",                 "group:sand",                 "group:sand"},
+			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet"}
+		},
+	})
+
+	minetest.register_craft( {
+		output = "pipeworks:sand_tube_1",
+		recipe = {
+			{"group:sand", "pipeworks:tube_1", "group:sand"},
+		},
+	})
+end
+
 if pipeworks.enable_mese_sand_tube then
 	minetest.register_craft( {
 		output = "pipeworks:mese_sand_tube_1 2",
