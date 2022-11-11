@@ -5,34 +5,22 @@ local enable_max = minetest.settings:get_bool("pipeworks_enable_items_per_tube_l
 local max_items = tonumber(minetest.settings:get("pipeworks_max_items_per_tube")) or 30
 max_items = math.ceil(max_items / 2)  -- Limit vacuuming to half the max limit
 
-local sqrtof3 = math.sqrt(3)  -- Distance between opposite corners of a 1x1x1 cube
-
-local function inside_area(p, minp, maxp)
-	if p.x < minp.x or p.x > maxp.x then return false end
-	if p.y < minp.y or p.y > maxp.y then return false end
-	if p.z < minp.z or p.z > maxp.z then return false end
-	return true
-end
-
 local function vacuum(pos, radius)
 	radius = radius + 0.5
 	local min_pos = vector.subtract(pos, radius)
 	local max_pos = vector.add(pos, radius)
 	local count = 0
-	for _, obj in pairs(minetest.get_objects_inside_radius(pos, radius * sqrtof3)) do
+	for _, obj in pairs(minetest.get_objects_in_area(min_pos, max_pos)) do
 		local entity = obj:get_luaentity()
 		if entity and entity.name == "__builtin:item" then
-			local obj_pos = obj:get_pos()
-			if inside_area(obj_pos, min_pos, max_pos) then
-				if entity.itemstring ~= "" then
-					pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), entity.itemstring)
-					entity.itemstring = ""
-					count = count + 1
-				end
-				obj:remove()
-				if enable_max and count >= max_items then
-					return  -- Don't break tube by vacuuming too many items
-				end
+			if entity.itemstring ~= "" then
+				pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), entity.itemstring)
+				entity.itemstring = ""
+				count = count + 1
+			end
+			obj:remove()
+			if enable_max and count >= max_items then
+				return  -- Don't break tube by vacuuming too many items
 			end
 		end
 	end
