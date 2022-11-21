@@ -12,7 +12,7 @@ local function after_break(pos)
 end
 
 if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
-	local detector_tube_step = 5 * tonumber(minetest.settings:get("dedicated_server_step"))
+	local detector_tube_step = 5 * (tonumber(minetest.settings:get("dedicated_server_step")) or 0.09)
 	pipeworks.register_tube("pipeworks:detector_tube_on", {
 			description = S("Detecting Pneumatic Tube Segment on"),
 			inventory_image = "pipeworks_detector_tube_inv.png",
