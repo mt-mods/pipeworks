@@ -61,13 +61,13 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		outimgs[vti[v]] = ends[v]
 	end
 
-	local tgroups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory = 1, dig_generic = 4}
+	local tgroups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory = 1, dig_generic = 4, axey=5}
 	local tubedesc = string.format("%s %s", desc, dump(connects))
 	local iimg = type(plain[1]) == "table" and plain[1].name or plain[1]
 	local wscale = {x = 1, y = 1, z = 1}
 
 	if #connects == 0 then
-		tgroups = {snappy = 3, tube = 1, tubedevice = 1, dig_generic = 4}
+		tgroups = {snappy = 3, tube = 1, tubedevice = 1, dig_generic = 4, axey=5}
 		tubedesc = desc
 		iimg=inv
 		outimgs = {
@@ -106,6 +106,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 			fixed = outboxes
 		},
 		groups = tgroups,
+		_mcl_hardness=1.6,
 		_sound_def = {
 			key = "node_sound_wood_defaults",
 		},

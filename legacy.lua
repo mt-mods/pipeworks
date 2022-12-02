@@ -26,7 +26,8 @@ if not minetest.get_modpath("auto_tree_tap") and
 			"pipeworks_nodebreaker_back.png","pipeworks_nodebreaker_front_off.png"},
 		is_ground_content = true,
 		paramtype2 = "facedir",
-		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, not_in_creative_inventory=1 },
+		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2, mesecon = 2,tubedevice=1, not_in_creative_inventory=1, axey=5},
+		_mcl_hardness=1.6,
 		_sound_def = {
 			key = "node_sound_stone_defaults",
 		},
