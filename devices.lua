@@ -35,7 +35,7 @@ function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 
 		else
 
-			local pitch = placer:get_look_pitch()
+			local pitch = placer:get_look_vertical()
 			local above = pointed_thing.above
 			local under = pointed_thing.under
 			local fdir = minetest.dir_to_facedir(placer:get_look_dir())
