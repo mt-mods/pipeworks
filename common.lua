@@ -149,7 +149,8 @@ function fs_helpers.get_inv(y)
 		local inv_x = i3.settings.legacy_inventory and 0.75 or 0.22
 		local inv_y = (y + 0.4) or 6.9
 		local size, spacing = 1, 0.1
-		local hotbar_len = i3.settings.hotbar_len
+		local hotbar_len = i3.settings.hotbar_len or (i3.settings.legacy_inventory and 8 or 9)
+		local inv_size = i3.settings.inv_size or (hotbar_len * 4)
 
 		table.insert(fs, "style_type[box;colors=#77777710,#77777710,#777,#777]")
 
@@ -162,13 +163,13 @@ function fs_helpers.get_inv(y)
 
 		table.insert(fs, "style_type[box;colors=#666]")
 		for i=0, 2 do
-			for j=0, (i3.settings.legacy_inventory and 7 or 8) do
+			for j=0, hotbar_len - 1 do
 				table.insert(fs, "box["..0.2+(j*0.1)+(j*size)..","..(inv_y+size+spacing+0.05)+(i*0.1)+(i*size)..";"..size..","..size..";]")
 			end
 		end
 
 		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
-		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(i3.settings.inv_size / hotbar_len)..";"..hotbar_len.."]")
+		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(inv_size / hotbar_len)..";"..hotbar_len.."]")
 	else
 		table.insert(fs, "list[current_player;main;0.22,"..y..";8,4;]")
 	end
