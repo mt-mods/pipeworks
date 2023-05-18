@@ -243,10 +243,10 @@ local function can_go(pos, node, velocity, stack)
 		return {}
 	end
 	local target = receivers[math.random(1, #receivers)]
-	local src_owner = src_meta:get_string("owner")
-	local dst_meta = minetest.get_meta(pos)
-	local dst_owner = dst_meta:get_string("owner")
 	if minetest.settings:get_bool("pipeworks_log_teleport_tubes", false) then
+		local src_owner = src_meta:get_string("owner")
+		local dst_meta = minetest.get_meta(pos)
+		local dst_owner = dst_meta:get_string("owner")
 		minetest.log("action", string.format("[pipeworks] %s teleported from %s (owner=%s) to %s (owner=%s) via %s",
 			stack:to_string(), minetest.pos_to_string(pos), src_owner, minetest.pos_to_string(target), dst_owner, channel
 		))
