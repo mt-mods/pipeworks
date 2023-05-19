@@ -3,6 +3,8 @@ local S = minetest.get_translator("pipeworks")
 local filename = minetest.get_worldpath().."/teleport_tubes"  -- Only used for backward-compat
 local storage = minetest.get_mod_storage()
 
+local enable_logging = minetest.settings:get_bool("pipeworks_log_teleport_tubes", false)
+
 local has_digilines = minetest.get_modpath("digilines")
 
 -- V1: Serialized text file indexed by vector position.
@@ -243,7 +245,7 @@ local function can_go(pos, node, velocity, stack)
 		return {}
 	end
 	local target = receivers[math.random(1, #receivers)]
-	if minetest.settings:get_bool("pipeworks_log_teleport_tubes", false) then
+	if enable_logging then
 		local src_owner = src_meta:get_string("owner")
 		local dst_meta = minetest.get_meta(pos)
 		local dst_owner = dst_meta:get_string("owner")
