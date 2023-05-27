@@ -277,19 +277,16 @@ local function digiline_action(pos, _, digiline_channel, msg)
 	end
 	local channel = meta:get_string("channel")
 	local can_receive = meta:get_int("can_receive")
-	local t_msg = type(msg)
-	if t_msg == "string" then
+	if type(msg) == "string" then
 		channel = msg
-	elseif t_msg == "table" then
+	elseif type(msg) == "table" then
 		if type(msg.channel) == "string" then
 			channel = msg.channel
 		end
-		if nil ~= msg.can_receive then
-			if msg.can_receive == 1 or msg.can_receive == true then
-				can_receive = 1
-			else
-				can_receive = 0
-			end
+		if msg.can_receive == 1 or msg.can_receive == true then
+			can_receive = 1
+		elseif msg.can_receive == 0 or msg.can_receive == false then
+			can_receive = 0
 		end
 	else
 		return
