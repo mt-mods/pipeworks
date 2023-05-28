@@ -270,14 +270,29 @@ local function repair_tube(pos, node)
 	update_meta(meta)
 end
 
-local function digiline_action(pos, _, channel, msg)
+local function digiline_action(pos, _, digiline_channel, msg)
 	local meta = minetest.get_meta(pos)
-	if channel ~= meta:get_string("digiline_channel") or type(msg) ~= "string" then
+	if digiline_channel ~= meta:get_string("digiline_channel") then
 		return
 	end
-	local name = meta:get_string("owner")
-	local cr = meta:get_int("can_receive")
-	update_tube(pos, msg, cr, name)
+	local channel = meta:get_string("channel")
+	local can_receive = meta:get_int("can_receive")
+	if type(msg) == "string" then
+		channel = msg
+	elseif type(msg) == "table" then
+		if type(msg.channel) == "string" then
+			channel = msg.channel
+		end
+		if msg.can_receive == 1 or msg.can_receive == true then
+			can_receive = 1
+		elseif msg.can_receive == 0 or msg.can_receive == false then
+			can_receive = 0
+		end
+	else
+		return
+	end
+	local player_name = meta:get_string("owner")
+	update_tube(pos, channel, can_receive, player_name)
 	update_meta(meta)
 end
 
