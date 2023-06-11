@@ -97,18 +97,18 @@ end
 -- note, that this function assumes allready being updated to virtual items
 -- and doesn't handle recipes with stacksizes > 1
 local function after_recipe_change(pos, inventory)
+	local hash = minetest.hash_node_position(pos)
 	local meta = minetest.get_meta(pos)
 	-- if we emptied the grid, there's no point in keeping it running or cached
 	if inventory:is_empty("recipe") then
 		minetest.get_node_timer(pos):stop()
-		autocrafterCache[minetest.hash_node_position(pos)] = nil
+		autocrafterCache[hash] = nil
 		meta:set_string("infotext", S("unconfigured Autocrafter"))
 		inventory:set_stack("output", 1, "")
 		return
 	end
-	local recipe = inventory:get_list("recipe")
 
-	local hash = minetest.hash_node_position(pos)
+	local recipe = inventory:get_list("recipe")
 	local craft = autocrafterCache[hash]
 
 	if craft then
