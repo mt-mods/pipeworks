@@ -1,6 +1,7 @@
 local S = minetest.get_translator("pipeworks")
 local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
-
+local sandbox_inv = minetest.create_detached_inventory("pipeworks:autocrafter_sandbox")
+sandbox_inv:set_size("", 4 * 3)
 local craft_time = 1
 
 local function count_index(invlist)
@@ -48,43 +49,25 @@ local function autocraft(inventory, craft)
 		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
 
-	-- since there is no inv:room_for_items() method, we use history/undo system
+	-- since there is no inv:room_for_items() method, we use a sandbox inventory
 	-- see: https://github.com/mt-mods/pipeworks/issues/61
-	-- keep track of stacks we add to dst inventory
-	local history = { output_item }
-	-- add the result into the dst inventory
-	inventory:add_item("dst", output_item)
-
-	-- add any "replacements" as well and keep track of what didn't fit
-	local leftover, replacement, undo, diff
+	sandbox_inv:set_list("", inventory:get_list("dst"))
+	-- we checked if this fits, so go ahead
+	sandbox_inv:add_item("", output_item)
+	-- now try to add replacements
+	local replacement
 	for i = 1, 9 do
 		replacement = craft.decremented_input.items[i]
 		if not replacement:is_empty() then
-			leftover = inventory:add_item("dst", replacement)
-			if not leftover:is_empty() then
-				-- hold up, there isn't room, we need to undo
-				undo = true
-				-- adjust count (mostly is just 1) so diff will mostly be 0
-				diff = replacement:get_count() - leftover:get_count()
-				-- make a copy with adjusted count
-				replacement = ItemStack(replacement)
-				replacement:set_count(diff)
+			if not sandbox_inv:room_for_item("", replacement) then
+				return false
 			end
-			-- add to history what had fit
-			table.insert(history, replacement)
-			-- if not all fit, let's not make it worse
-			if undo then break end
+			sandbox_inv:add_item("", replacement)
 		end
 	end
 
-	if undo then
-		-- we need to remove what we put in dst
-		for _, stack in ipairs(history) do
-				inventory:remove_item("dst", stack)
-		end
-		return false
-	end
-
+	-- success, so apply to actual output inventory
+	inventory:set_list("dst", sandbox_inv:get_list(""))
 	-- consume materials
 	for itemname, number in pairs(consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
