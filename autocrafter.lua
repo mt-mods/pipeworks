@@ -442,7 +442,7 @@ minetest.register_node("pipeworks:autocrafter", {
 						start_crafter(pos)
 					end
 				elseif msg == "single" then
-					run_autocrafter(pos,1)
+					run_autocrafter(pos, craft_time)
 				end
 			end,
 		},
