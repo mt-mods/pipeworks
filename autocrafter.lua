@@ -68,6 +68,8 @@ local function autocraft(inventory, craft)
 
 	-- success, so apply to actual output inventory
 	inventory:set_list("dst", sandbox_inv:get_list(""))
+	-- clear sandbox, just in case it matters
+	sandbox_inv:set_list("", {})
 	-- consume materials
 	for itemname, number in pairs(consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
