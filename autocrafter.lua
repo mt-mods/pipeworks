@@ -1,7 +1,6 @@
 local S = minetest.get_translator("pipeworks")
 local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
-local sandbox_inv = minetest.create_detached_inventory("pipeworks:autocrafter_sandbox")
-sandbox_inv:set_size("", 4 * 3)
+local sandbox_inv_name = "pipeworks:autocrafter_sandbox"
 local craft_time = 1
 
 local function count_index(invlist)
@@ -51,6 +50,8 @@ local function autocraft(inventory, craft)
 
 	-- since there is no inv:room_for_items() method, we use a sandbox inventory
 	-- see: https://github.com/mt-mods/pipeworks/issues/61
+	local sandbox_inv = minetest.create_detached_inventory(sandbox_inv_name)
+	sandbox_inv:set_size("", inventory:get_size("dst"))
 	sandbox_inv:set_list("", inventory:get_list("dst"))
 	-- we checked if this fits, so go ahead
 	sandbox_inv:add_item("", output_item)
@@ -60,6 +61,8 @@ local function autocraft(inventory, craft)
 		replacement = craft.decremented_input.items[i]
 		if not replacement:is_empty() then
 			if not sandbox_inv:room_for_item("", replacement) then
+				-- cleanup and leave
+				minetest.remove_detached_inventory(sandbox_inv_name)
 				return false
 			end
 			sandbox_inv:add_item("", replacement)
@@ -68,8 +71,8 @@ local function autocraft(inventory, craft)
 
 	-- success, so apply to actual output inventory
 	inventory:set_list("dst", sandbox_inv:get_list(""))
-	-- clear sandbox, just in case it matters
-	sandbox_inv:set_list("", {})
+	-- destroy sandbox inv
+	minetest.remove_detached_inventory(sandbox_inv_name)
 	-- consume materials
 	for itemname, number in pairs(consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
