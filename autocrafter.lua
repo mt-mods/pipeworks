@@ -41,6 +41,7 @@ local function has_room_for_in(list_src, list_dst)
 	if i == 0 then return false end -- sanity check jic
 
 	-- copy destination list indexing list
+	-- For reason why, see: https://github.com/fluxionary/minetest-futil/issues/2
 	local dst = {}
 	local stack, name
 	local indexes = { __empty__ = {} }
