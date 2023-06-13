@@ -1,6 +1,5 @@
 local S = minetest.get_translator("pipeworks")
 local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
-local sandbox_inv_name = "pipeworks:autocrafter_sandbox"
 local craft_time = 1
 
 local function count_index(invlist)
@@ -33,13 +32,95 @@ local function get_craft(pos, inventory, hash)
 	return craft
 end
 
+-- Check if items from list_src fit into list_dst.
+-- Items in list_src are expected to be ItemStack objects and have legal size.
+-- Items in list_dst may be any type ItemStack constructor accepts.
+-- based on: https://github.com/fluxionary/minetest-futil/blob/5f895d7be879054ea24bf6ce65eb60347bdd9338/minetest/fake_inventory.lua
+local function has_room_for_in(list_src, list_dst)
+	local i = #list_dst
+	if i == 0 then return false end -- sanity check jic
+
+	-- copy destination list indexing list
+	local dst = {}
+	local stack, name
+	local indexes = { __empty__ = {} }
+	repeat
+		stack = ItemStack(list_dst[i])
+		name = stack:get_name()
+		if stack:is_empty() then name = "__empty__" end
+		if not indexes[name] then indexes[name] = {} end
+		indexes[name][#indexes[name] + 1] = i
+		dst[i] = stack
+		i = i - 1
+	until i == 0
+
+	-- purge empty slots from source list
+	local src = {}
+	i = #list_src
+	if i > 0 then -- jic
+		repeat
+			if not list_src[i]:is_empty() then
+				src[#src + 1] = list_src[i]
+			end
+			i = i - 1
+		until i == 0
+	end
+	-- Shortcut check is safe as we can expect all stacks in list_src
+	-- to have valid stack sizes.
+	-- If there are plenty empty slots, confirm to have space.
+	if #indexes.__empty__ >= #src then return true end
+
+	-- try adding each stack to slots until stacks are empty
+	local j, done
+	i = #src
+	if i == 0 then return true end -- sanity check jic
+
+	repeat
+		done = false
+		stack = ItemStack(src[i])
+		name = stack:get_name()
+		-- first try stacks with same item name
+		if indexes[name] then
+			j = #indexes[name]
+			repeat
+				stack = dst[indexes[name][j]]:add_item(stack)
+				if stack:is_empty() then
+					done = true
+					break
+				end
+				j = j - 1
+			until j == 0
+		end
+		-- do we have 'empty' slots to test?
+		j = #indexes.__empty__
+		if not done and j == 0 then return false end
+
+		if not done then
+			-- try adding stack to empty slots until stack is empty
+			-- note: slots may no longer be empty (as we don't update indexes here)
+			repeat
+				stack = dst[indexes.__empty__[j]]:add_item(stack)
+				if stack:is_empty() then
+					done = true
+					break
+				end
+				j = j - 1
+			until j == 0
+			-- we've tried all sensible slots, if stack still contains items
+			-- there is not enough space, no need to try any others
+			if not done then return false end
+
+		end
+		-- this item fit, try next one
+		i = i - 1
+	until i == 0
+
+	-- all stacks from source list fit into destination list
+	return true
+end
+
 local function autocraft(inventory, craft)
 	if not craft then return false end
-
-	local output_item = craft.output.item
-	-- check if we have enough room in dst for output item(s)
-	-- we'll check replacements later
-	if not inventory:room_for_item("dst", output_item) then return false end
 
 	local consumption = craft.consumption
 	local inv_index = count_index(inventory:get_list("src"))
@@ -48,31 +129,39 @@ local function autocraft(inventory, craft)
 		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
 
-	-- since there is no inv:room_for_items() method, we use a sandbox inventory
-	-- see: https://github.com/mt-mods/pipeworks/issues/61
-	local sandbox_inv = minetest.create_detached_inventory(sandbox_inv_name)
-	sandbox_inv:set_size("", inventory:get_size("dst"))
-	sandbox_inv:set_list("", inventory:get_list("dst"))
-	-- we checked if this fits, so go ahead
-	sandbox_inv:add_item("", output_item)
-	-- now try to add replacements
-	local replacement
-	for i = 1, 9 do
-		replacement = craft.decremented_input.items[i]
-		if not replacement:is_empty() then
-			if not sandbox_inv:room_for_item("", replacement) then
-				-- cleanup and leave
-				minetest.remove_detached_inventory(sandbox_inv_name)
-				return false
-			end
-			sandbox_inv:add_item("", replacement)
+	-- make a list of output stacks
+	local list_out = { craft.output.item }
+	local i = #craft.decremented_input.items
+	repeat
+		-- purge empty stacks
+		if not craft.decremented_input.items[i]:is_empty() then
+			list_out[#list_out + 1] = craft.decremented_input.items[i]
 		end
+		i = i - 1
+	until i == 0
+
+	-- since there is no inv:room_for_items() method, we use our own
+	-- see: https://github.com/mt-mods/pipeworks/issues/61
+	if not has_room_for_in(list_out, inventory:get_list("dst")) then
+		return false
 	end
 
-	-- success, so apply to actual output inventory
-	inventory:set_list("dst", sandbox_inv:get_list(""))
-	-- destroy sandbox inv
-	minetest.remove_detached_inventory(sandbox_inv_name)
+	-- success, so safely add items to output inventory
+	local leftover
+	i = #list_out
+	repeat
+		leftover = inventory:add_item("dst", list_out[i])
+		if not leftover:is_empty() then
+			local location = inventory:get_location()
+			local error_text = "[pipeworks] autocrafter failed to predict space for output items."
+			if location.type == "node" then
+				error_text = error_text .. " At " .. minetest.pos_to_string(location.pos)
+			end
+			minetest.log("warning", error_text)
+		end
+		i = i - 1
+	until i == 0
+
 	-- consume materials
 	for itemname, number in pairs(consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
