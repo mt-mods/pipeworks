@@ -35,17 +35,13 @@ end
 
 local function autocraft(inventory, craft)
 	if not craft then return false end
-	local output = craft.output.item
-
-	-- check if we have enough room in dst
-	if not inventory:room_for_item("dst", output) then	return false end
-	local consumption = craft.consumption
-	local inv_index = count_index(inventory:get_list("src"))
 	-- check if we have enough material available
-	for itemname, number in pairs(consumption) do
+	local inv_index = count_index(inventory:get_list("src"))
+	for itemname, number in pairs(craft.consumption) do
 		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
 	-- check if output and all replacements fit in dst
+	local output = craft.output.item
 	local out_items = count_index(craft.decremented_input.items)
 	out_items[output:get_name()] = (out_items[output:get_name()] or 0) + output:get_count()
 	local empty_count = 0
@@ -68,12 +64,11 @@ local function autocraft(inventory, craft)
 		return false
 	end
 	-- consume material
-	for itemname, number in pairs(consumption) do
+	for itemname, number in pairs(craft.consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
 			inventory:remove_item("src", ItemStack(itemname))
 		end
 	end
-
 	-- craft the result into the dst inventory and add any "replacements" as well
 	inventory:add_item("dst", output)
 	for i = 1, 9 do
