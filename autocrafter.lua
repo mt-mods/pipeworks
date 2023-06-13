@@ -55,30 +55,19 @@ local function has_room_for_in(list_src, list_dst)
 		i = i - 1
 	until i == 0
 
-	-- purge empty slots from source list
-	local src = {}
-	i = #list_src
-	if i > 0 then -- jic
-		repeat
-			if not list_src[i]:is_empty() then
-				src[#src + 1] = list_src[i]
-			end
-			i = i - 1
-		until i == 0
-	end
 	-- Shortcut check is safe as we can expect all stacks in list_src
 	-- to have valid stack sizes.
 	-- If there are plenty empty slots, confirm to have space.
-	if #indexes.__empty__ >= #src then return true end
+	if #indexes.__empty__ >= #list_src then return true end
 
 	-- try adding each stack to slots until stacks are empty
 	local j, done
-	i = #src
+	i = #list_src
 	if i == 0 then return true end -- sanity check jic
 
 	repeat
 		done = false
-		stack = ItemStack(src[i])
+		stack = ItemStack(list_src[i])
 		name = stack:get_name()
 		-- first try stacks with same item name
 		if indexes[name] then
