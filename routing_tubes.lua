@@ -64,28 +64,39 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 			local itemstack = puncher:get_wielded_item()
 			local wieldname = itemstack:get_name()
 			local playername = puncher:get_player_name()
-			local log_msg = playername.." struck a broken tube at "..minetest.pos_to_string(pos).."\n"
+			local log_msg = playername.." struck a broken tube at "..minetest.pos_to_string(pos).."\n            "
 			local meta = minetest.get_meta(pos)
 			local was_node = minetest.deserialize(meta:get_string("the_tube_was"))
 			if not was_node then
-				pipeworks.logger(log_msg.."            but it can't be repaired.")
+				pipeworks.logger(log_msg.."but it can't be repaired.")
 				return
 			end
 			if not pipeworks.check_and_wear_hammer(puncher) then
 				if wieldname == "" then
-					pipeworks.logger(log_msg.."            by hand. It's not very effective.")
+					pipeworks.logger(log_msg.."by hand. It's not very effective.")
 					if minetest.settings:get_bool("enable_damage") then
 						minetest.chat_send_player(playername,S("Broken tubes may be a bit sharp. Perhaps try with a hammer?"))
 						puncher:set_hp(puncher:get_hp()-1)
 					end
 				else
-					pipeworks.logger(log_msg.."            with "..wieldname.." but that tool is too weak.")
+					pipeworks.logger(log_msg.."with "..wieldname.." but that tool is too weak.")
 				end
 				return
 			end
-			pipeworks.logger(log_msg.."            with "..wieldname.." to repair it.")
-			minetest.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
-			pipeworks.scan_for_tube_objects(pos)
+			log_msg = log_msg.."with "..wieldname.." to repair it"
+			local nodedef = minetest.registered_nodes[was_node.name]
+			if nodedef then
+				pipeworks.logger(log_msg..".")
+				if nodedef.tube and nodedef.tube.on_repair then
+					nodedef.tube.on_repair(pos, was_node)
+				else
+					minetest.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
+					pipeworks.scan_for_tube_objects(pos)
+				end
+			else
+				pipeworks.logger(log_msg.." but original node "..was_node.name.." is not registered anymore.")
+				minetest.chat_send_player(playername, S("This tube cannot be repaired."))
+			end
 		end
 	}
 })
@@ -106,14 +117,6 @@ if pipeworks.enable_priority_tube then
 				tube = { priority = 150 } -- higher than tubedevices (100)
 			},
 	})
-	minetest.register_craft( {
-		output = "pipeworks:priority_tube_1 6",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "default:gold_ingot", "", "default:gold_ingot" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
 end
 
 if pipeworks.enable_accelerator_tube then
@@ -131,14 +134,6 @@ if pipeworks.enable_accelerator_tube then
 					end}
 			},
 	})
-	minetest.register_craft( {
-		output = "pipeworks:accelerator_tube_1 2",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "default:mese_crystal_fragment", "default:steel_ingot", "default:mese_crystal_fragment" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
 end
 
 if pipeworks.enable_crossing_tube then
@@ -153,28 +148,31 @@ if pipeworks.enable_crossing_tube then
 				tube = {can_go = function(pos, node, velocity, stack) return {velocity} end }
 			},
 	})
-	minetest.register_craft( {
-		output = "pipeworks:crossing_tube_1 5",
-		recipe = {
-			{ "", "pipeworks:tube_1", "" },
-			{ "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
-			{ "", "pipeworks:tube_1", "" }
-		},
-	})
 end
 
+local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+	and "clip" or true
+
 if pipeworks.enable_one_way_tube then
+	local tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
+		"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"}
+	for i, tile in ipairs(tiles) do
+		tiles[i] = pipeworks.make_tube_tile(tile)
+	end
 	minetest.register_node("pipeworks:one_way_tube", {
 		description = S("One way tube"),
-		tiles = {"pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_top.png", "pipeworks_one_way_tube_output.png",
-			"pipeworks_one_way_tube_input.png", "pipeworks_one_way_tube_side.png", "pipeworks_one_way_tube_top.png"},
+		tiles = tiles,
+		use_texture_alpha = texture_alpha_mode,
 		paramtype2 = "facedir",
 		drawtype = "nodebox",
 		paramtype = "light",
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
-		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1},
-		sounds = default.node_sound_wood_defaults(),
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, axey=5},
+		_mcl_hardness=1.6,
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
 		tube = {
 			connect_sides = {left = 1, right = 1},
 			can_go = function(pos, node, velocity, stack)
@@ -193,12 +191,4 @@ if pipeworks.enable_one_way_tube then
 		check_for_horiz_pole = pipeworks.check_for_horiz_tube
 	})
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:one_way_tube"
-	minetest.register_craft({
-		output = "pipeworks:one_way_tube 2",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "group:stick", "default:mese_crystal", "basic_materials:plastic_sheet" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
 end

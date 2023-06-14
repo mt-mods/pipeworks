@@ -75,3 +75,15 @@ pipeworks_drop_on_routing_fail (Drop On Routing Fail) bool false
 
 #Delete item on clearobject.
 pipeworks_delete_item_on_clearobject (Delete Item On Clearobject) bool true
+
+#Use real visible entities in tubes within active areas.
+#When disabled, tubes are made opaque.
+pipeworks_use_real_entities (Use Real Entities) bool true
+
+#Target interval between tube entity steps.
+#A high value may cause issues with tube entity visuals.
+#A value 0.2 or above may cause issues with accelerator tubes.
+pipeworks_entity_update_interval (Entity Update Interval) float 0 0 0.8
+
+# if set to true, items passing through teleport tubes will log log where they came from and where they went.
+pipeworks_log_teleport_tubes (Log Teleport Tubes) bool false

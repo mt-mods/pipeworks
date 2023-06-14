@@ -1,5 +1,5 @@
 local luaentity = pipeworks.luaentity
-local enable_max_limit = minetest.settings:get("pipeworks_enable_items_per_tube_limit")
+local enable_max_limit = minetest.settings:get_bool("pipeworks_enable_items_per_tube_limit")
 local max_tube_limit = tonumber(minetest.settings:get("pipeworks_max_items_per_tube")) or 30
 if enable_max_limit == nil then enable_max_limit = true end
 
@@ -311,8 +311,6 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			self:set_pos(pos)
 		end
 
-		local stack = ItemStack(self.itemstring)
-
 		local velocity = self:get_velocity()
 
 		local moved = false
@@ -329,9 +327,15 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			moved = true
 		end
 
+		if not moved then
+			return
+		end
+
+		local stack = ItemStack(self.itemstring)
+
 		pipeworks.load_position(self.start_pos)
 		local node = minetest.get_node(self.start_pos)
-		if moved and minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
+		if minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
 			local leftover
 			if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
 				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel, self.owner)
@@ -349,45 +353,43 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			return
 		end
 
-		if moved then
-			local found_next, new_velocity, multimode = go_next(self.start_pos, velocity, stack, self.owner) -- todo: color
-			local rev_vel = vector.multiply(velocity, -1)
-			local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
-			local rev_node = minetest.get_node(vector.round(vector.add(self.start_pos,rev_dir)))
-			local tube_present = minetest.get_item_group(rev_node.name,"tubedevice") == 1
-			if not found_next then
-				if pipeworks.drop_on_routing_fail or not tube_present or
-						minetest.get_item_group(rev_node.name,"tube") ~= 1 then
-					-- Using add_item instead of item_drop since this makes pipeworks backward
-					-- compatible with Minetest 0.4.13.
-					-- Using item_drop here makes Minetest 0.4.13 crash.
-					local dropped_item = minetest.add_item(self.start_pos, stack)
-					if dropped_item then
-						dropped_item:set_velocity(vector.multiply(velocity, 5))
-						self:remove()
-					end
-					return
-				else
-					velocity = vector.multiply(velocity, -1)
-					self:set_pos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
-					self:set_velocity(velocity)
+		local found_next, new_velocity, multimode = go_next(self.start_pos, velocity, stack, self.owner) -- todo: color
+		local rev_vel = vector.multiply(velocity, -1)
+		local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
+		local rev_node = minetest.get_node(vector.round(vector.add(self.start_pos,rev_dir)))
+		local tube_present = minetest.get_item_group(rev_node.name,"tubedevice") == 1
+		if not found_next then
+			if pipeworks.drop_on_routing_fail or not tube_present or
+					minetest.get_item_group(rev_node.name,"tube") ~= 1 then
+				-- Using add_item instead of item_drop since this makes pipeworks backward
+				-- compatible with Minetest 0.4.13.
+				-- Using item_drop here makes Minetest 0.4.13 crash.
+				local dropped_item = minetest.add_item(self.start_pos, stack)
+				if dropped_item then
+					dropped_item:set_velocity(vector.multiply(velocity, 5))
+					self:remove()
 				end
-			elseif is_multimode(multimode) then
-				-- create new stacks according to returned data.
-				local s = self.start_pos
-				for _, split in ipairs(multimode) do
-					pipeworks.tube_inject_item(s, s, split.velocity, split.itemstack, self.owner)
-				end
-				-- remove ourself now the splits are sent
-				self:remove()
 				return
+			else
+				velocity = vector.multiply(velocity, -1)
+				self:set_pos(vector.subtract(self.start_pos, vector.multiply(vel, moved_by - 1)))
+				self:set_velocity(velocity)
 			end
+		elseif is_multimode(multimode) then
+			-- create new stacks according to returned data.
+			local s = self.start_pos
+			for _, split in ipairs(multimode) do
+				pipeworks.tube_inject_item(s, s, split.velocity, split.itemstack, self.owner)
+			end
+			-- remove ourself now the splits are sent
+			self:remove()
+			return
+		end
 
-			if new_velocity and not vector.equals(velocity, new_velocity) then
-				local nvelr = math.abs(new_velocity.x + new_velocity.y + new_velocity.z)
-				self:set_pos(vector.add(self.start_pos, vector.multiply(new_velocity, (moved_by - 1) / nvelr)))
-				self:set_velocity(new_velocity)
-			end
+		if new_velocity and not vector.equals(velocity, new_velocity) then
+			local nvelr = math.abs(new_velocity.x + new_velocity.y + new_velocity.z)
+			self:set_pos(vector.add(self.start_pos, vector.multiply(new_velocity, (moved_by - 1) / nvelr)))
+			self:set_velocity(new_velocity)
 		end
 	end
 })

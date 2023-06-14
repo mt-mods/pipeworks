@@ -11,8 +11,8 @@ local function after_break(pos)
 	end
 end
 
-if pipeworks.enable_detector_tube then
-	local detector_tube_step = 5 * tonumber(minetest.settings:get("dedicated_server_step"))
+if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
+	local detector_tube_step = 5 * (tonumber(minetest.settings:get("dedicated_server_step")) or 0.09)
 	pipeworks.register_tube("pipeworks:detector_tube_on", {
 			description = S("Detecting Pneumatic Tube Segment on"),
 			inventory_image = "pipeworks_detector_tube_inv.png",
@@ -137,7 +137,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 	})
 end
 
-if pipeworks.enable_conductor_tube then
+if minetest.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
 	pipeworks.register_tube("pipeworks:conductor_tube_off", {
 			description = S("Conducting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_conductor_tube_inv.png",

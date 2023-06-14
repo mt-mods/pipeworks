@@ -100,37 +100,49 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 end
 
 local function autocraft(inventory, craft)
-	if not craft then
-		return false
-	end
-	local output_item = craft.output.item
-
-	-- check if we have enough room in dst
-	if not inventory:room_for_item("dst", output_item) then
-		return false
-	end
-
-	-- get required items and index inventory
+	if not craft then return false end
+	-- check if we have enough material available
 	local inv_index = count_index(inventory:get_list("src"))
 	local consumption = calculate_consumption(inv_index, craft.consumption)
 	if not consumption then
 		return false
 	end
-
 	-- check if we have enough material available
 	for itemname, number in pairs(consumption) do
 		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
-
+	-- check if output and all replacements fit in dst
+	local output = craft.output.item
+	local out_items = count_index(craft.decremented_input.items)
+	out_items[output:get_name()] = (out_items[output:get_name()] or 0) + output:get_count()
+	local empty_count = 0
+	for _,item in pairs(inventory:get_list("dst")) do
+		if item:is_empty() then
+			empty_count = empty_count + 1
+		else
+			local name = item:get_name()
+			if out_items[name] then
+				out_items[name] = out_items[name] - item:get_free_space()
+			end
+		end
+	end
+	for _,count in pairs(out_items) do
+		if count > 0 then
+			empty_count = empty_count - 1
+		end
+	end
+	if empty_count < 0 then
+		return false
+	end
 	-- consume material
-	for itemname, number in pairs(consumption) do
+	for itemname, number in pairs(craft.consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
 			inventory:remove_item("src", ItemStack(itemname))
 		end
 	end
 
 	-- craft the result into the dst inventory and add any "replacements" as well
-	inventory:add_item("dst", output_item)
+	inventory:add_item("dst", output)
 	for i = 1, 9 do
 		inventory:add_item("dst", craft.decremented_input.items[i])
 	end
@@ -249,27 +261,47 @@ end
 local function update_meta(meta, enabled)
 	local state = enabled and "on" or "off"
 	meta:set_int("enabled", enabled and 1 or 0)
-	local fs = 	"size[8,12]"..
-			"list[context;recipe;0,0;3,3;]"..
-			"image[3,1;1,1;gui_hb_bg.png^[colorize:#141318:255]"..
-			"list[context;output;3,1;1,1;]"..
-			"image_button[3,2;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
-			"list[context;src;0,4.5;8,3;]"..
-			"list[context;dst;4,0;4,3;]"..
-			default.gui_bg..
-			default.gui_bg_img..
-			default.gui_slots..
-			default.get_hotbar_bg(0,8) ..
-			"list[current_player;main;0,8;8,4;]" ..
-			"listring[current_player;main]"..
-			"listring[context;src]" ..
-			"listring[current_player;main]"..
-			"listring[context;dst]" ..
-			"listring[current_player;main]"
+	local list_backgrounds = ""
+	if minetest.get_modpath("i3") then
+		list_backgrounds = "style_type[box;colors=#666]"
+		for i=0, 2 do
+			for j=0, 2 do
+				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 0.22+(j*1.25) ..";1,1;]"
+			end
+		end
+		for i=0, 3 do
+			for j=0, 2 do
+				list_backgrounds = list_backgrounds .. "box[".. 5.28+(i*1.25) ..",".. 0.22+(j*1.25) ..";1,1;]"
+			end
+		end
+		for i=0, 7 do
+			for j=0, 2 do
+				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 5+(j*1.25) ..";1,1;]"
+			end
+		end
+	end
+	local size = "10.2,14"
+	local fs =
+		"formspec_version[2]"..
+		"size["..size.."]"..
+		pipeworks.fs_helpers.get_prepends(size)..
+		list_backgrounds..
+		"list[context;recipe;0.22,0.22;3,3;]"..
+		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]"..
+		"list[context;output;4,1.45;1,1;]"..
+		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
+		"list[context;dst;5.28,0.22;4,3;]"..
+		"list[context;src;0.22,5;8,3;]"..
+		pipeworks.fs_helpers.get_inv(9)..
+		"listring[current_player;main]"..
+		"listring[context;src]" ..
+		"listring[current_player;main]"..
+		"listring[context;dst]" ..
+		"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
-		fs = fs.."field[0.3,3.5;4.5,1;channel;"..S("Channel")..";${channel}]"..
-			"button[4.5,3.2;1.5,1;set_channel;"..S("Set").."]"..
-			"button_exit[6,3.2;2,1;close;"..S("Close").."]"
+		fs = fs.."field[0.22,4.1;4.5,0.75;channel;"..S("Channel")..";${channel}]"..
+			"button[5,4.1;1.5,0.75;set_channel;"..S("Set").."]"..
+			"button_exit[6.8,4.1;2,0.75;close;"..S("Close").."]"
 	end
 	meta:set_string("formspec",fs)
 
@@ -329,7 +361,8 @@ minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1},
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=5},
+	_mcl_hardness=1.6,
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
@@ -354,8 +387,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
-		if not fields.channel or (fields.quit and not fields.key_enter_field)
-				or not pipeworks.may_configure(pos, sender) then
+		if (fields.quit and not fields.key_enter_field) or not pipeworks.may_configure(pos, sender) then
 			return
 		end
 		local meta = minetest.get_meta(pos)
@@ -506,12 +538,3 @@ minetest.register_node("pipeworks:autocrafter", {
 	},
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:autocrafter"
-
-minetest.register_craft( {
-	output = "pipeworks:autocrafter 2",
-	recipe = {
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
-	        { "basic_materials:plastic_sheet", "default:steel_ingot", "basic_materials:plastic_sheet" },
-	        { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
-	},
-})

@@ -1,4 +1,37 @@
+
 local S = minetest.get_translator("pipeworks")
+
+local enable_max = minetest.settings:get_bool("pipeworks_enable_items_per_tube_limit", true)
+local max_items = tonumber(minetest.settings:get("pipeworks_max_items_per_tube")) or 30
+max_items = math.ceil(max_items / 2)  -- Limit vacuuming to half the max limit
+
+local function vacuum(pos, radius)
+	radius = radius + 0.5
+	local min_pos = vector.subtract(pos, radius)
+	local max_pos = vector.add(pos, radius)
+	local count = 0
+	for _, obj in pairs(minetest.get_objects_in_area(min_pos, max_pos)) do
+		local entity = obj:get_luaentity()
+		if entity and entity.name == "__builtin:item" then
+			if entity.itemstring ~= "" then
+				pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), entity.itemstring)
+				entity.itemstring = ""
+				count = count + 1
+			end
+			obj:remove()
+			if enable_max and count >= max_items then
+				return  -- Don't break tube by vacuuming too many items
+			end
+		end
+	end
+end
+
+local function set_timer(pos)
+	local timer = minetest.get_node_timer(pos)
+	-- Randomize timer so not all tubes vacuum at the same time
+	timer:start(math.random(10, 20) * 0.1)
+end
+
 if pipeworks.enable_sand_tube then
 	pipeworks.register_tube("pipeworks:sand_tube", {
 		description = S("Vacuuming Pneumatic Tube Segment"),
@@ -6,123 +39,64 @@ if pipeworks.enable_sand_tube then
 		short = "pipeworks_sand_tube_short.png",
 		noctr = {"pipeworks_sand_tube_noctr.png"},
 		plain = {"pipeworks_sand_tube_plain.png"},
-		ends  = {"pipeworks_sand_tube_end.png"},
-		node_def = {groups = {vacuum_tube = 1}},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:sand_tube_1 2",
-		recipe = {
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet"},
-			{"group:sand",                 "group:sand",                 "group:sand"},
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet"}
-		},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:sand_tube_1",
-		recipe = {
-			{"group:sand", "pipeworks:tube_1", "group:sand"},
+		ends = {"pipeworks_sand_tube_end.png"},
+		node_def = {
+			groups = {vacuum_tube = 1},
+			on_construct = set_timer,
+			on_timer = function(pos, elapsed)
+				vacuum(pos, 2)
+				set_timer(pos)
+			end,
 		},
 	})
 end
 
 if pipeworks.enable_mese_sand_tube then
+	local formspec = "formspec_version[2]size[8,3]"..
+		pipeworks.fs_helpers.get_prepends("8,3")..
+		"image[0.5,0.3;1,1;pipeworks_mese_sand_tube_inv.png]"..
+		"label[1.75,0.8;"..S("Adjustable Vacuuming Tube").."]"..
+		"field[0.5,1.7;5,0.8;dist;"..S("Radius")..";${dist}]"..
+		"button_exit[5.5,1.7;2,0.8;save;"..S("Save").."]"
+
 	pipeworks.register_tube("pipeworks:mese_sand_tube", {
-			description = S("Adjustable Vacuuming Pneumatic Tube Segment"),
-			inventory_image = "pipeworks_mese_sand_tube_inv.png",
-			short = "pipeworks_mese_sand_tube_short.png",
-			noctr = {"pipeworks_mese_sand_tube_noctr.png"},
-			plain = {"pipeworks_mese_sand_tube_plain.png"},
-			ends  = {"pipeworks_mese_sand_tube_end.png"},
-			node_def = {
-				groups = {vacuum_tube = 1},
-				on_construct = function(pos)
-					local meta = minetest.get_meta(pos)
-					meta:set_int("dist", 0)
-					meta:set_string("formspec",
-						"size[6.0,2.2]"..
-						"image[0.2,0;1,1;pipeworks_mese_sand_tube_inv.png]"..
-						"label[1.2,0.2;"..S("Adjustable Vacuuming Tube").."]"..
-						"field[0.5,1.6;2.1,1;dist;"..S("Radius")..";${dist}]"..
-						"button[2.3,1.3;1.5,1;set_dist;"..S("Set").."]"..
-						"button_exit[3.8,1.3;2,1;close;"..S("Close").."]"..
-						default.gui_bg..
-						default.gui_bg_img)
-					meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment"))
-				end,
-				on_receive_fields = function(pos,formname,fields,sender)
-					if (fields.quit and not fields.key_enter_field)
-					or (fields.key_enter_field ~= "dist" and not fields.set_dist)
-					or not pipeworks.may_configure(pos, sender) then
-						return
-					end
-
-					local meta = minetest.get_meta(pos)
-					local dist = tonumber(fields.dist)
-					if dist then
-						dist = math.max(0, dist)
-						dist = math.min(8, dist)
-						meta:set_int("dist", dist)
-						meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment (@1m)", dist))
-					end
-				end,
-			},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:mese_sand_tube_1 2",
-		recipe = {
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{"group:sand",                 "default:mese_crystal",       "group:sand" },
-			{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
-
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_sand_tube_1",
-		recipe = {
-			"pipeworks:sand_tube_1",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
-	})
-end
-
-local function vacuum(pos, radius)
-	radius = radius + 0.5
-	for _, object in pairs(minetest.get_objects_inside_radius(pos, math.sqrt(3) * radius)) do
-		local lua_entity = object:get_luaentity()
-		if not object:is_player() and lua_entity and lua_entity.name == "__builtin:item" then
-			local obj_pos = object:get_pos()
-			local minpos = vector.subtract(pos, radius)
-			local maxpos = vector.add(pos, radius)
-			if  obj_pos.x >= minpos.x and obj_pos.x <= maxpos.x
-			and obj_pos.y >= minpos.y and obj_pos.y <= maxpos.y
-			and obj_pos.z >= minpos.z and obj_pos.z <= maxpos.z then
-				if lua_entity.itemstring ~= "" then
-					pipeworks.tube_inject_item(pos, pos, vector.new(0, 0, 0), lua_entity.itemstring)
-					lua_entity.itemstring = ""
+		description = S("Adjustable Vacuuming Tube"),
+		inventory_image = "pipeworks_mese_sand_tube_inv.png",
+		short = "pipeworks_mese_sand_tube_short.png",
+		noctr = {"pipeworks_mese_sand_tube_noctr.png"},
+		plain = {"pipeworks_mese_sand_tube_plain.png"},
+		ends = {"pipeworks_mese_sand_tube_end.png"},
+		node_def = {
+			groups = {vacuum_tube = 1},
+			on_construct = function(pos)
+				local meta = minetest.get_meta(pos)
+				meta:set_int("dist", 2)
+				meta:set_string("formspec", formspec)
+				meta:set_string("infotext", S("Adjustable Vacuuming Tube (@1m)", 2))
+				set_timer(pos)
+			end,
+			on_timer = function(pos, elapsed)
+				local radius = minetest.get_meta(pos):get_int("dist")
+				vacuum(pos, radius)
+				set_timer(pos)
+			end,
+			on_receive_fields = function(pos, _, fields, sender)
+				if not fields.dist or not pipeworks.may_configure(pos, sender) then
+					return
 				end
-				object:remove()
-			end
-		end
-	end
+				local meta = minetest.get_meta(pos)
+				local dist = math.min(math.max(tonumber(fields.dist) or 0, 0), 8)
+				meta:set_int("dist", dist)
+				meta:set_string("infotext", S("Adjustable Vacuuming Tube (@1m)", dist))
+			end,
+		},
+	})
 end
 
-minetest.register_abm({nodenames = {"group:vacuum_tube"},
-	interval = 1,
-	chance = 1,
-	label = "Vacuum tubes",
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		if node.name:find("pipeworks:sand_tube") then
-			vacuum(pos, 2)
-		else
-			local radius = minetest.get_meta(pos):get_int("dist")
-			vacuum(pos, radius)
-		end
-	end
+minetest.register_lbm({
+	label = "Vacuum tube node timer starter",
+	name = "pipeworks:vacuum_tube_start",
+	nodenames = {"group:vacuum_tube"},
+	run_at_every_load = false,
+	action = set_timer,
 })

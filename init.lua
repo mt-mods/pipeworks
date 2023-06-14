@@ -11,6 +11,16 @@ pipeworks.worldpath = minetest.get_worldpath()
 pipeworks.modpath = minetest.get_modpath("pipeworks")
 local S = minetest.get_translator("pipeworks")
 
+pipeworks.liquids = {}
+pipeworks.liquids.water = {
+	source = minetest.registered_nodes["mapgen_water_source"].name,
+	flowing = minetest.registered_nodes["mapgen_water_source"].liquid_alternative_flowing
+}
+pipeworks.liquids.river_water = {
+	source = minetest.registered_nodes["mapgen_river_water_source"].name,
+	flowing = minetest.registered_nodes["mapgen_river_water_source"].liquid_alternative_flowing
+}
+
 dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
@@ -21,6 +31,9 @@ if worldsettingsfile then
 end
 if pipeworks.toggles.pipe_mode == "pressure" then
 	minetest.log("warning", "pipeworks pressure logic mode comes with caveats and differences in behaviour, you have been warned!")
+end
+if pipeworks.entity_update_interval >= 0.2 and pipeworks.enable_accelerator_tube then
+	minetest.log("warning", "pipeworks accelerator tubes will not entirely work with an entity update interval 0.2 or above.")
 end
 
 -- Random variables
@@ -40,7 +53,8 @@ pipeworks.rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y
 pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 pipeworks.digilines_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 
-pipeworks.liquid_texture = "default_water.png"
+pipeworks.liquid_texture = minetest.registered_nodes[pipeworks.liquids.water.flowing].tiles[1]
+if type(pipeworks.liquid_texture) == "table" then pipeworks.liquid_texture = pipeworks.liquid_texture.name end
 
 pipeworks.button_off   = {text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"}
 pipeworks.button_on    = {text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
@@ -56,6 +70,29 @@ function pipeworks.fix_image_names(table, replacement)
 	end
 
 	return outtable
+end
+
+local function overlay_tube_texture(texture)
+	-- The texture appears the first time to be colorized as the opaque background.
+	return ("(%s)^[noalpha^[colorize:#dadada^(%s)"):format(texture, texture)
+end
+
+function pipeworks.make_tube_tile(tile)
+	if pipeworks.use_real_entities then
+		return tile
+	elseif type(tile) == "string" then
+		return overlay_tube_texture(tile)
+	else
+		tile = table.copy(tile)
+		if tile.color then
+			-- Won't work 100% of the time, but good enough.
+			tile.name = tile.name .. "^[multiply:" .. minetest.colorspec_to_colorstring(tile.color)
+			tile.color = nil
+		end
+		tile.name = overlay_tube_texture(tile.name)
+		tile.backface_culling = nil -- The texture is opaque
+		return tile
+	end
 end
 
 function pipeworks.add_node_box(t, b)
@@ -91,7 +128,7 @@ function pipeworks.replace_name(tbl,tr,name)
 end
 
 pipeworks.logger = function(msg)
-	print("[pipeworks] "..msg)
+	minetest.log("action", "[pipeworks] "..msg)
 end
 
 -------------------------------------------
@@ -113,11 +150,9 @@ dofile(pipeworks.modpath.."/autoplace_tubes.lua")
 dofile(pipeworks.modpath.."/luaentity.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
-dofile(pipeworks.modpath.."/crafts.lua")
 dofile(pipeworks.modpath.."/tube_registration.lua")
 dofile(pipeworks.modpath.."/routing_tubes.lua")
 dofile(pipeworks.modpath.."/sorting_tubes.lua")
-dofile(pipeworks.modpath.."/vacuum_tubes.lua")
 dofile(pipeworks.modpath.."/signal_tubes.lua")
 dofile(pipeworks.modpath.."/decorative_tubes.lua")
 dofile(pipeworks.modpath.."/filter-injector.lua")
@@ -134,18 +169,30 @@ dofile(pipeworks.modpath..logicdir.."abms.lua")
 dofile(pipeworks.modpath..logicdir.."abm_register.lua")
 dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 
-if pipeworks.enable_pipes then dofile(pipeworks.modpath.."/pipes.lua") end
-if pipeworks.enable_teleport_tube then dofile(pipeworks.modpath.."/teleport_tube.lua") end
-if pipeworks.enable_pipe_devices then dofile(pipeworks.modpath.."/devices.lua") end
-if pipeworks.enable_redefines then
+if pipeworks.enable_pipes then
+	dofile(pipeworks.modpath.."/pipes.lua")
+end
+if pipeworks.enable_teleport_tube then
+	dofile(pipeworks.modpath.."/teleport_tube.lua")
+end
+if pipeworks.enable_pipe_devices then
+	dofile(pipeworks.modpath.."/devices.lua")
+end
+if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.get_modpath("hades_core")) then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
 	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
-if pipeworks.enable_autocrafter then dofile(pipeworks.modpath.."/autocrafter.lua") end
-if pipeworks.enable_lua_tube and
-		(minetest.get_modpath("mesecons") or minetest.get_modpath("digilines")) then
+if pipeworks.enable_autocrafter then
+	dofile(pipeworks.modpath.."/autocrafter.lua")
+end
+if pipeworks.enable_lua_tube and minetest.get_modpath("mesecons") then
 	dofile(pipeworks.modpath.."/lua_tube.lua")
 end
+if pipeworks.enable_sand_tube or pipeworks.enable_mese_sand_tube then
+	dofile(pipeworks.modpath.."/vacuum_tubes.lua")
+end
+
+dofile(pipeworks.modpath.."/crafts.lua")
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 

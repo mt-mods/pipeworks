@@ -37,11 +37,11 @@ for index, connects in ipairs(cconnects) do
 	end
 	--]]
 
-	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1}
+	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1, dig_generic = 4, axey=5}
 	local pipedesc = S("Pipe Segment").." "..dump(connects)
 
 	if #connects == 0 then
-		pgroups = {snappy = 3, tube = 1}
+		pgroups = {snappy = 3, tube = 1, dig_generic = 4, axey=5}
 		pipedesc = S("Pipe Segment")
 	end
 
@@ -76,7 +76,10 @@ for index, connects in ipairs(cconnects) do
 			fixed = outsel
 		},
 		groups = pgroups,
-		sounds = default.node_sound_metal_defaults(),
+		_mcl_hardness=1.6,
+		_sound_def = {
+			key = "node_sound_metal_defaults",
+		},
 		walkable = true,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
@@ -91,7 +94,7 @@ for index, connects in ipairs(cconnects) do
 		pipenumber = index
 	})
 
-	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1}
+	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1, dig_generic = 4, axey=5}
 
 	minetest.register_node("pipeworks:pipe_"..index.."_loaded", {
 		description = pipedesc,
@@ -110,7 +113,10 @@ for index, connects in ipairs(cconnects) do
 			fixed = outsel
 		},
 		groups = pgroups,
-		sounds = default.node_sound_metal_defaults(),
+		_mcl_hardness = 1.6,
+		_sound_def = {
+			key = "node_sound_metal_defaults",
+		},
 		walkable = true,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)

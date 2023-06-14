@@ -73,31 +73,43 @@ local function get_blockpos(pos)
 	        z = math.floor(pos.z / 16)}
 end
 
-local active_blocks = {} -- These only contain active blocks near players (i.e., not forceloaded ones)
+local move_entities_globalstep_part1
+local is_active
 
-local move_entities_globalstep_part1 = function(dtime)
-	local active_block_range = tonumber(minetest.settings:get("active_block_range")) or 2
-	local new_active_blocks = {}
-	for _, player in ipairs(minetest.get_connected_players()) do
-		local blockpos = get_blockpos(player:get_pos())
-		local minp = vector.subtract(blockpos, active_block_range)
-		local maxp = vector.add(blockpos, active_block_range)
+if pipeworks.use_real_entities then
+	local active_blocks = {} -- These only contain active blocks near players (i.e., not forceloaded ones)
 
-		for x = minp.x, maxp.x do
-		for y = minp.y, maxp.y do
-		for z = minp.z, maxp.z do
-			local pos = {x = x, y = y, z = z}
-			new_active_blocks[minetest.hash_node_position(pos)] = pos
+	move_entities_globalstep_part1 = function(dtime)
+		local active_block_range = tonumber(minetest.settings:get("active_block_range")) or 2
+		local new_active_blocks = {}
+		for _, player in ipairs(minetest.get_connected_players()) do
+			local blockpos = get_blockpos(player:get_pos())
+			local minp = vector.subtract(blockpos, active_block_range)
+			local maxp = vector.add(blockpos, active_block_range)
+
+			for x = minp.x, maxp.x do
+			for y = minp.y, maxp.y do
+			for z = minp.z, maxp.z do
+				local pos = {x = x, y = y, z = z}
+				new_active_blocks[minetest.hash_node_position(pos)] = pos
+			end
+			end
+			end
 		end
-		end
-		end
+		active_blocks = new_active_blocks
+		-- todo: callbacks on block load/unload
 	end
-	active_blocks = new_active_blocks
-	-- todo: callbacks on block load/unload
-end
 
-local function is_active(pos)
-	return active_blocks[minetest.hash_node_position(get_blockpos(pos))] ~= nil
+	is_active = function(pos)
+		return active_blocks[minetest.hash_node_position(get_blockpos(pos))] ~= nil
+	end
+else
+	move_entities_globalstep_part1 = function()
+	end
+
+	is_active = function()
+		return false
+	end
 end
 
 local entitydef_default = {
@@ -370,13 +382,36 @@ local move_entities_globalstep_part2 = function(dtime)
 	end
 end
 
-local handle_active_blocks_timer = 0.1
+-- dtime after which there is an update (or skip).
+local dtime_threshold = pipeworks.entity_update_interval
+-- Accumulated dtime since last update (or skip).
+local dtime_accum = 0
+-- Delayed dtime accumulated due to skipped updates.
+local dtime_delayed = 0
+local skip_update = false
 
 minetest.register_globalstep(function(dtime)
-	handle_active_blocks_timer = handle_active_blocks_timer + dtime
-	if dtime < 0.2 or handle_active_blocks_timer >= (dtime * 3) then
-		handle_active_blocks_timer = 0.1
-		move_entities_globalstep_part1(dtime)
-		move_entities_globalstep_part2(dtime)
+	if dtime >= 0.2 and dtime_delayed < 1 then
+		-- Reduce activity when the server is lagging.
+		skip_update = true
 	end
+
+	dtime_accum = dtime_accum + dtime
+	if dtime_accum < dtime_threshold then
+		return
+	end
+
+	if skip_update then
+		dtime_delayed = dtime_delayed + dtime_accum
+		skip_update = false
+	else
+		move_entities_globalstep_part1(dtime_accum + dtime_delayed)
+		move_entities_globalstep_part2(dtime_accum + dtime_delayed)
+		dtime_delayed = 0
+	end
+
+	-- Tune the threshold so that the average interval is pipeworks.entity_update_interval.
+	dtime_threshold = math.max(dtime_threshold + (pipeworks.entity_update_interval - dtime_accum) / 10, 0)
+
+	dtime_accum = 0
 end)

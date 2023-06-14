@@ -16,29 +16,43 @@ if pipeworks.enable_mese_tube then
 		local buttons_formspec = ""
 		for i = 0, 5 do
 			buttons_formspec = buttons_formspec .. fs_helpers.cycling_button(meta,
-				"image_button[7,"..(i+0.2)..";1,0.6", "l"..(i+1).."s",
+				"image_button[9,"..(i+(i*0.25)+0.5)..";1,0.6", "l"..(i+1).."s",
 				{
 					pipeworks.button_off,
 					pipeworks.button_on
 				}
 			)
 		end
+		local list_backgrounds = ""
+		if minetest.get_modpath("i3") then
+			list_backgrounds = "style_type[box;colors=#666]"
+			for i=0, 5 do
+				for j=0, 5 do
+					list_backgrounds = list_backgrounds .. "box[".. 1.5+(i*1.25) ..",".. 0.25+(j*1.25) ..";1,1;]"
+				end
+			end
+		end
+		local size = "10.2,13"
 		meta:set_string("formspec",
-			"size[8,11]"..
-			"list[context;line1;1,0;6,1;]"..
-			"list[context;line2;1,1;6,1;]"..
-			"list[context;line3;1,2;6,1;]"..
-			"list[context;line4;1,3;6,1;]"..
-			"list[context;line5;1,4;6,1;]"..
-			"list[context;line6;1,5;6,1;]"..
-			"image[0,0;1,1;pipeworks_white.png]"..
-			"image[0,1;1,1;pipeworks_black.png]"..
-			"image[0,2;1,1;pipeworks_green.png]"..
-			"image[0,3;1,1;pipeworks_yellow.png]"..
-			"image[0,4;1,1;pipeworks_blue.png]"..
-			"image[0,5;1,1;pipeworks_red.png]"..
+			"formspec_version[2]"..
+			"size["..size.."]"..
+			pipeworks.fs_helpers.get_prepends(size)..
+			"list[context;line1;1.5,0.25;6,1;]"..
+			"list[context;line2;1.5,1.50;6,1;]"..
+			"list[context;line3;1.5,2.75;6,1;]"..
+			"list[context;line4;1.5,4.00;6,1;]"..
+			"list[context;line5;1.5,5.25;6,1;]"..
+			"list[context;line6;1.5,6.50;6,1;]"..
+			list_backgrounds..
+			"image[0.22,0.25;1,1;pipeworks_white.png]"..
+			"image[0.22,1.50;1,1;pipeworks_black.png]"..
+			"image[0.22,2.75;1,1;pipeworks_green.png]"..
+			"image[0.22,4.00;1,1;pipeworks_yellow.png]"..
+			"image[0.22,5.25;1,1;pipeworks_blue.png]"..
+			"image[0.22,6.50;1,1;pipeworks_red.png]"..
 			buttons_formspec..
-			"list[current_player;main;0,7;8,4;]" ..
+			--"list[current_player;main;0,8;8,4;]" ..
+			pipeworks.fs_helpers.get_inv(8)..
 			"listring[current_player;main]" ..
 			"listring[current_player;main]" ..
 			"listring[context;line1]" ..
@@ -162,26 +176,5 @@ if pipeworks.enable_mese_tube then
 					end
 				end,
 			},
-	})
-
-	minetest.register_craft( {
-		output = "pipeworks:mese_tube_000000 2",
-		recipe = {
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ "", "default:mese_crystal", "" },
-			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
-		},
-	})
-
-	minetest.register_craft( {
-		type = "shapeless",
-		output = "pipeworks:mese_tube_000000",
-		recipe = {
-			"pipeworks:tube_1",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment",
-			"default:mese_crystal_fragment"
-		},
 	})
 end
