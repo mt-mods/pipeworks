@@ -257,7 +257,6 @@ local function after_recipe_change(pos, inventory)
 		inventory:set_stack("output", 1, "")
 		return
 	end
-	local recipe = inventory:get_list("recipe")
 	local craft = get_craft(pos, inventory, hash)
 	local output_item = craft.output.item
 	local description, name = get_item_info(output_item)
