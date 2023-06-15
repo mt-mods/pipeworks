@@ -67,7 +67,6 @@ local function get_craft(pos, inventory, hash)
 	local craft = autocrafterCache[hash]
 	if craft then return craft end
 
-		craft = {recipe = recipe, consumption=count_index(recipe), output = output, decremented_input = decremented_input}
 	local example_recipe = inventory:get_list("recipe")
 	local output, decremented_input = minetest.get_craft_result({
 		method = "normal", width = 3, items = example_recipe
@@ -77,6 +76,13 @@ local function get_craft(pos, inventory, hash)
 	if output and not output.item:is_empty() then
 		recipe = get_matching_craft(output.item:get_name(), example_recipe)
 	end
+
+	craft = {
+		recipe = recipe,
+		consumption = count_index(recipe),
+		output = output,
+		decremented_input = decremented_input.items
+	}
 	autocrafterCache[hash] = craft
 	return craft
 end
