@@ -191,9 +191,6 @@ local function autocraft(inventory, craft)
 		return false
 	end
 
-	for itemname, number in pairs(consumption) do
-		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
-	end
 	-- consume material
 	for itemname, number in pairs(consumption) do
 		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
