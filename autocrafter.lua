@@ -125,7 +125,7 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 				for i = 1, #groups do
 					local group = groups[i]
 					local groupname = "group:" .. group
-					if item_groups[group] >= 1 and consumption_with_groups[groupname] > 0 then
+					if item_groups[group] and item_groups[group] >= 1 and consumption_with_groups[groupname] > 0 then
 						local take = math.min(count, consumption_with_groups[groupname])
 						consumption_with_groups[groupname] = consumption_with_groups[groupname] - take
 						assert(consumption_with_groups[groupname] >= 0)
