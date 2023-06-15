@@ -49,7 +49,8 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 	local groups = {}
 
 	-- First consume all non-group requirements
-	-- This is done to avoid consuming a non-group item which is also in a group
+	-- This is done to avoid consuming a non-group item which is also
+	-- in a group
 	for key, count in pairs(consumption_with_groups) do
 		if key:sub(1, 6) == "group:" then
 			groups[#groups + 1] = key:sub(7, #key)
@@ -73,7 +74,7 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 			if count > 0 then
 				local def = minetest.registered_items[itemname]
 				local item_groups = def and def.groups or {}
-				for i=1, #groups do
+				for i = 1, #groups do
 					local group = groups[i]
 					local groupname = "group:" .. group
 					if item_groups[group] >= 1 and consumption_with_groups[groupname] > 0 then
@@ -101,6 +102,7 @@ end
 
 local function autocraft(inventory, craft)
 	if not craft then return false end
+
 	-- check if output and all replacements fit in dst
 	local output = craft.output.item
 	local out_items = count_index(craft.decremented_input.items)
@@ -124,12 +126,14 @@ local function autocraft(inventory, craft)
 	if empty_count < 0 then
 		return false
 	end
+
 	-- check if we have enough material available
 	local inv_index = count_index(inventory:get_list("src"))
 	local consumption = calculate_consumption(inv_index, craft.consumption)
 	if not consumption then
 		return false
 	end
+
 	for itemname, number in pairs(consumption) do
 		if (not inv_index[itemname]) or inv_index[itemname] < number then return false end
 	end
@@ -161,7 +165,7 @@ local function run_autocrafter(pos, elapsed)
 		return false
 	end
 
-	for _ = 1, math.floor(elapsed/craft_time) do
+	for _ = 1, math.floor(elapsed / craft_time) do
 		local continue = autocraft(inventory, craft)
 		if not continue then return false end
 	end
@@ -251,7 +255,8 @@ local function on_output_change(pos, inventory, stack)
 			end
 			width_idx = (width_idx < 3) and (width_idx + 1) or 1
 		end
-		-- we'll set the output slot in after_recipe_change to the actual result of the new recipe
+		-- we'll set the output slot in after_recipe_change to the actual
+		-- result of the new recipe
 	end
 	after_recipe_change(pos, inventory)
 end
@@ -263,46 +268,46 @@ local function update_meta(meta, enabled)
 	local list_backgrounds = ""
 	if minetest.get_modpath("i3") then
 		list_backgrounds = "style_type[box;colors=#666]"
-		for i=0, 2 do
-			for j=0, 2 do
-				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 0.22+(j*1.25) ..";1,1;]"
+		for i = 0, 2 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" .. 0.22 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
 			end
 		end
-		for i=0, 3 do
-			for j=0, 2 do
-				list_backgrounds = list_backgrounds .. "box[".. 5.28+(i*1.25) ..",".. 0.22+(j*1.25) ..";1,1;]"
+		for i = 0, 3 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" .. 5.28 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
 			end
 		end
-		for i=0, 7 do
-			for j=0, 2 do
-				list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 5+(j*1.25) ..";1,1;]"
+		for i = 0, 7 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" .. 0.22 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
 			end
 		end
 	end
 	local size = "10.2,14"
 	local fs =
-		"formspec_version[2]"..
-		"size["..size.."]"..
-		pipeworks.fs_helpers.get_prepends(size)..
-		list_backgrounds..
-		"list[context;recipe;0.22,0.22;3,3;]"..
-		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]"..
-		"list[context;output;4,1.45;1,1;]"..
+		"formspec_version[2]" ..
+		"size[" .. size .. "]" ..
+		pipeworks.fs_helpers.get_prepends(size) ..
+		list_backgrounds ..
+		"list[context;recipe;0.22,0.22;3,3;]" ..
+		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
+		"list[context;output;4,1.45;1,1;]" ..
 		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
-		"list[context;dst;5.28,0.22;4,3;]"..
-		"list[context;src;0.22,5;8,3;]"..
-		pipeworks.fs_helpers.get_inv(9)..
-		"listring[current_player;main]"..
+		"list[context;dst;5.28,0.22;4,3;]" ..
+		"list[context;src;0.22,5;8,3;]" ..
+		pipeworks.fs_helpers.get_inv(9) ..
+		"listring[current_player;main]" ..
 		"listring[context;src]" ..
-		"listring[current_player;main]"..
+		"listring[current_player;main]" ..
 		"listring[context;dst]" ..
 		"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
-		fs = fs.."field[0.22,4.1;4.5,0.75;channel;"..S("Channel")..";${channel}]"..
-			"button[5,4.1;1.5,0.75;set_channel;"..S("Set").."]"..
-			"button_exit[6.8,4.1;2,0.75;close;"..S("Close").."]"
+		fs = fs .. "field[0.22,4.1;4.5,0.75;channel;" .. S("Channel") .. ";${channel}]" ..
+			"button[5,4.1;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
+			"button_exit[6.8,4.1;2,0.75;close;" .. S("Close") .. "]"
 	end
-	meta:set_string("formspec",fs)
+	meta:set_string("formspec", fs)
 
 	-- toggling the button doesn't quite call for running a recipe change check
 	-- so instead we run a minimal version for infotext setting only
@@ -360,8 +365,8 @@ minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey = 5},
+	_mcl_hardness = 1.6,
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
@@ -379,9 +384,9 @@ minetest.register_node("pipeworks:autocrafter", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
-		inv:set_size("src", 3*8)
-		inv:set_size("recipe", 3*3)
-		inv:set_size("dst", 4*3)
+		inv:set_size("src", 3 * 8)
+		inv:set_size("recipe", 3 * 3)
+		inv:set_size("dst", 4 * 3)
 		inv:set_size("output", 1)
 		update_meta(meta, false)
 	end,
@@ -490,13 +495,13 @@ minetest.register_node("pipeworks:autocrafter", {
 				if type(msg) == "table" then
 					if #msg < 3 then return end
 					local inv = meta:get_inventory()
-					for y=0,2,1 do
-						for x=1,3,1 do
-							local slot = y*3+x
-							if minetest.registered_items[msg[y+1][x]] then
-								inv:set_stack("recipe",slot,ItemStack(msg[y+1][x]))
+					for y = 0, 2, 1 do
+						for x = 1, 3, 1 do
+							local slot = y * 3 + x
+							if minetest.registered_items[msg[y + 1][x]] then
+								inv:set_stack("recipe", slot, ItemStack(msg[y + 1][x]))
 							else
-								inv:set_stack("recipe",slot,ItemStack(""))
+								inv:set_stack("recipe", slot, ItemStack(""))
 							end
 						end
 					end
@@ -505,11 +510,11 @@ minetest.register_node("pipeworks:autocrafter", {
 					local meta = minetest.get_meta(pos)
 					local inv = meta:get_inventory()
 					local recipe = {}
-					for y=0,2,1 do
+					for y = 0, 2, 1 do
 						local row = {}
-						for x=1,3,1 do
-							local slot = y*3+x
-							table.insert(row, inv:get_stack("recipe",slot):get_name())
+						for x = 1, 3, 1 do
+							local slot = y * 3 + x
+							table.insert(row, inv:get_stack("recipe", slot):get_name())
 						end
 						table.insert(recipe, row)
 					end
@@ -536,4 +541,4 @@ minetest.register_node("pipeworks:autocrafter", {
 		},
 	},
 })
-pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:autocrafter"
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list + 1] = "pipeworks:autocrafter"
