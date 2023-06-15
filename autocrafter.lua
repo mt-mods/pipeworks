@@ -200,8 +200,12 @@ local function autocraft(inventory, craft)
 
 	-- craft the result into the dst inventory and add any "replacements" as well
 	inventory:add_item("dst", output)
+	local leftover
 	for i = 1, 9 do
-		inventory:add_item("dst", craft.decremented_input.items[i])
+		leftover = inventory:add_item("dst", craft.decremented_input[i])
+		if leftover and not leftover:is_empty() then
+			minetest.log("warning", "[pipeworks] autocrafter didn't calculate output space correctly.")
+		end
 	end
 	return true
 end
