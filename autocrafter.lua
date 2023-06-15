@@ -22,6 +22,46 @@ local function get_item_info(stack)
 	return description, name
 end
 
+-- Get best matching recipe for what user has put in crafting grid.
+-- This function does not consider crafting method (mix vs craft)
+local function get_matching_craft(output_name, example_recipe)
+	local recipes = minetest.get_all_craft_recipes(output_name)
+	if not recipes then
+		return example_recipe
+	end
+
+	if 1 == #recipes then
+		return recipes[1].items
+	end
+
+	local index_example = count_index(example_recipe)
+	local best_score = 0
+	local index_recipe, best_index, score, group, def
+	for i = 1, #recipes do
+		score = 0
+		index_recipe = count_index(recipes[i].items)
+		for recipe_item_name, _ in pairs(index_recipe) do
+			if index_example[recipe_item_name] then
+				score = score + 1
+			elseif recipe_item_name:sub(1, 6) == "group:" then
+				group = recipe_item_name:sub(7)
+				for example_item_name, _ in pairs(index_example) do
+					def = minetest.registered_items[example_item_name]
+					if def and def.groups[group] and def.groups[group] > 0 then
+						score = score + 1
+						break
+					end
+				end
+			end
+		end
+		if best_score < score then
+			best_index = i
+		end
+	end
+
+	return best_index and recipes[best_index].items or example_recipe
+end
+
 local function get_craft(pos, inventory, hash)
 	local hash = hash or minetest.hash_node_position(pos)
 	local craft = autocrafterCache[hash]
