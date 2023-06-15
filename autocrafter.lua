@@ -249,30 +249,16 @@ end
 local function after_recipe_change(pos, inventory)
 	local hash = minetest.hash_node_position(pos)
 	local meta = minetest.get_meta(pos)
+	autocrafterCache[hash] = nil
 	-- if we emptied the grid, there's no point in keeping it running or cached
 	if inventory:is_empty("recipe") then
 		minetest.get_node_timer(pos):stop()
-		autocrafterCache[hash] = nil
 		meta:set_string("infotext", S("unconfigured Autocrafter"))
 		inventory:set_stack("output", 1, "")
 		return
 	end
 	local recipe = inventory:get_list("recipe")
-	local craft = autocrafterCache[hash]
-
-	if craft then
-		-- check if it changed
-		local cached_recipe = craft.recipe
-		for i = 1, 9 do
-			if recipe[i]:get_name() ~= cached_recipe[i]:get_name() then
-				autocrafterCache[hash] = nil -- invalidate recipe
-				craft = nil
-				break
-			end
-		end
-	end
-
-	craft = craft or get_craft(pos, inventory, hash)
+	local craft = get_craft(pos, inventory, hash)
 	local output_item = craft.output.item
 	local description, name = get_item_info(output_item)
 	meta:set_string("infotext", S("'@1' Autocrafter (@2)", description, name))
