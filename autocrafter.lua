@@ -155,18 +155,25 @@ local function autocraft(inventory, craft)
 	local output = craft.output.item
 	local out_items = count_index(craft.decremented_input.items)
 	out_items[output:get_name()] = (out_items[output:get_name()] or 0) + output:get_count()
+local function has_room_for_output(list_output, index_output)
+	local name
 	local empty_count = 0
 	for _,item in pairs(inventory:get_list("dst")) do
+	for _, item in pairs(list_output) do
 		if item:is_empty() then
 			empty_count = empty_count + 1
 		else
 			local name = item:get_name()
 			if out_items[name] then
 				out_items[name] = out_items[name] - item:get_free_space()
+			name = item:get_name()
+			if index_output[name] then
+				index_output[name] = index_output[name] - item:get_free_space()
 			end
 		end
 	end
 	for _,count in pairs(out_items) do
+	for _, count in pairs(index_output) do
 		if count > 0 then
 			empty_count = empty_count - 1
 		end
@@ -174,6 +181,9 @@ local function autocraft(inventory, craft)
 	if empty_count < 0 then
 		return false
 	end
+
+	return true
+end
 
 	-- check if we have enough material available
 	local inv_index = count_index(inventory:get_list("src"))
