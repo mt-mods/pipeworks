@@ -3,6 +3,60 @@ Changelog
 
 
 
+2023-06-22 (SwissalpS, rubenwardy)
+groups support in recipe. Set recipe as usual via recipe formspec or digilines.
+Autocrafter now resolves matching recipe using groups so that items in input
+inventory are used, that match group and no longer only strictly what user
+has in recipe-inventory
+
+
+
+2023-06-21 (OgelGames, BuckarooBanzay)
+fix autocrafter destroying replacement items (OG)
+remove facedir debugging logs (BB)
+
+
+
+2023-05-28 (SwissalpS)
+support setting 'can_receive' for teleport tubes via digiline
+
+
+
+2023-05-19 (fluxionary, OgelGames)
+log items going through teleport tubes
+
+
+
+2022-12-02 (wsor4035)
+bring back compatibility with mineclone2
+
+
+
+2022-11-11 (OgelGames)
+prevent tp- and sand-tubes from breaking themselves and refactor part of code
+
+2022-09-18 (fluxionary)
+protection checks before break-/placeing a node -> less violation logs
+
+
+2022-08-14 (wsor4035)
+prevent tubes from connecting to furnace front
+
+
+
+2022-08-13 (TurkeyMcMac)
+moved teleport-tube database to mod-storage
+
+
+
+2022-06-23 (S-S-X)
+on_repair tweak, improved repairing tubes
+
+
+* many updates not mentioned here *
+
+
+
 2017-10-19 (thetaepsilon)
 Directional flowables are now implemented.
 All devices for which it is relevant (valve, flow sensor etc.) have been converted so that they only flow on their connecting sides, so pressure propogation now works as expected for these devices when pressure logic is enabled.
