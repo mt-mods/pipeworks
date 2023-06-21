@@ -36,7 +36,7 @@ local function get_matching_craft(output_name, example_recipe)
 
 	local index_example = count_index(example_recipe)
 	local best_score = 0
-	local index_recipe, best_index, score, group, def
+	local index_recipe, best_index, score, group
 	for i = 1, #recipes do
 		score = 0
 		index_recipe = count_index(recipes[i].items)
@@ -46,8 +46,7 @@ local function get_matching_craft(output_name, example_recipe)
 			elseif recipe_item_name:sub(1, 6) == "group:" then
 				group = recipe_item_name:sub(7)
 				for example_item_name, _ in pairs(index_example) do
-					def = minetest.registered_items[example_item_name]
-					if def and def.groups[group] and def.groups[group] > 0 then
+					if minetest.get_item_group(example_item_name, group) > 0 then
 						score = score + 1
 						break
 					end
