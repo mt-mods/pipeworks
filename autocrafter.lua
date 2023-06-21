@@ -1,5 +1,7 @@
 local S = minetest.get_translator("pipeworks")
-local autocrafterCache = {}  -- caches some recipe data to avoid to call the slow function minetest.get_craft_result() every second
+-- cache some recipe data to avoid calling the slow function
+-- minetest.get_craft_result() every second
+local autocrafterCache = {}
 
 local craft_time = 1
 
@@ -116,6 +118,7 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 	end
 
 	-- Next, resolve groups using the remaining items in the inventory
+	local take
 	if #groups > 0 then
 		for itemname, count in pairs(inv_index) do
 			if count > 0 then
@@ -124,11 +127,17 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 				for i = 1, #groups do
 					local group = groups[i]
 					local groupname = "group:" .. group
-					if item_groups[group] and item_groups[group] >= 1 and consumption_with_groups[groupname] > 0 then
-						local take = math.min(count, consumption_with_groups[groupname])
-						consumption_with_groups[groupname] = consumption_with_groups[groupname] - take
+					if item_groups[group] and item_groups[group] >= 1
+						and consumption_with_groups[groupname] > 0
+					then
+						take = math.min(count, consumption_with_groups[groupname])
+						consumption_with_groups[groupname] =
+								consumption_with_groups[groupname] - take
+
 						assert(consumption_with_groups[groupname] >= 0)
-						consumption[itemname] = (consumption[itemname] or 0) + take
+						consumption[itemname] =
+								(consumption[itemname] or 0) + take
+
 						inv_index[itemname] = inv_index[itemname] - take
 						assert(inv_index[itemname] >= 0)
 					end
@@ -178,7 +187,9 @@ local function autocraft(inventory, craft)
 	-- check if output and all replacements fit in dst
 	local output = craft.output.item
 	local out_items = count_index(craft.decremented_input)
-	out_items[output:get_name()] = (out_items[output:get_name()] or 0) + output:get_count()
+	out_items[output:get_name()] =
+			(out_items[output:get_name()] or 0) + output:get_count()
+
 	if not has_room_for_output(inventory:get_list("dst"), out_items) then
 		return false
 	end
@@ -192,7 +203,8 @@ local function autocraft(inventory, craft)
 
 	-- consume material
 	for itemname, number in pairs(consumption) do
-		for _ = 1, number do -- We have to do that since remove_item does not work if count > stack_max
+		-- We have to do that since remove_item does not work if count > stack_max
+		for _ = 1, number do
 			inventory:remove_item("src", ItemStack(itemname))
 		end
 	end
@@ -203,14 +215,16 @@ local function autocraft(inventory, craft)
 	for i = 1, 9 do
 		leftover = inventory:add_item("dst", craft.decremented_input[i])
 		if leftover and not leftover:is_empty() then
-			minetest.log("warning", "[pipeworks] autocrafter didn't calculate output space correctly.")
+			minetest.log("warning", "[pipeworks] autocrafter didn't " ..
+				"calculate output space correctly.")
 		end
 	end
 	return true
 end
 
 -- returns false to stop the timer, true to continue running
--- is started only from start_autocrafter(pos) after sanity checks and cached recipe
+-- is started only from start_autocrafter(pos) after sanity checks and
+-- recipe is cached
 local function run_autocrafter(pos, elapsed)
 	local meta = minetest.get_meta(pos)
 	local inventory = meta:get_inventory()
@@ -265,7 +279,8 @@ local function after_recipe_change(pos, inventory)
 	after_inventory_change(pos)
 end
 
--- clean out unknown items and groups, which would be handled like unknown items in the crafting grid
+-- clean out unknown items and groups, which would be handled like unknown
+-- items in the crafting grid
 -- if minetest supports query by group one day, this might replace them
 -- with a canonical version instead
 local function normalize(item_list)
@@ -302,7 +317,8 @@ local function on_output_change(pos, inventory, stack)
 	after_recipe_change(pos, inventory)
 end
 
--- returns false if we shouldn't bother attempting to start the timer again after this
+-- returns false if we shouldn't bother attempting to start the timer again
+-- after this
 local function update_meta(meta, enabled)
 	local state = enabled and "on" or "off"
 	meta:set_int("enabled", enabled and 1 or 0)
@@ -311,17 +327,20 @@ local function update_meta(meta, enabled)
 		list_backgrounds = "style_type[box;colors=#666]"
 		for i = 0, 2 do
 			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" .. 0.22 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
+				list_backgrounds = list_backgrounds .. "box[" ..
+					0.22 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
 			end
 		end
 		for i = 0, 3 do
 			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" .. 5.28 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
+				list_backgrounds = list_backgrounds .. "box[" ..
+					5.28 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
 			end
 		end
 		for i = 0, 7 do
 			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" .. 0.22 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
+				list_backgrounds = list_backgrounds .. "box[" ..
+					0.22 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
 			end
 		end
 	end
@@ -334,7 +353,8 @@ local function update_meta(meta, enabled)
 		"list[context;recipe;0.22,0.22;3,3;]" ..
 		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
 		"list[context;output;4,1.45;1,1;]" ..
-		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
+		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
+		state .. ";;;false;pipeworks_button_interm.png]" ..
 		"list[context;dst;5.28,0.22;4,3;]" ..
 		"list[context;src;0.22,5;8,3;]" ..
 		pipeworks.fs_helpers.get_inv(9) ..
@@ -344,7 +364,8 @@ local function update_meta(meta, enabled)
 		"listring[context;dst]" ..
 		"listring[current_player;main]"
 	if minetest.get_modpath("digilines") then
-		fs = fs .. "field[0.22,4.1;4.5,0.75;channel;" .. S("Channel") .. ";${channel}]" ..
+		fs = fs .. "field[0.22,4.1;4.5,0.75;channel;" .. S("Channel") ..
+			";${channel}]" ..
 			"button[5,4.1;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
 			"button_exit[6.8,4.1;2,0.75;close;" .. S("Close") .. "]"
 	end
@@ -368,9 +389,12 @@ local function update_meta(meta, enabled)
 end
 
 -- 1st version of the autocrafter had actual items in the crafting grid
--- the 2nd replaced these with virtual items, dropped the content on update and set "virtual_items" to string "1"
--- the third added an output inventory, changed the formspec and added a button for enabling/disabling
--- so we work out way backwards on this history and update each single case to the newest version
+-- the 2nd replaced these with virtual items, dropped the content on update and
+--   set "virtual_items" to string "1"
+-- the third added an output inventory, changed the formspec and added a button
+--   for enabling/disabling
+-- so we work out way backwards on this history and update each single case
+--   to the newest version
 local function upgrade_autocrafter(pos, meta)
 	local meta = meta or minetest.get_meta(pos)
 	local inv = meta:get_inventory()
@@ -381,7 +405,8 @@ local function upgrade_autocrafter(pos, meta)
 		update_meta(meta, true)
 
 		if meta:get_string("virtual_items") == "1" then -- we are version 2
-			-- we already dropped stuff, so lets remove the metadatasetting (we are not being called again for this node)
+			-- we already dropped stuff, so lets remove the metadatasetting
+			-- (we are not being called again for this node)
 			meta:set_string("virtual_items", "")
 		else -- we are version 1
 			local recipe = inv:get_list("recipe")
@@ -406,9 +431,13 @@ minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey = 5},
+	groups = {
+		snappy = 3, tubedevice = 1, tubedevice_receiver = 1,
+		dig_generic = 1, axey = 5
+	},
 	_mcl_hardness = 1.6,
-	tube = {insert_object = function(pos, node, stack, direction)
+	tube = {
+		insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			local added = inv:add_item("src", stack)
@@ -421,7 +450,10 @@ minetest.register_node("pipeworks:autocrafter", {
 			return inv:room_for_item("src", stack)
 		end,
 		input_inventory = "dst",
-		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1}},
+		connect_sides = {
+			left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1
+			}
+	},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
@@ -432,7 +464,9 @@ minetest.register_node("pipeworks:autocrafter", {
 		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
-		if (fields.quit and not fields.key_enter_field) or not pipeworks.may_configure(pos, sender) then
+		if (fields.quit and not fields.key_enter_field)
+			or not pipeworks.may_configure(pos, sender)
+		then
 			return
 		end
 		local meta = minetest.get_meta(pos)
@@ -479,7 +513,9 @@ minetest.register_node("pipeworks:autocrafter", {
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		if not pipeworks.may_configure(pos, player) then
-			minetest.log("action", string.format("%s attempted to take from autocrafter at %s", player:get_player_name(), minetest.pos_to_string(pos)))
+			minetest.log("action", string.format("%s attempted to take from " ..
+				"autocrafter at %s",
+				player:get_player_name(), minetest.pos_to_string(pos)))
 			return 0
 		end
 		upgrade_autocrafter(pos)
@@ -495,7 +531,9 @@ minetest.register_node("pipeworks:autocrafter", {
 		after_inventory_change(pos)
 		return stack:get_count()
 	end,
-	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+	allow_metadata_inventory_move = function(
+			pos, from_list, from_index, to_list, to_index, count, player)
+
 		if not pipeworks.may_configure(pos, player) then return 0 end
 		upgrade_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
@@ -540,7 +578,8 @@ minetest.register_node("pipeworks:autocrafter", {
 						for x = 1, 3, 1 do
 							local slot = y * 3 + x
 							if minetest.registered_items[msg[y + 1][x]] then
-								inv:set_stack("recipe", slot, ItemStack(msg[y + 1][x]))
+								inv:set_stack("recipe", slot, ItemStack(
+									msg[y + 1][x]))
 							else
 								inv:set_stack("recipe", slot, ItemStack(""))
 							end
@@ -555,7 +594,8 @@ minetest.register_node("pipeworks:autocrafter", {
 						local row = {}
 						for x = 1, 3, 1 do
 							local slot = y * 3 + x
-							table.insert(row, inv:get_stack("recipe", slot):get_name())
+							table.insert(row, inv:get_stack(
+									"recipe", slot):get_name())
 						end
 						table.insert(recipe, row)
 					end
