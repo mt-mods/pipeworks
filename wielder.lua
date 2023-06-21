@@ -225,7 +225,6 @@ local function register_wielder(data)
 					local node = minetest.get_node(pos)
 					node.param2 = minetest.dir_to_facedir(dir, true)
 					minetest.set_node(pos, node)
-					minetest.log("action", "real (6d) facedir: " .. node.param2)
 				end
 				minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 			end,

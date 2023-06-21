@@ -55,7 +55,6 @@ if not minetest.get_modpath("auto_tree_tap") and
 				local node = minetest.get_node(pos)
 				node.param2 = minetest.dir_to_facedir(dir, true)
 				minetest.set_node(pos, node)
-				minetest.log("action", "real (6d) facedir: " .. node.param2)
 			end
 		end,
 		after_dig_node = pipeworks.scan_for_tube_objects,
