@@ -49,7 +49,7 @@ local override_barrel = {
    on_rotate = pipeworks.on_rotate
 }
 
-override_barrel_open = table.copy(override_barrel)
+local override_barrel_open = table.copy(override_barrel)
 
 override_barrel_open.tiles = {
    "mcl_barrels_barrel_top_open.png",
