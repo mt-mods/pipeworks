@@ -190,7 +190,7 @@ local function update_meta(meta, enabled)
 	local state = enabled and "on" or "off"
 	meta:set_int("enabled", enabled and 1 or 0)
 	local list_backgrounds = ""
-	if minetest.get_modpath("i3") then
+	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 		list_backgrounds = "style_type[box;colors=#666]"
 		for i=0, 2 do
 			for j=0, 2 do
