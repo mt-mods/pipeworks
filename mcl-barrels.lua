@@ -41,8 +41,8 @@ local override_barrel = {
       input_inventory = "main",
       connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1}
    },
-   after_dig_node = function(pos)
-      old_barrel.after_dig_node(pos)
+   after_dig_node = function(pos, oldnode, oldmetadata, digger)
+      old_barrel.after_dig_node(pos, oldnode, oldmetadata, digger)
       pipeworks.after_dig(pos)
    end,
    groups = table.copy(old_barrel.groups),
