@@ -185,6 +185,9 @@ end
 if pipeworks.enable_redefines and minetest.get_modpath("mcl_barrels") then
 	dofile(pipeworks.modpath.."/mcl-barrels.lua")
 end
+if pipeworks.enable_redefines and minetest.get_modpath("mcl_furnaces") then
+	dofile(pipeworks.modpath.."/mcl-furnaces.lua")
+end
 if pipeworks.enable_autocrafter then
 	dofile(pipeworks.modpath.."/autocrafter.lua")
 end
