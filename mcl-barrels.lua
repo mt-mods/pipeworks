@@ -6,7 +6,6 @@ local tube_entry = "^pipeworks_tube_connection_wooden.png"
 
 -- Original Definitions
 local old_barrel = table.copy(minetest.registered_items["mcl_barrels:barrel_closed"])
-local old_barrel_open_def = table.copy(minetest.registered_items["mcl_barrels:barrel_open"])
 
 local groups = old_barrel.groups
 groups["tubedevice"] = 1

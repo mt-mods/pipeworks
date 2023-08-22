@@ -1,6 +1,5 @@
 
 local old_furnace = table.copy(minetest.registered_nodes["mcl_furnaces:furnace"])
-local old_furnace_active = table.copy(minetest.registered_nodes["mcl_furnaces:furnace_active"])
 
 local tube_entry = "^pipeworks_tube_connection_stony.png"
 
@@ -59,7 +58,7 @@ local override = {
       end,
       input_inventory = "dst",
       connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
-   },   
+   },
    after_place_node = function(pos, placer, itemstack, pointed_thing)
       pipeworks.after_place(pos, placer, itemstack, pointed_thing)
    end,
@@ -120,7 +119,7 @@ override_active.tube = {
    input_inventory = "dst",
    connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
 }
-   
+
 
 -- override
 minetest.override_item("mcl_furnaces:furnace", override)
