@@ -20,6 +20,6 @@ read_globals = {
 	-- mods
 	"default", "mesecon", "digiline",
 	"screwdriver", "unified_inventory",
-	"i3",
+	"i3", "mcl_experience", "awards"
 
 }
