@@ -24,7 +24,7 @@ if pipeworks.enable_mese_tube then
 			)
 		end
 		local list_backgrounds = ""
-		if minetest.get_modpath("i3") then
+		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 			list_backgrounds = "style_type[box;colors=#666]"
 			for i=0, 5 do
 				for j=0, 5 do
