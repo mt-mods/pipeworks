@@ -8,7 +8,7 @@ end
 local function set_wielder_formspec(data, meta)
 	local size = "10.2,"..(7+data.wield_inv_height)
 	local list_background = ""
-	if minetest.get_modpath("i3") then
+	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 		list_background = "style_type[box;colors=#666]"
 		for i=0, data.wield_inv_height-1 do
 			for j=0, data.wield_inv_width-1 do

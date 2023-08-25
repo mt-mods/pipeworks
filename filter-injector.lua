@@ -38,7 +38,7 @@ local function set_filter_formspec(data, meta)
 		end
 		local size = "10.2,11"
 		local list_backgrounds = ""
-		if minetest.get_modpath("i3") then
+		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 			list_backgrounds = "style_type[box;colors=#666]"
 			for i=0, 7 do
 				for j=0, 1 do

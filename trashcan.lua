@@ -23,7 +23,7 @@ minetest.register_node("pipeworks:trashcan", {
 		local meta = minetest.get_meta(pos)
 		local size = "10.2,9"
 		local list_background = ""
-		if minetest.get_modpath("i3") then
+		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 			list_background = "style_type[box;colors=#666]box[4.5,2;1,1;]"
 		end
 		meta:set_string("formspec",
