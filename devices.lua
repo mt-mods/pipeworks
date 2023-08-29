@@ -133,9 +133,9 @@ for s in ipairs(states) do
 
 	local dgroups
 	if states[s] == "off" then
-		dgroups = {snappy=3, pipe=1, dig_generic = 4, axey=5}
+		dgroups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	else
-		dgroups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5}
+		dgroups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	end
 
 	local pumpname = "pipeworks:pump_"..states[s]
@@ -148,7 +148,7 @@ for s in ipairs(states) do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = dgroups,
-		_mcl_hardness=1.6,
+		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_metal_defaults",
 		},
@@ -203,7 +203,7 @@ for s in ipairs(states) do
 			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		groups = dgroups,
-		_mcl_hardness = 1.6,
+		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_metal_defaults",
 		},
@@ -253,8 +253,8 @@ minetest.register_node(nodename_valve_loaded, {
 		type = "fixed",
 		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -306,8 +306,8 @@ minetest.register_node("pipeworks:grating", {
 	},
 	sunlight_propagates = true,
 	paramtype = "light",
-	groups = {snappy=3, pipe=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -334,8 +334,8 @@ minetest.register_node(nodename_spigot_empty, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -372,8 +372,8 @@ minetest.register_node(nodename_spigot_loaded, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -431,8 +431,8 @@ minetest.register_node(nodename_panel_empty, {
 	tiles = { "pipeworks_entry_panel.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -454,8 +454,8 @@ minetest.register_node(nodename_panel_loaded, {
 	tiles = { "pipeworks_entry_panel.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -487,8 +487,8 @@ minetest.register_node(nodename_sensor_empty, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -529,8 +529,8 @@ minetest.register_node(nodename_sensor_loaded, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -577,12 +577,12 @@ new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pi
 -- TODO flow-logic-stub: these don't currently do anything under the new flow logic.
 for fill = 0, 10 do
 	local filldesc=S("empty")
-	local sgroups = {snappy=3, pipe=1, tankfill=fill+1, dig_generic = 4, axey=5}
+	local sgroups = {snappy=3, pipe=1, tankfill=fill+1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	local image = nil
 
 	if fill ~= 0 then
 		filldesc=S("@1% full", 10*fill)
-		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4, axey=5}
+		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 		image = "pipeworks_storage_tank_fittings.png"
 	end
 
@@ -599,8 +599,8 @@ for fill = 0, 10 do
 		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
-		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-		_mcl_hardness=1.6,
+		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_metal_defaults",
 		},
@@ -631,7 +631,7 @@ for fill = 0, 10 do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = sgroups,
-		_mcl_hardness=1.6,
+		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_metal_defaults",
 		},
@@ -660,8 +660,8 @@ minetest.register_node(nodename_fountain_empty, {
 	tiles = { "pipeworks_fountainhead.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
-	groups = {snappy=3, pipe=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -698,8 +698,8 @@ minetest.register_node(nodename_fountain_loaded, {
 	tiles = { "pipeworks_fountainhead.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -751,8 +751,8 @@ minetest.register_node(nodename_sp_empty, {
 	tiles = { "pipeworks_straight_pipe_empty.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
@@ -776,8 +776,8 @@ minetest.register_node(nodename_sp_loaded, {
 	tiles = { "pipeworks_straight_pipe_loaded.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	_sound_def = {
         key = "node_sound_metal_defaults",
     },
