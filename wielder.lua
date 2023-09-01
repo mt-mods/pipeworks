@@ -146,7 +146,7 @@ local function register_wielder(data)
 	data.fixup_node = data.fixup_node or function (pos, node) end
 	data.fixup_oldmetadata = data.fixup_oldmetadata or function (m) return m end
 	for _, state in ipairs({ "off", "on" }) do
-		local groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, mesecon=2, tubedevice=1, tubedevice_receiver=1, axey=5 }
+		local groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, mesecon=2, tubedevice=1, tubedevice_receiver=1, axey=1, handy=1, pickaxey=1 }
 		if state == "on" then groups.not_in_creative_inventory = 1 end
 		local tile_images = {}
 		for _, face in ipairs({ "top", "bottom", "side2", "side1", "back", "front" }) do
