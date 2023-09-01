@@ -289,8 +289,8 @@ minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()

@@ -388,8 +388,8 @@ for _, data in ipairs({
 			"pipeworks_"..data.name.."_top.png",
 		},
 		paramtype2 = "facedir",
-		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, mesecon = 2, axey=5},
-		_mcl_hardness=1.6,
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, mesecon = 2, axey=1, handy=1, pickaxey=1},
+		_mcl_hardness=0.8,
 		legacy_facedir_simple = true,
 		_sound_def = {
 			key = "node_sound_wood_defaults",
