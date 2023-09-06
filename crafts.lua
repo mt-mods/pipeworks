@@ -16,18 +16,17 @@ local materials = {
 if minetest.get_modpath("mcl_core") then
 	materials = {
 		stone = "mcl_core:stone",
-		desert_stone = "mcl_core:sandstone2",
+		desert_stone = "mcl_core:redsandstone",
 		desert_sand = "mcl_core:sand",
 		chest = "mcl_chests:chest_small",
 		steel_ingot = "mcl_core:iron_ingot",
 		gold_ingot = "mcl_core:gold_ingot",
-		mese = "default:mese",
-		mese_crystal = "default:mese_crystal",
+		mese = "mesecons_torch:redstoneblock",
+		mese_crystal = "mesecons:redstone",
 		mese_crystal_fragment = "mesecons:redstone",
-		teleporter = "default:mese",
-		-- Use iron where no equivalent
-		copper_ingot = "mcl_core:iron_ingot",
-		glass = "default:glass",
+		teleporter = "mesecons_torch:redstoneblock",
+		copper_ingot = "mcl_copper:copper_ingot",
+		glass = "mcl_core:glass",
 	}
 elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
 	materials = {
