@@ -163,11 +163,15 @@ local entitydef_default = {
 		if not is_active(entity_pos) then
 			return
 		end
-		local ent = minetest.add_entity(entity_pos, entity.name):get_luaentity()
+		local object = minetest.add_entity(entity_pos, entity.name)
+		if not object then
+			return
+		end
+		local ent = object:get_luaentity()
 		ent:from_data(entity.data)
 		ent.parent_id = self._id
 		ent.attached_id = index
-		entity.entity = ent.object
+		entity.entity = object
 		local master = self._attached_entities_master
 		if master then
 			self:_attach(index, master)
