@@ -18,7 +18,7 @@ if minetest.get_modpath("mcl_core") then
 		stone = "mcl_core:stone",
 		desert_stone = "mcl_core:redsandstone",
 		desert_sand = "mcl_core:sand",
-		chest = "mcl_chests:chest_small",
+		chest = "mcl_chests:chest",
 		steel_ingot = "mcl_core:iron_ingot",
 		gold_ingot = "mcl_core:gold_ingot",
 		mese = "mesecons_torch:redstoneblock",
