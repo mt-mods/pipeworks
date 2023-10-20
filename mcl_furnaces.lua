@@ -89,10 +89,10 @@ override.after_dig_node = function(pos, oldnode, oldmetadata, digger)
 end
 
 override.on_metadata_inventory_take = function(pos, listname, index, stack, player)
-   if listname == "dst" and player and player:get_player_name() then
-      if stack:get_name() == "mcl_core:iron_ingot" then
+   if listname == "dst" then
+      if stack:get_name() == "mcl_core:iron_ingot" and type(player) == "userdata" then
 	 awards.unlock(player:get_player_name(), "mcl:acquireIron")
-      elseif stack:get_name() == "mcl_fishing:fish_cooked" then
+      elseif stack:get_name() == "mcl_fishing:fish_cooked" and type(player) == "userdata" then
 	 awards.unlock(player:get_player_name(), "mcl:cookFish")
       end
       give_xp(pos, player)
@@ -199,8 +199,8 @@ end
 
 override_blast_furnace.on_metadata_inventory_take = function(pos, listname, index, stack, player)
    -- Award smelting achievements
-   if listname == "dst" and player and player:get_player_name() then
-      if stack:get_name() == "mcl_core:iron_ingot" then
+   if listname == "dst" then
+      if stack:get_name() == "mcl_core:iron_ingot" and type(player) == "userdata" then
 	 awards.unlock(player:get_player_name(), "mcl:acquireIron")
       end
       give_xp(pos, player)
@@ -310,8 +310,8 @@ end
 
 override_smoker.on_metadata_inventory_take = function(pos, listname, index, stack, player)
    -- Award fish achievements
-   if listname == "dst" and player and player:get_player_name() then
-      if stack:get_name() == "mcl_fishing:fish_cooked" then
+   if listname == "dst" then
+      if stack:get_name() == "mcl_fishing:fish_cooked" and type(player) == "userdata" then
 	 awards.unlock(player:get_player_name(), "mcl:cookFish")
       end
       give_xp(pos, player)
