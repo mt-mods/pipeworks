@@ -97,7 +97,16 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 				pipeworks.logger(log_msg.." but original node "..was_node.name.." is not registered anymore.")
 				minetest.chat_send_player(playername, S("This tube cannot be repaired."))
 			end
-		end
+		end,
+		allow_metadata_inventory_put = function()
+			return 0
+		end,
+		allow_metadata_inventory_move = function()
+			return 0
+		end,
+		allow_metadata_inventory_take = function()
+			return 0
+		end,
 	}
 })
 
