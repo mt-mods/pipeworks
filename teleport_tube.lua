@@ -1,5 +1,6 @@
 
 local S = minetest.get_translator("pipeworks")
+local F = minetest.formspec_escape
 local filename = minetest.get_worldpath().."/teleport_tubes"  -- Only used for backward-compat
 local storage = minetest.get_mod_storage()
 
@@ -150,24 +151,47 @@ end
 
 local help_text = S("Channels are public by default").."\n"..
 	S("Use <player>:<channel> for fully private channels").."\n"..
-	S("Use <player>\\;<channel> for private receivers")
+	S("Use <player>;<channel> for private receivers")
 
 local size = has_digilines and "8,5.9" or "8,4.4"
 
-local formspec = "formspec_version[2]size["..size.."]"..
-	pipeworks.fs_helpers.get_prepends(size)..
-	"image[0.5,0.3;1,1;pipeworks_teleport_tube_inv.png]"..
-	"label[1.75,0.8;"..S("Teleporting Tube").."]"..
-	"field[0.5,1.7;5,0.8;channel;"..S("Channel")..";${channel}]"..
-	"button_exit[5.5,1.7;2,0.8;save;"..S("Save").."]"..
-	"label[6.5,0.6;"..S("Receive").."]"..
-	"label[0.5,2.8;"..help_text.."]"
+local function make_formspec(meta)
+	local fs = {
+		"formspec_version[2]",
+		"size["..size.."]",
+		pipeworks.fs_helpers.get_prepends(size),
+		"image[0.5,0.3;1,1;pipeworks_teleport_tube_inv.png]",
+		"label[1.75,0.8;"..S("Teleporting Tube").."]",
+		("field[0.5,1.7;5,0.8;channel;%s;%s]"):format(
+			S("Channel"),
+			F(meta:get_string("channel"))
+		),
+		"button_exit[5.5,1.7;2,0.8;save;"..S("Save").."]",
+		"label[6.5,0.6;"..S("Receive").."]",
+		"label[0.5,2.8;"..F(help_text).."]"
+	}
 
-if has_digilines then
-	formspec = formspec..
-		"field[0.5,4.6;5,0.8;digiline_channel;"..S("Digiline Channel")..";${digiline_channel}]"..
-		"button_exit[5.5,4.6;2,0.8;save;"..S("Save").."]"
+	if has_digilines then
+		fs[#fs + 1] = {
+			("field[0.5,4.6;5,0.8;digiline_channel;%s;%s]"):format(
+				S("Digiline Channel"),
+				F(meta:get_string("digiline_channel"))
+			)
+		}
+		fs[#fs + 1] = {
+			"button_exit[5.5,4.6;2,0.8;save;"..S("Save").."]"
+		}
+	end
+
+	local cr = meta:get_int("can_receive") == 1
+	local state = cr and "on" or "off"
+	fs[#fs + 1] = ("image_button[6.4,0.8;1,0.6;%s;cr_%s;;;false;pipeworks_button_interm.png]"):format(
+		"pipeworks_button_" .. state .. ".png", state
+	)
+
+	return table.concat(fs)
 end
+
 
 local function update_meta(meta)
 	local channel = meta:get_string("channel")
@@ -178,10 +202,8 @@ local function update_meta(meta)
 		local desc = cr and "sending and receiving" or "sending"
 		meta:set_string("infotext", S("Teleportation Tube @1 on '@2'", desc, channel))
 	end
-	local state = cr and "on" or "off"
-	meta:set_string("formspec", formspec..
-		"image_button[6.4,0.8;1,0.6;pipeworks_button_"..state..
-		".png;cr_"..state..";;;false;pipeworks_button_interm.png]")
+
+	meta:set_string("formspec", make_formspec(meta))
 end
 
 local function update_tube(pos, channel, cr, player_name)
