@@ -148,9 +148,11 @@ local function get_receivers(pos, channel)
 	return receivers
 end
 
-local help_text = S("Channels are public by default").."\n"..
+local help_text = minetest.formspec_escape(
+	S("Channels are public by default").."\n"..
 	S("Use <player>:<channel> for fully private channels").."\n"..
-	S("Use <player>\\;<channel> for private receivers")
+	S("Use <player>;<channel> for private receivers")
+)
 
 local size = has_digilines and "8,5.9" or "8,4.4"
 
