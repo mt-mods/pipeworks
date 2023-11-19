@@ -8,7 +8,7 @@ end
 local function set_wielder_formspec(data, meta)
 	local size = "10.2,"..(7+data.wield_inv_height)
 	local list_background = ""
-	if minetest.get_modpath("i3") then
+	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 		list_background = "style_type[box;colors=#666]"
 		for i=0, data.wield_inv_height-1 do
 			for j=0, data.wield_inv_width-1 do
@@ -146,7 +146,7 @@ local function register_wielder(data)
 	data.fixup_node = data.fixup_node or function (pos, node) end
 	data.fixup_oldmetadata = data.fixup_oldmetadata or function (m) return m end
 	for _, state in ipairs({ "off", "on" }) do
-		local groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, mesecon=2, tubedevice=1, tubedevice_receiver=1, axey=5 }
+		local groups = { snappy=2, choppy=2, oddly_breakable_by_hand=2, mesecon=2, tubedevice=1, tubedevice_receiver=1, axey=1, handy=1, pickaxey=1 }
 		if state == "on" then groups.not_in_creative_inventory = 1 end
 		local tile_images = {}
 		for _, face in ipairs({ "top", "bottom", "side2", "side1", "back", "front" }) do
@@ -225,7 +225,6 @@ local function register_wielder(data)
 					local node = minetest.get_node(pos)
 					node.param2 = minetest.dir_to_facedir(dir, true)
 					minetest.set_node(pos, node)
-					minetest.log("action", "real (6d) facedir: " .. node.param2)
 				end
 				minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 			end,

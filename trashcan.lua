@@ -10,8 +10,8 @@ minetest.register_node("pipeworks:trashcan", {
 		"pipeworks_trashcan_side.png",
 		"pipeworks_trashcan_side.png",
 	},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4, axey=5},
-	_mcl_hardness=1.6,
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	_mcl_hardness=0.8,
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			return ItemStack("")
@@ -23,7 +23,7 @@ minetest.register_node("pipeworks:trashcan", {
 		local meta = minetest.get_meta(pos)
 		local size = "10.2,9"
 		local list_background = ""
-		if minetest.get_modpath("i3") then
+		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 			list_background = "style_type[box;colors=#666]box[4.5,2;1,1;]"
 		end
 		meta:set_string("formspec",

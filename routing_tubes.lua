@@ -97,7 +97,16 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 				pipeworks.logger(log_msg.." but original node "..was_node.name.." is not registered anymore.")
 				minetest.chat_send_player(playername, S("This tube cannot be repaired."))
 			end
-		end
+		end,
+		allow_metadata_inventory_put = function()
+			return 0
+		end,
+		allow_metadata_inventory_move = function()
+			return 0
+		end,
+		allow_metadata_inventory_take = function()
+			return 0
+		end,
 	}
 })
 
@@ -168,8 +177,8 @@ if pipeworks.enable_one_way_tube then
 		paramtype = "light",
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
-		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, axey=5},
-		_mcl_hardness=1.6,
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, axey=1, handy=1, pickaxey=1},
+		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_wood_defaults",
 		},
