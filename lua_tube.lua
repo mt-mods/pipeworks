@@ -425,7 +425,7 @@ end
 
 -- itbl: Flat table of functions to run after sandbox cleanup, used to prevent various security hazards
 local function get_digiline_send(pos, itbl, send_warning)
-	if not minetest.global_exists("digilines") then return end
+	if not minetest.get_modpath("digilines") then return end
 	local chan_maxlen = mesecon.setting("luacontroller_digiline_channel_maxlen", 256)
 	local maxlen = mesecon.setting("luacontroller_digiline_maxlen", 50000)
 	return function(channel, msg)

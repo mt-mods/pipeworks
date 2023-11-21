@@ -204,7 +204,7 @@ minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 
 -- Unified Inventory categories integration
 
-if minetest.global_exists("unified_inventory") and unified_inventory.registered_categories then
+if minetest.get_modpath("unified_inventory") and unified_inventory.registered_categories then
 	if not unified_inventory.registered_categories["automation"] then
 		unified_inventory.register_category("automation", {
 			symbol = "pipeworks:lua_tube000000",

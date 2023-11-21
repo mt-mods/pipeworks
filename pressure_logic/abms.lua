@@ -353,7 +353,7 @@ end
 flowlogic.run_transition_post = function(pos, node)
 	local mesecons_def = minetest.registered_nodes[node.name].mesecons
 	local mesecons_rules = pipeworks.flowables.transitions.mesecons[node.name]
-	if minetest.global_exists("mesecon") and (mesecons_def ~= nil) and mesecons_rules then
+	if minetest.get_modpath("mesecons") and (mesecons_def ~= nil) and mesecons_rules then
 		if type(mesecons_def) ~= "table" then
 			pipeworks.logger("flowlogic.run_transition_post() BUG mesecons def for "..node.name.."not a table: got "..tostring(mesecons_def))
 		else
