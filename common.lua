@@ -504,6 +504,6 @@ function pipeworks.create_fake_player(def, is_dynamic)
 	p.getpos = p.get_pos
 	p.setpos = p.set_pos
 	p.moveto = p.move_to
-	setmetatable(p, fake_player_metatable)
+	setmetatable(p, { __index = fake_player_metatable })
 	return p
 end
