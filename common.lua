@@ -248,6 +248,183 @@ local function get_set_wrap(name, is_dynamic)
 	end)
 end
 
+local fake_player_metatable = {
+	is_player = delay(true),
+	is_fake_player = true,
+
+	-- dummy implementation of the rest of the player API:
+	add_player_velocity = delay(),  -- deprecated
+	add_velocity = delay(),
+	get_acceleration = delay(), -- no-op for players
+	get_animation = delay({x = 0, y = 0}, 0, 0, false),
+	get_armor_groups = delay({}),
+	get_attach = delay(),
+	get_attribute = delay(),  -- deprecated
+	get_bone_position = delay(vector.zero(), vector.zero()),
+	get_children = delay({}),
+	get_clouds = delay({
+		ambient = { r = 0, b = 0, g = 0, a = 0 },
+		color = { r = 0, b = 0, g = 0, a = 0 },
+		density = 0,
+		height = 120,
+		thickness = 10,
+		speed = vector.zero(),
+	}),
+	get_day_night_ratio = delay(),
+	get_entity_name = delay(),
+	get_formspec_prepend = delay(""),
+	get_fov = delay(0, false, 0),
+	get_lighting = delay({
+		exposure = {
+			center_weight_power = 1,
+			exposure_correction = 0,
+			luminance_max = -3,
+			luminance_min = -3,
+			speed_bright_dark = 1000,
+			speed_dark_bright = 1000,
+		},
+		saturation = 1,
+		shadows = {
+			intensity = .6212,
+		},
+	}),
+	get_local_animation = delay({x = 0, y = 0}, {x = 0, y = 0}, {x = 0, y = 0}, {x = 0, y = 0}, 30),
+	get_luaentity = delay(),
+	get_meta = delay({
+		contains = delay(false),
+		get = delay(),
+		set_string = delay(),
+		get_string = delay(""),
+		set_int = delay(),
+		get_int = delay(0),
+		set_float = delay(),
+		get_float = delay(0),
+		get_keys = delay({}),
+		to_table = delay({fields = {}}),
+		from_table = delay(false),
+		equals = delay(false),
+	}),
+	get_moon = delay({
+		scale = 1,
+		texture = "",
+		tonemap = "",
+		visible = false,
+	}),
+	get_physics_override = delay({
+		acceleration_air = 1,
+		acceleration_default = 1,
+		gravity = 1,
+		jump = 1,
+		liquid_fluidity = 1,
+		liquid_fluidity_smooth = 1,
+		liquid_sink = 1,
+		new_move = true,
+		sneak = true,
+		sneak_glitch = false,
+		speed = 1,
+		speed_climb = 1,
+		speed_crouch = 1,
+	}),
+	get_player_velocity = vector.zero,  -- deprecated
+	get_rotation = delay(), -- no-op for players
+	get_sky = delay({ r = 0, g = 0, b = 0, a = 0 }, "regular", {}, true),
+	get_sky_color = delay({
+		dawn_horizon = { r = 0, g = 0, b = 0, a = 0 },
+		dawn_sky = { r = 0, g = 0, b = 0, a = 0 },
+		day_horizon = { r = 0, g = 0, b = 0, a = 0 },
+		day_sky = { r = 0, g = 0, b = 0, a = 0 },
+		fog_moon_tint = { r = 0, g = 0, b = 0, a = 0 },
+		fog_sun_tint = { r = 0, g = 0, b = 0, a = 0 },
+		fog_tint_type = "default",
+		indoors = { r = 0, g = 0, b = 0, a = 0 },
+		night_horizon = { r = 0, g = 0, b = 0, a = 0 },
+		night_sky = { r = 0, g = 0, b = 0, a = 0 },
+	}),
+	get_stars = delay({
+		count = 1000,
+		day_opacity = 0,
+		scale = 1,
+		star_color = { r = 0, g = 0, b = 0, a = 0 },
+		visible = true,
+	}),
+	get_sun = delay({
+		scale = 1,
+		sunrise = "",
+		sunrise_visible = true,
+		texture = "",
+		tonemap = "",
+		visible = true,
+	}),
+	get_texture_mod = delay(), -- no-op for players
+	get_velocity = vector.zero,
+	get_yaw = delay(), -- no-op for players
+	getacceleration = delay(), -- backward compatibility
+	getvelocity = vector.zero, -- backward compatibility
+	getyaw = delay(), -- backward compatibility
+	hud_add = delay(),
+	hud_change = delay(),
+	hud_get = delay(),
+	hud_get_flags = delay({
+		basic_debug = false,
+		breathbar = false,
+		chat = false,
+		crosshair = false,
+		healthbar = false,
+		hotbar = false,
+		minimap = false,
+		minimap_radar = false,
+		wielditem = false,
+	}),
+	hud_get_hotbar_image = delay(""),
+	hud_get_hotbar_itemcount = delay(1),
+	hud_get_hotbar_selected_image = delay(""),
+	hud_remove = delay(),
+	hud_set_flags = delay(),
+	hud_set_hotbar_image = delay(),
+	hud_set_hotbar_itemcount = delay(),
+	hud_set_hotbar_selected_image = delay(),
+	override_day_night_ratio = delay(),
+	punch = delay(),
+	remove = delay(),
+	respawn = delay(),
+	right_click = delay(),
+	send_mapblock = delay(),
+	set_acceleration = delay(),
+	set_animation = delay(),
+	set_animation_frame_speed = delay(),
+	set_armor_groups = delay(),
+	set_attach = delay(),
+	set_attribute = delay(), -- deprecated
+	set_bone_position = delay(),
+	set_clouds = delay(),
+	set_detach = delay(),
+	set_formspec_prepend = delay(),
+	set_fov = delay(),
+	set_lighting = delay(),
+	set_local_animation = delay(),
+	set_look_horizontal = delay(),
+	set_look_pitch = delay(),
+	set_look_vertical = delay(),
+	set_look_yaw = delay(),
+	set_minimap_modes = delay(),
+	set_moon = delay(),
+	set_nametag_attributes = delay(),
+	set_physics_override = delay(),
+	set_rotation = delay(), -- no-op for players
+	set_sky = delay(),
+	set_sprite = delay(), -- no-op for players
+	set_stars = delay(),
+	set_sun = delay(),
+	set_texture_mod = delay(), -- no-op for players
+	set_velocity = delay(), -- no-op for players
+	set_yaw = delay(), -- no-op for players
+	setacceleration = delay(), -- backward compatibility
+	setsprite = delay(), -- backward compatibility
+	settexturemod = delay(), -- backward compatibility
+	setvelocity = delay(), -- backward compatibility
+	setyaw = delay(), -- backward compatibility
+}
+
 function pipeworks.create_fake_player(def, is_dynamic)
 	local wielded_item = ItemStack("")
 	if def.inventory and def.wield_list then
@@ -255,8 +432,6 @@ function pipeworks.create_fake_player(def, is_dynamic)
 	end
 	local p = {
 		get_player_name = delay(def.name),
-		is_player = delay(true),
-		is_fake_player = true,
 
 		_formspec = def.formspec or "",
 		_hp = def.hp or 20,
@@ -277,12 +452,11 @@ function pipeworks.create_fake_player(def, is_dynamic)
 		get_eye_offset = function(self)
 			return self._eye_offset1, self._eye_offset3
 		end,
-		get_look_dir = delay(def.look_dir or {x=0, y=0, z=1}),
+		get_look_dir = delay(def.look_dir or vector.new()),
 		get_look_pitch = delay(def.look_pitch or 0),
 		get_look_yaw = delay(def.look_yaw or 0),
 		get_look_horizontal = delay(def.look_yaw or 0),
 		get_look_vertical = delay(-(def.look_pitch or 0)),
-		set_animation = delay(),
 
 		-- Controls
 		get_player_control = delay({
@@ -308,14 +482,11 @@ function pipeworks.create_fake_player(def, is_dynamic)
 			return ItemStack(self._wielded_item)
 		end,
 		get_wield_list = delay(def.wield_list),
-
-		punch = delay(),
-		remove = delay(),
-		right_click = delay(),
-		set_attach = delay(),
-		set_detach = delay(),
-		set_bone_position = delay(),
-		hud_change = delay(),
+		get_nametag_attributes = delay({
+			bgcolor = false,
+			color = { r = 0, g = 0, b = 0, a = 0 },
+			text = def.name,
+		}),
 	}
 	-- Getter & setter functions
 	p.get_inventory_formspec, p.set_inventory_formspec
@@ -329,37 +500,10 @@ function pipeworks.create_fake_player(def, is_dynamic)
 	-- For players, move_to and get_pos do the same
 	p.move_to = p.get_pos
 
-	-- Backwards compatibilty
+	-- Backwards compatibility
 	p.getpos = p.get_pos
 	p.setpos = p.set_pos
 	p.moveto = p.move_to
-
-	-- TODO "implement" all these
-	-- set_armor_groups
-	-- get_armor_groups
-	-- get_animation
-	-- get_bone_position
-	-- get_player_velocity
-	-- set_look_pitch
-	-- set_look_yaw
-	-- set_physics_override
-	-- get_physics_override
-	-- hud_add
-	-- hud_remove
-	-- hud_get
-	-- hud_set_flags
-	-- hud_get_flags
-	-- hud_set_hotbar_itemcount
-	-- hud_get_hotbar_itemcount
-	-- hud_set_hotbar_image
-	-- hud_get_hotbar_image
-	-- hud_set_hotbar_selected_image
-	-- hud_get_hotbar_selected_image
-	-- hud_replace_builtin
-	-- set_sky
-	-- get_sky
-	-- override_day_night_ratio
-	-- get_day_night_ratio
-	-- set_local_animation
+	setmetatable(p, { __index = fake_player_metatable })
 	return p
 end
