@@ -357,6 +357,7 @@ pipeworks.tptube = {
 	hash = hash_pos,
 	get_db = function() return tube_db end,
 	save_tube_db = save_tube_db,
+	remove_tube = remove_tube,
 	set_tube = set_tube,
 	save_tube = save_tube,
 	update_tube = update_tube,
