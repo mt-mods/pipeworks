@@ -1,5 +1,5 @@
 -- Crafting recipes for pipes
-local materials = pipeworks.materials
+local materials = ...
 
 minetest.register_craft( {
 	output = "pipeworks:pipe_1_empty 12",

@@ -52,7 +52,6 @@ if minetest.get_modpath("signs_lib") then
 end
 
 dofile(pipeworks.modpath.."/common.lua")
-dofile(pipeworks.modpath.."/materials.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
 dofile(pipeworks.modpath.."/autoplace_tubes.lua")
@@ -63,11 +62,13 @@ dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 
+local materials = loadfile(pipeworks.modpath.."/materials.lua")()
+
 dofile(pipeworks.modpath.."/tubes/registration.lua")
 dofile(pipeworks.modpath.."/tubes/routing.lua")
 dofile(pipeworks.modpath.."/tubes/sorting.lua")
 dofile(pipeworks.modpath.."/tubes/signal.lua")
-dofile(pipeworks.modpath.."/tubes/embedded_tube.lua")
+loadfile(pipeworks.modpath.."/tubes/embedded_tube.lua")(materials)
 dofile(pipeworks.modpath.."/tubes/pane_embedded_tube.lua")
 
 if pipeworks.enable_teleport_tube then
@@ -110,7 +111,7 @@ if pipeworks.enable_autocrafter then
 	dofile(pipeworks.modpath.."/autocrafter.lua")
 end
 
-dofile(pipeworks.modpath.."/crafts.lua")
+loadfile(pipeworks.modpath.."/crafts.lua")(materials)
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 

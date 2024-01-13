@@ -1,3 +1,4 @@
+local materials = ...
 local S = minetest.get_translator("pipeworks")
 
 local straight = function(pos, node, velocity, stack) return {velocity} end
@@ -63,5 +64,5 @@ end
 pipeworks.register_embedded_tube("pipeworks:steel_block_embedded_tube", {
 	description = S("Airtight steelblock embedded tube"),
 	base_texture = steel_tex,
-	base_ingredient = pipeworks.materials.steel_ingot
+	base_ingredient = materials.steel_ingot
 })

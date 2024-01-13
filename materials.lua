@@ -1,4 +1,4 @@
-pipeworks.materials = {
+local materials = {
     stone = "default:stone",
     desert_stone = "default:desert_stone",
     desert_sand = "default:desert_sand",
@@ -14,7 +14,7 @@ pipeworks.materials = {
 }
 
 if minetest.get_modpath("mcl_core") then
-    pipeworks.materials = {
+    materials = {
         stone = "mcl_core:stone",
         desert_stone = "mcl_core:redsandstone",
         desert_sand = "mcl_core:sand",
@@ -29,7 +29,7 @@ if minetest.get_modpath("mcl_core") then
         glass = "mcl_core:glass",
     }
 elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
-    pipeworks.materials = {
+    materials = {
         stone = "fl_stone:stone",
         desert_stone = "fl_stone:desert_stone",
         desert_sand = "fl_stone:desert_sand",
@@ -44,7 +44,7 @@ elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
         glass = "fl_glass:framed_glass",
     }
 elseif minetest.get_modpath("hades_core") then
-    pipeworks.materials = {
+    materials = {
         stone = "hades_core:stone",
         desert_stone = "hades_core:stone_baked",
         desert_sand = "hades_core:volcanic_sand",
@@ -60,6 +60,8 @@ elseif minetest.get_modpath("hades_core") then
         glass = "hades_core:glass",
     }
     if minetest.get_modpath("hades_default") then
-        pipeworks.materials.desert_sand = "hades_default:desert_sand"
+        materials.desert_sand = "hades_default:desert_sand"
     end
 end
+
+return materials
