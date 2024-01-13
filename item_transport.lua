@@ -3,6 +3,27 @@ local enable_max_limit = minetest.settings:get_bool("pipeworks_enable_items_per_
 local max_tube_limit = tonumber(minetest.settings:get("pipeworks_max_items_per_tube")) or 30
 if enable_max_limit == nil then enable_max_limit = true end
 
+if pipeworks.enable_item_tags then
+	local item_tag_name = "pipeworks:item_tag"
+	local item_tag_name_limit = tonumber(minetest.settings:get("pipeworks_item_tag_name_limit") or "30")
+
+	pipeworks.safe_tag = function(tag)
+		if tag == nil or type(tag) ~= "string" or tag == "" then return nil end
+		tag = tag:gsub(",", "_")  -- replace commas with underscores
+		tag = tag:match("^%s*(.-)%s*$") -- trim leading and trailing spaces
+		return tag:sub(1, item_tag_name_limit)
+	end
+
+	pipeworks.set_item_tag = function(item_stack, tag)
+		if item_stack == nil then return end
+		item_stack:get_meta():set_string(item_tag_name, pipeworks.safe_tag(tag))
+	end
+
+	pipeworks.get_item_tag = function(item_stack)
+		if item_stack == nil then return nil end
+		return item_stack:get_meta():get_string(item_tag_name)
+	end
+end
 function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
 end
@@ -338,6 +359,9 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		if minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
 			local leftover
 			if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
+				if pipeworks.enable_item_tags then
+					pipeworks.set_item_tag(stack, nil)
+				end
 				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel, self.owner)
 			else
 				leftover = stack
@@ -364,6 +388,9 @@ luaentity.register_entity("pipeworks:tubed_item", {
 				-- Using add_item instead of item_drop since this makes pipeworks backward
 				-- compatible with Minetest 0.4.13.
 				-- Using item_drop here makes Minetest 0.4.13 crash.
+				if pipeworks.enable_item_tags then
+					pipeworks.set_item_tag(stack, nil)
+				end
 				local dropped_item = minetest.add_item(self.start_pos, stack)
 				if dropped_item then
 					dropped_item:set_velocity(vector.multiply(velocity, 5))
