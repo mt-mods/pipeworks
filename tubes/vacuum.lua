@@ -32,6 +32,12 @@ local function set_timer(pos)
 	timer:start(math.random(10, 20) * 0.1)
 end
 
+local function repair_tube(pos, was_node)
+	minetest.swap_node(pos, {name = was_node.name, param2 = was_node.param2})
+	pipeworks.scan_for_tube_objects(pos)
+	set_timer(pos)
+end
+
 if pipeworks.enable_sand_tube then
 	pipeworks.register_tube("pipeworks:sand_tube", {
 		description = S("Vacuuming Pneumatic Tube Segment"),
@@ -42,6 +48,9 @@ if pipeworks.enable_sand_tube then
 		ends = {"pipeworks_sand_tube_end.png"},
 		node_def = {
 			groups = {vacuum_tube = 1},
+			tube = {
+				on_repair = repair_tube,
+			},
 			on_construct = set_timer,
 			on_timer = function(pos, elapsed)
 				vacuum(pos, 2)
@@ -68,6 +77,9 @@ if pipeworks.enable_mese_sand_tube then
 		ends = {"pipeworks_mese_sand_tube_end.png"},
 		node_def = {
 			groups = {vacuum_tube = 1},
+			tube = {
+				on_repair = repair_tube,
+			},
 			on_construct = function(pos)
 				local meta = minetest.get_meta(pos)
 				meta:set_int("dist", 2)
