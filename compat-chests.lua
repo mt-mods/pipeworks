@@ -6,7 +6,7 @@
 
 -- Pipeworks Specific
 local fs_helpers = pipeworks.fs_helpers
-local tube_entry = "^pipeworks_tube_connection_wooden.png"
+local tube_entry = pipeworks.pipeworks_pipe_holes_wooden_texture
 
 -- Chest Locals
 local open_chests = {}
@@ -300,4 +300,3 @@ elseif minetest.get_modpath("hades_chests") then
 	minetest.override_item("hades_chests:chest_locked", override_protected)
   --minetest.override_item("hades_chests:chest_locked_open", override_protected_open)
 end
-

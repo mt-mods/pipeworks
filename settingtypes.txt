@@ -76,6 +76,9 @@ pipeworks_drop_on_routing_fail (Drop On Routing Fail) bool false
 #Delete item on clearobject.
 pipeworks_delete_item_on_clearobject (Delete Item On Clearobject) bool true
 
+# Enable Pipe Holes in supported node textures
+pipeworks_show_pipe_holes (Enable Pipe Hole Textures) bool true
+
 #Use real visible entities in tubes within active areas.
 #When disabled, tubes are made opaque.
 pipeworks_use_real_entities (Use Real Entities) bool true

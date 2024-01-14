@@ -2,7 +2,7 @@
 -- pipeworks.
 
 -- Pipeworks Specific
-local tube_entry = "^pipeworks_tube_connection_wooden.png"
+local tube_entry = pipeworks.pipeworks_pipe_holes_wooden_texture
 
 -- Original Definitions
 local old_barrel = table.copy(minetest.registered_items["mcl_barrels:barrel_closed"])

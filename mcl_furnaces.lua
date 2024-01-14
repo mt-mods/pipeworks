@@ -3,7 +3,7 @@ local old_furnace = table.copy(minetest.registered_nodes["mcl_furnaces:furnace"]
 local old_blast_furnace = table.copy(minetest.registered_nodes["mcl_blast_furnace:blast_furnace"])
 local old_smoker = table.copy(minetest.registered_nodes["mcl_smoker:smoker"])
 
-local tube_entry = "^pipeworks_tube_connection_stony.png"
+local tube_entry = pipeworks.pipeworks_pipe_holes_stony_texture
 
 -- groups
 local furnace_groups = old_furnace.groups

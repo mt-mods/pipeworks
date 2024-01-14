@@ -21,6 +21,10 @@ pipeworks = {
 }
 
 dofile(pipeworks.modpath.."/default_settings.lua")
+
+pipeworks.pipeworks_pipe_holes_wooden_texture = pipeworks.show_pipe_holes  and "^pipeworks_tube_connection_wooden.png" or ""
+pipeworks.pipeworks_pipe_holes_stony_texture = pipeworks.show_pipe_holes and "^pipeworks_tube_connection_stony.png" or ""
+
 -- Read the external config file if it exists.
 local worldsettingspath = pipeworks.worldpath.."/pipeworks_settings.txt"
 local worldsettingsfile = io.open(worldsettingspath, "r")

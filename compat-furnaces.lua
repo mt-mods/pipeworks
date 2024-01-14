@@ -10,7 +10,7 @@ elseif minetest.get_modpath("hades_furnaces") then
 	--def_active = table.copy(minetest.registered_nodes["hades_furnaces:furnace_active"])
 end
 
-local tube_entry = "^pipeworks_tube_connection_stony.png"
+local tube_entry = pipeworks.pipeworks_pipe_holes_stony_texture
 
 local groups = def.groups
 groups["tubedevice"] = 1
@@ -125,4 +125,3 @@ elseif minetest.get_modpath("hades_furnaces") then
 	minetest.override_item("hades_furnaces:furnace", override)
 	minetest.override_item("hades_furnaces:furnace_active", override_active)
 end
-
