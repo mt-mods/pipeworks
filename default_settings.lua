@@ -5,6 +5,7 @@ local prefix = "pipeworks_"
 local settings = {
 	enable_pipes = true,
 	enable_item_tags = true,
+	enable_tags_tube = true,
 	enable_lowpoly = false,
 	enable_autocrafter = true,
 	enable_deployer = true,
