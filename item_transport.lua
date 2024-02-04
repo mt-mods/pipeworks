@@ -378,6 +378,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		end
 
 		local found_next, new_velocity, multimode = go_next(self.start_pos, velocity, stack, self.owner) -- todo: color
+		self.itemstring = stack:to_string()
 		local rev_vel = vector.multiply(velocity, -1)
 		local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
 		local rev_node = minetest.get_node(vector.round(vector.add(self.start_pos,rev_dir)))

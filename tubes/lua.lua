@@ -464,11 +464,25 @@ local safe_globals = {
 	"tonumber", "tostring", "type", "unpack", "_VERSION"
 }
 
-local function create_environment(pos, mem, event, itbl, send_warning)
+local function create_environment(pos, mem, event, stack, itbl, send_warning)
 	-- Make sure the tube hasn't broken.
 	local vports = minetest.registered_nodes[minetest.get_node(pos).name].virtual_portstates
 	if not vports then return {} end
 
+	local function get_item_tag()
+		if not pipeworks.enable_item_tags then return nil end
+		return pipeworks.get_item_tag(stack)
+	end
+	local function set_item_tag(tag)
+		if not pipeworks.enable_item_tags and not stack then return end
+		local string_meta = getmetatable("")
+		local sandbox = string_meta.__index
+		string_meta.__index = string -- Leave string sandbox temporarily
+		pipeworks.set_item_tag(stack, tostring(tag))
+		event.itemstring = stack:to_string()
+		event.item = stack:to_table()
+		string_meta.__index = sandbox -- Restore string sandbox
+	end
 	-- Gather variables for the environment
 	local vports_copy = {}
 	for k, v in pairs(vports) do vports_copy[k] = v end
@@ -543,6 +557,10 @@ local function create_environment(pos, mem, event, itbl, send_warning)
 			datetable = safe_date,
 		},
 	}
+	if pipeworks.enable_item_tags then
+		env.get_item_tag = get_item_tag
+		env.set_item_tag = set_item_tag
+	end
 	env._G = env
 
 	for _, name in pairs(safe_globals) do
@@ -608,7 +626,7 @@ end
 
 -- Returns success (boolean), errmsg (string), retval(any, return value of the user supplied code)
 -- run (as opposed to run_inner) is responsible for setting up meta according to this output
-local function run_inner(pos, code, event)
+local function run_inner(pos, code, event, stack)
 	local meta = minetest.get_meta(pos)
 	-- Note: These return success, presumably to avoid changing LC ID.
 	if overheat(pos) then return true, "", nil end
@@ -626,7 +644,7 @@ local function run_inner(pos, code, event)
 
 	-- Create environment
 	local itbl = {}
-	local env = create_environment(pos, mem, event, itbl, send_warning)
+	local env = create_environment(pos, mem, event, stack, itbl, send_warning)
 
 	-- Create the sandbox and execute code
 	local f, msg = create_sandbox(code, env)
@@ -682,10 +700,10 @@ local function reset_meta(pos, code, errmsg)
 end
 
 -- Wraps run_inner with LC-reset-on-error
-local function run(pos, event)
+local function run(pos, event, stack)
 	local meta = minetest.get_meta(pos)
 	local code = meta:get_string("code")
-	local ok, errmsg, retval = run_inner(pos, code, event)
+	local ok, errmsg, retval = run_inner(pos, code, event, stack)
 	if not ok then
 		reset_meta(pos, code, errmsg)
 	else
@@ -960,7 +978,7 @@ for white  = 0, 1 do
 					itemstring = stack:to_string(),
 					item = stack:to_table(),
 					velocity = velocity,
-				})
+									}, stack)
 				if not succ or type(msg) ~= "string" then
 					return go_back(velocity)
 				end
