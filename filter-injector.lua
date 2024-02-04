@@ -62,6 +62,11 @@ local function set_filter_formspec(data, meta)
 			exmatch_button..
 			pipeworks.fs_helpers.get_inv(6)..
 			"listring[]"
+		if pipeworks.enable_item_tags then
+			formspec = formspec ..
+				"field[5.8,0.5;3,0.8;items_tag;" .. S("Items tag") .. ";${items_tag}]" ..
+				"button[9,0.3;1,1.1;set_items_tag;" .. S("Set") .. "]"
+		end
 	end
 	meta:set_string("formspec", formspec)
 end
@@ -338,6 +343,9 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				end
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
+				if pipeworks.enable_item_tags then
+					pipeworks.set_item_tag(item, filtmeta:get_string("items_tag"))
+				end
 				pipeworks.tube_inject_item(pos, start_pos, dir, item,
 					fakePlayer:get_player_name())
 				return true -- only fire one item, please
@@ -477,6 +485,9 @@ for _, data in ipairs({
 			fs_helpers.on_receive_fields(pos, fields)
 			local meta = minetest.get_meta(pos)
 			meta:set_int("slotseq_index", 1)
+			if pipeworks.enable_item_tags and fields.items_tag and (fields.key_enter_field == "items_tag" or fields.set_items_tag) then
+				meta:set_string("items_tag", fields.items_tag)
+			end
 			set_filter_formspec(data, meta)
 			set_filter_infotext(data, meta)
 		end
