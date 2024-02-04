@@ -14,20 +14,29 @@ local function set_filter_formspec(data, meta)
 
 	local formspec
 	if data.digiline then
+		local form_height = 3
+		if pipeworks.enable_item_tags then
+			form_height = 4
+		end
 		formspec =
-			"size[8.5,3]"..
+			("size[8.5,%f]"):format(form_height) ..
 			"item_image[0.2,0;1,1;pipeworks:"..data.name.."]"..
 			"label[1.2,0.2;"..minetest.formspec_escape(itemname).."]"..
 			"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
 			"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
-			fs_helpers.cycling_button(meta, "button[0.2,2.3;4.05,1", "slotseq_mode",
+			fs_helpers.cycling_button(meta, ("button[0.2,%f;4.05,1"):format(form_height - 0.7), "slotseq_mode",
 				{S("Sequence slots by Priority"),
 				 S("Sequence slots Randomly"),
 				 S("Sequence slots by Rotation")})..
-			fs_helpers.cycling_button(meta, "button[4.25,2.3;4.05,1", "exmatch_mode",
+			fs_helpers.cycling_button(meta, ("button[4.25,%f;4.05,1"):format(form_height - 0.7), "exmatch_mode",
 				{S("Exact match - off"),
 				 S("Exact match - on")})..
-			"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"
+			("button_exit[6.3,%f;2,1;close;" .. S("Close") .. "]"):format(form_height - 1.7)
+		if pipeworks.enable_item_tags then
+			formspec = formspec ..
+				("field[0.5,%f;4.6,1;items_tag;"):format(form_height - 1.4) .. S("Items tag") .. ";${items_tag}]" ..
+				("button[4.8,%f;1.5,1;set_items_tag;"):format(form_height - 1.7) .. S("Set") .. "]"
+		end
 	else
 		local exmatch_button = ""
 		if data.stackwise then
@@ -128,6 +137,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local slotseq_mode
 	local exmatch_mode
 
+	local item_tag = filtmeta:get_string("items_tag")
 	local filters = {}
 	if data.digiline then
 		local function add_filter(name, group, count, wear, metadata)
@@ -191,6 +201,9 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				set_filter_formspec(data, filtmeta)
 			end
 
+			if msg.tag then
+				item_tag = msg.tag
+			end
 			if msg.nofire then
 				return
 			end
@@ -344,7 +357,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
 				if pipeworks.enable_item_tags then
-					pipeworks.set_item_tag(item, filtmeta:get_string("items_tag"))
+					pipeworks.set_item_tag(item, item_tag)
 				end
 				pipeworks.tube_inject_item(pos, start_pos, dir, item,
 					fakePlayer:get_player_name())
@@ -464,6 +477,9 @@ for _, data in ipairs({
 			end
 
 			local meta = minetest.get_meta(pos)
+			if pipeworks.enable_item_tags and fields.items_tag and (fields.key_enter_field == "items_tag" or fields.set_items_tag) then
+				meta:set_string("items_tag", fields.items_tag)
+			end
 			--meta:set_int("slotseq_index", 1)
 			set_filter_formspec(data, meta)
 			set_filter_infotext(data, meta)
