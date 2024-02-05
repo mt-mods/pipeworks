@@ -978,7 +978,7 @@ for white  = 0, 1 do
 					itemstring = stack:to_string(),
 					item = stack:to_table(),
 					velocity = velocity,
-									}, stack)
+				}, stack)
 				if not succ or type(msg) ~= "string" then
 					return go_back(velocity)
 				end
