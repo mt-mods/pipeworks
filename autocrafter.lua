@@ -57,6 +57,7 @@ local function get_matching_craft(output_name, example_recipe)
 		end
 		if best_score < score then
 			best_index = i
+			best_score = score
 		end
 	end
 
