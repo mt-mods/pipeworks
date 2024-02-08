@@ -7,4 +7,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - name: Luacheck
-        uses: BuckarooBanzay/luacheck@master
+        uses: BuckarooBanzay/luacheck@minetest-builtin
