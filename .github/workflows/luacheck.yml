@@ -7,4 +7,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - name: Luacheck
-        uses: lunarmodules/luacheck@master
+        uses: BuckarooBanzay/luacheck@master
