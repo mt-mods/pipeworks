@@ -8,4 +8,4 @@ jobs:
         uses: actions/checkout@master
       - name: Luacheck
         run: |
-          docker run --rm -it -u luacheck --mount="type=bind,source=$(pwd),target=/repo" mineunit/luacheck
+          docker run --rm -i -u luacheck --mount="type=bind,source=$(pwd),target=/repo" mineunit/luacheck
