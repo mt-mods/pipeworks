@@ -10,7 +10,7 @@ if pipeworks.enable_item_tags then
 	pipeworks.safe_tag = function(tag)
 		if tag == nil or type(tag) ~= "string" or tag == "" then return nil end
 		tag = tag:gsub(",", "_")  -- replace commas with underscores
-		tag = tag:match("^%s*(.-)%s*$") -- trim leading and trailing spaces
+		tag = tag:trim() -- trim leading and trailing spaces
 		return tag:sub(1, item_tag_name_limit)
 	end
 
