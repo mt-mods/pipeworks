@@ -389,6 +389,7 @@ for _, data in ipairs({
 		},
 		paramtype2 = "facedir",
 		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, mesecon = 2, axey=1, handy=1, pickaxey=1},
+		is_ground_content = false,
 		_mcl_hardness=0.8,
 		legacy_facedir_simple = true,
 		_sound_def = {
