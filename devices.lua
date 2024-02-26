@@ -796,7 +796,7 @@ minetest.register_node(nodename_sp_loaded, {
 	_mcl_hardness=0.8,
 	_sound_def = {
 		key = "node_sound_metal_defaults",
-    	},
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
