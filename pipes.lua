@@ -76,6 +76,7 @@ for index, connects in ipairs(cconnects) do
 			fixed = outsel
 		},
 		groups = pgroups,
+		is_ground_content = false,
 		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_metal_defaults",
@@ -113,6 +114,7 @@ for index, connects in ipairs(cconnects) do
 			fixed = outsel
 		},
 		groups = pgroups,
+		is_ground_content = false,
 		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_metal_defaults",
@@ -151,6 +153,7 @@ if REGISTER_COMPATIBILITY then
 		paramtype = "light",
 		description = S("Pipe Segment (legacy)"),
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
+		is_ground_content = false,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)
@@ -163,6 +166,7 @@ if REGISTER_COMPATIBILITY then
 		sunlight_propagates = true,
 		paramtype = "light",
 		groups = {not_in_creative_inventory = 1, pipe_to_update = 1},
+		is_ground_content = false,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
 			pipeworks.scan_for_pipe_objects(pos)

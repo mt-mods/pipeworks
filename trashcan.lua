@@ -11,6 +11,7 @@ minetest.register_node("pipeworks:trashcan", {
 		"pipeworks_trashcan_side.png",
 	},
 	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
 	_mcl_hardness=0.8,
 	tube = {
 		insert_object = function(pos, node, stack, direction)

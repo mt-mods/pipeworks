@@ -50,6 +50,7 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 	node_def = {
 		drop = "pipeworks:tube_1",
 		groups = {not_in_creative_inventory = 1, tubedevice_receiver = 1},
+		is_ground_content = false,
 		tube = {
 			insert_object = function(pos, node, stack, direction)
 				minetest.item_drop(stack, nil, pos)
@@ -179,6 +180,7 @@ if pipeworks.enable_one_way_tube then
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
 		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, axey=1, handy=1, pickaxey=1},
+		is_ground_content = false,
 		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_wood_defaults",
