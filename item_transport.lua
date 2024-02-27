@@ -359,10 +359,12 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		if minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
 			local leftover
 			if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
+				local item_tag = nil
 				if pipeworks.enable_item_tags then
+					item_tag = pipeworks.get_item_tag(stack)
 					pipeworks.set_item_tag(stack, nil)
 				end
-				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel, self.owner)
+				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel, self.owner, item_tag)
 			else
 				leftover = stack
 			end
