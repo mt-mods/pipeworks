@@ -12,6 +12,10 @@ local safe_tags = function(tags)
 	return tags:sub(1, length_limit * 6)
 end
 
+local function escape(s)
+	return (s:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]', '%%%1'))
+end
+
 local update_formspec = function(pos)
 	local meta = minetest.get_meta(pos)
 	local buttons_formspec = ""
@@ -85,7 +89,7 @@ pipeworks.register_tube(tube_name, {
 							if not is_empty then
 								for tag in string.gmatch(tags, "[^,]+") do
 									tag = pipeworks.safe_tag(tag)
-									if tag and tag == stack_tag then
+									if tag and (tag == stack_tag or stack_tag:find(("^%s%%."):format(escape(tag)))) then
 										foundn = foundn + 1
 										found[foundn] = vect
 									end
