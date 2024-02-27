@@ -464,25 +464,11 @@ local safe_globals = {
 	"tonumber", "tostring", "type", "unpack", "_VERSION"
 }
 
-local function create_environment(pos, mem, event, stack, itbl, send_warning)
+local function create_environment(pos, mem, event, itbl, send_warning)
 	-- Make sure the tube hasn't broken.
 	local vports = minetest.registered_nodes[minetest.get_node(pos).name].virtual_portstates
 	if not vports then return {} end
 
-	local function get_item_tag()
-		if not pipeworks.enable_item_tags then return nil end
-		return pipeworks.get_item_tag(stack)
-	end
-	local function set_item_tag(tag)
-		if not pipeworks.enable_item_tags and not stack then return end
-		local string_meta = getmetatable("")
-		local sandbox = string_meta.__index
-		string_meta.__index = string -- Leave string sandbox temporarily
-		pipeworks.set_item_tag(stack, tostring(tag))
-		event.itemstring = stack:to_string()
-		event.item = stack:to_table()
-		string_meta.__index = sandbox -- Restore string sandbox
-	end
 	-- Gather variables for the environment
 	local vports_copy = {}
 	for k, v in pairs(vports) do vports_copy[k] = v end
@@ -557,10 +543,6 @@ local function create_environment(pos, mem, event, stack, itbl, send_warning)
 			datetable = safe_date,
 		},
 	}
-	if pipeworks.enable_item_tags then
-		env.get_item_tag = get_item_tag
-		env.set_item_tag = set_item_tag
-	end
 	env._G = env
 
 	for _, name in pairs(safe_globals) do
@@ -626,7 +608,7 @@ end
 
 -- Returns success (boolean), errmsg (string), retval(any, return value of the user supplied code)
 -- run (as opposed to run_inner) is responsible for setting up meta according to this output
-local function run_inner(pos, code, event, stack)
+local function run_inner(pos, code, event)
 	local meta = minetest.get_meta(pos)
 	-- Note: These return success, presumably to avoid changing LC ID.
 	if overheat(pos) then return true, "", nil end
@@ -644,7 +626,7 @@ local function run_inner(pos, code, event, stack)
 
 	-- Create environment
 	local itbl = {}
-	local env = create_environment(pos, mem, event, stack, itbl, send_warning)
+	local env = create_environment(pos, mem, event, itbl, send_warning)
 
 	-- Create the sandbox and execute code
 	local f, msg = create_sandbox(code, env)
@@ -700,10 +682,10 @@ local function reset_meta(pos, code, errmsg)
 end
 
 -- Wraps run_inner with LC-reset-on-error
-local function run(pos, event, stack)
+local function run(pos, event)
 	local meta = minetest.get_meta(pos)
 	local code = meta:get_string("code")
-	local ok, errmsg, retval = run_inner(pos, code, event, stack)
+	local ok, errmsg, retval = run_inner(pos, code, event)
 	if not ok then
 		reset_meta(pos, code, errmsg)
 	else
@@ -825,6 +807,45 @@ local function go_back(velocity)
 	end
 	vel.speed = speed
 	return pipeworks.notvel(adjlist, vel)
+end
+
+local function get_item_table(stack)
+	local item = stack:to_table()
+	if pipeworks.enable_item_tags then
+		item.tag = pipeworks.get_item_tag(stack)
+	end
+	return item
+end
+
+local function parse_returned_msg_v1(msg, _, velocity)
+	if type(msg) ~= "string" then
+		return false
+	end
+	local r = rules[msg]
+	return true, r and { r } or go_back(velocity)
+end
+
+local function parse_returned_msg_v2(msg, stack, velocity)
+	if type(msg) ~= "table" or type(msg.side) ~= "string" then
+		return false
+	end
+	local r = rules[msg.side]
+	if pipeworks.enable_item_tags and r and type(msg.tag) == "string" then
+		pipeworks.set_item_tag(stack, msg.tag)
+	end
+	return true, r and { r } or go_back(velocity)
+end
+
+local function parse_returned_msg(msg, stack, velocity)
+	local parsers = {
+		parse_returned_msg_v2,
+		parse_returned_msg_v1,
+	}
+	for _, parser in ipairs(parsers) do
+		local is_processed, result = parser(msg, stack, velocity)
+		if is_processed then return result end
+	end
+	return go_back(velocity)
 end
 
 local tiles_base = {
@@ -976,14 +997,13 @@ for white  = 0, 1 do
 					type = "item",
 					pin = src,
 					itemstring = stack:to_string(),
-					item = stack:to_table(),
+					item = get_item_table(stack),
 					velocity = velocity,
-				}, stack)
-				if not succ or type(msg) ~= "string" then
+				})
+				if not succ then
 					return go_back(velocity)
 				end
-				local r = rules[msg]
-				return r and {r} or go_back(velocity)
+				return parse_returned_msg(msg, stack, velocity)
 			end,
 		},
 		after_place_node = pipeworks.after_place,
