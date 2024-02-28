@@ -3,6 +3,11 @@ Changelog
 
 
 
+2024-02-26 (SwissalpS)
+set is_ground_content to false for various nodes.
+
+
+
 2023-06-22 (SwissalpS, rubenwardy)
 groups support in recipe. Set recipe as usual via recipe formspec or digilines.
 Autocrafter now resolves matching recipe using groups so that items in input

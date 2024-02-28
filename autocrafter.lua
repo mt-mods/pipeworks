@@ -57,6 +57,7 @@ local function get_matching_craft(output_name, example_recipe)
 		end
 		if best_score < score then
 			best_index = i
+			best_score = score
 		end
 	end
 
@@ -432,6 +433,7 @@ minetest.register_node("pipeworks:autocrafter", {
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
 	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
 	_mcl_hardness=0.8,
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)

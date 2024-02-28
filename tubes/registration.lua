@@ -106,6 +106,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 			fixed = outboxes
 		},
 		groups = tgroups,
+		is_ground_content = false,
 		_mcl_hardness=0.8,
 		_sound_def = {
 			key = "node_sound_wood_defaults",
@@ -227,6 +228,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 				description = S("Pneumatic tube segment (legacy)"),
 				after_place_node = pipeworks.after_place,
 				groups = {not_in_creative_inventory = 1, tube_to_update = 1, tube = 1},
+				is_ground_content = false,
 				tube = {connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1}},
 				drop = name.."_1",
 			})
