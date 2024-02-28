@@ -4,31 +4,35 @@ local max_tube_limit = tonumber(minetest.settings:get("pipeworks_max_items_per_t
 if enable_max_limit == nil then enable_max_limit = true end
 
 if pipeworks.enable_item_tags then
-	local item_tag_name = "pipeworks:item_tag"
-	local item_tag_name_limit = tonumber(minetest.settings:get("pipeworks_item_tag_name_limit") or "30")
+	local max_tag_length = tonumber(minetest.settings:get("pipeworks_max_item_tag_length")) or 32
+	local max_tags = tonumber(minetest.settings:get("pipeworks_max_item_tags")) or 16
 
-	pipeworks.safe_tag = function(tag)
-		if tag == nil or type(tag) ~= "string" or tag == "" then return nil end
-		tag = tag:gsub(",", "_")  -- replace commas with underscores
-		tag = tag:trim() -- trim leading and trailing spaces
-		return tag:sub(1, item_tag_name_limit)
-	end
-
-	pipeworks.set_item_tag = function(item_stack, tag)
-		if item_stack == nil then return end
-		item_stack:get_meta():set_string(item_tag_name, pipeworks.safe_tag(tag))
-	end
-
-	pipeworks.get_item_tag = function(item_stack)
-		if item_stack == nil then return nil end
-		return item_stack:get_meta():get_string(item_tag_name)
+	function pipeworks.sanitize_tags(tags)
+		if type(tags) == "string" then
+			tags = tags:split(",")
+		end
+		local sanitized = {}
+		for i, tag in ipairs(tags) do
+			if type(tag) == "string" then
+				tag = tag:gsub("[%s,]", "")  -- Remove whitespace and commas
+				tag = tag:gsub("%$%b%{%}", "")  -- Remove special ${key} values
+				if tag ~= "" then
+					table.insert(sanitized, tag:sub(1, max_tag_length))
+				end
+			end
+			if #sanitized >= max_tags then
+				break
+			end
+		end
+		return sanitized
 	end
 end
+
 function pipeworks.tube_item(pos, item)
 	error("obsolete pipeworks.tube_item() called; change caller to use pipeworks.tube_inject_item() instead")
 end
 
-function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner)
+function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner, tags)
 	-- Take item in any format
 	local stack = ItemStack(item)
 	local obj = luaentity.add_entity(pos, "pipeworks:tubed_item")
@@ -36,6 +40,7 @@ function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner)
 	obj.start_pos = vector.new(start_pos)
 	obj:set_velocity(velocity)
 	obj.owner = owner
+	obj.tags = tags
 	--obj:set_color("red") -- todo: this is test-only code
 	return obj
 end
@@ -100,13 +105,14 @@ end
 
 -- compatibility behaviour for the existing can_go() callbacks,
 -- which can only specify a list of possible positions.
-local function go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
+local function go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner, tags)
 	local next_positions = {}
 	local max_priority = 0
 	local can_go
 
-	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
-		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
+	local def = minetest.registered_nodes[cnode.name]
+	if def and def.tube and def.tube.can_go then
+		can_go = def.tube.can_go(pos, cnode, vel, stack, tags)
 	else
 		local adjlist_string = minetest.get_meta(pos):get_string("adjlist")
 		local adjlist = minetest.deserialize(adjlist_string) or default_adjlist -- backward compat: if not found, use old behavior: all directions
@@ -165,7 +171,7 @@ end
 -- * a "multi-mode" data table (or nil if N/A) where a stack was split apart.
 --	if this is not nil, the luaentity spawns new tubed items for each new fragment stack,
 --	then deletes itself (i.e. the original item stack).
-local function go_next(pos, velocity, stack, owner)
+local function go_next(pos, velocity, stack, owner, tags)
 	local cnode = minetest.get_node(pos)
 	local cmeta = minetest.get_meta(pos)
 	local speed = math.abs(velocity.x + velocity.y + velocity.z)
@@ -193,7 +199,7 @@ local function go_next(pos, velocity, stack, owner)
 	-- n is the new value of the cycle counter.
 	-- XXX: this probably needs cleaning up after being split out,
 	-- seven args is a bit too many
-	local n, found, new_velocity, multimode = go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
+	local n, found, new_velocity, multimode = go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner, tags)
 
 	-- if not using output cycling,
 	-- don't update the field so it stays the same for the next item.
@@ -297,6 +303,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 	color_entity = nil,
 	color = nil,
 	start_pos = nil,
+	tags = nil,
 
 	set_item = function(self, item)
 		local itemstring = ItemStack(item):to_string() -- Accept any input format
@@ -358,13 +365,9 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		local node = minetest.get_node(self.start_pos)
 		if minetest.get_item_group(node.name, "tubedevice_receiver") == 1 then
 			local leftover
-			if minetest.registered_nodes[node.name].tube and minetest.registered_nodes[node.name].tube.insert_object then
-				local item_tag = nil
-				if pipeworks.enable_item_tags then
-					item_tag = pipeworks.get_item_tag(stack)
-					pipeworks.set_item_tag(stack, nil)
-				end
-				leftover = minetest.registered_nodes[node.name].tube.insert_object(self.start_pos, node, stack, vel, self.owner, item_tag)
+			local def = minetest.registered_nodes[node.name]
+			if def.tube and def.tube.insert_object then
+				leftover = def.tube.insert_object(self.start_pos, node, stack, vel, self.owner)
 			else
 				leftover = stack
 			end
@@ -379,8 +382,14 @@ luaentity.register_entity("pipeworks:tubed_item", {
 			return
 		end
 
-		local found_next, new_velocity, multimode = go_next(self.start_pos, velocity, stack, self.owner) -- todo: color
-		self.itemstring = stack:to_string()
+		local tags
+		if pipeworks.enable_item_tags then
+			tags = self.tags or {}
+		end
+		local found_next, new_velocity, multimode = go_next(self.start_pos, velocity, stack, self.owner, tags) -- todo: color
+		if pipeworks.enable_item_tags then
+			self.tags = #tags > 0 and pipeworks.sanitize_tags(tags) or nil
+		end
 		local rev_vel = vector.multiply(velocity, -1)
 		local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
 		local rev_node = minetest.get_node(vector.round(vector.add(self.start_pos,rev_dir)))
@@ -391,9 +400,6 @@ luaentity.register_entity("pipeworks:tubed_item", {
 				-- Using add_item instead of item_drop since this makes pipeworks backward
 				-- compatible with Minetest 0.4.13.
 				-- Using item_drop here makes Minetest 0.4.13 crash.
-				if pipeworks.enable_item_tags then
-					pipeworks.set_item_tag(stack, nil)
-				end
 				local dropped_item = minetest.add_item(self.start_pos, stack)
 				if dropped_item then
 					dropped_item:set_velocity(vector.multiply(velocity, 5))

@@ -809,45 +809,6 @@ local function go_back(velocity)
 	return pipeworks.notvel(adjlist, vel)
 end
 
-local function get_item_table(stack)
-	local item = stack:to_table()
-	if pipeworks.enable_item_tags then
-		item.tag = pipeworks.get_item_tag(stack)
-	end
-	return item
-end
-
-local function parse_returned_msg_v1(msg, _, velocity)
-	if type(msg) ~= "string" then
-		return false
-	end
-	local r = rules[msg]
-	return true, r and { r } or go_back(velocity)
-end
-
-local function parse_returned_msg_v2(msg, stack, velocity)
-	if type(msg) ~= "table" or type(msg.side) ~= "string" then
-		return false
-	end
-	local r = rules[msg.side]
-	if pipeworks.enable_item_tags and r and type(msg.tag) == "string" then
-		pipeworks.set_item_tag(stack, msg.tag)
-	end
-	return true, r and { r } or go_back(velocity)
-end
-
-local function parse_returned_msg(msg, stack, velocity)
-	local parsers = {
-		parse_returned_msg_v2,
-		parse_returned_msg_v1,
-	}
-	for _, parser in ipairs(parsers) do
-		local is_processed, result = parser(msg, stack, velocity)
-		if is_processed then return result end
-	end
-	return go_back(velocity)
-end
-
 local tiles_base = {
 	"pipeworks_mese_tube_plain_4.png", "pipeworks_mese_tube_plain_3.png",
 	"pipeworks_mese_tube_plain_2.png", "pipeworks_mese_tube_plain_1.png",
@@ -984,7 +945,7 @@ for white  = 0, 1 do
 		tube = {
 			connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1},
 			priority = 50,
-			can_go = function(pos, node, velocity, stack)
+			can_go = function(pos, node, velocity, stack, tags)
 				local src = {name = nil}
 				-- add color of the incoming tube explicitly; referring to rules, in case they change later
 				for _, rule in pairs(rules) do
@@ -997,13 +958,35 @@ for white  = 0, 1 do
 					type = "item",
 					pin = src,
 					itemstring = stack:to_string(),
-					item = get_item_table(stack),
+					item = stack:to_table(),
 					velocity = velocity,
+					tags = table.copy(tags),
+					side = src.name,
 				})
 				if not succ then
 					return go_back(velocity)
 				end
-				return parse_returned_msg(msg, stack, velocity)
+				if type(msg) == "string" then
+					local side = rules[msg]
+					return side and {side} or go_back(velocity)
+				elseif type(msg) == "table" then
+					if pipeworks.enable_item_tags then
+						local new_tags
+						if type(msg.tags) == "table" then
+							new_tags = msg.tags
+						elseif type(msg.tag) == "string" then
+							new_tags = {msg.tag}
+						end
+						if new_tags then
+							for i=1, math.max(#tags, #new_tags) do
+								tags[i] = new_tags[i]
+							end
+						end
+					end
+					local side = rules[msg.side]
+					return side and {side} or go_back(velocity)
+				end
+				return go_back(velocity)
 			end,
 		},
 		after_place_node = pipeworks.after_place,

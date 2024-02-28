@@ -34,8 +34,8 @@ local function set_filter_formspec(data, meta)
 			("button_exit[6.3,%f;2,1;close;" .. S("Close") .. "]"):format(form_height - 1.7)
 		if pipeworks.enable_item_tags then
 			formspec = formspec ..
-				("field[0.5,%f;4.6,1;items_tag;"):format(form_height - 1.4) .. S("Items tag") .. ";${items_tag}]" ..
-				("button[4.8,%f;1.5,1;set_items_tag;"):format(form_height - 1.7) .. S("Set") .. "]"
+				("field[0.5,%f;4.6,1;item_tags;"):format(form_height - 1.4) .. S("Item Tags") .. ";${item_tags}]" ..
+				("button[4.8,%f;1.5,1;set_item_tags;"):format(form_height - 1.7) .. S("Set") .. "]"
 		end
 	else
 		local exmatch_button = ""
@@ -73,8 +73,8 @@ local function set_filter_formspec(data, meta)
 			"listring[]"
 		if pipeworks.enable_item_tags then
 			formspec = formspec ..
-				"field[5.8,0.5;3,0.8;items_tag;" .. S("Items tag") .. ";${items_tag}]" ..
-				"button[9,0.3;1,1.1;set_items_tag;" .. S("Set") .. "]"
+				"field[5.8,0.5;3,0.8;item_tags;" .. S("Item Tags") .. ";${item_tags}]" ..
+				"button[9,0.3;1,1.1;set_item_tags;" .. S("Set") .. "]"
 		end
 	end
 	meta:set_string("formspec", formspec)
@@ -137,7 +137,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local slotseq_mode
 	local exmatch_mode
 
-	local item_tag = filtmeta:get_string("items_tag")
+	local item_tags = pipeworks.sanitize_tags(filtmeta:get_string("item_tags"))
 	local filters = {}
 	if data.digiline then
 		local function add_filter(name, group, count, wear, metadata)
@@ -201,9 +201,12 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				set_filter_formspec(data, filtmeta)
 			end
 
-			if msg.tag then
-				item_tag = msg.tag
+			if type(msg.tags) == "table" then
+				item_tags = pipeworks.sanitize_tags(msg.tags)
+			elseif type(msg.tag) == "string" then
+				item_tags = pipeworks.sanitize_tags({msg.tag})
 			end
+
 			if msg.nofire then
 				return
 			end
@@ -356,11 +359,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				end
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
-				if pipeworks.enable_item_tags then
-					pipeworks.set_item_tag(item, item_tag)
-				end
 				pipeworks.tube_inject_item(pos, start_pos, dir, item,
-					fakePlayer:get_player_name())
+					fakePlayer:get_player_name(), item_tags)
 				return true -- only fire one item, please
 			end
 		end
@@ -478,8 +478,9 @@ for _, data in ipairs({
 			end
 
 			local meta = minetest.get_meta(pos)
-			if pipeworks.enable_item_tags and fields.items_tag and (fields.key_enter_field == "items_tag" or fields.set_items_tag) then
-				meta:set_string("items_tag", fields.items_tag)
+			if pipeworks.enable_item_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
+				local tags = pipeworks.sanitize_tags(fields.item_tags)
+				meta:set_string("item_tags", table.concat(tags, ","))
 			end
 			--meta:set_int("slotseq_index", 1)
 			set_filter_formspec(data, meta)
@@ -502,8 +503,9 @@ for _, data in ipairs({
 			fs_helpers.on_receive_fields(pos, fields)
 			local meta = minetest.get_meta(pos)
 			meta:set_int("slotseq_index", 1)
-			if pipeworks.enable_item_tags and fields.items_tag and (fields.key_enter_field == "items_tag" or fields.set_items_tag) then
-				meta:set_string("items_tag", fields.items_tag)
+			if pipeworks.enable_item_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
+				local tags = pipeworks.sanitize_tags(fields.item_tags)
+				meta:set_string("item_tags", table.concat(tags, ","))
 			end
 			set_filter_formspec(data, meta)
 			set_filter_infotext(data, meta)

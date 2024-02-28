@@ -10,7 +10,8 @@ local materials = {
     mese_crystal = "default:mese_crystal",
     mese_crystal_fragment = "default:mese_crystal_fragment",
     teleporter = "default:mese",
-    glass = "default:glass"
+    glass = "default:glass",
+    book = "default:book",
 }
 
 if minetest.get_modpath("mcl_core") then
@@ -27,6 +28,7 @@ if minetest.get_modpath("mcl_core") then
         teleporter = "mesecons_torch:redstoneblock",
         copper_ingot = "mcl_copper:copper_ingot",
         glass = "mcl_core:glass",
+        book = "mcl_core:book",
     }
 elseif minetest.get_modpath("fl_ores") and minetest.get_modpath("fl_stone") then
     materials = {
@@ -58,6 +60,7 @@ elseif minetest.get_modpath("hades_core") then
         copper_ingot = "hades_core:copper_ingot",
         tin_ingot = "hades_core:tin_ingot",
         glass = "hades_core:glass",
+        book = "hades_core:book",
     }
     if minetest.get_modpath("hades_default") then
         materials.desert_sand = "hades_default:desert_sand"
