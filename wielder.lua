@@ -195,7 +195,7 @@ local function register_wielder(data)
 					return stack:get_count()
 				end,
 			},
-			is_ground_content = true,
+			is_ground_content = false,
 			paramtype2 = "facedir",
 			tubelike = 1,
 			groups = groups,
