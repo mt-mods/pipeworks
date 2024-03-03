@@ -223,6 +223,26 @@ if pipeworks.enable_mese_tube then
 	})
 end
 
+if pipeworks.enable_item_tags and pipeworks.enable_tag_tube then
+	minetest.register_craft( {
+		output = "pipeworks:tag_tube_000000 2",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ materials.book, materials.mese_crystal, materials.book },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:tag_tube_000000",
+		recipe = {
+			"pipeworks:mese_tube_000000",
+			materials.book,
+		},
+	})
+end
+
 if pipeworks.enable_sand_tube then
 	minetest.register_craft( {
 		output = "pipeworks:sand_tube_1 2",

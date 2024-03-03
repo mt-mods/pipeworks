@@ -67,6 +67,7 @@ dofile(pipeworks.modpath.."/tubes/sorting.lua")
 dofile(pipeworks.modpath.."/tubes/signal.lua")
 dofile(pipeworks.modpath.."/tubes/embedded_tube.lua")
 dofile(pipeworks.modpath.."/tubes/pane_embedded_tube.lua")
+dofile(pipeworks.modpath.."/tubes/tags.lua")
 
 if pipeworks.enable_teleport_tube then
 	dofile(pipeworks.modpath.."/tubes/teleport.lua")
