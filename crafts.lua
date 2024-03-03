@@ -1,5 +1,5 @@
 -- Crafting recipes for pipes
-local materials = ...
+local materials = xcompat.materials
 
 minetest.register_craft( {
 	output = "pipeworks:pipe_1_empty 12",
@@ -151,7 +151,7 @@ minetest.register_craft( {
 	output = "pipeworks:teleport_tube_1 2",
 	recipe = {
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ materials.desert_stone, materials.teleporter, materials.desert_stone },
+			{ materials.desert_stone, materials.mese, materials.desert_stone },
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
 	},
 })
