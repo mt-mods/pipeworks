@@ -91,22 +91,27 @@ local function get_craft(pos, inventory, hash)
 	return craft
 end
 
--- From a consumption table with groups and an inventory index, build
--- a consumption table without groups
+-- From a consumption table with groups and an inventory index,
+-- build a consumption table without groups
 local function calculate_consumption(inv_index, consumption_with_groups)
 	inv_index = table.copy(inv_index)
 	consumption_with_groups = table.copy(consumption_with_groups)
 
+	-- table of items to actually consume
 	local consumption = {}
+	-- table of ingredients defined as one or more groups each
 	local grouped_ingredients = {}
 
 	-- First consume all non-group requirements
-	-- This is done to avoid consuming a non-group item which is also
-	-- in a group
+	-- This is done to avoid consuming a non-group item which
+	-- is also in a group
 	for key, count in pairs(consumption_with_groups) do
 		if key:sub(1, 6) == "group:" then
+			-- build table with group recipe items while looping
 			grouped_ingredients[key] = key:sub(7):split(',')
 		else
+			-- if the item to consume doesn't exist in inventory
+			-- or not enough of them, abort crafting
 			if not inv_index[key] or inv_index[key] < count then
 				return nil
 			end
@@ -140,19 +145,25 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 		local take
 		for itemname, count in pairs(inv_index) do
 			if count > 0 then
+				-- groupname is the string as defined by recipe.
+				--  e.g. group:dye,color_blue
+				-- groups holds the group names split into a list
+				--  ready to be passed to core.get_item_group()
 				for groupname, groups in pairs(grouped_ingredients) do
 					if consumption_with_groups[groupname] > 0
 						and ingredient_groups_match_item(groups, itemname)
 					then
-						take = math.min(count, consumption_with_groups[groupname])
+						take = math.min(count,
+							consumption_with_groups[groupname])
 						consumption_with_groups[groupname] =
-								consumption_with_groups[groupname] - take
+							consumption_with_groups[groupname] - take
 
 						assert(consumption_with_groups[groupname] >= 0)
 						consumption[itemname] =
-								(consumption[itemname] or 0) + take
+							(consumption[itemname] or 0) + take
 
-						inv_index[itemname] = inv_index[itemname] - take
+						inv_index[itemname] =
+							inv_index[itemname] - take
 						assert(inv_index[itemname] >= 0)
 					end
 				end
