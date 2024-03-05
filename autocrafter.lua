@@ -4,6 +4,7 @@ local S = minetest.get_translator("pipeworks")
 local autocrafterCache = {}
 
 local craft_time = 1
+local next = next
 
 local function count_index(invlist)
 	local index = {}
@@ -141,7 +142,7 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 	end
 
 	-- Next, resolve groups using the remaining items in the inventory
-	if grouped_ingredients ~= {} then
+	if next(grouped_ingredients) ~= nil then
 		local take
 		for itemname, count in pairs(inv_index) do
 			if count > 0 then
