@@ -972,10 +972,10 @@ for white  = 0, 1 do
 				elseif type(msg) == "table" then
 					if pipeworks.enable_item_tags then
 						local new_tags
-						if type(msg.tags) == "table" then
-							new_tags = msg.tags
+						if type(msg.tags) == "table" or type(msg.tags) == "string" then
+							new_tags = pipeworks.sanitize_tags(msg.tags)
 						elseif type(msg.tag) == "string" then
-							new_tags = {msg.tag}
+							new_tags = pipeworks.sanitize_tags({msg.tag})
 						end
 						if new_tags then
 							for i=1, math.max(#tags, #new_tags) do

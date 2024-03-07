@@ -201,7 +201,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				set_filter_formspec(data, filtmeta)
 			end
 
-			if type(msg.tags) == "table" then
+			if type(msg.tags) == "table" or type(msg.tags) == "string" then
 				item_tags = pipeworks.sanitize_tags(msg.tags)
 			elseif type(msg.tag) == "string" then
 				item_tags = pipeworks.sanitize_tags({msg.tag})

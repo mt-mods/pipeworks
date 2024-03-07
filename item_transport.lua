@@ -388,7 +388,7 @@ luaentity.register_entity("pipeworks:tubed_item", {
 		end
 		local found_next, new_velocity, multimode = go_next(self.start_pos, velocity, stack, self.owner, tags) -- todo: color
 		if pipeworks.enable_item_tags then
-			self.tags = #tags > 0 and pipeworks.sanitize_tags(tags) or nil
+			self.tags = #tags > 0 and tags or nil
 		end
 		local rev_vel = vector.multiply(velocity, -1)
 		local rev_dir = vector.direction(self.start_pos,vector.add(self.start_pos,rev_vel))
