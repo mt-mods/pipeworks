@@ -111,6 +111,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				end
 				minetest.after(0.2, function()
 					if minetest.get_modpath("default") then
+						local current_node = minetest.get_node(pos)
+						if current_node.name ~= "default:" .. swap .. "_open" then
+							-- the chest has already been replaced, don't try to replace what's there.
+							-- see: https://github.com/minetest/minetest_game/pull/3046
+							return
+						end
 						minetest.swap_node(pos, { name = "default:" .. swap, param2 = node.param2 })
 					end
 
