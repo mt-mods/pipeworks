@@ -26,6 +26,9 @@ if pipeworks.enable_item_tags then
 		end
 		return sanitized
 	end
+
+else
+	function pipeworks.sanitize_tags() return {} end
 end
 
 function pipeworks.tube_item(pos, item)
