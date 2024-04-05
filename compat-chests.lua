@@ -1,5 +1,5 @@
--- this bit of code modifies the default and hades chests to be compatible
--- with pipeworks.
+-- this bit of code overrides the default chests from common games (mtg, hades, minclone*) to be
+-- compatible with pipeworks. Where possible, it overrides their formspec to add a splitstacks switch
 
 local fs_helpers = pipeworks.fs_helpers
 
@@ -149,6 +149,8 @@ elseif minetest.get_modpath("hades_chests") then
 			on_rotate = screwdriver.rotate_simple
 		}
 
+		-- get the fields from the chest formspec, we can do this bc. newest functions are called first
+		-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
 		minetest.register_on_player_receive_fields(function(player, formname, fields)
 			if formname == "hades_chests:chest_locked" then
 				local pn = player:get_player_name()
@@ -168,6 +170,8 @@ elseif minetest.get_modpath("hades_chests") then
 		pipeworks.override_chest(chestname_protected, override_protected, connect_sides)
 	end
 elseif minetest.get_modpath("mcl_barrels") then
+	-- TODO: bring splitstacks switch in the formspec
+	-- with the current implementation of mcl_barrels this would mean to duplicate a lot of code from there...
 	local connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1}
 	pipeworks.override_chest("mcl_barrels:barrel_closed", {}, connect_sides)
 	pipeworks.override_chest("mcl_barrels:barrel_open", {}, connect_sides)
