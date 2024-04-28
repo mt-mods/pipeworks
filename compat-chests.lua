@@ -60,7 +60,7 @@ if minetest.get_modpath("default") then
 		if is_pipeworks_chest and not fields.quit and pipeworks.may_configure(pos, player) then
 			-- Pipeworks Switch
 			fs_helpers.on_receive_fields(pos, fields)
-			minetest.show_formspec(pn),
+			minetest.show_formspec(pn,
 					"default:chest",
 					default.chest.get_chest_formspec(pos))
 		end
