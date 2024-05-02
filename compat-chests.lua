@@ -50,14 +50,19 @@ if minetest.get_modpath("default") then
 		if formname ~= "default:chest" then
 			return
 		end
-		local pn = player:get_player_name()
-		if not pn then
+		if fields.quit then
 			return
 		end
-		local pos = default.chest.open_chests[pn].pos
+		local pn = player:get_player_name()
+		local chest_open = default.chest.open_chests[pn]
+		if not chest_open then
+			-- chest already closed before formspec
+			return
+		end
+		local pos = chest_open.pos
 		local chest = pos and minetest.get_node(pos)
 		local is_pipeworks_chest = chest and pipeworks.chests[chest]
-		if is_pipeworks_chest and not fields.quit and pipeworks.may_configure(pos, player) then
+		if is_pipeworks_chest and pipeworks.may_configure(pos, player) then
 			-- Pipeworks Switch
 			fs_helpers.on_receive_fields(pos, fields)
 			minetest.show_formspec(pn,
