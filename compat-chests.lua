@@ -47,10 +47,7 @@ if minetest.get_modpath("default") then
 	-- get the fields from the chest formspec, we can do this bc. newest functions are called first
 	-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
 	minetest.register_on_player_receive_fields(function(player, formname, fields)
-		if formname ~= "default:chest" then
-			return
-		end
-		if fields.quit then
+		if fields.quit or formname ~= "default:chest" then
 			return
 		end
 		local pn = player:get_player_name()
@@ -66,8 +63,8 @@ if minetest.get_modpath("default") then
 			-- Pipeworks Switch
 			fs_helpers.on_receive_fields(pos, fields)
 			minetest.show_formspec(pn,
-					"default:chest",
-					default.chest.get_chest_formspec(pos))
+				"default:chest",
+				default.chest.get_chest_formspec(pos))
 		end
 		-- Do NOT return true here, the callback from default still needs to run
 		return false
@@ -161,15 +158,12 @@ elseif minetest.get_modpath("hades_chests") then
 		-- get the fields from the chest formspec, we can do this bc. newest functions are called first
 		-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
 		minetest.register_on_player_receive_fields(function(player, formname, fields)
-			if formname ~= "hades_chests:chest_locked" then
+			if fields.quit or formname ~= "hades_chests:chest_locked" then
 				return
 			end
 			local pn = player:get_player_name()
-			if not pn then
-				return
-			end
 			local pos = open_chests[pn]
-			if not fields.quit and pos and pipeworks.may_configure(pos, player) then
+			if pos and pipeworks.may_configure(pos, player) then
 				-- Pipeworks Switch
 				fs_helpers.on_receive_fields(pos, fields)
 				minetest.show_formspec(pn, "hades_chests:chest_locked", get_locked_chest_formspec(pos))
