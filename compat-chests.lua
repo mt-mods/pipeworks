@@ -47,21 +47,27 @@ if minetest.get_modpath("default") then
 	-- get the fields from the chest formspec, we can do this bc. newest functions are called first
 	-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
 	minetest.register_on_player_receive_fields(function(player, formname, fields)
-		if formname == "default:chest" then
-			local pn = player:get_player_name()
-			local pos = default.chest.open_chests[pn].pos
-			local chest = pos and minetest.get_node(pos)
-			local is_pipeworks_chest = chest and pipeworks.chests[chest]
-			if is_pipeworks_chest and not fields.quit and pipeworks.may_configure(pos, player) then
-				-- Pipeworks Switch
-				fs_helpers.on_receive_fields(pos, fields)
-				minetest.show_formspec(player:get_player_name(),
-						"default:chest",
-						default.chest.get_chest_formspec(pos))
-			end
-			-- Do NOT return true here, the callback from default still needs to run
-			return false
+		if fields.quit or formname ~= "default:chest" then
+			return
 		end
+		local pn = player:get_player_name()
+		local chest_open = default.chest.open_chests[pn]
+		if not chest_open then
+			-- chest already closed before formspec
+			return
+		end
+		local pos = chest_open.pos
+		local chest = pos and minetest.get_node(pos)
+		local is_pipeworks_chest = chest and pipeworks.chests[chest]
+		if is_pipeworks_chest and pipeworks.may_configure(pos, player) then
+			-- Pipeworks Switch
+			fs_helpers.on_receive_fields(pos, fields)
+			minetest.show_formspec(pn,
+				"default:chest",
+				default.chest.get_chest_formspec(pos))
+		end
+		-- Do NOT return true here, the callback from default still needs to run
+		return false
 	end)
 
 	local connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
@@ -152,17 +158,18 @@ elseif minetest.get_modpath("hades_chests") then
 		-- get the fields from the chest formspec, we can do this bc. newest functions are called first
 		-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
 		minetest.register_on_player_receive_fields(function(player, formname, fields)
-			if formname == "hades_chests:chest_locked" then
-				local pn = player:get_player_name()
-				local pos = open_chests[pn]
-				if not fields.quit and pos and pipeworks.may_configure(pos, player) then
-					-- Pipeworks Switch
-					fs_helpers.on_receive_fields(pos, fields)
-					minetest.show_formspec(pn, "hades_chests:chest_locked", get_locked_chest_formspec(pos))
-				end
-				-- Do NOT return true here, the callback from hades still needs to run (if they add one)
-				return false
+			if fields.quit or formname ~= "hades_chests:chest_locked" then
+				return
 			end
+			local pn = player:get_player_name()
+			local pos = open_chests[pn]
+			if pos and pipeworks.may_configure(pos, player) then
+				-- Pipeworks Switch
+				fs_helpers.on_receive_fields(pos, fields)
+				minetest.show_formspec(pn, "hades_chests:chest_locked", get_locked_chest_formspec(pos))
+			end
+			-- Do NOT return true here, the callback from hades still needs to run (if they add one)
+			return false
 		end)
 
 		local connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
