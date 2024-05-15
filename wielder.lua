@@ -1,5 +1,4 @@
 local S = minetest.get_translator("pipeworks")
-local assumed_eye_pos = vector.new(0, 1.5, 0)
 
 local function delay(x)
 	return (function() return x end)
@@ -87,43 +86,20 @@ local function wielder_on(data, wielder_pos, wielder_node)
 	-- and the problems of wielders acting on themselves if below is solid
 	local under_pos = vector.subtract(wielder_pos, dir)
 	local above_pos = vector.subtract(under_pos, dir)
-	local pitch
-	local yaw
-	if dir.z < 0 then
-		yaw = 0
-		pitch = 0
-	elseif dir.z > 0 then
-		yaw = math.pi
-		pitch = 0
-	elseif dir.x < 0 then
-		yaw = 3*math.pi/2
-		pitch = 0
-	elseif dir.x > 0 then
-		yaw = math.pi/2
-		pitch = 0
-	elseif dir.y > 0 then
-		yaw = 0
-		pitch = -math.pi/2
-	else
-		yaw = 0
-		pitch = math.pi/2
-	end
-	local virtplayer = pipeworks.create_fake_player({
+
+	local fakeplayer = fakelib.create_player({
 		name = data.masquerade_as_owner and wielder_meta:get_string("owner")
 			or ":pipeworks:" .. minetest.pos_to_string(wielder_pos),
-		formspec = wielder_meta:get_string("formspec"),
-		look_dir = vector.multiply(dir, -1),
-		look_pitch = pitch,
-		look_yaw = yaw,
-		sneak = data.sneak,
-		position = vector.subtract(wielder_pos, assumed_eye_pos),
+		direction = vector.multiply(dir, -1),
+		controls = {sneak = data.sneak},
+		position = wielder_pos,
 		inventory = inv,
 		wield_index = wieldindex,
 		wield_list = wield_inv_name
 	})
 
 	local pointed_thing = { type="node", under=under_pos, above=above_pos }
-	data.act(virtplayer, pointed_thing)
+	data.act(fakeplayer, pointed_thing)
 	if data.eject_drops then
 		for i, stack in ipairs(inv:get_list("main")) do
 			if not stack:is_empty() then
@@ -216,16 +192,17 @@ local function register_wielder(data)
 					inv:set_size("main", 100)
 				end
 			end,
-			after_place_node = function (pos, placer)
+			after_place_node = function(pos, placer)
+				if not placer then
+					return
+				end
 				pipeworks.scan_for_tube_objects(pos)
 				local placer_pos = placer:get_pos()
-				if placer_pos and placer:is_player() then placer_pos = vector.add(placer_pos, assumed_eye_pos) end
-				if placer_pos then
-					local dir = vector.subtract(pos, placer_pos)
-					local node = minetest.get_node(pos)
-					node.param2 = minetest.dir_to_facedir(dir, true)
-					minetest.set_node(pos, node)
-				end
+				placer_pos.y = placer_pos.y + placer:get_properties().eye_height
+				local dir = vector.subtract(pos, placer_pos)
+				local node = minetest.get_node(pos)
+				node.param2 = minetest.dir_to_facedir(dir, true)
+				minetest.set_node(pos, node)
 				minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 			end,
 			can_dig = (data.can_dig_nonempty_wield_inv and delay(true) or function(pos, player)
@@ -335,19 +312,18 @@ if pipeworks.enable_node_breaker then
 		end,
 		masquerade_as_owner = true,
 		sneak = false,
-		act = function(virtplayer, pointed_thing)
-			if minetest.is_protected(vector.add(virtplayer:get_pos(), assumed_eye_pos), virtplayer:get_player_name()) then
+		act = function(fakeplayer, pointed_thing)
+			if minetest.is_protected(fakeplayer:get_pos(), fakeplayer:get_player_name()) then
 				return
 			end
-
 			--local dname = "nodebreaker.act() "
-			local wieldstack = virtplayer:get_wielded_item()
+			local wieldstack = fakeplayer:get_wielded_item()
 			local oldwieldstack = ItemStack(wieldstack)
 			local on_use = (minetest.registered_items[wieldstack:get_name()] or {}).on_use
 			if on_use then
 				--pipeworks.logger(dname.."invoking on_use "..tostring(on_use))
-				wieldstack = on_use(wieldstack, virtplayer, pointed_thing) or wieldstack
-				virtplayer:set_wielded_item(wieldstack)
+				wieldstack = on_use(wieldstack, fakeplayer, pointed_thing) or wieldstack
+				fakeplayer:set_wielded_item(wieldstack)
 			else
 				local under_node = minetest.get_node(pointed_thing.under)
 				local def = minetest.registered_nodes[under_node.name]
@@ -363,13 +339,13 @@ if pipeworks.enable_node_breaker then
 				if can_tool_dig_node(under_node.name,
 						wieldstack:get_tool_capabilities(),
 						wieldstack:get_name()) then
-					def.on_dig(pointed_thing.under, under_node, virtplayer)
+					def.on_dig(pointed_thing.under, under_node, fakeplayer)
 					local sound = def.sounds and def.sounds.dug
 					if sound then
 						minetest.sound_play(sound.name,
 							{pos=pointed_thing.under, gain=sound.gain})
 					end
-					wieldstack = virtplayer:get_wielded_item()
+					wieldstack = fakeplayer:get_wielded_item()
 				--~ else
 					--pipeworks.logger(dname.."couldn't dig node!")
 				end
@@ -380,13 +356,13 @@ if pipeworks.enable_node_breaker then
 				if wieldstack:get_count() == oldwieldstack:get_count() and
 						wieldstack:get_metadata() == oldwieldstack:get_metadata() and
 						((minetest.registered_items[wieldstack:get_name()] or {}).wear_represents or "mechanical_wear") == "mechanical_wear" then
-					virtplayer:set_wielded_item(oldwieldstack)
+					fakeplayer:set_wielded_item(oldwieldstack)
 				end
 			elseif wieldname ~= "" then
 				-- tool got replaced by something else:
 				-- treat it as a drop
-				virtplayer:get_inventory():add_item("main", wieldstack)
-				virtplayer:set_wielded_item(ItemStack(""))
+				fakeplayer:get_inventory():add_item("main", wieldstack)
+				fakeplayer:set_wielded_item(ItemStack(""))
 			end
 		end,
 		eject_drops = true,
@@ -430,13 +406,12 @@ if pipeworks.enable_deployer then
 		can_dig_nonempty_wield_inv = false,
 		masquerade_as_owner = true,
 		sneak = false,
-		act = function(virtplayer, pointed_thing)
-			if minetest.is_protected(vector.add(virtplayer:get_pos(), assumed_eye_pos), virtplayer:get_player_name()) then
+		act = function(fakeplayer, pointed_thing)
+			if minetest.is_protected(fakeplayer:get_pos(), fakeplayer:get_player_name()) then
 				return
 			end
-
-			local wieldstack = virtplayer:get_wielded_item()
-			virtplayer:set_wielded_item((minetest.registered_items[wieldstack:get_name()] or {on_place=minetest.item_place}).on_place(wieldstack, virtplayer, pointed_thing) or wieldstack)
+			local wieldstack = fakeplayer:get_wielded_item()
+			fakeplayer:set_wielded_item((minetest.registered_items[wieldstack:get_name()] or {on_place=minetest.item_place}).on_place(wieldstack, fakeplayer, pointed_thing) or wieldstack)
 		end,
 		eject_drops = false,
 	})
@@ -460,10 +435,10 @@ if pipeworks.enable_dispenser then
 		can_dig_nonempty_wield_inv = false,
 		masquerade_as_owner = false,
 		sneak = true,
-		act = function(virtplayer, pointed_thing)
-			local wieldstack = virtplayer:get_wielded_item()
-			virtplayer:set_wielded_item((minetest.registered_items[wieldstack:get_name()] or
-				{on_drop=minetest.item_drop}).on_drop(wieldstack, virtplayer, virtplayer:get_pos()) or
+		act = function(fakeplayer, pointed_thing)
+			local wieldstack = fakeplayer:get_wielded_item()
+			fakeplayer:set_wielded_item((minetest.registered_items[wieldstack:get_name()] or
+				{on_drop=minetest.item_drop}).on_drop(wieldstack, fakeplayer, fakeplayer:get_pos()) or
 				wieldstack)
 		end,
 		eject_drops = false,
