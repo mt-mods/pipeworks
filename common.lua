@@ -91,22 +91,6 @@ function pipeworks.replace_name(tbl,tr,name)
 	return ntbl
 end
 
-----------------------
--- Vector functions --
-----------------------
-
-function pipeworks.vector_cross(a, b)
-	return {
-		x = a.y * b.z - a.z * b.y,
-		y = a.z * b.x - a.x * b.z,
-		z = a.x * b.y - a.y * b.x
-	}
-end
-
-function pipeworks.vector_dot(a, b)
-	return a.x * b.x + a.y * b.y + a.z * b.z
-end
-
 -----------------------
 -- Facedir functions --
 -----------------------
@@ -122,7 +106,7 @@ function pipeworks.facedir_to_top_dir(facedir)
 end
 
 function pipeworks.facedir_to_right_dir(facedir)
-	return pipeworks.vector_cross(
+	return vector.cross(
 		pipeworks.facedir_to_top_dir(facedir),
 		minetest.facedir_to_dir(facedir)
 	)
@@ -142,27 +126,8 @@ function directions.side_to_dir(side)
 end
 
 function directions.dir_to_side(dir)
-	local c = pipeworks.vector_dot(dir, vector.new(1, 2, 3)) + 4
+	local c = vector.dot(dir, vector.new(1, 2, 3)) + 4
 	return ({6, 2, 4, 0, 3, 1, 5})[c]
-end
-
-----------------------
--- String functions --
-----------------------
-
---[[function pipeworks.string_split(str, sep)
-	local fields = {}
-	local index = 1
-	local expr = "([^"..sep.."])+"
-	string.gsub(str, expr, function(substring)
-		fields[index] = substring
-		index = index + 1
-	end)
-	return fields
-end]]
-
-function pipeworks.string_startswith(str, substr)
-	return str:sub(1, substr:len()) == substr
 end
 
 ---------------------
@@ -208,7 +173,7 @@ pipeworks.fs_helpers = fs_helpers
 function fs_helpers.on_receive_fields(pos, fields)
 	local meta = minetest.get_meta(pos)
 	for field in pairs(fields) do
-		if pipeworks.string_startswith(field, "fs_helpers_cycling:") then
+		if field:match("^fs_helpers_cycling:") then
 			local l = field:split(":")
 			local new_value = tonumber(l[2])
 			local meta_name = l[3]
