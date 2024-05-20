@@ -205,7 +205,10 @@ if pipeworks.enable_node_breaker then
 						return
 					end
 				end
-				node_def.on_dig(pointed.under, node, fakeplayer)
+				-- This must only check for false, because `on_dig` returning nil is the same as returning true.
+				if node_def.on_dig(pointed.under, node, fakeplayer) == false then
+					return
+				end
 				local sound = node_def.sounds and node_def.sounds.dug
 				if sound then
 					minetest.sound_play(sound.name, {pos = pointed.under, gain = sound.gain})
