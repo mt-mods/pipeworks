@@ -59,6 +59,7 @@ dofile(pipeworks.modpath.."/luaentity.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/filter-injector.lua")
+dofile(pipeworks.modpath.."/chests.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
 dofile(pipeworks.modpath.."/tubes/registration.lua")
@@ -95,12 +96,11 @@ end
 if pipeworks.enable_pipe_devices then
 	dofile(pipeworks.modpath.."/devices.lua")
 end
-if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.get_modpath("hades_core")) then
+if pipeworks.enable_redefines then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
-	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
-if pipeworks.enable_redefines and minetest.get_modpath("mcl_barrels") then
-	dofile(pipeworks.modpath.."/mcl_barrels.lua")
+if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.get_modpath("hades_core")) then
+	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
 if pipeworks.enable_redefines and minetest.get_modpath("mcl_furnaces") then
 	dofile(pipeworks.modpath.."/mcl_furnaces.lua")
