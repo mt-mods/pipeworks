@@ -267,7 +267,7 @@ if pipeworks.enable_node_breaker then
 				end
 				local sound = node_def.sounds and node_def.sounds.dug
 				if sound then
-					minetest.sound_play(sound.name, {pos = pointed.under, gain = sound.gain})
+					minetest.sound_play(sound, {pos = pointed.under}, true)
 				end
 				stack = fakeplayer:get_wielded_item()
 			end
@@ -304,7 +304,14 @@ if pipeworks.enable_deployer then
 			local stack = fakeplayer:get_wielded_item()
 			local def = minetest.registered_items[stack:get_name()]
 			if def and def.on_place then
-				fakeplayer:set_wielded_item(def.on_place(stack, fakeplayer, pointed) or stack)
+				local new_stack, placed_pos = def.on_place(stack, fakeplayer, pointed)
+				fakeplayer:set_wielded_item(new_stack or stack)
+				-- minetest.item_place_node doesn't play sound to the placer
+				local sound = placed_pos and def.sounds and def.sounds.place
+				if sound then
+					local name = fakeplayer:get_player_name()
+					minetest.sound_play(sound, {pos = placed_pos, to_player = name}, true)
+				end
 			end
 		end,
 	})
