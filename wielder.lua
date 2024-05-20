@@ -308,8 +308,8 @@ if pipeworks.enable_deployer then
 				fakeplayer:set_wielded_item(new_stack or stack)
 				-- minetest.item_place_node doesn't play sound to the placer
 				local sound = placed_pos and def.sounds and def.sounds.place
-				if sound then
-					local name = fakeplayer:get_player_name()
+				local name = fakeplayer:get_player_name()
+				if sound and name ~= "" then
 					minetest.sound_play(sound, {pos = placed_pos, to_player = name}, true)
 				end
 			end
