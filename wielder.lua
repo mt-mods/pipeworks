@@ -1,8 +1,8 @@
 local S = minetest.get_translator("pipeworks")
 
-local function set_wielder_formspec(data, meta)
-	local width, height = data.wield_inv.width, data.wield_inv.height
-	local size = "10.2,"..(data.wield_inv.height + 7)
+local function set_wielder_formspec(def, meta)
+	local width, height = def.wield_inv.width, def.wield_inv.height
+	local size = "10.2,"..(def.wield_inv.height + 7)
 	local list_bg = ""
 	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 		list_bg = "style_type[box;colors=#666]"
@@ -15,30 +15,30 @@ local function set_wielder_formspec(data, meta)
 	meta:set_string("formspec",
 		"formspec_version[2]size["..size.."]"..
 		pipeworks.fs_helpers.get_prepends(size)..list_bg..
-		"item_image[0.5,0.5;1,1;pipeworks:"..data.name.."_off]"..
-		"label[1.5,1;"..minetest.formspec_escape(data.description).."]"..
-		"list[context;"..data.wield_inv.name..";"..((10-width)*0.5)..",1;"..width..","..height..";]"..
+		"item_image[0.5,0.5;1,1;"..def.name.."_off]"..
+		"label[1.5,1;"..minetest.formspec_escape(def.description).."]"..
+		"list[context;"..def.wield_inv.name..";"..((10-width)*0.5)..",1;"..width..","..height..";]"..
 		pipeworks.fs_helpers.get_inv((height+2)).."listring[]"
 	)
-	meta:set_string("infotext", data.description)
+	meta:set_string("infotext", def.description)
 end
 
-local function wielder_on(data, pos, node)
-	if node.name ~= "pipeworks:"..data.name.."_off" then
+local function wielder_on(def, pos, node)
+	if node.name ~= def.name.."_off" then
 		return
 	end
-	node.name = "pipeworks:"..data.name.."_on"
+	node.name = def.name.."_on"
 	minetest.swap_node(pos, node)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local wield_index
-	for i, stack in ipairs(inv:get_list(data.wield_inv.name)) do
+	for i, stack in ipairs(inv:get_list(def.wield_inv.name)) do
 		if not stack:is_empty() then
 			wield_index = i
 			break
 		end
 	end
-	if not wield_index and not data.wield_hand then
+	if not wield_index and not def.wield_hand then
 		return
 	end
 	local dir = minetest.facedir_to_dir(node.param2)
@@ -48,7 +48,7 @@ local function wielder_on(data, pos, node)
 		position = pos,
 		inventory = inv,
 		wield_index = wield_index or 1,
-		wield_list = data.wield_inv.name,
+		wield_list = def.wield_inv.name,
 	})
 	-- Under and above positions are intentionally switched.
 	local pointed = {
@@ -56,8 +56,8 @@ local function wielder_on(data, pos, node)
 		under = vector.subtract(pos, dir),
 		above = vector.subtract(pos, vector.multiply(dir, 2)),
 	}
-	data.action(fakeplayer, pointed)
-	if data.eject_drops then
+	def.action(fakeplayer, pointed)
+	if def.eject_drops then
 		for i, stack in ipairs(inv:get_list("main")) do
 			if not stack:is_empty() then
 				pipeworks.tube_inject_item(pos, pos, dir, stack)
@@ -67,14 +67,14 @@ local function wielder_on(data, pos, node)
 	end
 end
 
-local function wielder_off(data, pos, node)
-	if node.name == "pipeworks:"..data.name.."_on" then
-		node.name = "pipeworks:"..data.name.."_off"
+local function wielder_off(def, pos, node)
+	if node.name == def.name.."_on" then
+		node.name = def.name.."_off"
 		minetest.swap_node(pos, node)
 	end
 end
 
-local function register_wielder(data)
+function pipeworks.register_wielder(def)
 	for _,state in ipairs({"off", "on"}) do
 		local groups = {
 			snappy = 2, choppy = 2, oddly_breakable_by_hand = 2,
@@ -82,14 +82,9 @@ local function register_wielder(data)
 			axey = 1, handy = 1, pickaxey = 1,
 			not_in_creative_inventory = state == "on" and 1 or nil
 		}
-		local tiles = {}
-		for _,side in ipairs({"top", "bottom", "side2", "side1", "back", "front"}) do
-			local suffix = data.stateful_sides[side] and "_"..state or ""
-			table.insert(tiles, "pipeworks_"..data.name.."_"..side..suffix..".png")
-		end
-		minetest.register_node("pipeworks:"..data.name.."_"..state, {
-			description = data.description,
-			tiles = tiles,
+		minetest.register_node(def.name.."_"..state, {
+			description = def.description,
+			tiles = def.tiles[state],
 			paramtype2 = "facedir",
 			groups = groups,
 			is_ground_content = false,
@@ -97,35 +92,36 @@ local function register_wielder(data)
 			_sound_def = {
 				key = "node_sound_stone_defaults",
 			},
-			drop = "pipeworks:"..data.name.."_off",
+			drop = def.name.."_off",
 			mesecons = {
 				effector = {
 					rules = pipeworks.rules_all,
 					action_on = function (pos, node)
-						wielder_on(data, pos, node)
+						wielder_on(def, pos, node)
 					end,
 					action_off = function (pos, node)
-						wielder_off(data, pos, node)
+						wielder_off(def, pos, node)
 					end,
 				},
 			},
 			tube = {
 				can_insert = function(pos, node, stack, direction)
-					if data.block_back_insert then
+					if def.eject_drops then
+						-- Prevent ejected items from being inserted
 						local dir = vector.multiply(minetest.facedir_to_dir(node.param2), -1)
 						if vector.equals(direction, dir) then
 							return false
 						end
 					end
 					local inv = minetest.get_meta(pos):get_inventory()
-					return inv:room_for_item(data.wield_inv.name, stack)
+					return inv:room_for_item(def.wield_inv.name, stack)
 				end,
 				insert_object = function(pos, node, stack)
 					local inv = minetest.get_meta(pos):get_inventory()
-					return inv:add_item(data.wield_inv.name, stack)
+					return inv:add_item(def.wield_inv.name, stack)
 				end,
 				input_inventory = "main",
-				connect_sides = data.connect_sides,
+				connect_sides = def.connect_sides,
 				can_remove = function(pos, node, stack)
 					return stack:get_count()
 				end,
@@ -133,11 +129,11 @@ local function register_wielder(data)
 			on_construct = function(pos)
 				local meta = minetest.get_meta(pos)
 				local inv = meta:get_inventory()
-				inv:set_size(data.wield_inv.name, data.wield_inv.width * data.wield_inv.height)
-				if data.eject_drops then
+				inv:set_size(def.wield_inv.name, def.wield_inv.width * def.wield_inv.height)
+				if def.eject_drops then
 					inv:set_size("main", 32)
 				end
-				set_wielder_formspec(data, meta)
+				set_wielder_formspec(def, meta)
 			end,
 			after_place_node = function(pos, placer)
 				pipeworks.scan_for_tube_objects(pos)
@@ -172,18 +168,29 @@ local function register_wielder(data)
 			end
 		})
 	end
-	table.insert(pipeworks.ui_cat_tube_list, "pipeworks:"..data.name.."_off")
+	table.insert(pipeworks.ui_cat_tube_list, def.name.."_off")
+end
+
+local function get_tiles(name, stateful)
+	local tiles = {on = {}, off = {}}
+	for _,state in ipairs({"off", "on"}) do
+		for _,side in ipairs({"top", "bottom", "side2", "side1", "back", "front"}) do
+			local suffix = stateful[side] and "_"..state or ""
+			table.insert(tiles[state], "pipeworks_"..name.."_"..side..suffix..".png")
+		end
+	end
+	return tiles
 end
 
 if pipeworks.enable_node_breaker then
-	register_wielder({
-		name = "nodebreaker",
+	pipeworks.register_wielder({
+		name = "pipeworks:nodebreaker",
 		description = S("Node Breaker"),
-		stateful_sides = {top = true, bottom = true, side2 = true, side1 = true, front = true},
+		tiles = get_tiles("nodebreaker", {top = 1, bottom = 1, side2 = 1, side1 = 1, front = 1}),
 		connect_sides = {top = 1, bottom = 1, left = 1, right = 1, back = 1},
-		block_back_insert = false,
 		wield_inv = {name = "pick", width = 1, height = 1},
 		wield_hand = true,
+		eject_drops = true,
 		action = function(fakeplayer, pointed)
 			local stack = fakeplayer:get_wielded_item()
 			local old_stack = ItemStack(stack)
@@ -228,7 +235,6 @@ if pipeworks.enable_node_breaker then
 				fakeplayer:set_wielded_item("")
 			end
 		end,
-		eject_drops = true,
 	})
 	minetest.register_alias("technic:nodebreaker_off", "pipeworks:nodebreaker_off")
 	minetest.register_alias("technic:nodebreaker_on", "pipeworks:nodebreaker_on")
@@ -239,10 +245,10 @@ if pipeworks.enable_node_breaker then
 end
 
 if pipeworks.enable_deployer then
-	register_wielder({
-		name = "deployer",
+	pipeworks.register_wielder({
+		name = "pipeworks:deployer",
 		description = S("Deployer"),
-		stateful_sides = {front = true},
+		tiles = get_tiles("deployer", {front = 1}),
 		connect_sides = {back = 1},
 		wield_inv = {name = "main", width = 3, height = 3},
 		action = function(fakeplayer, pointed)
@@ -252,7 +258,6 @@ if pipeworks.enable_deployer then
 				fakeplayer:set_wielded_item(def.on_place(stack, fakeplayer, pointed) or stack)
 			end
 		end,
-		eject_drops = false,
 	})
 	minetest.register_alias("technic:deployer_off", "pipeworks:deployer_off")
 	minetest.register_alias("technic:deployer_on", "pipeworks:deployer_on")
@@ -269,10 +274,10 @@ if pipeworks.enable_dispenser then
 		end
 		return item_drop(stack, dropper, pos)
 	end
-	register_wielder({
-		name = "dispenser",
+	pipeworks.register_wielder({
+		name = "pipeworks:dispenser",
 		description = S("Dispenser"),
-		stateful_sides = {front = true},
+		tiles = get_tiles("dispenser", {front = 1}),
 		connect_sides = {back = 1},
 		wield_inv = {name = "main", width = 3, height = 3},
 		action = function(fakeplayer)
@@ -283,6 +288,5 @@ if pipeworks.enable_dispenser then
 				fakeplayer:set_wielded_item(def.on_drop(stack, fakeplayer, pos) or stack)
 			end
 		end,
-		eject_drops = false,
 	})
 end
