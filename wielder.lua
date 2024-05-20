@@ -1,41 +1,51 @@
 local S = minetest.get_translator("pipeworks")
+local has_digilines = minetest.get_modpath("digilines")
 
 local function set_wielder_formspec(def, meta)
 	local width, height = def.wield_inv.width, def.wield_inv.height
-	local size = "10.2,"..(def.wield_inv.height + 7)
+	local offset = 5.22 - width * 0.625
+	local size = "10.2,"..(6.5 + height * 1.25 + (has_digilines and 1.25 or 0))
 	local list_bg = ""
 	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
 		list_bg = "style_type[box;colors=#666]"
 		for i=0, height-1 do
 			for j=0, width-1 do
-				list_bg = list_bg.."box["..((10-width)*0.5)+(i*1.25)..","..1+(j*1.25)..";1,1;]"
+				list_bg = list_bg.."box["..offset+(i*1.25)..","..1.25+(j*1.25)..";1,1;]"
 			end
 		end
 	end
-	meta:set_string("formspec",
-		"formspec_version[2]size["..size.."]"..
+	local inv_offset = 1.5 + height * 1.25
+	local fs = "formspec_version[2]size["..size.."]"..
 		pipeworks.fs_helpers.get_prepends(size)..list_bg..
-		"item_image[0.5,0.5;1,1;"..def.name.."_off]"..
-		"label[1.5,1;"..minetest.formspec_escape(def.description).."]"..
-		"list[context;"..def.wield_inv.name..";"..((10-width)*0.5)..",1;"..width..","..height..";]"..
-		pipeworks.fs_helpers.get_inv((height+2)).."listring[]"
-	)
+		"item_image[0.5,0.3;1,1;"..def.name.."_off]"..
+		"label[1.75,0.8;"..minetest.formspec_escape(def.description).."]"..
+		"list[context;"..def.wield_inv.name..";"..offset..",1.25;"..width..","..height..";]"
+	if has_digilines then
+		fs = fs.."field[1.5,"..inv_offset..";5,0.8;channel;"..S("Channel")..";${channel}]"..
+			"button_exit[6.5,"..inv_offset..";2,0.8;save;"..S("Save").."]"..
+			pipeworks.fs_helpers.get_inv(inv_offset + 1.25).."listring[]"
+	else
+		fs = fs..pipeworks.fs_helpers.get_inv(inv_offset).."listring[]"
+	end
+	meta:set_string("formspec", fs)
 	meta:set_string("infotext", def.description)
 end
 
-local function wielder_on(def, pos, node)
-	if node.name ~= def.name.."_off" then
-		return
-	end
-	node.name = def.name.."_on"
-	minetest.swap_node(pos, node)
+local function wielder_action(def, pos, node, index)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
+	local list = inv:get_list(def.wield_inv.name)
 	local wield_index
-	for i, stack in ipairs(inv:get_list(def.wield_inv.name)) do
-		if not stack:is_empty() then
-			wield_index = i
-			break
+	if index then
+		if list[index] and (def.wield_hand or not list[index]:is_empty()) then
+			wield_index = index
+		end
+	else
+		for i, stack in ipairs(list) do
+			if not stack:is_empty() then
+				wield_index = i
+				break
+			end
 		end
 	end
 	if not wield_index and not def.wield_hand then
@@ -67,10 +77,41 @@ local function wielder_on(def, pos, node)
 	end
 end
 
+local function wielder_on(def, pos, node)
+	if node.name ~= def.name.."_off" then
+		return
+	end
+	node.name = def.name.."_on"
+	minetest.swap_node(pos, node)
+	wielder_action(def, pos, node)
+end
+
 local function wielder_off(def, pos, node)
 	if node.name == def.name.."_on" then
 		node.name = def.name.."_off"
 		minetest.swap_node(pos, node)
+	end
+end
+
+local function wielder_digiline_action(def, pos, channel, msg)
+	local meta = minetest.get_meta(pos)
+	local set_channel = meta:get_string("channel")
+	if channel ~= set_channel then
+		return
+	end
+	if type(msg) ~= "table" then
+		if type(msg) == "string" then
+			if msg:sub(1, 8) == "activate" then
+				msg = {command = "activate", slot = tonumber(msg:sub(9))}
+			end
+		else
+			return
+		end
+	end
+	if msg.command == "activate" then
+		local node = minetest.get_node(pos)
+		local index = type(msg.slot) == "number" and msg.slot or nil
+		wielder_action(def, pos, node, index)
 	end
 end
 
@@ -96,11 +137,19 @@ function pipeworks.register_wielder(def)
 			mesecons = {
 				effector = {
 					rules = pipeworks.rules_all,
-					action_on = function (pos, node)
+					action_on = function(pos, node)
 						wielder_on(def, pos, node)
 					end,
-					action_off = function (pos, node)
+					action_off = function(pos, node)
 						wielder_off(def, pos, node)
+					end,
+				},
+			},
+			digilines = {
+				receptor = {},
+				effector = {
+					action = function(pos, _, channel, msg)
+						wielder_digiline_action(def, pos, channel, msg)
 					end,
 				},
 			},
