@@ -214,7 +214,13 @@ function pipeworks.register_wielder(def)
 			allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 				if not pipeworks.may_configure(pos, player) then return 0 end
 				return count
-			end
+			end,
+			on_receive_fields = function(pos, _, fields, sender)
+				if not fields.channel or not pipeworks.may_configure(pos, sender) then
+					return
+				end
+				minetest.get_meta(pos):set_string("channel", fields.channel)
+			end,
 		})
 	end
 	table.insert(pipeworks.ui_cat_tube_list, def.name.."_off")
