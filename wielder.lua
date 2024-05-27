@@ -169,7 +169,7 @@ function pipeworks.register_wielder(def)
 					local inv = minetest.get_meta(pos):get_inventory()
 					return inv:add_item(def.wield_inv.name, stack)
 				end,
-				input_inventory = "main",
+				input_inventory = def.wield_inv.name,
 				connect_sides = def.connect_sides,
 				can_remove = function(pos, node, stack)
 					return stack:get_count()
@@ -195,7 +195,7 @@ function pipeworks.register_wielder(def)
 				minetest.get_meta(pos):set_string("owner", placer:get_player_name())
 			end,
 			after_dig_node = function(pos, oldnode, oldmetadata, digger)
-				for _,stack in ipairs(oldmetadata.inventory.main or {}) do
+				for _,stack in ipairs(oldmetadata.inventory[def.wield_inv.name] or {}) do
 					if not stack:is_empty() then
 						minetest.add_item(pos, stack)
 					end
