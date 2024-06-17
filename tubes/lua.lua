@@ -232,7 +232,7 @@ local function safe_print(param)
 	local string_meta = getmetatable("")
 	local sandbox = string_meta.__index
 	string_meta.__index = string -- Leave string sandbox temporarily
-	minetest.log("action", "Lua Tube print: " .. dump(param))
+	print(dump(param))
 	string_meta.__index = sandbox -- Restore string sandbox
 end
 
