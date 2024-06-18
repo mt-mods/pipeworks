@@ -606,7 +606,7 @@ local function save_memory(pos, meta, mem)
 		meta:set_string("lc_memory", memstring)
 		meta:mark_as_private("lc_memory")
 	else
-		minetest.log("error", "lua_tube memory overflow. "..memsize_max.." bytes available, "
+		minetest.log("info", "lua_tube memory overflow. "..memsize_max.." bytes available, "
 				..#memstring.." required. Controller overheats.")
 		burn_controller(pos)
 	end
