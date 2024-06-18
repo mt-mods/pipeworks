@@ -31,6 +31,7 @@ local settings = {
 	delete_item_on_clearobject = true,
 	use_real_entities = true,
 	entity_update_interval = 0,
+	lua_tube_print_behavior = "noop",
 }
 
 pipeworks.toggles = {}
@@ -70,6 +71,7 @@ for name, value in pairs(settings) do
 	elseif setting_type == "number" then
 		pipeworks[name] = tonumber(minetest.settings:get(prefix..name) or value)
 	else
-		pipeworks[name] = value
+		local got_setting = minetest.settings:get(prefix..name)
+		pipeworks[name] = got_setting ~= "" and got_setting or value
 	end
 end

@@ -228,8 +228,9 @@ end
 -- Parsing and running --
 -------------------------
 
-local function safe_print(param)
-	if mesecon.setting("luacontroller_print_behavior", "log") == "log" then
+local safe_print = function() end
+if pipeworks.lua_tube_print_behavior == "log" then
+	safe_print = function(param)
 		local string_meta = getmetatable("")
 		local sandbox = string_meta.__index
 		string_meta.__index = string -- Leave string sandbox temporarily
