@@ -228,9 +228,8 @@ end
 -- Parsing and running --
 -------------------------
 
-local safe_print = function() end
-if pipeworks.lua_tube_print_behavior == "log" then
-	safe_print = function(param)
+local function safe_print(param)
+	if pipeworks.lua_tube_print_behavior == "log" then
 		local string_meta = getmetatable("")
 		local sandbox = string_meta.__index
 		string_meta.__index = string -- Leave string sandbox temporarily
