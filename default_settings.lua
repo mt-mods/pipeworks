@@ -31,7 +31,7 @@ local settings = {
 	delete_item_on_clearobject = true,
 	use_real_entities = true,
 	entity_update_interval = 0,
-	lua_tube_print_behavior = "noop",
+	lua_tube_print_behavior = "log",
 }
 
 pipeworks.toggles = {}
