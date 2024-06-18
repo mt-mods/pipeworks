@@ -1,5 +1,5 @@
 -- Crafting recipes for pipes
-local materials = ...
+local materials = xcompat.materials
 
 minetest.register_craft( {
 	output = "pipeworks:pipe_1_empty 12",
@@ -151,7 +151,7 @@ minetest.register_craft( {
 	output = "pipeworks:teleport_tube_1 2",
 	recipe = {
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
-			{ materials.desert_stone, materials.teleporter, materials.desert_stone },
+			{ materials.desert_stone, materials.mese, materials.desert_stone },
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
 	},
 })
@@ -219,6 +219,26 @@ if pipeworks.enable_mese_tube then
 			materials.mese_crystal_fragment,
 			materials.mese_crystal_fragment,
 			materials.mese_crystal_fragment,
+		},
+	})
+end
+
+if pipeworks.enable_item_tags and pipeworks.enable_tag_tube then
+	minetest.register_craft( {
+		output = "pipeworks:tag_tube_000000 2",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ materials.book, materials.mese_crystal, materials.book },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "pipeworks:tag_tube_000000",
+		recipe = {
+			"pipeworks:mese_tube_000000",
+			materials.book,
 		},
 	})
 end

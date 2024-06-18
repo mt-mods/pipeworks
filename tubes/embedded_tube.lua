@@ -1,4 +1,4 @@
-local materials = ...
+local materials = xcompat.materials
 local S = minetest.get_translator("pipeworks")
 
 local straight = function(pos, node, velocity, stack) return {velocity} end
@@ -27,6 +27,7 @@ function pipeworks.register_embedded_tube(nodename, opts)
 			pickaxey=1,
 			handy=1
 		},
+		is_ground_content = false,
 		_mcl_hardness = 0.8,
 		legacy_facedir_simple = true,
 		_sound_def = {

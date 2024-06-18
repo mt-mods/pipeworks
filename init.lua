@@ -59,17 +59,16 @@ dofile(pipeworks.modpath.."/luaentity.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
 dofile(pipeworks.modpath.."/flowing_logic.lua")
 dofile(pipeworks.modpath.."/filter-injector.lua")
+dofile(pipeworks.modpath.."/chests.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
 dofile(pipeworks.modpath.."/wielder.lua")
-
-local materials = loadfile(pipeworks.modpath.."/materials.lua")()
-
 dofile(pipeworks.modpath.."/tubes/registration.lua")
 dofile(pipeworks.modpath.."/tubes/routing.lua")
 dofile(pipeworks.modpath.."/tubes/sorting.lua")
 dofile(pipeworks.modpath.."/tubes/signal.lua")
-loadfile(pipeworks.modpath.."/tubes/embedded_tube.lua")(materials)
+dofile(pipeworks.modpath.."/tubes/embedded_tube.lua")
 dofile(pipeworks.modpath.."/tubes/pane_embedded_tube.lua")
+dofile(pipeworks.modpath.."/tubes/tags.lua")
 
 if pipeworks.enable_teleport_tube then
 	dofile(pipeworks.modpath.."/tubes/teleport.lua")
@@ -97,12 +96,11 @@ end
 if pipeworks.enable_pipe_devices then
 	dofile(pipeworks.modpath.."/devices.lua")
 end
-if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.get_modpath("hades_core")) then
+if pipeworks.enable_redefines then
 	dofile(pipeworks.modpath.."/compat-chests.lua")
-	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
-if pipeworks.enable_redefines and minetest.get_modpath("mcl_barrels") then
-	dofile(pipeworks.modpath.."/mcl_barrels.lua")
+if pipeworks.enable_redefines and (minetest.get_modpath("default") or minetest.get_modpath("hades_core")) then
+	dofile(pipeworks.modpath.."/compat-furnaces.lua")
 end
 if pipeworks.enable_redefines and minetest.get_modpath("mcl_furnaces") then
 	dofile(pipeworks.modpath.."/mcl_furnaces.lua")
@@ -111,7 +109,7 @@ if pipeworks.enable_autocrafter then
 	dofile(pipeworks.modpath.."/autocrafter.lua")
 end
 
-loadfile(pipeworks.modpath.."/crafts.lua")(materials)
+dofile(pipeworks.modpath.."/crafts.lua")
 
 minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 

@@ -4,6 +4,7 @@ local S = minetest.get_translator("pipeworks")
 local autocrafterCache = {}
 
 local craft_time = 1
+local next = next
 
 local function count_index(invlist)
 	local index = {}
@@ -48,7 +49,9 @@ local function get_matching_craft(output_name, example_recipe)
 			elseif recipe_item_name:sub(1, 6) == "group:" then
 				group = recipe_item_name:sub(7)
 				for example_item_name, _ in pairs(index_example) do
-					if minetest.get_item_group(example_item_name, group) > 0 then
+					if minetest.get_item_group(
+						example_item_name, group) ~= 0
+					then
 						score = score + 1
 						break
 					end
@@ -89,22 +92,27 @@ local function get_craft(pos, inventory, hash)
 	return craft
 end
 
--- From a consumption table with groups and an inventory index, build
--- a consumption table without groups
+-- From a consumption table with groups and an inventory index,
+-- build a consumption table without groups
 local function calculate_consumption(inv_index, consumption_with_groups)
 	inv_index = table.copy(inv_index)
 	consumption_with_groups = table.copy(consumption_with_groups)
 
+	-- table of items to actually consume
 	local consumption = {}
-	local groups = {}
+	-- table of ingredients defined as one or more groups each
+	local grouped_ingredients = {}
 
 	-- First consume all non-group requirements
-	-- This is done to avoid consuming a non-group item which is also
-	-- in a group
+	-- This is done to avoid consuming a non-group item which
+	-- is also in a group
 	for key, count in pairs(consumption_with_groups) do
 		if key:sub(1, 6) == "group:" then
-			groups[#groups + 1] = key:sub(7, #key)
+			-- build table with group recipe items while looping
+			grouped_ingredients[key] = key:sub(7):split(',')
 		else
+			-- if the item to consume doesn't exist in inventory
+			-- or not enough of them, abort crafting
 			if not inv_index[key] or inv_index[key] < count then
 				return nil
 			end
@@ -118,28 +126,45 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 		end
 	end
 
+	-- helper function to resolve matching ingredients with multiple group
+	-- requirements
+	local function ingredient_groups_match_item(ingredient_groups, name)
+		local found = 0
+		local count_ingredient_groups = #ingredient_groups
+		for i = 1, count_ingredient_groups do
+			if minetest.get_item_group(name,
+				ingredient_groups[i]) ~= 0
+			then
+				found = found + 1
+			end
+		end
+		return found == count_ingredient_groups
+	end
+
 	-- Next, resolve groups using the remaining items in the inventory
-	local take
-	if #groups > 0 then
+	if next(grouped_ingredients) ~= nil then
+		local take
 		for itemname, count in pairs(inv_index) do
 			if count > 0 then
-				local def = minetest.registered_items[itemname]
-				local item_groups = def and def.groups or {}
-				for i = 1, #groups do
-					local group = groups[i]
-					local groupname = "group:" .. group
-					if item_groups[group] and item_groups[group] >= 1
-						and consumption_with_groups[groupname] > 0
+				-- groupname is the string as defined by recipe.
+				--  e.g. group:dye,color_blue
+				-- groups holds the group names split into a list
+				--  ready to be passed to core.get_item_group()
+				for groupname, groups in pairs(grouped_ingredients) do
+					if consumption_with_groups[groupname] > 0
+						and ingredient_groups_match_item(groups, itemname)
 					then
-						take = math.min(count, consumption_with_groups[groupname])
+						take = math.min(count,
+							consumption_with_groups[groupname])
 						consumption_with_groups[groupname] =
-								consumption_with_groups[groupname] - take
+							consumption_with_groups[groupname] - take
 
 						assert(consumption_with_groups[groupname] >= 0)
 						consumption[itemname] =
-								(consumption[itemname] or 0) + take
+							(consumption[itemname] or 0) + take
 
-						inv_index[itemname] = inv_index[itemname] - take
+						inv_index[itemname] =
+							inv_index[itemname] - take
 						assert(inv_index[itemname] >= 0)
 					end
 				end
@@ -433,6 +458,7 @@ minetest.register_node("pipeworks:autocrafter", {
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
 	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
 	_mcl_hardness=0.8,
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
