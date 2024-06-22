@@ -70,7 +70,6 @@ for name, value in pairs(settings) do
 	elseif setting_type == "number" then
 		pipeworks[name] = tonumber(minetest.settings:get(prefix..name) or value)
 	else
-		local got_setting = minetest.settings:get(prefix..name)
-		pipeworks[name] = got_setting ~= "" and got_setting or value
+		pipeworks[name] = value
 	end
 end
