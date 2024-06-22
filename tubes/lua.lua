@@ -229,7 +229,7 @@ end
 -------------------------
 
 local function safe_print(param)
-	if minetest.settings:get("pipeworks_lua_tube_print_behavior") == "log" then
+	if (minetest.settings:get("pipeworks_lua_tube_print_behavior") or "log") == "log" then
 		local string_meta = getmetatable("")
 		local sandbox = string_meta.__index
 		string_meta.__index = string -- Leave string sandbox temporarily
