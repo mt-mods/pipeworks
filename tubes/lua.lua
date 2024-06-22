@@ -229,11 +229,13 @@ end
 -------------------------
 
 local function safe_print(param)
-	local string_meta = getmetatable("")
-	local sandbox = string_meta.__index
-	string_meta.__index = string -- Leave string sandbox temporarily
-	print(dump(param))
-	string_meta.__index = sandbox -- Restore string sandbox
+	if (minetest.settings:get("pipeworks_lua_tube_print_behavior") or "log") == "log" then
+		local string_meta = getmetatable("")
+		local sandbox = string_meta.__index
+		string_meta.__index = string -- Leave string sandbox temporarily
+		minetest.log("action", string.format("[pipeworks.tubes.lua] print(%s)", dump(param)))
+		string_meta.__index = sandbox -- Restore string sandbox
+	end
 end
 
 local function safe_date()
@@ -603,7 +605,7 @@ local function save_memory(pos, meta, mem)
 		meta:set_string("lc_memory", memstring)
 		meta:mark_as_private("lc_memory")
 	else
-		print("Error: lua_tube memory overflow. "..memsize_max.." bytes available, "
+		minetest.log("info", "lua_tube memory overflow. "..memsize_max.." bytes available, "
 				..#memstring.." required. Controller overheats.")
 		burn_controller(pos)
 	end

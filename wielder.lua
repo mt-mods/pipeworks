@@ -281,7 +281,6 @@ if pipeworks.enable_node_breaker then
 				-- Don't mechanically wear out tool
 				if stack:get_wear() ~= old_stack:get_wear() and stack:get_count() == old_stack:get_count()
 						and (item_def.wear_represents == nil or item_def.wear_represents == "mechanical_wear") then
-					print("replaced")
 					fakeplayer:set_wielded_item(old_stack)
 				end
 			elseif not stack:is_empty() then
