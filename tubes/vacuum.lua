@@ -1,6 +1,8 @@
 
 local S = minetest.get_translator("pipeworks")
 
+local has_vislib = minetest.get_modpath("vizlib")
+
 local enable_max = minetest.settings:get_bool("pipeworks_enable_items_per_tube_limit", true)
 local max_items = tonumber(minetest.settings:get("pipeworks_max_items_per_tube")) or 30
 max_items = math.ceil(max_items / 2)  -- Limit vacuuming to half the max limit
@@ -38,6 +40,15 @@ local function repair_tube(pos, was_node)
 	set_timer(pos)
 end
 
+local function show_area(pos, node, player)
+	if not player or player:get_wielded_item():get_name() ~= "" then
+		-- Only show area when using an empty hand
+		return
+	end
+	local radius = tonumber(minetest.get_meta(pos):get("dist")) or 2
+	vizlib.draw_cube(pos, radius + 0.5, {player = player})
+end
+
 if pipeworks.enable_sand_tube then
 	pipeworks.register_tube("pipeworks:sand_tube", {
 		description = S("Vacuuming Pneumatic Tube Segment"),
@@ -56,6 +67,7 @@ if pipeworks.enable_sand_tube then
 				vacuum(pos, 2)
 				set_timer(pos)
 			end,
+			on_punch = has_vislib and show_area or nil,
 		},
 	})
 end
@@ -101,6 +113,7 @@ if pipeworks.enable_mese_sand_tube then
 				meta:set_int("dist", dist)
 				meta:set_string("infotext", S("Adjustable Vacuuming Tube (@1m)", dist))
 			end,
+			on_punch = has_vislib and show_area or nil,
 		},
 	})
 end
