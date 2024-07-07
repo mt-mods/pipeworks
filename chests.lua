@@ -36,7 +36,7 @@ function pipeworks.override_chest(chestname, override, connect_sides)
 		pipeworks.after_place(pos)
 	end
 
-	local old_after_dig = override.after_dig or old_def.after_dig or function()  end
+	local old_after_dig = override.after_dig or old_def.after_dig_node or function()  end
 	override.after_dig_node = function(pos, oldnode, oldmetadata, digger)
 		old_after_dig(pos, oldnode, oldmetadata, digger)
 		pipeworks.after_dig(pos, oldnode, oldmetadata, digger)
