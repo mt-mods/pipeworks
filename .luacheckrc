@@ -13,6 +13,5 @@ read_globals = {
 	"default", "mesecon", "digiline",
 	"screwdriver", "unified_inventory",
 	"i3", "mcl_experience", "awards",
-	"xcompat", "fakelib"
 	"xcompat", "fakelib", "vizlib"
 }
