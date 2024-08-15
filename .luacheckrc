@@ -14,4 +14,5 @@ read_globals = {
 	"screwdriver", "unified_inventory",
 	"i3", "mcl_experience", "awards",
 	"xcompat", "fakelib"
+	"xcompat", "fakelib", "vizlib"
 }
