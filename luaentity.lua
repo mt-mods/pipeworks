@@ -67,36 +67,41 @@ end
 minetest.register_on_shutdown(write_entities)
 luaentity.entities_index = 0
 
-local function get_blockpos(pos)
-	return {x = math.floor(pos.x / 16),
-	        y = math.floor(pos.y / 16),
-	        z = math.floor(pos.z / 16)}
-end
-
 local move_entities_globalstep_part1
 local is_active
 
 if pipeworks.use_real_entities then
 	local active_blocks = {} -- These only contain active blocks near players (i.e., not forceloaded ones)
 
+	local function get_blockpos(pos)
+		return {x = math.floor(pos.x / 16),
+				y = math.floor(pos.y / 16),
+				z = math.floor(pos.z / 16)}
+	end
+
 	move_entities_globalstep_part1 = function(dtime)
 		local active_block_range = tonumber(minetest.settings:get("active_block_range")) or 2
-		local new_active_blocks = {}
+		for key in pairs(active_blocks) do
+			active_blocks[key] = nil
+		end
 		for _, player in ipairs(minetest.get_connected_players()) do
 			local blockpos = get_blockpos(player:get_pos())
-			local minp = vector.subtract(blockpos, active_block_range)
-			local maxp = vector.add(blockpos, active_block_range)
+			local minpx = blockpos.x - active_block_range
+			local minpy = blockpos.y - active_block_range
+			local minpz = blockpos.z - active_block_range
+			local maxpx = blockpos.x + active_block_range
+			local maxpy = blockpos.y + active_block_range
+			local maxpz = blockpos.z + active_block_range
 
-			for x = minp.x, maxp.x do
-			for y = minp.y, maxp.y do
-			for z = minp.z, maxp.z do
-				local pos = {x = x, y = y, z = z}
-				new_active_blocks[minetest.hash_node_position(pos)] = pos
-			end
-			end
+			for x = minpx, maxpx do
+				for y = minpy, maxpy do
+					for z = minpz, maxpz do
+						local pos = {x = x, y = y, z = z}
+						active_blocks[minetest.hash_node_position(pos)] = true
+					end
+				end
 			end
 		end
-		active_blocks = new_active_blocks
 		-- todo: callbacks on block load/unload
 	end
 
