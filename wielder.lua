@@ -251,7 +251,8 @@ if pipeworks.enable_node_breaker then
 			local old_stack = ItemStack(stack)
 			local item_def = minetest.registered_items[stack:get_name()]
 			if item_def.on_use then
-				fakeplayer:set_wielded_item(item_def.on_use(stack, fakeplayer, pointed) or stack)
+				stack = item_def.on_use(stack, fakeplayer, pointed) or stack
+				fakeplayer:set_wielded_item(stack)
 			else
 				local node = minetest.get_node(pointed.under)
 				local node_def = minetest.registered_nodes[node.name]
