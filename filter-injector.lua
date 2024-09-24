@@ -84,9 +84,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local filtmeta = minetest.get_meta(filtpos)
 	local filtinv = filtmeta:get_inventory()
 	local owner = filtmeta:get_string("owner")
-	local fakePlayer = pipeworks.create_fake_player({
-		name = owner
-	})
+	local fakeplayer = fakelib.create_player(owner)
 	local dir = pipeworks.facedir_to_right_dir(filtnode.param2)
 	local frompos = vector.subtract(filtpos, dir)
 	local fromnode = minetest.get_node(frompos)
@@ -322,7 +320,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			if fromtube.can_remove then
 				doRemove = fromtube.can_remove(frompos, fromnode, stack, dir, frominvname, spos)
 			elseif fromdef.allow_metadata_inventory_take then
-				doRemove = fromdef.allow_metadata_inventory_take(frompos, frominvname,spos, stack, fakePlayer)
+				doRemove = fromdef.allow_metadata_inventory_take(frompos, frominvname, spos, stack, fakeplayer)
 			end
 			-- stupid lack of continue statements grumble
 			if doRemove > 0 then
@@ -356,13 +354,13 @@ local function punch_filter(data, filtpos, filtnode, msg)
 					item = stack:take_item(count)
 					frominv:set_stack(frominvname, spos, stack)
 					if fromdef.on_metadata_inventory_take then
-						fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakePlayer)
+						fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakeplayer)
 					end
 				end
 				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
 				local start_pos = vector.add(frompos, dir)
 				pipeworks.tube_inject_item(pos, start_pos, dir, item,
-					fakePlayer:get_player_name(), item_tags)
+					fakeplayer:get_player_name(), item_tags)
 				return true -- only fire one item, please
 			end
 		end
