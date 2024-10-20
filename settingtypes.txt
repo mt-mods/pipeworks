@@ -85,6 +85,11 @@ pipeworks_use_real_entities (Use Real Entities) bool true
 #A value 0.2 or above may cause issues with accelerator tubes.
 pipeworks_entity_update_interval (Entity Update Interval) float 0 0 0.8
 
+# Use the default rules from the digilines mod.
+# If enabled pipeworks devices (filter injector, deployer, dispenser, node breaker, 
+# teleport tube, lua tube, etc) will conduct digiline signals vertically.
+pipeworks_use_default_digilines_rules (Use the default rules from the digilines mod) bool true
+
 # if set to true, items passing through teleport tubes will log log where they came from and where they went.
 pipeworks_log_teleport_tubes (Log Teleport Tubes) bool false
 
