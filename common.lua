@@ -17,12 +17,12 @@ pipeworks.rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y
 pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 
 local digilines_enabled = minetest.get_modpath("digilines") ~= nil
-if digilines_enabled and pipeworks.use_default_digilines_rules then
+if digilines_enabled and pipeworks.enable_vertical_digilines_connectivity then
 	pipeworks.digilines_rules=digiline.rules.default
 else
-	-- When using these rules, digiline signals are NOT conducted vertically, despite any rotation to the node. This
-	-- breaks expected behavior with digiline conducting tubes. Some servers however, may have builds that relied on
-	-- the lack of vertical conduction and may wish to revert to this behavior.
+	-- These rules break vertical connectivity to deployers, node breakers, dispensers, and digiline filter injectors
+	-- via digiline conducting tubes. Changing them may break some builds on some servers, so the setting was added
+	-- for server admins to be able to revert to the old "broken" behavior as some builds may use it as a "feature".
 	-- See https://github.com/mt-mods/pipeworks/issues/64
 	pipeworks.digilines_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 end
