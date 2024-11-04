@@ -15,7 +15,17 @@ pipeworks.rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y
 		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}
 
 pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
-pipeworks.digilines_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
+
+local digilines_enabled = minetest.get_modpath("digilines") ~= nil
+if digilines_enabled and pipeworks.enable_vertical_digilines_connectivity then
+	pipeworks.digilines_rules=digiline.rules.default
+else
+	-- These rules break vertical connectivity to deployers, node breakers, dispensers, and digiline filter injectors
+	-- via digiline conducting tubes. Changing them may break some builds on some servers, so the setting was added
+	-- for server admins to be able to revert to the old "broken" behavior as some builds may use it as a "feature".
+	-- See https://github.com/mt-mods/pipeworks/issues/64
+	pipeworks.digilines_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
+end
 
 pipeworks.liquid_texture = minetest.registered_nodes[pipeworks.liquids.water.flowing].tiles[1]
 if type(pipeworks.liquid_texture) == "table" then pipeworks.liquid_texture = pipeworks.liquid_texture.name end
