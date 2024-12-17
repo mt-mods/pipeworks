@@ -92,7 +92,7 @@ pipeworks_entity_update_interval (Entity Update Interval) float 0 0 0.8
 # or bottom faces, regardless of the node rotation. This breaks expected behavior with digiline
 # conducting tubes, so it is recommended to enable this option unless you have specific builds
 # that make use of the lack of vertical digiline connectivity and those are more important to you.
-enable_vertical_digilines_connectivity (Use the default rules from the digilines mod) bool true
+enable_vertical_digilines_connectivity (Use the default rules from the digilines mod) bool false
 
 # if set to true, items passing through teleport tubes will log log where they came from and where they went.
 pipeworks_log_teleport_tubes (Log Teleport Tubes) bool false
