@@ -451,11 +451,6 @@ for _, data in ipairs({
 			if not pipeworks.may_configure(pos, player) then return 0 end
 			return count
 		end,
-		can_dig = function(pos, player)
-			local meta = minetest.get_meta(pos)
-			local inv = meta:get_inventory()
-			return inv:is_empty("main")
-		end,
 		tube = {connect_sides = {right = 1}},
 	}
 

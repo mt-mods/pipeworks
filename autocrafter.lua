@@ -598,11 +598,12 @@ minetest.register_node("pipeworks:autocrafter", {
 					if #msg < 3 then return end
 					local inv = meta:get_inventory()
 					for y = 0, 2, 1 do
+						local row = msg[y + 1]
 						for x = 1, 3, 1 do
 							local slot = y * 3 + x
-							if minetest.registered_items[msg[y + 1][x]] then
+							if type(row) == "table" and minetest.registered_items[row[x]] then
 								inv:set_stack("recipe", slot, ItemStack(
-									msg[y + 1][x]))
+									row[x]))
 							else
 								inv:set_stack("recipe", slot, ItemStack(""))
 							end

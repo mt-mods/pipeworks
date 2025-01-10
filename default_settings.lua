@@ -31,6 +31,7 @@ local settings = {
 	delete_item_on_clearobject = true,
 	use_real_entities = true,
 	entity_update_interval = 0,
+	enable_vertical_digilines_connectivity = false,
 }
 
 pipeworks.toggles = {}
