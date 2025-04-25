@@ -6,6 +6,90 @@ local autocrafterCache = {}
 local craft_time = 1
 local next = next
 
+local function get_item_info(stack)
+	local name = stack:get_name()
+	local def = minetest.registered_items[name]
+	local description = def and def.description or S("Unknown item")
+	return description, name
+end
+
+-- returns false if we shouldn't bother attempting to start the timer again
+-- after this
+local function update_meta(meta, enabled)
+	local state = enabled and "on" or "off"
+	meta:set_int("enabled", enabled and 1 or 0)
+	local list_backgrounds = ""
+	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
+		list_backgrounds = "style_type[box;colors=#666]"
+		for i = 0, 2 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" ..
+					1.5 + (i * 1.25) .. "," .. 0.25 + (j * 1.25) .. ";1,1;]"
+			end
+		end
+		for i = 0, 3 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" ..
+					5.28 + 1.25 + (i * 1.25) .. "," .. 0.25 + (j * 1.25) .. ";1,1;]"
+			end
+		end
+		for i = 0, 7 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" ..
+					1.5 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
+			end
+		end
+	end
+	local size = "11.5,14"
+	local fluid = meta:get("fluidtype")
+	local amount = meta:get_float("fluidamount")
+	local fluid_cap = meta:get_float("fluidcap")
+	local bar_height = 8.25 * amount / fluid_cap
+	local fs =
+		"formspec_version[4]" ..
+		"size[" .. size .. "]" ..
+		pipeworks.fs_helpers.get_prepends(size) ..
+		list_backgrounds ..
+		"list[context;recipe;1.47,0.22;3,3;]" ..
+		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
+		"list[context;output;5.25,1.45;1,1;]" ..
+		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
+		state .. ";;;false;pipeworks_button_interm.png]" ..
+		"list[context;dst;6.53,0.22;4,3;]" ..
+		"list[context;src;1.47,5;8,3;]" ..--
+		pipeworks.fs_helpers.get_inv(9,1.25) ..
+		"listring[current_player;main]" ..
+		"listring[context;src]" ..
+		"listring[current_player;main]" ..
+		"listring[context;dst]" ..
+		"listring[current_player;main]" ..
+		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";pipeworks_fluid_" .. (fluid or "air") .. ".png]" ..
+		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]"
+	if minetest.get_modpath("digilines") then
+		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
+			";${channel}]" ..
+			"button[6.25,4;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
+			"button_exit[8.05,4;2,0.75;close;" .. S("Close") .. "]"
+	end
+	meta:set_string("formspec", fs)
+
+	-- toggling the button doesn't quite call for running a recipe change check
+	-- so instead we run a minimal version for infotext setting only
+	-- this might be more written code, but actually executes less
+	local output = meta:get_inventory():get_stack("output", 1)
+	if output:is_empty() then -- doesn't matter if paused or not
+		meta:set_string("infotext", S("unconfigured Autocrafter"))
+		return false
+	end
+
+	local description, name = get_item_info(output)
+	local infotext = enabled and S("'@1' Autocrafter (@2)", description, name)
+				or S("paused '@1' Autocrafter", description)
+
+	meta:set_string("infotext", infotext)
+	return enabled
+end
+
 local function count_index(invlist)
 	local index = {}
 	for _, stack in pairs(invlist) do
@@ -16,13 +100,6 @@ local function count_index(invlist)
 		end
 	end
 	return index
-end
-
-local function get_item_info(stack)
-	local name = stack:get_name()
-	local def = minetest.registered_items[name]
-	local description = def and def.description or S("Unknown item")
-	return description, name
 end
 
 -- Get best matching recipe for what user has put in crafting grid.
@@ -76,13 +153,22 @@ local function get_craft(pos, inventory, hash)
 	local output, decremented_input = minetest.get_craft_result({
 		method = "normal", width = 3, items = example_recipe
 	})
+	
+	if (not output) or (output.item:is_empty()) then
+		example_recipe[#example_recipe + 1] = ItemStack("air 65535")
+		output, decremented_input = core.get_craft_result({
+			method = "normal", width = 3, items = example_recipe -- GOHERE
+		})
+	end
 
+	pipeworks.fluid_recipes.take_fluid(decremented_input.items)
 	local recipe = example_recipe
 	if output and not output.item:is_empty() then
 		recipe = get_matching_craft(output.item:get_name(), example_recipe)
 	end
 
 	craft = {
+		fluid = pipeworks.fluid_recipes.take_fluid(recipe),
 		recipe = recipe,
 		consumption = count_index(recipe),
 		output = output,
@@ -207,12 +293,21 @@ local function has_room_for_output(list_output, index_output)
 	return true
 end
 
-local function autocraft(inventory, craft)
+-- returns true if not enough fluid
+local function check_fluid_insufficiency(req, input)
+	if not req then return false end
+	if not input then return true end
+	if input.type ~= req.type then return true end
+	if input.amount < req.amount then return true end
+end
+
+local function autocraft(inventory, craft, fluid)
 	if not craft then return false end
 
 	-- check if output and all replacements fit in dst
 	local output = craft.output.item
 	local out_items = count_index(craft.decremented_input)
+	local craftfluid = craft.fluid
 	out_items[output:get_name()] =
 			(out_items[output:get_name()] or 0) + output:get_count()
 
@@ -223,7 +318,7 @@ local function autocraft(inventory, craft)
 	-- check if we have enough material available
 	local inv_index = count_index(inventory:get_list("src"))
 	local consumption = calculate_consumption(inv_index, craft.consumption)
-	if not consumption then
+	if craftfluid and ((not consumption) or check_fluid_insufficiency(craftfluid, fluid)) then
 		return false
 	end
 
@@ -234,6 +329,7 @@ local function autocraft(inventory, craft)
 			inventory:remove_item("src", ItemStack(itemname))
 		end
 	end
+	if craftfluid then fluid.amount = fluid.amount - craftfluid.amount end
 
 	-- craft the result into the dst inventory and add any "replacements" as well
 	inventory:add_item("dst", output)
@@ -262,9 +358,12 @@ local function run_autocrafter(pos, elapsed)
 		return false
 	end
 
+	local fluid = {type = meta:get("fluidtype"), amount = meta:get_float("fluidamount")}
 	for _ = 1, math.floor(elapsed / craft_time) do
-		local continue = autocraft(inventory, craft)
+		local continue = autocraft(inventory, craft, fluid)
 		if not continue then return false end
+		meta:set_float("fluidamount", fluid.amount)
+		update_meta(meta, meta:get_int("enabled") == 1)
 	end
 	return true
 end
@@ -343,77 +442,6 @@ local function on_output_change(pos, inventory, stack)
 	after_recipe_change(pos, inventory)
 end
 
--- returns false if we shouldn't bother attempting to start the timer again
--- after this
-local function update_meta(meta, enabled)
-	local state = enabled and "on" or "off"
-	meta:set_int("enabled", enabled and 1 or 0)
-	local list_backgrounds = ""
-	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
-		list_backgrounds = "style_type[box;colors=#666]"
-		for i = 0, 2 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					0.22 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 3 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					5.28 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 7 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					0.22 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-	end
-	local size = "10.2,14"
-	local fs =
-		"formspec_version[2]" ..
-		"size[" .. size .. "]" ..
-		pipeworks.fs_helpers.get_prepends(size) ..
-		list_backgrounds ..
-		"list[context;recipe;0.22,0.22;3,3;]" ..
-		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
-		"list[context;output;4,1.45;1,1;]" ..
-		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
-		state .. ";;;false;pipeworks_button_interm.png]" ..
-		"list[context;dst;5.28,0.22;4,3;]" ..
-		"list[context;src;0.22,5;8,3;]" ..
-		pipeworks.fs_helpers.get_inv(9) ..
-		"listring[current_player;main]" ..
-		"listring[context;src]" ..
-		"listring[current_player;main]" ..
-		"listring[context;dst]" ..
-		"listring[current_player;main]"
-	if minetest.get_modpath("digilines") then
-		fs = fs .. "field[0.22,4.1;4.5,0.75;channel;" .. S("Channel") ..
-			";${channel}]" ..
-			"button[5,4.1;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
-			"button_exit[6.8,4.1;2,0.75;close;" .. S("Close") .. "]"
-	end
-	meta:set_string("formspec", fs)
-
-	-- toggling the button doesn't quite call for running a recipe change check
-	-- so instead we run a minimal version for infotext setting only
-	-- this might be more written code, but actually executes less
-	local output = meta:get_inventory():get_stack("output", 1)
-	if output:is_empty() then -- doesn't matter if paused or not
-		meta:set_string("infotext", S("unconfigured Autocrafter"))
-		return false
-	end
-
-	local description, name = get_item_info(output)
-	local infotext = enabled and S("'@1' Autocrafter (@2)", description, name)
-				or S("paused '@1' Autocrafter", description)
-
-	meta:set_string("infotext", infotext)
-	return enabled
-end
-
 -- 1st version of the autocrafter had actual items in the crafting grid
 -- the 2nd replaced these with virtual items, dropped the content on update and
 --   set "virtual_items" to string "1"
@@ -453,6 +481,41 @@ local function upgrade_autocrafter(pos, meta)
 	end
 end
 
+pipeworks.fluid_recipes = {}
+
+pipeworks.fluid_recipes.take_fluid = function(recipe)
+	local stack = recipe[#recipe][1]
+	if stack == nil then stack = recipe[#recipe] end
+	if type(stack) == "userdata" then
+		if stack:get_name() ~= "air" then return end
+		stack = stack:get_count()
+	else
+		stack = string.split(stack, " ")
+		if stack[1] ~= "air" then return end
+		stack = stack[2]
+	end
+	local fluid = pipeworks.fluid_recipes[tonumber(stack)]
+	recipe[#recipe] = nil
+	return fluid
+end
+
+local modify_recipe = function(recipe, fluid)
+	local modified_recipe = table.copy(recipe)
+	if type(fluid) == "number" then
+		-- do not use this unless you know what you are doing
+		modified_recipe.recipe[#modified_recipe.recipe + 1] = {"air " .. fluid}
+	else
+		pipeworks.fluid_recipes[#pipeworks.fluid_recipes + 1] = fluid
+		modified_recipe.recipe[#modified_recipe.recipe + 1] = {"air " .. #pipeworks.fluid_recipes}
+	end
+	modified_recipe.type = "shaped"
+	return modified_recipe
+end
+
+pipeworks.register_fluid_recipe = function(recipe, fluid)
+	core.register_craft(modify_recipe(recipe, fluid))
+end
+
 minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
@@ -460,6 +523,7 @@ minetest.register_node("pipeworks:autocrafter", {
 	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 1, axey=1, handy=1, pickaxey=1},
 	is_ground_content = false,
 	_mcl_hardness=0.8,
+	pipe_connections = { top = 1, bottom = 1, left = 1, right = 1, front = 1, back = 1 },
 	tube = {insert_object = function(pos, node, stack, direction)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
@@ -479,6 +543,8 @@ minetest.register_node("pipeworks:autocrafter", {
 	},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
+		meta:set_float("fluidcap", 8)
+		meta:set_string("fluidtype", "water")
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3 * 8)
 		inv:set_size("recipe", 3 * 3)
@@ -511,9 +577,13 @@ minetest.register_node("pipeworks:autocrafter", {
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("dst"))
 	end,
-	after_place_node = pipeworks.scan_for_tube_objects,
+	after_place_node = function(pos)
+		pipeworks.scan_for_tube_objects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_tube_objects(pos)
+		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	on_destruct = function(pos)
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
@@ -646,4 +716,18 @@ minetest.register_node("pipeworks:autocrafter", {
 		},
 	},
 })
-pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list + 1] = "pipeworks:autocrafter"
+
+-- autocrafter fluid stuff
+local autocraftername = "pipeworks:autocrafter"
+pipeworks.flowables.register.simple(autocraftername)
+pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, currentpressure, finitemode)
+	local meta = core.get_meta(pos)
+	local fluid_cap = meta:get_float("fluidcap")
+	local fluid_amount = meta:get_float("fluidamount")
+	local taken = math.min(fluid_cap - fluid_amount, currentpressure)
+	meta:set_float("fluidamount", fluid_amount + taken)
+	update_meta(meta, meta:get_int("enabled") == 1)
+	return taken
+end, function()end)
+
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list + 1] = autocraftername
