@@ -50,6 +50,12 @@ minetest.register_node(voidname, {
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
 		minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 	end,
+	after_place_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = voidname
 pipeworks.flowables.register.simple(voidname)
