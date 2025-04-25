@@ -127,6 +127,32 @@ local pipes_devicelist = {
 
 -- Now define the nodes.
 
+local sourcename = "pipeworks:source_loaded"
+local tile = table.copy(core.registered_nodes[pipeworks.liquids.water.source].tiles[1])
+tile.name = tile.name .. "^pipeworks_source_frame.png"
+core.register_node(sourcename, {
+	description = S("Infinite Water Source"),
+	tiles = { tile },
+	paramtype = "light",
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
+	walkable = true,
+	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1},
+	after_place_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end
+})
+
+new_flow_logic_register.simple(sourcename)
+new_flow_logic_register.intake(sourcename, 4, function() return 4 end)
+
 local states = { "on", "off" }
 
 for s in ipairs(states) do
