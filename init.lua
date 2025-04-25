@@ -51,6 +51,17 @@ if minetest.get_modpath("signs_lib") then
 	dofile(pipeworks.modpath.."/signs_compat.lua")
 end
 
+local logicdir = "/pressure_logic/"
+
+-- note that even with these files the new flow logic is not yet default.
+-- registration will take place but no actual ABMs/node logic will be installed,
+-- unless the toggle flag is specifically enabled in the per-world settings flag.
+-- -- disregard previous comments, new flow logic is default now
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
+dofile(pipeworks.modpath..logicdir.."abms.lua")
+dofile(pipeworks.modpath..logicdir.."abm_register.lua")
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
+
 dofile(pipeworks.modpath.."/common.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
@@ -79,16 +90,6 @@ end
 if pipeworks.enable_sand_tube or pipeworks.enable_mese_sand_tube then
 	dofile(pipeworks.modpath.."/tubes/vacuum.lua")
 end
-
-local logicdir = "/pressure_logic/"
-
--- note that even with these files the new flow logic is not yet default.
--- registration will take place but no actual ABMs/node logic will be installed,
--- unless the toggle flag is specifically enabled in the per-world settings flag.
-dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
-dofile(pipeworks.modpath..logicdir.."abms.lua")
-dofile(pipeworks.modpath..logicdir.."abm_register.lua")
-dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 
 if pipeworks.enable_pipes then
 	dofile(pipeworks.modpath.."/pipes.lua")
