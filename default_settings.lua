@@ -48,7 +48,7 @@ pipeworks.toggles = {}
 -- setting to nil inhibits all flow logic, useful for debugging ABM crashes,
 -- or for rendering the pipes purely decorative.
 ]]
-pipeworks.toggles.pipe_mode = "classic"
+pipeworks.toggles.pipe_mode = "pressure"
 --[[
 -- force-enable finite water handling mode.
 -- this changes the way that water node placement is handled;
