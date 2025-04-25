@@ -316,3 +316,33 @@ if pipeworks.enable_node_breaker then
 		}
 	})
 end
+
+if pipeworks.enable_autocrafter then
+
+local buckets = {}
+if core.get_modpath("bucket") then
+	buckets.air = "bucket:bucket_empty"
+	buckets.water = "bucket:bucket_water"
+	buckets.river_water = "bucket:bucket_river_water"
+	buckets.lava = "bucket:bucket_lava"
+elseif core.get_modpath("mcl_buckets") then
+	buckets.air = "mcl_buckets:bucket_empty"
+	buckets.water = "mcl_buckets:bucket_water"
+	buckets.river_water = "mcl_buckets:bucket_river_water"
+	buckets.lava = "mcl_buckets:bucket_lava"
+end
+
+if buckets.air and buckets.water then
+local fluid = {type = "water", amount = 1}
+local recipe = {
+	output = buckets.water,
+	recipe = {
+		{buckets.air},
+		{""},
+		{""}
+	}
+}
+pipeworks.register_fluid_recipe(recipe, fluid)
+end
+
+end
