@@ -1,5 +1,6 @@
 local S = minetest.get_translator("pipeworks")
-minetest.register_node("pipeworks:trashcan", {
+local voidname = "pipeworks:trashcan"
+minetest.register_node(voidname, {
 	description = S("Trash Can"),
 	drawtype = "normal",
 	tiles = {
@@ -20,6 +21,7 @@ minetest.register_node("pipeworks:trashcan", {
 		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1},
 		priority = 1, -- Lower than anything else
 	},
+	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local size = "10.2,9"
@@ -49,4 +51,6 @@ minetest.register_node("pipeworks:trashcan", {
 		minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 	end,
 })
-pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = voidname
+pipeworks.flowables.register.simple(voidname)
+pipeworks.flowables.register.output(voidname, 0, 0, function() return 4 end, function()end)
