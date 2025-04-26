@@ -605,7 +605,16 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_loaded, tru
 -- activate flow sensor at roughly half the pressure pumps drive pipes
 local sensor_pressure_set = { { nodename_sensor_empty, 0.0 }, { nodename_sensor_loaded, 1.0 } }
 new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pipeworks.mesecons_rules })
-
+core.register_abm({
+	label = "flow sensor info",
+	nodenames = { "pipeworks:flow_sensor_empty", "pipeworks:flow_sensor_loaded" },
+	interval = 1,
+	chance = 1,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		meta = core.get_meta(pos)
+		meta:set_string("infotext", S("Pressure: @1", meta:get("pipeworks.water_pressure")))
+	end
+})
 
 
 -- tanks
