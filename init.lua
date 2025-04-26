@@ -10,12 +10,19 @@ pipeworks = {
 	modpath = minetest.get_modpath("pipeworks"),
 	liquids = {
 		water = {
+			def = core.registered_nodes["mapgen_water_source"],
 			source = minetest.registered_nodes["mapgen_water_source"].name,
 			flowing = minetest.registered_nodes["mapgen_water_source"].liquid_alternative_flowing
 		},
 		river_water = {
+			def = core.registered_nodes["mapgen_river_water_source"],
 			source = minetest.registered_nodes["mapgen_river_water_source"].name,
 			flowing = minetest.registered_nodes["mapgen_river_water_source"].liquid_alternative_flowing
+		},
+		lava = {
+			def = core.registered_nodes["mapgen_lava_source"],
+			source = core.registered_nodes["mapgen_lava_source"].name,
+			flowing = core.registered_nodes["mapgen_lava_source"].liquid_alternative_flowing
 		}
 	}
 }
