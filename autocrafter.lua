@@ -1,4 +1,35 @@
 local S = minetest.get_translator("pipeworks")
+
+core.register_craftitem("pipeworks:text_req", {
+    description = S("Requirements"),
+	inventory_image = "text_req.png",
+	groups = {not_in_creative_inventory = 1},
+    stack_max = 1,
+})
+
+core.register_craftitem("pipeworks:text_div1000", {
+    description = S("Liters (divide by 1000 for m³)"),
+	inventory_image = "text_div1000.png",
+	groups = {not_in_creative_inventory = 1},
+    stack_max = 1,
+})
+
+if core.get_modpath("unified_inventory") then
+	unified_inventory.register_craft_type("fluidshaped", {
+		description = S("Shaped Fluid Craft"),
+		icon = "pipeworks_autocrafter.png",
+		width = 3,
+		height = 4,
+	})
+	unified_inventory.register_on_craft_registered(
+		function (item_name, options)
+			if options.type ~= "fluidshaped" then return end
+			options.items[10] = "pipeworks:text_req"
+			options.items[11] = pipeworks.liquids[options.fluid.type].source .. " " .. (options.fluid.amount * 1000)
+			options.items[12] = "pipeworks:text_div1000"
+		end
+	)
+end
 -- cache some recipe data to avoid calling the slow function
 -- minetest.get_craft_result() every second
 local autocrafterCache = {}
@@ -532,6 +563,16 @@ pipeworks.fluid_recipes.register = function(self, def)
 		end
 	end
 
+	if core.get_modpath("unified_inventory") then
+		unified_inventory.register_craft({
+			output = def.output,
+			type = "fluidshaped",
+			items = newdef.items,
+			fluid = newdef.fluid,
+			width = 3,
+		})
+	end
+
 	if type(def.output) == "table" then
 		newdef.output = def.output
 	else
@@ -794,7 +835,7 @@ pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, c
 	local fluid_cap = meta:get_float("fluidcap")
 	local fluid_amount = meta:get_float("fluidamount")
 	local current_fluid_type = meta:get("fluidtype")
-	if (current_fluid_type != fluid_type) then
+	if current_fluid_type ~= fluid_type then
 		if fluid_amount == 0 then
 			meta:set_string("fluidtype", fluid_type)
 		else
