@@ -23,6 +23,7 @@ function pipeworks.register_embedded_tube(nodename, opts)
 			cracky = 1,
 			oddly_breakable_by_hand = 1,
 			tubedevice = 1,
+			tube = 1,
 			dig_glass = 2,
 			pickaxey=1,
 			handy=1
