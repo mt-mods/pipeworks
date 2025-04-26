@@ -333,16 +333,14 @@ elseif core.get_modpath("mcl_buckets") then
 end
 
 if buckets.air and buckets.water then
-local fluid = {type = "water", amount = 1}
-local recipe = {
-	output = buckets.water,
-	recipe = {
-		{buckets.air},
-		{""},
-		{""}
+	local def = {
+		fluid = {type = "water", amount = 1},
+		output = ItemStack(buckets.water),
+		items = {
+			buckets.air, "", "", "", "", "", "", "", ""
+		}
 	}
-}
-pipeworks.register_fluid_recipe(recipe, fluid)
+pipeworks.fluid_recipes:register(def)
 end
 
 end
