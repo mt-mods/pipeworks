@@ -1,26 +1,27 @@
 local S = minetest.get_translator("pipeworks")
 
-core.register_craftitem("pipeworks:text_req", {
-    description = S("Requirements"),
-	inventory_image = "text_req.png",
-	groups = {not_in_creative_inventory = 1},
-    stack_max = 1,
-})
-
-core.register_craftitem("pipeworks:text_div1000", {
-    description = S("Liters (divide by 1000 for m³)"),
-	inventory_image = "text_div1000.png",
-	groups = {not_in_creative_inventory = 1},
-    stack_max = 1,
-})
-
 if core.get_modpath("unified_inventory") then
+	core.register_craftitem("pipeworks:text_req", {
+   		description = S("Requirements"),
+		inventory_image = "text_req.png",
+		groups = {not_in_creative_inventory = 1},
+		stack_max = 1,
+	})
+
+	core.register_craftitem("pipeworks:text_div1000", {
+		description = S("Liters (divide by 1000 for m³)"),
+		inventory_image = "text_div1000.png",
+		groups = {not_in_creative_inventory = 1},
+		stack_max = 1,
+	})
+	
 	unified_inventory.register_craft_type("fluidshaped", {
 		description = S("Shaped Fluid Craft"),
 		icon = "pipeworks_autocrafter.png",
 		width = 3,
 		height = 4,
 	})
+	
 	unified_inventory.register_on_craft_registered(
 		function (item_name, options)
 			if options.type ~= "fluidshaped" then return end
