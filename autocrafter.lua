@@ -45,6 +45,32 @@ local function update_meta(meta, enabled)
 	local amount = meta:get_float("fluidamount")
 	local fluid_cap = meta:get_float("fluidcap")
 	local bar_height = 8.25 * amount / fluid_cap
+	local fs =
+		"formspec_version[4]" ..
+		"size[" .. size .. "]" ..
+		pipeworks.fs_helpers.get_prepends(size) ..
+		list_backgrounds ..
+		"list[context;recipe;1.47,0.22;3,3;]" ..
+		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
+		"list[context;output;5.25,1.45;1,1;]" ..
+		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
+		state .. ";;;false;pipeworks_button_interm.png]" ..
+		"list[context;dst;6.53,0.22;4,3;]" ..
+		"list[context;src;1.47,5;8,3;]" ..--
+		pipeworks.fs_helpers.get_inv(9,1.25) ..
+		"listring[current_player;main]" ..
+		"listring[context;src]" ..
+		"listring[current_player;main]" ..
+		"listring[context;dst]" ..
+		"listring[current_player;main]" ..
+		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";pipeworks_fluid_" .. (fluid or "air") .. ".png]" ..
+		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]"
+	if minetest.get_modpath("digilines") then
+		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
+			";${channel}]" ..
+			"button[6.25,4;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
+			"button_exit[8.05,4;2,0.75;close;" .. S("Close") .. "]"
+	end
 	meta:set_string("formspec", fs)
 
 	-- toggling the button doesn't quite call for running a recipe change check
@@ -81,7 +107,7 @@ end
 local function get_matching_craft(output_name, example_recipe, fluid_input)
 	local recipes
 	if fluid_input then
-		recipes = pipeworks.fluid_recipes:get_all(output_name)
+		recipes = pipeworks.fluid_recipes:get_all(output_name, fluid_input.type)
 	else
 		recipes = minetest.get_all_craft_recipes(output_name)
 	end
@@ -120,6 +146,7 @@ local function get_matching_craft(output_name, example_recipe, fluid_input)
 		end
 	end
 
+	
 	return best_index and recipes[best_index].items or example_recipe
 end
 
@@ -133,9 +160,10 @@ local function get_craft(pos, inventory, hash)
 		method = "normal", width = 3, items = example_recipe
 	})
 	
+	local fluid
 	if (not output) or output.item:is_empty() then
 		output, decremented_input, fluid = pipeworks.fluid_recipes:get({
-			shaped = true, items = example_recipe -- GOHERE
+			items = example_recipe, fluid_type = core.get_meta(pos):get("fluidtype") -- GOHERE
 		})
 	end
 
@@ -144,6 +172,7 @@ local function get_craft(pos, inventory, hash)
 		recipe = get_matching_craft(output.item:get_name(), example_recipe, fluid)
 	end
 
+	core.log(dump(decremented_input))
 	craft = {
 		fluid = fluid,
 		recipe = recipe,
@@ -480,59 +509,75 @@ pipeworks.fluid_recipes.register = function(self, def)
 		shaped = def.shaped
 	}
 	local path = self.trie
+
 	for _,v in ipairs(def.items) do
 		if type(v) == "table" then
-			for i = 0, 2 do
-				if not v[i] then error("Invalid recipe! (nil stack)") end
-				newdef.items[#newdef.items + 1] = v[i]
+			for _,w in ipairs(v) do
+				newdef.items[#newdef.items + 1] = w
 				local child = {}
-				path[v[i]] = {slot = #newdef.items, [#newdef.items] = child}
+				if path[w] then
+					child = path[w]
+				end
+				path[w] = child
 				path = child
 			end
 		else
 			newdef.items[#newdef.items + 1] = v
 			local child = {}
-			path[v] = {slot = #newdef.items, [#newdef.items] = child}
+			if path[v] then
+				child = path[v]
+			end
+			path[v] = child
 			path = child
 		end
 	end
+
 	if type(def.output) == "table" then
 		newdef.output = def.output
 	else
 		newdef.output = {item = def.output}
 	end
-	path.fluid = newdef.fluid
-	path.output = newdef.output
+
+	if not path.fluid then path.fluid = {} end
+	if not path.output then path.output = {} end
+
+	path.fluid[newdef.fluid.type] = newdef.fluid
+	path.output[newdef.fluid.type] = newdef.output
 	path.tail = true
 	self[#self + 1] = newdef
 end
 
 --[[ input = {
 	input = <ItemStack list>,
-	shaped = <boolean> -- doesn't really work for shapeless
+	fluid_type = <fluidtype>
 } ]]
 pipeworks.fluid_recipes.get = function(self, input)
 	local path = self.trie
+	local empty = {item = ItemStack("")}
 	local dec_input = table.copy(input)
 	for k,v in ipairs(dec_input.items) do
 		path = path[v:get_name()]
-		if dec_input.shaped then
-			path = path[k]
-		else
-			path = path[path.slot]
+		if path == nil then return empty, input end
+		dec_input.items[k] = ItemStack(v)
+		dec_input.items[k]:set_count(v:get_count()-1)
+		if path == nil then return empty, input end
+		if path.tail then
+			if path.output[dec_input.fluid_type] then
+				return path.output[dec_input.fluid_type], dec_input, path.fluid[dec_input.fluid_type]
+			else
+				return empty, input
+			end
 		end
-		v:set_count(v:get_count()-1)
-		if path == nil then return nil, input end
-		if path.tail then return path.output, dec_input, path.fluid end
 	end
-	return nil, input
+	return empty, input
 end
 
 -- name = <string>
-pipeworks.fluid_recipes.get_all = function(self, name)
+-- fluid_type = <string>
+pipeworks.fluid_recipes.get_all = function(self, name, fluid_type)
 	local out = {}
 	for _,v in ipairs(self) do
-		if v.output.item:get_name() == name then
+		if v.output[fluid_type] and v.output[fluid_type].item:get_name() == name then
 			out[#out + 1] = v
 		end
 	end
@@ -743,10 +788,19 @@ minetest.register_node("pipeworks:autocrafter", {
 -- autocrafter fluid stuff
 local autocraftername = "pipeworks:autocrafter"
 pipeworks.flowables.register.simple(autocraftername)
-pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, currentpressure, finitemode)
+pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, currentpressure, finitemode, fluid_type) -- "fluid_type" doesn't work, though it's a placeholder
+	local fluid_type = fluid_type or "water"
 	local meta = core.get_meta(pos)
 	local fluid_cap = meta:get_float("fluidcap")
 	local fluid_amount = meta:get_float("fluidamount")
+	local current_fluid_type = meta:get("fluidtype")
+	if (current_fluid_type != fluid_type) then
+		if fluid_amount == 0 then
+			meta:set_string("fluidtype", fluid_type)
+		else
+			return 0
+		end
+	end
 	local taken = math.min(fluid_cap - fluid_amount, currentpressure)
 	meta:set_float("fluidamount", fluid_amount + taken)
 	update_meta(meta, meta:get_int("enabled") == 1)
