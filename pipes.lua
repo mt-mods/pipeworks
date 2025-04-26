@@ -41,7 +41,7 @@ for index, connects in ipairs(cconnects) do
 	local pipedesc = S("Pipe Segment").." "..dump(connects)
 
 	if #connects == 0 then
-		pgroups = {snappy = 3, tube = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
+		pgroups = {snappy = 3, pipe = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 		pipedesc = S("Pipe Segment")
 	end
 
