@@ -340,7 +340,27 @@ if buckets.air and buckets.water then
 			buckets.air, "", "", "", "", "", "", "", ""
 		}
 	}
-pipeworks.fluid_recipes:register(def)
+	pipeworks.fluid_recipes:register(def)
+end
+if buckets.air and buckets.lava then
+	local def = {
+		fluid = {type = "lava", amount = 1},
+		output = ItemStack(buckets.lava),
+		items = {
+			buckets.air, "", "", "", "", "", "", "", ""
+		}
+	}
+	pipeworks.fluid_recipes:register(def)
+end
+if buckets.river_water and buckets.lava then
+	local def = {
+		fluid = {type = "river_water", amount = 0.5},
+		output = ItemStack(buckets.river_water),
+		items = {
+			buckets.air, "", "", "", "", "", "", "", ""
+		}
+	}
+	pipeworks.fluid_recipes:register(def)
 end
 
 end
