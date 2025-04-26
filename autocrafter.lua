@@ -45,32 +45,6 @@ local function update_meta(meta, enabled)
 	local amount = meta:get_float("fluidamount")
 	local fluid_cap = meta:get_float("fluidcap")
 	local bar_height = 8.25 * amount / fluid_cap
-	local fs =
-		"formspec_version[4]" ..
-		"size[" .. size .. "]" ..
-		pipeworks.fs_helpers.get_prepends(size) ..
-		list_backgrounds ..
-		"list[context;recipe;1.47,0.22;3,3;]" ..
-		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
-		"list[context;output;5.25,1.45;1,1;]" ..
-		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
-		state .. ";;;false;pipeworks_button_interm.png]" ..
-		"list[context;dst;6.53,0.22;4,3;]" ..
-		"list[context;src;1.47,5;8,3;]" ..--
-		pipeworks.fs_helpers.get_inv(9,1.25) ..
-		"listring[current_player;main]" ..
-		"listring[context;src]" ..
-		"listring[current_player;main]" ..
-		"listring[context;dst]" ..
-		"listring[current_player;main]" ..
-		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";pipeworks_fluid_" .. (fluid or "air") .. ".png]" ..
-		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]"
-	if minetest.get_modpath("digilines") then
-		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
-			";${channel}]" ..
-			"button[6.25,4;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
-			"button_exit[8.05,4;2,0.75;close;" .. S("Close") .. "]"
-	end
 	meta:set_string("formspec", fs)
 
 	-- toggling the button doesn't quite call for running a recipe change check
@@ -104,8 +78,13 @@ end
 
 -- Get best matching recipe for what user has put in crafting grid.
 -- This function does not consider crafting method (mix vs craft)
-local function get_matching_craft(output_name, example_recipe)
-	local recipes = minetest.get_all_craft_recipes(output_name)
+local function get_matching_craft(output_name, example_recipe, fluid_input)
+	local recipes
+	if fluid_input then
+		recipes = pipeworks.fluid_recipes:get_all(output_name)
+	else
+		recipes = minetest.get_all_craft_recipes(output_name)
+	end
 	if not recipes then
 		return example_recipe
 	end
@@ -154,21 +133,19 @@ local function get_craft(pos, inventory, hash)
 		method = "normal", width = 3, items = example_recipe
 	})
 	
-	if (not output) or (output.item:is_empty()) then
-		example_recipe[#example_recipe + 1] = ItemStack("air 65535")
-		output, decremented_input = core.get_craft_result({
-			method = "normal", width = 3, items = example_recipe -- GOHERE
+	if (not output) or output.item:is_empty() then
+		output, decremented_input, fluid = pipeworks.fluid_recipes:get({
+			shaped = true, items = example_recipe -- GOHERE
 		})
 	end
 
-	pipeworks.fluid_recipes.take_fluid(decremented_input.items)
 	local recipe = example_recipe
 	if output and not output.item:is_empty() then
-		recipe = get_matching_craft(output.item:get_name(), example_recipe)
+		recipe = get_matching_craft(output.item:get_name(), example_recipe, fluid)
 	end
 
 	craft = {
-		fluid = pipeworks.fluid_recipes.take_fluid(recipe),
+		fluid = fluid,
 		recipe = recipe,
 		consumption = count_index(recipe),
 		output = output,
@@ -481,39 +458,85 @@ local function upgrade_autocrafter(pos, meta)
 	end
 end
 
-pipeworks.fluid_recipes = {}
+pipeworks.fluid_recipes = {
+	trie = {}
+}
 
-pipeworks.fluid_recipes.take_fluid = function(recipe)
-	local stack = recipe[#recipe][1]
-	if stack == nil then stack = recipe[#recipe] end
-	if type(stack) == "userdata" then
-		if stack:get_name() ~= "air" then return end
-		stack = stack:get_count()
-	else
-		stack = string.split(stack, " ")
-		if stack[1] ~= "air" then return end
-		stack = stack[2]
+--[[def = {items = {
+	<strictly width 3 or shapeless>
+},
+output = out|{outs}, -- Itemstacks
+fluid = {
+	type = <type>,
+	amount = <float amount>
+}}
+]]
+pipeworks.fluid_recipes.register = function(self, def)
+	if def.output == nil then return end
+	if def.items == nil then return end
+	local newdef = {
+		items = {},
+		fluid = def.fluid,
+		shaped = def.shaped
+	}
+	local path = self.trie
+	for _,v in ipairs(def.items) do
+		if type(v) == "table" then
+			for i = 0, 2 do
+				if not v[i] then error("Invalid recipe! (nil stack)") end
+				newdef.items[#newdef.items + 1] = v[i]
+				local child = {}
+				path[v[i]] = {slot = #newdef.items, [#newdef.items] = child}
+				path = child
+			end
+		else
+			newdef.items[#newdef.items + 1] = v
+			local child = {}
+			path[v] = {slot = #newdef.items, [#newdef.items] = child}
+			path = child
+		end
 	end
-	local fluid = pipeworks.fluid_recipes[tonumber(stack)]
-	recipe[#recipe] = nil
-	return fluid
+	if type(def.output) == "table" then
+		newdef.output = def.output
+	else
+		newdef.output = {item = def.output}
+	end
+	path.fluid = newdef.fluid
+	path.output = newdef.output
+	path.tail = true
+	self[#self + 1] = newdef
 end
 
-local modify_recipe = function(recipe, fluid)
-	local modified_recipe = table.copy(recipe)
-	if type(fluid) == "number" then
-		-- do not use this unless you know what you are doing
-		modified_recipe.recipe[#modified_recipe.recipe + 1] = {"air " .. fluid}
-	else
-		pipeworks.fluid_recipes[#pipeworks.fluid_recipes + 1] = fluid
-		modified_recipe.recipe[#modified_recipe.recipe + 1] = {"air " .. #pipeworks.fluid_recipes}
+--[[ input = {
+	input = <ItemStack list>,
+	shaped = <boolean> -- doesn't really work for shapeless
+} ]]
+pipeworks.fluid_recipes.get = function(self, input)
+	local path = self.trie
+	local dec_input = table.copy(input)
+	for k,v in ipairs(dec_input.items) do
+		path = path[v:get_name()]
+		if dec_input.shaped then
+			path = path[k]
+		else
+			path = path[path.slot]
+		end
+		v:set_count(v:get_count()-1)
+		if path == nil then return nil, input end
+		if path.tail then return path.output, dec_input, path.fluid end
 	end
-	modified_recipe.type = "shaped"
-	return modified_recipe
+	return nil, input
 end
 
-pipeworks.register_fluid_recipe = function(recipe, fluid)
-	core.register_craft(modify_recipe(recipe, fluid))
+-- name = <string>
+pipeworks.fluid_recipes.get_all = function(self, name)
+	local out = {}
+	for _,v in ipairs(self) do
+		if v.output.item:get_name() == name then
+			out[#out + 1] = v
+		end
+	end
+	return out
 end
 
 minetest.register_node("pipeworks:autocrafter", {
