@@ -870,7 +870,7 @@ for white  = 0, 1 do
 	tiles[3] = tiles[3]..tiles_on_off.R270:format(white == 1 and "on" or "off");
 	tiles[4] = tiles[4]..tiles_on_off.R_90:format(white == 1 and "on" or "off");
 
-	local groups = {snappy = 3, tube = 1, tubedevice = 1, overheat = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
+	local groups = {snappy = 3, tube = 1, tubedevice = 1, tube = 1, overheat = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	if red + blue + yellow + green + black + white ~= 0 then
 		groups.not_in_creative_inventory = 1
 	end
@@ -1050,7 +1050,7 @@ minetest.register_node(BASENAME .. "_burnt", {
 	is_burnt = true,
 	paramtype = "light",
 	is_ground_content = false,
-	groups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	groups = {snappy = 3, tube = 1, tubedevice = 1, tube = 1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
 	_mcl_hardness=0.8,
 	drop = BASENAME.."000000",
 	sunlight_propagates = true,
