@@ -234,7 +234,7 @@ function fs_helpers.get_inv(y,x)
 		table.insert(fs, "style_type[box;colors=#666]")
 		for i=0, 2 do
 			for j=0, hotbar_len - 1 do
-				table.insert(fs, "box["..0.2+(j*(spacing+size))..","..(inv_y+size+spacing+0.05)+(i*(spacing+size))..";"..size..","..size..";]")
+				table.insert(fs, "box["..inv_x+(j*(spacing+size))..","..(inv_y+size+spacing+0.05)+(i*(spacing+size))..";"..size..","..size..";]")
 			end
 		end
 
@@ -259,7 +259,7 @@ function fs_helpers.get_inv(y,x)
 		table.insert(fs, "style_type[box;colors=#666]")
 		for i=0, 2 do
 			for j=0, hotbar_len - 1 do
-				table.insert(fs, "box["..0.2+(j*(spacing+size))..","..(inv_y+size+spacing+0.05)+(i*(spacing+size))..";"..size..","..size..";]")
+				table.insert(fs, "box["..inv_x+(j*(spacing+size))..","..(inv_y+size+spacing+0.05)+(i*(spacing+size))..";"..size..","..size..";]")
 			end
 		end
 
