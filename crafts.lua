@@ -354,7 +354,7 @@ if buckets.air and buckets.lava then
 end
 if buckets.river_water and buckets.lava then
 	local def = {
-		fluid = {type = "river_water", amount = 0.5},
+		fluid = {type = "river_water", amount = 1},
 		output = ItemStack(buckets.river_water),
 		items = {
 			buckets.air, "", "", "", "", "", "", "", ""
