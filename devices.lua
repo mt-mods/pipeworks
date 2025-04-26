@@ -611,7 +611,7 @@ core.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		meta = core.get_meta(pos)
+		local meta = core.get_meta(pos)
 		meta:set_string("infotext", S("Pressure: @1", meta:get("pipeworks.water_pressure")))
 	end
 })
