@@ -84,7 +84,7 @@ end)
 
 function pipeworks.break_tube(pos)
 	local node = minetest.get_node(pos)
-	if not core.registered_nodes[node.name].groups.tubedevice then return end
+	if not core.registered_nodes[node.name].groups.tube then return end
 	local meta = minetest.get_meta(pos)
 	meta:set_string("the_tube_was", minetest.serialize(node))
 	minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
