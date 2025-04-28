@@ -1,3 +1,5 @@
+local S = core.get_translator("pipeworks")
+
 -- Pipeworks mod by Vanessa Ezekowitz - 2013-07-13
 --
 -- This mod supplies various steel pipes and plastic pneumatic tubes
@@ -8,24 +10,26 @@ pipeworks = {
 	ui_cat_tube_list = {},
 	worldpath = minetest.get_worldpath(),
 	modpath = minetest.get_modpath("pipeworks"),
-	liquids = {
-		water = {
-			def = core.registered_nodes["mapgen_water_source"],
-			source = minetest.registered_nodes["mapgen_water_source"].name,
-			flowing = minetest.registered_nodes["mapgen_water_source"].liquid_alternative_flowing
-		},
-		river_water = {
-			def = core.registered_nodes["mapgen_river_water_source"],
-			source = minetest.registered_nodes["mapgen_river_water_source"].name,
-			flowing = minetest.registered_nodes["mapgen_river_water_source"].liquid_alternative_flowing
-		},
-		lava = {
-			def = core.registered_nodes["mapgen_lava_source"],
-			source = core.registered_nodes["mapgen_lava_source"].name,
-			flowing = core.registered_nodes["mapgen_lava_source"].liquid_alternative_flowing
+	register_fluid = function(self, alias, name, density, description)
+		local def = core.registered_nodes[alias]
+		self.liquids[name] = {
+			def = def,
+			source = def.liquid_alternative_source,
+			description = description or string.gsub(def.description, "%s?"..S("Source").."%s?", ""),
+			flowing = def.liquid_alternative_flowing,
+			density = density, -- in g/cm³ as standard
 		}
-	}
+		self.fluid_types[def.liquid_alternative_source] = name
+	end,
+	liquids = {},
+	fluid_types = {}, -- easier indexing
+	gravity = {x=0, y=-0.025, z=0}, -- pressure bias factor, SI unit unspecified
 }
+
+-- fluid registration
+pipeworks:register_fluid("mapgen_water_source", "water", 1.05, S("Water"))
+pipeworks:register_fluid("mapgen_river_water_source", "river_water", 1, S("River Water"))
+pipeworks:register_fluid("mapgen_lava_source", "lava", 4, S("Lava"))
 
 dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
@@ -49,8 +53,8 @@ end
 -------------------------------------------
 -- Load the various other parts of the mod
 
--- early auto-detection for finite water mode if not explicitly disabled
-if pipeworks.toggles.finite_water == nil then
+-- early auto-detection for finite fluids mode if not explicitly disabled
+if pipeworks.toggles.finite == nil then
 	dofile(pipeworks.modpath.."/autodetect-finite-water.lua")
 end
 
