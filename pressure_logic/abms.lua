@@ -57,7 +57,7 @@ local check_for_liquids_v2 = function(pos, limit, current_type)
 		end
 	end
 	--pipeworks.logger("check_for_liquids_v2@"..formatvec(pos).." total "..total)
-	
+
 	return total, fluid_type
 end
 flowlogic.check_for_liquids_v2 = check_for_liquids_v2
@@ -222,7 +222,7 @@ flowlogic.balance_pressure = function(pos, node, currentpressure, currentfluidty
 
 	-- unconditionally include self in nodes to average over.
 	-- result of averaging will be returned as new pressure for main flow logic callback
-	
+
 	-- pressure handles to average over
 	local connections, tconnections, offsets = get_neighbour_positions(pos, node)
 
@@ -404,9 +404,11 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 	local lower = outputdef.lower
 	local result = currentpressure
 	local threshold
+	local currentfluidtype
 	if finitemode then threshold = lower else threshold = upper end
 	if currentpressure > threshold then
-		local takenpressure, currentfluidtype = outputdef.outputfn(pos, node, currentpressure, finitemode, currentfluidtype)
+		local takenpressure
+		takenpressure, currentfluidtype = outputdef.outputfn(pos, node, currentpressure, finitemode, currentfluidtype)
 		local newpressure = currentpressure - takenpressure
 		if newpressure < 0 then newpressure = 0 end
 		result = newpressure
