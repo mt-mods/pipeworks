@@ -151,7 +151,7 @@ core.register_node(sourcename, {
 })
 
 new_flow_logic_register.simple(sourcename)
-new_flow_logic_register.intake(sourcename, 4, function() return 4 end)
+new_flow_logic_register.intake(sourcename, 4, function() return 4, "water" end)
 
 local states = { "on", "off" }
 
@@ -396,7 +396,7 @@ minetest.register_node(nodename_spigot_loaded, {
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
-		minetest.registered_nodes[pipeworks.liquids.water.source].tiles[1],
+		pipeworks.liquids.water.def.tiles[1],
 		{ name = "pipeworks_spigot.png" }
 	},
 	use_texture_alpha = texture_alpha_mode and "blend" or true,
@@ -612,7 +612,8 @@ core.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local meta = core.get_meta(pos)
-		meta:set_string("infotext", S("Pressure: @1", meta:get("pipeworks.water_pressure")))
+		local fluid_def = pipeworks.liquids[meta:get("pipeworks.fluid_type")]
+		meta:set_string("infotext", S("@1: @2", (fluid_def and fluid_def.description) or S("none"), (meta:get("pipeworks.pressure") or 0)))
 	end
 })
 
