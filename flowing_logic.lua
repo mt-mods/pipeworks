@@ -4,7 +4,7 @@
 -- Contributed by mauvebic, 2013-01-03, rewritten a bit by Vanessa Ezekowitz
 --
 
-local finitewater = minetest.settings:get_bool("liquid_finite")
+local finite = minetest.settings:get_bool("liquid_finite")
 
 pipeworks.check_for_liquids = function(pos)
 	local coords = {
@@ -16,12 +16,12 @@ pipeworks.check_for_liquids = function(pos)
 		{x=pos.x,y=pos.y,z=pos.z+1},	}
 	for i =1,6 do
 		local name = minetest.get_node(coords[i]).name
-		if name and string.find(name,"water") then
-			if finitewater then minetest.remove_node(coords[i]) end
-			return true
+		if name and pipeworks.fluid_types[name] then
+			if finite then minetest.remove_node(coords[i]) end
+			return pipeworks.fluid_types[name]
 		end
 	end
-	return false
+	return nil
 end
 
 pipeworks.check_for_inflows = function(pos,node)
@@ -83,7 +83,7 @@ end
 
 pipeworks.spigot_check = function(pos, node)
 	local belowname = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
-	if belowname and (belowname == "air" or belowname == pipeworks.liquids.water.flowing or belowname == pipeworks.liquids.water.source) then
+	if belowname and (belowname == "air" or core.registered_nodes[name].liquid_alternative_flowing) then
 		local spigotname = minetest.get_node(pos).name
 		local fdir=node.param2 % 4
 		local check = {
@@ -96,14 +96,14 @@ pipeworks.spigot_check = function(pos, node)
 		if near_node and string.find(near_node.name, "_loaded") then
 			if spigotname and spigotname == "pipeworks:spigot" then
 				minetest.add_node(pos,{name = "pipeworks:spigot_pouring", param2 = fdir})
-				if finitewater or belowname ~= pipeworks.liquids.water.source then
+				if finite or belowname ~= pipeworks.liquids.water.source then
 					minetest.add_node({x=pos.x,y=pos.y-1,z=pos.z},{name = pipeworks.liquids.water.source})
 				end
 			end
 		else
 			if spigotname == "pipeworks:spigot_pouring" then
 				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:spigot", param2 = fdir})
-				if belowname == pipeworks.liquids.water.source and not finitewater then
+				if belowname == pipeworks.liquids.water.source and not finite then
 					minetest.remove_node({x=pos.x,y=pos.y-1,z=pos.z})
 				end
 			end
@@ -119,14 +119,14 @@ pipeworks.fountainhead_check = function(pos, node)
 		if near_node and string.find(near_node.name, "_loaded") then
 			if fountainhead_name and fountainhead_name == "pipeworks:fountainhead" then
 				minetest.add_node(pos,{name = "pipeworks:fountainhead_pouring"})
-				if finitewater or abovename ~= pipeworks.liquids.water.source then
+				if finite or abovename ~= pipeworks.liquids.water.source then
 					minetest.add_node({x=pos.x,y=pos.y+1,z=pos.z},{name = pipeworks.liquids.water.source})
 				end
 			end
 		else
 			if fountainhead_name == "pipeworks:fountainhead_pouring" then
 				minetest.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:fountainhead"})
-				if abovename == pipeworks.liquids.water.source and not finitewater then
+				if abovename == pipeworks.liquids.water.source and not finite then
 					minetest.remove_node({x=pos.x,y=pos.y+1,z=pos.z})
 				end
 			end
