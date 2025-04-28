@@ -83,7 +83,7 @@ end
 
 pipeworks.spigot_check = function(pos, node)
 	local belowname = minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
-	if belowname and (belowname == "air" or core.registered_nodes[name].liquid_alternative_flowing) then
+	if belowname and (belowname == "air" or core.registered_nodes[belowname].liquid_alternative_flowing) then
 		local spigotname = minetest.get_node(pos).name
 		local fdir=node.param2 % 4
 		local check = {
