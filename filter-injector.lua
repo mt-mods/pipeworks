@@ -313,10 +313,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				return a < b
 			end)
 		end
-		core.log(dump(sposes))
 		local taken = 0
 		for _, spos in ipairs(sposes) do
-			core.log(_)
 			local stack = frominv:get_stack(frominvname, spos)
 			local doRemove = stack:get_count()
 			if fromtube.can_remove then
@@ -334,7 +332,6 @@ local function punch_filter(data, filtpos, filtnode, msg)
 					filtmeta:set_int("slotseq_index", nextpos)
 					set_filter_infotext(data, filtmeta)
 				end
-				local item
 				local count
 				if data.stackwise then
 					count = math.min(stack:get_count(), doRemove)
@@ -345,6 +342,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				end
 			end
 		end
+		local item
 		if taken == 0 then return false end
 		if (exmatch_mode ~= 0) and (filterfor.count > taken) then return false end
 		taken = math.min(taken, filterfor.count)
@@ -353,7 +351,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			for i, spos in ipairs(sposes) do
 				-- it could be the entire stack...
 				item = fromtube.remove_items(frompos, fromnode, frominv:get_stack(frominvname, spos), dir, taken, frominvname, spos)
-				local count = math.min(taken, stack:get_count())
+				local count = math.min(taken, item:get_count())
 				taken = taken - count
 				real_taken = real_taken + count
 				if taken == 0 then break end
