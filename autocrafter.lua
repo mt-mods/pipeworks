@@ -2,7 +2,7 @@ local S = minetest.get_translator("pipeworks")
 
 if core.get_modpath("unified_inventory") then
 	core.register_craftitem("pipeworks:text_req", {
-   		description = S("Requirements"),
+		description = S("Requirements"),
 		inventory_image = "text_req.png",
 		groups = {not_in_creative_inventory = 1},
 		stack_max = 1,
@@ -14,14 +14,14 @@ if core.get_modpath("unified_inventory") then
 		groups = {not_in_creative_inventory = 1},
 		stack_max = 1,
 	})
-	
+
 	unified_inventory.register_craft_type("fluidshaped", {
 		description = S("Shaped Fluid Craft"),
 		icon = "pipeworks_autocrafter.png",
 		width = 3,
 		height = 4,
 	})
-	
+
 	unified_inventory.register_on_craft_registered(
 		function (item_name, options)
 			if options.type ~= "fluidshaped" then return end
@@ -178,7 +178,6 @@ local function get_matching_craft(output_name, example_recipe, fluid_input)
 		end
 	end
 
-	
 	return best_index and recipes[best_index].items or example_recipe
 end
 
@@ -191,7 +190,7 @@ local function get_craft(pos, inventory, hash)
 	local output, decremented_input = minetest.get_craft_result({
 		method = "normal", width = 3, items = example_recipe
 	})
-	
+
 	local fluid
 	if (not output) or output.item:is_empty() then
 		output, decremented_input, fluid = pipeworks.fluid_recipes:get({
