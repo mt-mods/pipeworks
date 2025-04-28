@@ -2,7 +2,7 @@ local S = minetest.get_translator("pipeworks")
 
 if core.get_modpath("unified_inventory") then
 	core.register_craftitem("pipeworks:text_req", {
-		description = S("Requirements"),
+   		description = S("Requirements"),
 		inventory_image = "text_req.png",
 		groups = {not_in_creative_inventory = 1},
 		stack_max = 1,
@@ -14,14 +14,14 @@ if core.get_modpath("unified_inventory") then
 		groups = {not_in_creative_inventory = 1},
 		stack_max = 1,
 	})
-
+	
 	unified_inventory.register_craft_type("fluidshaped", {
 		description = S("Shaped Fluid Craft"),
 		icon = "pipeworks_autocrafter.png",
 		width = 3,
 		height = 4,
 	})
-
+	
 	unified_inventory.register_on_craft_registered(
 		function (item_name, options)
 			if options.type ~= "fluidshaped" then return end
@@ -178,6 +178,7 @@ local function get_matching_craft(output_name, example_recipe, fluid_input)
 		end
 	end
 
+	
 	return best_index and recipes[best_index].items or example_recipe
 end
 
@@ -190,7 +191,7 @@ local function get_craft(pos, inventory, hash)
 	local output, decremented_input = minetest.get_craft_result({
 		method = "normal", width = 3, items = example_recipe
 	})
-
+	
 	local fluid
 	if (not output) or output.item:is_empty() then
 		output, decremented_input, fluid = pipeworks.fluid_recipes:get({
@@ -653,7 +654,6 @@ minetest.register_node("pipeworks:autocrafter", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_float("fluidcap", 8)
-		meta:set_string("fluidtype", "water")
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3 * 8)
 		inv:set_size("recipe", 3 * 3)
@@ -829,8 +829,8 @@ minetest.register_node("pipeworks:autocrafter", {
 -- autocrafter fluid stuff
 local autocraftername = "pipeworks:autocrafter"
 pipeworks.flowables.register.simple(autocraftername)
-pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, currentpressure, finitemode, fluid_type) -- "fluid_type" doesn't work, though it's a placeholder
-	local fluid_type = fluid_type or "water"
+pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, currentpressure, finitemode, fluid_type)
+	if fluid_type == nil  then return 0, fluid_type end -- you can't put empty in something and expect displacement
 	local meta = core.get_meta(pos)
 	local fluid_cap = meta:get_float("fluidcap")
 	local fluid_amount = meta:get_float("fluidamount")
@@ -839,13 +839,13 @@ pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, c
 		if fluid_amount == 0 then
 			meta:set_string("fluidtype", fluid_type)
 		else
-			return 0
+			return 0, fluid_type
 		end
 	end
 	local taken = math.min(fluid_cap - fluid_amount, currentpressure)
 	meta:set_float("fluidamount", fluid_amount + taken)
 	update_meta(meta, meta:get_int("enabled") == 1)
-	return taken
+	return taken, fluid_type
 end, function()end)
 
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list + 1] = autocraftername
