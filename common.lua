@@ -219,8 +219,8 @@ function fs_helpers.get_inv(y,x)
 		local inv_y = (y + 0.4) or 6.9
 		local size, spacing = 1, 0.1
 		local hotbar_len = i3.settings.hotbar_len or (i3.settings.legacy_inventory and 8 or 9)
-		local hotbar_width = 4
-		local inv_size = i3.settings.inv_size or (hotbar_len * hotbar_width)
+		local hotbar_width = (i3.settings.inv_size and (i3.settings.inv_size/hotbar_len)) or 4
+		--local inv_size = i3.settings.inv_size or (hotbar_len * hotbar_width) is useless
 
 		table.insert(fs, "style_type[box;colors=#77777710,#77777710,#777,#777]")
 
