@@ -404,7 +404,6 @@ flowlogic.run_output = function(pos, node, currentpressure, oldpressure, outputd
 	local lower = outputdef.lower
 	local result = currentpressure
 	local threshold
-	local currentfluidtype
 	if finitemode then threshold = lower else threshold = upper end
 	if currentpressure > threshold then
 		local takenpressure
