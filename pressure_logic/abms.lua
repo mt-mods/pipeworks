@@ -270,23 +270,18 @@ flowlogic.balance_pressure = function(pos, node, currentpressure, currentfluidty
 	end
 
 	if #intrusive > 0 then
-		core.log("st")
 		-- take from most "intrusive" connection
 		local add = currentpressure / #migrate
 		if #intrusive == 1 then
 			local intruder = intrusive[1]
-			core.log(dump(intruder) .. ": " .. dump(pressures[intruder]))
-			core.log(dump(pressures))
 			-- put current fluid in migration
 			for _, migrated in ipairs(migrate) do
 				pressures[migrated] = pressures[migrated] + add
 			end
-			core.log(pressures[intruder])
 			-- overwritingly distribute intrusive
 			currentfluidtype = fluid_types[intruder]
 			currentpressure = (pressures[intruder] - biases[intruder]) * 0.5
 			pressures[intruder] = currentpressure + biases[intruder]
-			core.log(pressures[intruder] + currentpressure)
 		else
 			-- find most "intrusive" connection
 			local highest_pressure = 0
