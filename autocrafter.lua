@@ -203,7 +203,6 @@ local function get_craft(pos, inventory, hash)
 		recipe = get_matching_craft(output.item:get_name(), example_recipe, fluid)
 	end
 
-	core.log(dump(decremented_input))
 	craft = {
 		fluid = fluid,
 		recipe = recipe,
