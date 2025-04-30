@@ -12,6 +12,7 @@ pipeworks = {
 	modpath = minetest.get_modpath("pipeworks"),
 	register_fluid = function(self, alias, name, density, description)
 		local def = core.registered_nodes[alias]
+		if not def then return false end
 		self.liquids[name] = {
 			def = def,
 			source = def.liquid_alternative_source,
@@ -20,10 +21,11 @@ pipeworks = {
 			density = density, -- in g/cm³ as standard
 		}
 		self.fluid_types[def.liquid_alternative_source] = name
+		return true
 	end,
 	liquids = {},
 	fluid_types = {}, -- easier indexing
-	gravity = {x=0, y=-0.025, z=0}, -- pressure bias factor, SI unit unspecified
+	gravity = {x=0, y=-0.025, z=0}, -- pressure bias factor, unit unspecified
 }
 
 -- fluid registration
