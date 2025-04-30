@@ -117,8 +117,14 @@ minetest.register_alias("pipeworks:pipe", "pipeworks:pipe_110000_empty")
 
 if minetest.get_modpath("unified_inventory") and unified_inventory.registered_categories then
 	if not unified_inventory.registered_categories["automation"] then
+		local symbol
+		if pipeworks.enable_lua_tube then
+			symbol = "pipeworks:lua_tube000000"
+		else
+			symbol = "pipeworks:mese_filter" -- fallback when lua tube isn't registered
+		end
 		unified_inventory.register_category("automation", {
-			symbol = "pipeworks:lua_tube000000",
+			symbol = symbol,
 			label = "Automation components"
 		})
 	end
