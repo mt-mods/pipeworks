@@ -334,6 +334,17 @@ luaentity.register_entity("pipeworks:tubed_item", {
 
 	on_step = function(self, dtime)
 		local pos = self:get_pos()
+
+		local nodename = core.get_node(pos).name
+		if core.get_item_group(nodename, "injector") == 0 then
+			if core.get_item_group(nodename, "tubedevice") == 0 then
+				if core.get_item_group(nodename, "tube") == 0 then
+					core.item_drop(ItemStack(self.itemstring), nil, pos)
+					self:remove()
+				end
+			end
+		end
+
 		if self.start_pos == nil then
 			self.start_pos = vector.round(pos)
 			self:set_pos(pos)
