@@ -127,12 +127,10 @@ local pipes_devicelist = {
 
 -- Now define the nodes.
 
-local sourcename = "pipeworks:source_loaded"
-local tile = table.copy(core.registered_nodes[pipeworks.liquids.water.source].tiles[1])
-tile.name = tile.name .. "^pipeworks_source_frame.png"
+local sourcename = "pipeworks:source"
 core.register_node(sourcename, {
-	description = S("Infinite Water Source"),
-	tiles = { tile },
+	description = S("Infinite Fluid Source"),
+	tiles = { "pipeworks_source_frame.png" },
 	paramtype = "light",
 	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
 	is_ground_content = false,
@@ -141,7 +139,31 @@ core.register_node(sourcename, {
 		key = "node_sound_metal_defaults",
 	},
 	walkable = true,
-	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1},
+	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1 },
+	on_receive_fields = function(pos, _, fields, sender)
+		local playername = sender:get_player_name()
+		if core.is_protected(pos, playername) then
+			core.record_protection_violation(pos, playername)
+			core.chat_send_player(playername, S("Changes not saved, node protected!"))
+			return
+		end
+		if not core.is_creative_enabled(playername) then
+			core.chat_send_player(playername, S("Changes not saved, \"creative\" priv missing!"))
+			return
+		end
+		local meta = core.get_meta(pos)
+		meta:set_string("fluidamount",fields.pressure or meta:get_string("fluidamount"))
+		meta:set_string("fluidtype",(pipeworks.liquids[fields.fluidtype] and fields.fluidtype) or meta:get_string("fluidtype"))
+	end,
+	on_construct = function(pos)
+		local meta = core.get_meta(pos)
+		local fs = 
+		"formspec_version[4]"..
+		"size[4.75,1.5]"..
+		"field[0.25,0.5;2.5,0.75;fluidtype;"..S("Fluid Type")..";${fluidtype}]"..
+		"field[3,0.5;1.5,0.75;pressure;"..S("Pressure")..";${fluidamount}]"
+		meta:set_string("formspec",fs)
+	end,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
@@ -151,7 +173,10 @@ core.register_node(sourcename, {
 })
 
 new_flow_logic_register.simple(sourcename)
-new_flow_logic_register.intake(sourcename, 4, function() return 4, "water" end)
+new_flow_logic_register.intake(sourcename, math.huge, function(pos)
+	local meta = core.get_meta(pos)
+	return meta:get_float("fluidamount") - meta:get_float("pipeworks.pressure"), meta:get("fluidtype")
+end)
 
 local states = { "on", "off" }
 
