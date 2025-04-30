@@ -89,7 +89,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 
 						local setchan = meta:get_string("channel")
 
-						digiline:receptor_send(pos, digiline.rules.default, setchan, stack:to_table())
+						digilines:receptor_send(pos, digilines.rules.default, setchan, stack:to_table())
 
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
@@ -115,7 +115,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 					end
 				end,
 				groups = {},
-				digiline = {
+				digilines = {
 					receptor = {},
 					effector = {
 						action = function(pos,node,channel,msg) end
@@ -183,7 +183,7 @@ if digiline_enabled and pipeworks.enable_digiline_conductor_tube then
 		plain = {"pipeworks_tube_plain.png^pipeworks_digiline_conductor_tube_plain.png"},
 		noctr = {"pipeworks_tube_noctr.png^pipeworks_digiline_conductor_tube_noctr.png"},
 		ends = {"pipeworks_tube_end.png^pipeworks_digiline_conductor_tube_end.png"},
-		node_def = {digiline = {wire = {rules = pipeworks.digilines_rules}}},
+		node_def = {digilines = {wire = {rules = pipeworks.digilines_rules}}},
 	})
 	minetest.register_craft({
 		type = "shapeless",
@@ -202,7 +202,7 @@ if digiline_enabled and pipeworks.enable_digiline_conductor_tube and
 		noctr = {"pipeworks_conductor_tube_noctr.png^pipeworks_digiline_conductor_tube_noctr.png"},
 		ends = {"pipeworks_conductor_tube_end.png^pipeworks_digiline_conductor_tube_end.png"},
 		node_def = {
-			digiline = {wire = {rules = pipeworks.digilines_rules}},
+			digilines = {wire = {rules = pipeworks.digilines_rules}},
 			groups = {mesecon = 2},
 			mesecons = {conductor = {
 				state = "off",
@@ -219,7 +219,7 @@ if digiline_enabled and pipeworks.enable_digiline_conductor_tube and
 		noctr = {"pipeworks_conductor_tube_on_noctr.png^pipeworks_digiline_conductor_tube_noctr.png"},
 		ends = {"pipeworks_conductor_tube_on_end.png^pipeworks_digiline_conductor_tube_end.png"},
 		node_def = {
-			digiline = {wire = {rules = pipeworks.digilines_rules}},
+			digilines = {wire = {rules = pipeworks.digilines_rules}},
 			groups = {mesecon = 2, not_in_creative_inventory = 1},
 			drop = "pipeworks:mesecon_and_digiline_conductor_tube_off_1",
 			mesecons = {conductor = {

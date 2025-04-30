@@ -588,7 +588,7 @@ minetest.register_node("pipeworks:autocrafter", {
 		return count
 	end,
 	on_timer = run_autocrafter,
-	digiline = {
+	digilines = {
 		receptor = {},
 		effector = {
 			action = function(pos,node,channel,msg)
@@ -625,7 +625,7 @@ minetest.register_node("pipeworks:autocrafter", {
 					end
 					local setchan = meta:get_string("channel")
 					local output = inv:get_stack("output", 1)
-					digiline:receptor_send(pos, digiline.rules.default, setchan, {
+					digilines:receptor_send(pos, digilines.rules.default, setchan, {
 						recipe = recipe,
 						result = {
 							name = output:get_name(),
