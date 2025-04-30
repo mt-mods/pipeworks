@@ -345,7 +345,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 		local item
 		if taken == 0 then return false end
 		if (exmatch_mode ~= 0) and (filterfor.count > taken) then return false end
-		taken = math.min(taken, filterfor.count)
+		if filterfor.count then taken = math.min(taken, filterfor.count) end
 		local real_taken = 0
 		if fromtube.remove_items then
 			for i, spos in ipairs(sposes) do
@@ -355,6 +355,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				taken = taken - count
 				real_taken = real_taken + count
 				if taken == 0 then break end
+				if not filterfor.count then break end
 			end
 		else
 			for i, spos in ipairs(sposes) do
@@ -369,6 +370,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				taken = taken - count
 				real_taken = real_taken + count
 				if taken == 0 then break end
+				if not filterfor.count then break end
 			end
 		end
 		local pos = vector.add(frompos, vector.multiply(dir, 1.4))
