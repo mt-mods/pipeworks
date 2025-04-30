@@ -157,7 +157,7 @@ core.register_node(sourcename, {
 	end,
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
-		local fs = 
+		local fs =
 		"formspec_version[4]"..
 		"size[4.75,1.5]"..
 		"field[0.25,0.5;2.5,0.75;fluidtype;"..S("Fluid Type")..";${fluidtype}]"..
