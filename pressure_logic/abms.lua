@@ -41,9 +41,9 @@ local check_for_liquids_v2 = function(pos, limit)
 	local total = 0
 	for _, tpos in ipairs(coords) do
 		if total >= limit then break end
-		local name = minetest.get_node(tpos).name
+		local name = core.get_node(tpos).name
 		if name == pipeworks.liquids.water.source then
-			minetest.remove_node(tpos)
+			core.remove_node(tpos)
 			total = total + 1
 		end
 	end
@@ -56,7 +56,7 @@ flowlogic.check_for_liquids_v2 = check_for_liquids_v2
 
 local label_pressure = "pipeworks.water_pressure"
 local get_pressure_access = function(pos)
-	local metaref = minetest.get_meta(pos)
+	local metaref = core.get_meta(pos)
 	return {
 		get = function()
 			return metaref:get_float(label_pressure)
@@ -114,7 +114,7 @@ flowlogic.run = function(pos, node)
 	if pipeworks.flowables.transitions.list[nodename] then
 		local newnode = flowlogic.run_transition(node, currentpressure)
 		--pipeworks.logger("flowlogic.run()@"..formatvec(pos).." transition, new node name = "..dump(newnode).." pressure "..tostring(currentpressure))
-		minetest.swap_node(pos, newnode)
+		core.swap_node(pos, newnode)
 		flowlogic.run_transition_post(pos, newnode)
 	end
 
@@ -155,7 +155,7 @@ local get_neighbour_positions = function(pos, node)
 	local connections = {}
 	for _, offset in ipairs(candidates) do
 		local npos = vector.add(pos, offset)
-		local neighbour = minetest.get_node(npos)
+		local neighbour = core.get_node(npos)
 		local nodename = neighbour.name
 		local is_simple = (pipeworks.flowables.list.simple[nodename])
 		if is_simple then
@@ -241,7 +241,7 @@ flowlogic.helpers.make_neighbour_output_fixed = function(neighbours)
 		local taken = 0
 		for _, offset in pairs(neighbours) do
 			local npos = vector.add(pos, offset)
-			local name = minetest.get_node(npos).name
+			local name = core.get_node(npos).name
 			if currentpressure < 1 then break end
 			-- take pressure anyway in non-finite mode, even if node is water source already.
 			-- in non-finite mode, pressure has to be sustained to keep the sources there.
@@ -249,7 +249,7 @@ flowlogic.helpers.make_neighbour_output_fixed = function(neighbours)
 			-- draining pressure is not.
 			local canplace = (name == "air") or (name == pipeworks.liquids.water.flowing)
 			if canplace then
-				minetest.swap_node(npos, {name=pipeworks.liquids.water.source})
+				core.swap_node(npos, {name=pipeworks.liquids.water.source})
 			end
 			if (not finitemode) or canplace then
 				taken = taken + 1
@@ -267,10 +267,10 @@ flowlogic.helpers.make_neighbour_cleanup_fixed = function(neighbours)
 		--pipeworks.logger("neighbour_cleanup_fixed@"..formatvec(pos))
 		for _, offset in pairs(neighbours) do
 			local npos = vector.add(pos, offset)
-			local name = minetest.get_node(npos).name
+			local name = core.get_node(npos).name
 			if (name == pipeworks.liquids.water.source) then
 				--pipeworks.logger("neighbour_cleanup_fixed removing "..formatvec(npos))
-				minetest.remove_node(npos)
+				core.remove_node(npos)
 			end
 		end
 	end
@@ -351,9 +351,9 @@ end
 -- among other things, updates mesecons if present.
 -- node here means the new node, returned from run_transition() above
 flowlogic.run_transition_post = function(pos, node)
-	local mesecons_def = minetest.registered_nodes[node.name].mesecons
+	local mesecons_def = core.registered_nodes[node.name].mesecons
 	local mesecons_rules = pipeworks.flowables.transitions.mesecons[node.name]
-	if minetest.get_modpath("mesecons") and (mesecons_def ~= nil) and mesecons_rules then
+	if core.get_modpath("mesecons") and (mesecons_def ~= nil) and mesecons_rules then
 		if type(mesecons_def) ~= "table" then
 			pipeworks.logger("flowlogic.run_transition_post() BUG mesecons def for "..node.name.."not a table: got "..tostring(mesecons_def))
 		else

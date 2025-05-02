@@ -26,7 +26,7 @@
 -- use too much memory from the sandbox.
 -- You can add more functions to the environment
 -- (see where local env is defined)
--- Something nice to play is appending minetest.env to it.
+-- Something nice to play is appending core.env to it.
 
 local BASENAME = "pipeworks:lua_tube"
 
@@ -63,7 +63,7 @@ local digiline_rules_luatube = {
 -- These helpers are required to set the port states of the lua_tube
 
 local function update_real_port_states(pos, rule_name, new_state)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	if rule_name == nil then
 		meta:set_int("real_portstates", 1)
 		return
@@ -100,7 +100,7 @@ local port_names = {"red", "blue", "yellow", "green", "black", "white"}
 
 local function get_real_port_states(pos)
 	-- Determine if ports are powered (by itself or from outside)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local L = {}
 	local n = meta:get_int("real_portstates") - 1
 	for _, name in ipairs(port_names) do
@@ -153,10 +153,10 @@ end
 
 
 local function set_port_states(pos, ports)
-	local node = minetest.get_node(pos)
+	local node = core.get_node(pos)
 	local name = node.name
 	clean_port_states(ports)
-	local vports = minetest.registered_nodes[name].virtual_portstates
+	local vports = core.registered_nodes[name].virtual_portstates
 	local new_name = generate_name(ports)
 
 	if name ~= new_name and vports then
@@ -169,17 +169,17 @@ local function set_port_states(pos, ports)
 		-- its output off.
 		-- Solution / Workaround:
 		-- Remember which output was turned off and ignore next "off" event.
-		local meta = minetest.get_meta(pos)
-		local ign = minetest.deserialize(meta:get_string("ignore_offevents"), true) or {}
+		local meta = core.get_meta(pos)
+		local ign = core.deserialize(meta:get_string("ignore_offevents"), true) or {}
 		if ports.red    and not vports.red    and not mesecon.is_powered(pos, rules.red)    then ign.red    = true end
 		if ports.blue   and not vports.blue   and not mesecon.is_powered(pos, rules.blue)   then ign.blue   = true end
 		if ports.yellow and not vports.yellow and not mesecon.is_powered(pos, rules.yellow) then ign.yellow = true end
 		if ports.green  and not vports.green  and not mesecon.is_powered(pos, rules.green)  then ign.green  = true end
 		if ports.black  and not vports.black  and not mesecon.is_powered(pos, rules.black)  then ign.black  = true end
 		if ports.white  and not vports.white  and not mesecon.is_powered(pos, rules.white)  then ign.white  = true end
-		meta:set_string("ignore_offevents", minetest.serialize(ign))
+		meta:set_string("ignore_offevents", core.serialize(ign))
 
-		minetest.swap_node(pos, {name = new_name, param2 = node.param2})
+		core.swap_node(pos, {name = new_name, param2 = node.param2})
 
 		if ports.red    ~= vports.red    then set_port(pos, rules.red,    ports.red)    end
 		if ports.blue   ~= vports.blue   then set_port(pos, rules.blue,   ports.blue)   end
@@ -195,12 +195,12 @@ end
 -- Overheating --
 -----------------
 local function burn_controller(pos)
-	local node = minetest.get_node(pos)
+	local node = core.get_node(pos)
 	node.name = BASENAME.."_burnt"
-	minetest.swap_node(pos, node)
-	minetest.get_meta(pos):set_string("lc_memory", "");
+	core.swap_node(pos, node)
+	core.get_meta(pos):set_string("lc_memory", "");
 	-- Wait for pending operations
-	minetest.after(0.2, mesecon.receptor_off, pos, mesecon.rules.flat)
+	core.after(0.2, mesecon.receptor_off, pos, mesecon.rules.flat)
 end
 
 local function overheat(pos, meta)
@@ -216,10 +216,10 @@ end
 
 local function ignore_event(event, meta)
 	if event.type ~= "off" then return false end
-	local ignore_offevents = minetest.deserialize(meta:get_string("ignore_offevents"), true) or {}
+	local ignore_offevents = core.deserialize(meta:get_string("ignore_offevents"), true) or {}
 	if ignore_offevents[event.pin.name] then
 		ignore_offevents[event.pin.name] = nil
-		meta:set_string("ignore_offevents", minetest.serialize(ignore_offevents))
+		meta:set_string("ignore_offevents", core.serialize(ignore_offevents))
 		return true
 	end
 end
@@ -229,11 +229,11 @@ end
 -------------------------
 
 local function safe_print(param)
-	if (minetest.settings:get("pipeworks_lua_tube_print_behavior") or "log") == "log" then
+	if (core.settings:get("pipeworks_lua_tube_print_behavior") or "log") == "log" then
 		local string_meta = getmetatable("")
 		local sandbox = string_meta.__index
 		string_meta.__index = string -- Leave string sandbox temporarily
-		minetest.log("action", string.format("[pipeworks.tubes.lua] print(%s)", dump(param)))
+		core.log("action", string.format("[pipeworks.tubes.lua] print(%s)", dump(param)))
 		string_meta.__index = sandbox -- Restore string sandbox
 	end
 end
@@ -307,7 +307,7 @@ if mesecon.setting("luacontroller_lightweight_interrupts", false) then
 		return (function(time, iid)
 			if type(time) ~= "number" then error("Delay must be a number") end
 			if iid ~= nil then send_warning("Interrupt IDs are disabled on this server") end
-			table.insert(itbl, function() minetest.get_node_timer(pos):start(time) end)
+			table.insert(itbl, function() core.get_node_timer(pos):start(time) end)
 		end)
 	end
 else
@@ -321,12 +321,12 @@ else
 			if type(time) ~= "number" then error("Delay must be a number") end
 			table.insert(itbl, function ()
 				-- Outside string metatable sandbox, can safely run this now
-				local luac_id = minetest.get_meta(pos):get_int("luac_id")
+				local luac_id = core.get_meta(pos):get_int("luac_id")
 				-- Check if IID is dodgy, so you can't use interrupts to store an infinite amount of data.
 				-- Note that this is safe from alter-after-free because this code gets run after the sandbox has ended.
 				-- This runs outside of the timer and *shouldn't* harm perf. unless dodgy data is being sent in the first place
 				iid = remove_functions(iid)
-				local msg_ser = minetest.serialize(iid)
+				local msg_ser = core.serialize(iid)
 				if #msg_ser <= mesecon.setting("luacontroller_interruptid_maxlen", 256) then
 					mesecon.queue:add_action(pos, "pipeworks:lc_tube_interrupt", {luac_id, iid}, time, iid, 1)
 				else
@@ -430,7 +430,7 @@ end
 
 -- itbl: Flat table of functions to run after sandbox cleanup, used to prevent various security hazards
 local function get_digiline_send(pos, itbl, send_warning)
-	if not minetest.get_modpath("digilines") then return end
+	if not core.get_modpath("digilines") then return end
 	local chan_maxlen = mesecon.setting("luacontroller_digiline_channel_maxlen", 256)
 	local maxlen = mesecon.setting("luacontroller_digiline_maxlen", 50000)
 	return function(channel, msg)
@@ -456,7 +456,7 @@ local function get_digiline_send(pos, itbl, send_warning)
 
 		table.insert(itbl, function ()
 			-- Runs outside of string metatable sandbox
-			local luac_id = minetest.get_meta(pos):get_int("luac_id")
+			local luac_id = core.get_meta(pos):get_int("luac_id")
 			mesecon.queue:add_action(pos, "pipeworks:lt_digiline_relay", {channel, luac_id, msg})
 		end)
 		return true
@@ -471,7 +471,7 @@ local safe_globals = {
 
 local function create_environment(pos, mem, event, itbl, send_warning)
 	-- Make sure the tube hasn't broken.
-	local vports = minetest.registered_nodes[minetest.get_node(pos).name].virtual_portstates
+	local vports = core.registered_nodes[core.get_node(pos).name].virtual_portstates
 	if not vports then return {} end
 
 	-- Gather variables for the environment
@@ -593,19 +593,19 @@ end
 
 
 local function load_memory(meta)
-	return minetest.deserialize(meta:get_string("lc_memory"), true) or {}
+	return core.deserialize(meta:get_string("lc_memory"), true) or {}
 end
 
 
 local function save_memory(pos, meta, mem)
-	local memstring = minetest.serialize(remove_functions(mem))
+	local memstring = core.serialize(remove_functions(mem))
 	local memsize_max = mesecon.setting("luacontroller_memsize", 100000)
 
 	if (#memstring <= memsize_max) then
 		meta:set_string("lc_memory", memstring)
 		meta:mark_as_private("lc_memory")
 	else
-		minetest.log("info", "lua_tube memory overflow. "..memsize_max.." bytes available, "
+		core.log("info", "lua_tube memory overflow. "..memsize_max.." bytes available, "
 				..#memstring.." required. Controller overheats.")
 		burn_controller(pos)
 	end
@@ -614,7 +614,7 @@ end
 -- Returns success (boolean), errmsg (string), retval(any, return value of the user supplied code)
 -- run (as opposed to run_inner) is responsible for setting up meta according to this output
 local function run_inner(pos, code, event)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	-- Note: These return success, presumably to avoid changing LC ID.
 	if overheat(pos) then return true, "", nil end
 	if ignore_event(event, meta) then return true, "", nil end
@@ -668,8 +668,8 @@ end
 local function reset_formspec(meta, code, errmsg)
 	meta:set_string("code", code)
 	meta:mark_as_private("code")
-	code = minetest.formspec_escape(code or "")
-	errmsg = minetest.formspec_escape(tostring(errmsg or ""))
+	code = core.formspec_escape(code or "")
+	errmsg = core.formspec_escape(tostring(errmsg or ""))
 	meta:set_string("formspec", "size[12,10]"
 		.."style_type[label,textarea;font=mono]"
 		.."background[-0.2,-0.25;12.4,10.75;jeija_luac_background.png]"
@@ -681,14 +681,14 @@ local function reset_formspec(meta, code, errmsg)
 end
 
 local function reset_meta(pos, code, errmsg)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	reset_formspec(meta, code, errmsg)
 	meta:set_int("luac_id", math.random(1, 65535))
 end
 
 -- Wraps run_inner with LC-reset-on-error
 local function run(pos, event)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local code = meta:get_string("code")
 	local ok, errmsg, retval = run_inner(pos, code, event)
 	if not ok then
@@ -705,7 +705,7 @@ local function reset(pos)
 end
 
 local function node_timer(pos)
-	if minetest.registered_nodes[minetest.get_node(pos).name].is_burnt then
+	if core.registered_nodes[core.get_node(pos).name].is_burnt then
 		return false
 	end
 	run(pos, {type="interrupt"})
@@ -718,16 +718,16 @@ end
 
 mesecon.queue:add_function("pipeworks:lc_tube_interrupt", function (pos, luac_id, iid)
 	-- There is no lua_tube anymore / it has been reprogrammed / replaced / burnt
-	if (minetest.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
-	if (minetest.registered_nodes[minetest.get_node(pos).name].is_burnt) then return end
+	if (core.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
+	if (core.registered_nodes[core.get_node(pos).name].is_burnt) then return end
 	run(pos, {type="interrupt", iid = iid})
 end)
 
 mesecon.queue:add_function("pipeworks:lt_digiline_relay", function (pos, channel, luac_id, msg)
 	if not digiline then return end
 	-- This check is only really necessary because in case of server crash, old actions can be thrown into the future
-	if (minetest.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
-	if (minetest.registered_nodes[minetest.get_node(pos).name].is_burnt) then return end
+	if (core.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
+	if (core.registered_nodes[core.get_node(pos).name].is_burnt) then return end
 	-- The actual work
 	digiline:receptor_send(pos, digiline_rules_luatube, channel, msg)
 end)
@@ -770,7 +770,7 @@ local digiline = {
 }
 
 local function get_program(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	return meta:get_string("code")
 end
 
@@ -785,14 +785,14 @@ local function on_receive_fields(pos, form_name, fields, sender)
 		return
 	end
 	local name = sender:get_player_name()
-	if minetest.is_protected(pos, name) and not minetest.check_player_privs(name, {protection_bypass=true}) then
-		minetest.record_protection_violation(pos, name)
+	if core.is_protected(pos, name) and not core.check_player_privs(name, {protection_bypass=true}) then
+		core.record_protection_violation(pos, name)
 		return
 	end
 	local ok, err = set_program(pos, fields.code)
 	if not ok then
 		-- it's not an error from the server perspective
-		minetest.log("action", "Lua controller programming error: " .. tostring(err))
+		core.log("action", "Lua controller programming error: " .. tostring(err))
 	end
 end
 
@@ -826,7 +826,7 @@ local tiles_on_off = {
 	R270 = "^(pipeworks_lua_tube_port_%s.png^[transformR270)"
 }
 
-local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+local texture_alpha_mode = core.features.use_texture_alpha_string_modes
 	and "clip" or true
 
 for red    = 0, 1 do -- 0 = off  1 = on
@@ -909,7 +909,7 @@ for white  = 0, 1 do
 		},
 	}
 
-	minetest.register_node(node_name, {
+	core.register_node(node_name, {
 		description = "Lua controlled Tube",
 		drawtype = "nodebox",
 		tiles = tiles,
@@ -997,10 +997,10 @@ for white  = 0, 1 do
 		after_place_node = pipeworks.after_place,
 		on_blast = function(pos, intensity)
 			if not intensity or intensity > 1 + 3^0.5 then
-				minetest.remove_node(pos)
+				core.remove_node(pos)
 				return
 			end
-			minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
+			core.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 			pipeworks.scan_for_tube_objects(pos)
 		end,
 	})
@@ -1043,7 +1043,7 @@ tiles_burnt[2] = tiles_burnt[2].."^(pipeworks_lua_tube_port_burnt.png^[transform
 tiles_burnt[3] = tiles_burnt[3].."^(pipeworks_lua_tube_port_burnt.png^[transformR270)"
 tiles_burnt[4] = tiles_burnt[4].."^(pipeworks_lua_tube_port_burnt.png^[transformR90)"
 
-minetest.register_node(BASENAME .. "_burnt", {
+core.register_node(BASENAME .. "_burnt", {
 	drawtype = "nodebox",
 	tiles = tiles_burnt,
 	use_texture_alpha = texture_alpha_mode,
@@ -1080,10 +1080,10 @@ minetest.register_node(BASENAME .. "_burnt", {
 	after_dig_node = pipeworks.after_dig,
 	on_blast = function(pos, intensity)
 		if not intensity or intensity > 1 + 3^0.5 then
-			minetest.remove_node(pos)
+			core.remove_node(pos)
 			return
 		end
-		minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
+		core.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 		pipeworks.scan_for_tube_objects(pos)
 	end,
 })
@@ -1092,7 +1092,7 @@ minetest.register_node(BASENAME .. "_burnt", {
 -- Craft Registration --
 ------------------------
 
-minetest.register_craft({
+core.register_craft({
 	type = "shapeless",
 	output = BASENAME.."000000",
 	recipe = {"pipeworks:mese_tube_000000", "mesecons_luacontroller:luacontroller0000"},

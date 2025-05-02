@@ -8,7 +8,7 @@ local function add_pipeworks_switch(formspec, pos)
 	-- based on the sorting tubes
 	formspec = formspec ..
 			fs_helpers.cycling_button(
-				minetest.get_meta(pos),
+				core.get_meta(pos),
 				pipeworks.button_base,
 				"splitstacks",
 				{
@@ -21,20 +21,20 @@ end
 
 -- helper to add the splitstacks switch to a node-formspec
 local function update_node_formspec(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local old_fs = meta:get_string("formspec")
 	local new_fs = add_pipeworks_switch(old_fs, pos)
 	meta:set_string("formspec", new_fs)
 end
 
 
-if minetest.get_modpath("default") then
+if core.get_modpath("default") then
 	-- add the pipeworks switch into the default chest formspec
 	local old_get_chest_formspec = default.chest.get_chest_formspec
 	-- luacheck: ignore 122
 	default.chest.get_chest_formspec = function(pos)
 		local old_fs = old_get_chest_formspec(pos)
-		local node = minetest.get_node(pos)
+		local node = core.get_node(pos)
 		-- not all chests using this formspec necessary connect to pipeworks
 		if pipeworks.chests[node.name] then
 			local new_fs = add_pipeworks_switch(old_fs, pos)
@@ -45,8 +45,8 @@ if minetest.get_modpath("default") then
 	end
 
 	-- get the fields from the chest formspec, we can do this bc. newest functions are called first
-	-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
-	minetest.register_on_player_receive_fields(function(player, formname, fields)
+	-- https://github.com/luanti-org/luanti/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
+	core.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.quit or formname ~= "default:chest" then
 			return
 		end
@@ -57,11 +57,11 @@ if minetest.get_modpath("default") then
 			return
 		end
 		local pos = chest_open.pos
-		local node = minetest.get_node(pos)
+		local node = core.get_node(pos)
 		if pipeworks.chests[node.name] and pipeworks.may_configure(pos, player) then
 			-- Pipeworks Switch
 			fs_helpers.on_receive_fields(pos, fields)
-			minetest.show_formspec(pn,
+			core.show_formspec(pn,
 				"default:chest",
 				default.chest.get_chest_formspec(pos))
 		end
@@ -76,7 +76,7 @@ if minetest.get_modpath("default") then
 	pipeworks.override_chest("default:chest_open", {}, connect_sides_open)
 	pipeworks.override_chest("default:chest_locked", {}, connect_sides)
 	pipeworks.override_chest("default:chest_locked_open", {}, connect_sides_open)
-elseif minetest.get_modpath("hades_chests") then
+elseif core.get_modpath("hades_chests") then
 	local chest_colors = {"", "white", "grey", "dark_grey", "black", "blue", "cyan", "dark_green", "green", "magenta",
 						  "orange", "pink", "red", "violet", "yellow"}
 	for _, color in ipairs(chest_colors) do
@@ -84,7 +84,7 @@ elseif minetest.get_modpath("hades_chests") then
 				or "hades_chests:chest_" .. color
 		local chestname_protected = (color == "" and "hades_chests:chest_locked")
 				or "hades_chests:chest_" .. color .. "_locked"
-		local old_def = minetest.registered_nodes[chestname]
+		local old_def = core.registered_nodes[chestname]
 
 		-- chest formspec-creation functions are local, we need to find other ways
 		-- normal chests use node formspecs, we can hack into these
@@ -124,7 +124,7 @@ elseif minetest.get_modpath("hades_chests") then
 
 		local function has_locked_chest_privilege(meta, player)
 			local name = player:get_player_name()
-			if name ~= meta:get_string("owner") and not minetest.check_player_privs(name, "protection_bypass") then
+			if name ~= meta:get_string("owner") and not core.check_player_privs(name, "protection_bypass") then
 				return false
 			end
 			return true
@@ -133,30 +133,30 @@ elseif minetest.get_modpath("hades_chests") then
 		-- store, which chest a formspec submission belongs to
 		-- {player1 = pos1, player2 = pos2, ...}
 		local open_chests = {}
-		minetest.register_on_leaveplayer(function(player)
+		core.register_on_leaveplayer(function(player)
 			open_chests[player:get_player_name()] = nil
 		end)
 
 		local override_protected = {
 			on_rightclick = function(pos, node, clicker)
-				local meta = minetest.get_meta(pos)
+				local meta = core.get_meta(pos)
 				if has_locked_chest_privilege(meta, clicker) then
-					minetest.show_formspec(
+					core.show_formspec(
 							clicker:get_player_name(),
 							"hades_chests:chest_locked",
 							get_locked_chest_formspec(pos)
 					)
 					open_chests[clicker:get_player_name()] = pos
 				else
-					minetest.sound_play({ name = "hades_chests_locked", gain = 0.3 }, { max_hear_distance = 10 }, true)
+					core.sound_play({ name = "hades_chests_locked", gain = 0.3 }, { max_hear_distance = 10 }, true)
 				end
 			end,
 			on_rotate = screwdriver.rotate_simple
 		}
 
 		-- get the fields from the chest formspec, we can do this bc. newest functions are called first
-		-- https://github.com/minetest/minetest/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
-		minetest.register_on_player_receive_fields(function(player, formname, fields)
+		-- https://github.com/luanti-org/luanti/blob/d4b10db998ebeb689b3d27368e30952a42169d03/doc/lua_api.md?plain=1#L5840
+		core.register_on_player_receive_fields(function(player, formname, fields)
 			if fields.quit or formname ~= "hades_chests:chest_locked" then
 				return
 			end
@@ -165,7 +165,7 @@ elseif minetest.get_modpath("hades_chests") then
 			if pos and pipeworks.may_configure(pos, player) then
 				-- Pipeworks Switch
 				fs_helpers.on_receive_fields(pos, fields)
-				minetest.show_formspec(pn, "hades_chests:chest_locked", get_locked_chest_formspec(pos))
+				core.show_formspec(pn, "hades_chests:chest_locked", get_locked_chest_formspec(pos))
 			end
 			-- Do NOT return true here, the callback from hades still needs to run (if they add one)
 			return false
@@ -175,7 +175,7 @@ elseif minetest.get_modpath("hades_chests") then
 		pipeworks.override_chest(chestname, override, connect_sides)
 		pipeworks.override_chest(chestname_protected, override_protected, connect_sides)
 	end
-elseif minetest.get_modpath("mcl_barrels") then
+elseif core.get_modpath("mcl_barrels") then
 	-- TODO: bring splitstacks switch in the formspec
 	-- with the current implementation of mcl_barrels this would mean to duplicate a lot of code from there...
 	local connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1}

@@ -1,51 +1,51 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 
--- the minetest.after() calls below can sometimes trigger after a tube
+-- the core.after() calls below can sometimes trigger after a tube
 -- breaks, at which point item_exit() is no longer valid, so we have to make
 -- sure that there even IS a callback to run, first.
 
 local function after_break(pos)
-	local name = minetest.get_node(pos).name
-	if minetest.registered_nodes[name].item_exit then
-		minetest.registered_nodes[name].item_exit(pos)
+	local name = core.get_node(pos).name
+	if core.registered_nodes[name].item_exit then
+		core.registered_nodes[name].item_exit(pos)
 	end
 end
 
-if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
-	local detector_tube_step = 5 * (tonumber(minetest.settings:get("dedicated_server_step")) or 0.09)
+if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
+	local detector_tube_step = 5 * (tonumber(core.settings:get("dedicated_server_step")) or 0.09)
 	pipeworks.register_tube("pipeworks:detector_tube_on", {
 			description = S("Detecting Pneumatic Tube Segment on"),
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
 				tube = {can_go = function(pos, node, velocity, stack)
-						 local meta = minetest.get_meta(pos)
+						 local meta = core.get_meta(pos)
 						 local nitems = meta:get_int("nitems")+1
 						 meta:set_int("nitems", nitems)
 						 local saved_pos = vector.new(pos)
-						 minetest.after(detector_tube_step, after_break, saved_pos)
+						 core.after(detector_tube_step, after_break, saved_pos)
 						 return pipeworks.notvel(pipeworks.meseadjlist,velocity)
 					end},
 				groups = {mesecon = 2, not_in_creative_inventory = 1},
 				drop = "pipeworks:detector_tube_off_1",
 				mesecons = {receptor = {state = "on", rules = pipeworks.mesecons_rules}},
 				item_exit = function(pos)
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					local nitems = meta:get_int("nitems")-1
-					local node = minetest.get_node(pos)
+					local node = core.get_node(pos)
 					local name = node.name
 					local fdir = node.param2
 					if nitems == 0 then
-						 minetest.set_node(pos, {name = string.gsub(name, "on", "off"), param2 = fdir})
+						 core.set_node(pos, {name = string.gsub(name, "on", "off"), param2 = fdir})
 						 mesecon.receptor_off(pos, pipeworks.mesecons_rules)
 					else
 						 meta:set_int("nitems", nitems)
 					end
 				end,
 				on_construct = function(pos)
-					 local meta = minetest.get_meta(pos)
+					 local meta = core.get_meta(pos)
 					 meta:set_int("nitems", 1)
-					 minetest.after(detector_tube_step, after_break, pos)
+					 core.after(detector_tube_step, after_break, pos)
 				end,
 			},
 	})
@@ -55,10 +55,10 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
 				tube = {can_go = function(pos, node, velocity, stack)
-						local node = minetest.get_node(pos)
+						local node = core.get_node(pos)
 						local name = node.name
 						local fdir = node.param2
-						minetest.set_node(pos,{name = string.gsub(name, "off", "on"), param2 = fdir})
+						core.set_node(pos,{name = string.gsub(name, "off", "on"), param2 = fdir})
 						mesecon.receptor_on(pos, pipeworks.mesecons_rules)
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
@@ -67,7 +67,7 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 			},
 	})
 
-	minetest.register_craft( {
+	core.register_craft( {
 		output = "pipeworks:detector_tube_off_1 2",
 		recipe = {
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
@@ -77,7 +77,7 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 	})
 end
 
-local digiline_enabled = minetest.get_modpath("digilines") ~= nil
+local digiline_enabled = core.get_modpath("digilines") ~= nil
 if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 	pipeworks.register_tube("pipeworks:digiline_detector_tube", {
 			description = S("Digiline Detecting Pneumatic Tube Segment"),
@@ -85,7 +85,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 			plain = { "pipeworks_digiline_detector_tube_plain.png" },
 			node_def = {
 				tube = {can_go = function(pos, node, velocity, stack)
-						local meta = minetest.get_meta(pos)
+						local meta = core.get_meta(pos)
 
 						local setchan = meta:get_string("channel")
 
@@ -94,7 +94,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
 				on_construct = function(pos)
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					meta:set_string("formspec",
 						"size[8.5,2.2]"..
 						"image[0.2,0;1,1;pipeworks_digiline_detector_tube_inv.png]"..
@@ -111,7 +111,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 						return
 					end
 					if fields.channel then
-						minetest.get_meta(pos):set_string("channel", fields.channel)
+						core.get_meta(pos):set_string("channel", fields.channel)
 					end
 				end,
 				groups = {},
@@ -127,7 +127,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 			},
 	})
 
-	minetest.register_craft( {
+	core.register_craft( {
 		output = "pipeworks:digiline_detector_tube_1 2",
 		recipe = {
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
@@ -137,7 +137,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 	})
 end
 
-if minetest.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
+if core.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
 	pipeworks.register_tube("pipeworks:conductor_tube_off", {
 			description = S("Conducting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_conductor_tube_inv.png",
@@ -168,7 +168,7 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
 			},
 	})
 
-	minetest.register_craft({
+	core.register_craft({
 		type = "shapeless",
 		output = "pipeworks:conductor_tube_off_1",
 		recipe = {"pipeworks:tube_1", "mesecons:mesecon"}
@@ -185,7 +185,7 @@ if digiline_enabled and pipeworks.enable_digiline_conductor_tube then
 		ends = {"pipeworks_tube_end.png^pipeworks_digiline_conductor_tube_end.png"},
 		node_def = {digiline = {wire = {rules = pipeworks.digilines_rules}}},
 	})
-	minetest.register_craft({
+	core.register_craft({
 		type = "shapeless",
 		output = "pipeworks:digiline_conductor_tube_1",
 		recipe = {"pipeworks:tube_1", "digilines:wire_std_00000000"}
@@ -229,17 +229,17 @@ if digiline_enabled and pipeworks.enable_digiline_conductor_tube and
 			},
 		},
 	})
-	minetest.register_craft({
+	core.register_craft({
 		type = "shapeless",
 		output = "pipeworks:mesecon_and_digiline_conductor_tube_off_1",
 		recipe = {"pipeworks:tube_1", "mesecons:mesecon", "digilines:wire_std_00000000"}
 	})
-	minetest.register_craft({
+	core.register_craft({
 		type = "shapeless",
 		output = "pipeworks:mesecon_and_digiline_conductor_tube_off_1",
 		recipe = {"pipeworks:conductor_tube_off_1", "digilines:wire_std_00000000"}
 	})
-	minetest.register_craft({
+	core.register_craft({
 		type = "shapeless",
 		output = "pipeworks:mesecon_and_digiline_conductor_tube_off_1",
 		recipe = {"pipeworks:digiline_conductor_tube_1", "mesecons:mesecon"}

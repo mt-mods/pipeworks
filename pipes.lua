@@ -1,5 +1,5 @@
 -- This file supplies the steel pipes
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 
 local REGISTER_COMPATIBILITY = true
 
@@ -59,7 +59,7 @@ for index, connects in ipairs(cconnects) do
 		mesh = "pipeworks_pipe_3"..polys..".obj"
 	end
 
-	minetest.register_node("pipeworks:pipe_"..index.."_empty", {
+	core.register_node("pipeworks:pipe_"..index.."_empty", {
 		description = pipedesc,
 		drawtype = "mesh",
 		mesh = mesh,
@@ -97,7 +97,7 @@ for index, connects in ipairs(cconnects) do
 
 	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 
-	minetest.register_node("pipeworks:pipe_"..index.."_loaded", {
+	core.register_node("pipeworks:pipe_"..index.."_loaded", {
 		description = pipedesc,
 		drawtype = "mesh",
 		mesh = mesh,
@@ -122,7 +122,7 @@ for index, connects in ipairs(cconnects) do
 		walkable = true,
 		drop = "pipeworks:pipe_1_empty",
 		after_place_node = function(pos)
-			minetest.set_node(pos, { name = "pipeworks:pipe_"..index.."_empty" })
+			core.set_node(pos, { name = "pipeworks:pipe_"..index.."_empty" })
 			pipeworks.scan_for_pipe_objects(pos)
 		end,
 		after_dig_node = function(pos)
@@ -147,7 +147,7 @@ pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:pipe_1_em
 if REGISTER_COMPATIBILITY then
 	local cempty = "pipeworks:pipe_compatibility_empty"
 	local cloaded = "pipeworks:pipe_compatibility_loaded"
-	minetest.register_node(cempty, {
+	core.register_node(cempty, {
 		drawtype = "airlike",
 		sunlight_propagates = true,
 		paramtype = "light",
@@ -161,7 +161,7 @@ if REGISTER_COMPATIBILITY then
 		on_rotate = false
 
 	})
-	minetest.register_node(cloaded, {
+	core.register_node(cloaded, {
 		drawtype = "airlike",
 		sunlight_propagates = true,
 		paramtype = "light",
@@ -181,22 +181,22 @@ if REGISTER_COMPATIBILITY then
 	for zm = 0, 1 do
 	for zp = 0, 1 do
 		local pname = xm..xp..ym..yp..zm..zp
-		minetest.register_alias("pipeworks:pipe_"..pname.."_empty", cempty)
-		minetest.register_alias("pipeworks:pipe_"..pname.."_loaded", cloaded)
+		core.register_alias("pipeworks:pipe_"..pname.."_empty", cempty)
+		core.register_alias("pipeworks:pipe_"..pname.."_loaded", cloaded)
 	end
 	end
 	end
 	end
 	end
 	end
-	minetest.register_abm({
+	core.register_abm({
 		nodenames = {"group:pipe_to_update"},
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
 			local minp = {x = pos.x-1, y = pos.y-1, z = pos.z-1}
 			local maxp = {x = pos.x+1, y = pos.y+1, z = pos.z+1}
-			if table.getn(minetest.find_nodes_in_area(minp, maxp, "ignore")) == 0 then
+			if table.getn(core.find_nodes_in_area(minp, maxp, "ignore")) == 0 then
 				pipeworks.scan_for_pipe_objects(pos)
 			end
 		end
@@ -229,7 +229,7 @@ pipeworks.pipes_empty_nodenames = pipes_empty_nodenames
 
 if pipeworks.toggles.pipe_mode == "classic" then
 
-minetest.register_abm({
+core.register_abm({
 	nodenames = pipes_empty_nodenames,
 	interval = 1,
 	chance = 1,
@@ -238,7 +238,7 @@ minetest.register_abm({
 	end
 })
 
-minetest.register_abm({
+core.register_abm({
 	nodenames = pipes_full_nodenames,
 	interval = 1,
 	chance = 1,
@@ -247,7 +247,7 @@ minetest.register_abm({
 	end
 })
 
-minetest.register_abm({
+core.register_abm({
 	nodenames = {"pipeworks:spigot","pipeworks:spigot_pouring"},
 	interval = 1,
 	chance = 1,
@@ -256,7 +256,7 @@ minetest.register_abm({
 	end
 })
 
-minetest.register_abm({
+core.register_abm({
 	nodenames = {"pipeworks:fountainhead","pipeworks:fountainhead_pouring"},
 	interval = 1,
 	chance = 1,
