@@ -1,7 +1,7 @@
 unused_args = false
 max_line_length= 240
 redefined = false
-std = "core+max"
+std = "luanti+max"
 
 globals = {
 	"pipeworks",
