@@ -257,7 +257,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	if fromtube.before_filter then fromtube.before_filter(frompos) end
 
 	local function grabAndFire(frominvname, filterfor)
-		if (exmatch_mode ~= 0) and not filterfor.count then return false
+		if (exmatch_mode ~= 0) and not filterfor.count then return false end
 		local sposes = {}
 		if not frominvname or not frominv:get_list(frominvname) then return end
 		for spos,stack in ipairs(frominv:get_list(frominvname)) do
