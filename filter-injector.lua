@@ -243,6 +243,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	if exmatch_mode == nil then
 		exmatch_mode = filtmeta:get_int("exmatch_mode")
 	end
+	
+	if (exmatch_mode ~= 0) and not filterfor.count then return false
 
 	local frominv
 	if fromtube.return_input_invref then
