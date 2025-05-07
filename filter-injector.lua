@@ -481,7 +481,7 @@ for _, data in ipairs({
 			set_filter_formspec(data, meta)
 			set_filter_infotext(data, meta)
 		end
-		node.digiline = {
+		node.digilines = {
 			effector = {
 				action = function(pos, node, channel, msg)
 					local meta = minetest.get_meta(pos)
