@@ -2,7 +2,7 @@ local S = minetest.get_translator("pipeworks")
 
 if core.get_modpath("unified_inventory") then
 	core.register_craftitem("pipeworks:text_req", {
-   		description = S("Requirements"),
+		description = S("Requirements"),
 		inventory_image = "text_req.png",
 		groups = {not_in_creative_inventory = 1},
 		stack_max = 1,
