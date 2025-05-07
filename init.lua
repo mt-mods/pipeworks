@@ -25,7 +25,7 @@ pipeworks = {
 	end,
 	liquids = {},
 	fluid_types = {}, -- easier indexing
-	gravity = {x=0, y=-0.025, z=0}, -- pressure bias factor, unit unspecified
+	gravity = vector.new(0, -0.025, 0), -- pressure bias factor, unit unspecified
 }
 
 -- fluid registration
