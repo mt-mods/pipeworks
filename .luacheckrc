@@ -10,7 +10,7 @@ globals = {
 
 read_globals = {
 	-- mods
-	"default", "mesecon", "digiline",
+	"default", "mesecon", "digilines",
 	"screwdriver", "unified_inventory",
 	"i3", "mcl_experience", "awards",
 	"xcompat", "fakelib", "vizlib"

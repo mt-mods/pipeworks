@@ -729,7 +729,7 @@ mesecon.queue:add_function("pipeworks:lt_digiline_relay", function (pos, channel
 	if (core.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
 	if (core.registered_nodes[core.get_node(pos).name].is_burnt) then return end
 	-- The actual work
-	digiline:receptor_send(pos, digiline_rules_luatube, channel, msg)
+	digilines:receptor_send(pos, digiline_rules_luatube, channel, msg)
 end)
 
 -----------------------
@@ -928,7 +928,7 @@ for white  = 0, 1 do
 			key = "node_sound_wood_defaults",
 		},
 		mesecons = mesecons,
-		digiline = digiline,
+		digilines = digiline,
 		-- Virtual portstates are the ports that
 		-- the node shows as powered up (light up).
 		virtual_portstates = {

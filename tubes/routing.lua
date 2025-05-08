@@ -179,7 +179,7 @@ if pipeworks.enable_one_way_tube then
 		paramtype = "light",
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
-		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, axey=1, handy=1, pickaxey=1},
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tube = 1, axey=1, handy=1, pickaxey=1},
 		is_ground_content = false,
 		_mcl_hardness=0.8,
 		_sound_def = {

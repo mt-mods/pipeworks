@@ -318,7 +318,7 @@ if has_digilines then
 		core.get_meta(pos):set_string("owner", placer:get_player_name())
 		pipeworks.after_place(pos)
 	end
-	def.digiline = {
+	def.digilines = {
 		receptor = {
 			rules = pipeworks.digilines_rules,
 		},

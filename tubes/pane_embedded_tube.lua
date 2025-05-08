@@ -30,7 +30,7 @@ core.register_node("pipeworks:steel_pane_embedded_tube", {
 	collision_box = pane_box,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2, pickaxey=1, handy=1},
+	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, tube = 1, dig_glass = 2, pickaxey=1, handy=1},
 	is_ground_content = false,
 	_mcl_hardness=0.8,
 	legacy_facedir_simple = true,

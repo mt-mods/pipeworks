@@ -18,7 +18,7 @@ pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z
 
 local digilines_enabled = core.get_modpath("digilines") ~= nil
 if digilines_enabled and pipeworks.enable_vertical_digilines_connectivity then
-	pipeworks.digilines_rules=digiline.rules.default
+	pipeworks.digilines_rules=digilines.rules.default
 else
 	-- These rules break vertical connectivity to deployers, node breakers, dispensers, and digiline filter injectors
 	-- via digiline conducting tubes. Changing them may break some builds on some servers, so the setting was added
