@@ -89,7 +89,7 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 
 						local setchan = meta:get_string("channel")
 
-						digilines:receptor_send(pos, digilines.rules.default, setchan, stack:to_table())
+						digilines.receptor_send(pos, digilines.rules.default, setchan, stack:to_table())
 
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
