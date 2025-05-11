@@ -724,7 +724,7 @@ mesecon.queue:add_function("pipeworks:lc_tube_interrupt", function (pos, luac_id
 end)
 
 mesecon.queue:add_function("pipeworks:lt_digiline_relay", function (pos, channel, luac_id, msg)
-	if not digiline then return end
+	if not digilines then return end
 	-- This check is only really necessary because in case of server crash, old actions can be thrown into the future
 	if (minetest.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
 	if (minetest.registered_nodes[minetest.get_node(pos).name].is_burnt) then return end

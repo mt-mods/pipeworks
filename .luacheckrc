@@ -9,6 +9,8 @@ globals = {
 }
 
 read_globals = {
+	-- luanti (TODO: remove after lunarmodules/luacheck releases a version with proper luanti support)
+	"core",
 	-- mods
 	"default", "mesecon", "digilines",
 	"screwdriver", "unified_inventory",
