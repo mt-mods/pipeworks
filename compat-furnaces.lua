@@ -2,12 +2,12 @@
 -- minetest_game/mods/default/furnaces.lua
 
 local def--, def_active
-if minetest.get_modpath("default") then
-	def = table.copy(minetest.registered_nodes["default:furnace"])
-	--def_active = table.copy(minetest.registered_nodes["default:furnace_active"])
-elseif minetest.get_modpath("hades_furnaces") then
-	def = table.copy(minetest.registered_nodes["hades_furnaces:furnace"])
-	--def_active = table.copy(minetest.registered_nodes["hades_furnaces:furnace_active"])
+if core.get_modpath("default") then
+	def = table.copy(core.registered_nodes["default:furnace"])
+	--def_active = table.copy(core.registered_nodes["default:furnace_active"])
+elseif core.get_modpath("hades_furnaces") then
+	def = table.copy(core.registered_nodes["hades_furnaces:furnace"])
+	--def_active = table.copy(core.registered_nodes["hades_furnaces:furnace_active"])
 end
 
 local tube_entry = "^pipeworks_tube_connection_stony.png"
@@ -34,9 +34,9 @@ local override = {
 	groups = groups,
 	tube = {
 		insert_object = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
-			local timer = minetest.get_node_timer(pos)
+			local timer = core.get_node_timer(pos)
 			if not timer:is_started() then
 				timer:start(1.0)
 			end
@@ -47,7 +47,7 @@ local override = {
 			end
 		end,
 		can_insert = function(pos,node,stack,direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
 			if direction.y == 1 then
 				return inv:room_for_item("fuel", stack)
@@ -88,9 +88,9 @@ local override_active = {
 	groups = groups_active,
 	tube = {
 		insert_object = function(pos,node,stack,direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
-			local timer = minetest.get_node_timer(pos)
+			local timer = core.get_node_timer(pos)
 			if not timer:is_started() then
 				timer:start(1.0)
 			end
@@ -101,7 +101,7 @@ local override_active = {
 			end
 		end,
 		can_insert = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
 			if direction.y == 1 then
 				return inv:room_for_item("fuel", stack)
@@ -118,11 +118,11 @@ local override_active = {
 	on_rotate = pipeworks.on_rotate
 }
 
-if minetest.get_modpath("default") then
-	minetest.override_item("default:furnace", override)
-	minetest.override_item("default:furnace_active", override_active)
-elseif minetest.get_modpath("hades_furnaces") then
-	minetest.override_item("hades_furnaces:furnace", override)
-	minetest.override_item("hades_furnaces:furnace_active", override_active)
+if core.get_modpath("default") then
+	core.override_item("default:furnace", override)
+	core.override_item("default:furnace_active", override_active)
+elseif core.get_modpath("hades_furnaces") then
+	core.override_item("hades_furnaces:furnace", override)
+	core.override_item("hades_furnaces:furnace_active", override_active)
 end
 
