@@ -1,7 +1,7 @@
 unused_args = false
 max_line_length= 240
 redefined = false
-std = "luanti+max"
+std = "minetest+max"
 
 globals = {
 	"pipeworks",
@@ -9,6 +9,8 @@ globals = {
 }
 
 read_globals = {
+	-- https://github.com/lunarmodules/luacheck/issues/121
+	"core",
 	-- mods
 	"default", "mesecon", "digilines",
 	"screwdriver", "unified_inventory",
