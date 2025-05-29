@@ -731,7 +731,7 @@ mesecon.queue:add_function("pipeworks:lt_digiline_relay", function (pos, channel
 	if (core.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
 	if (core.registered_nodes[core.get_node(pos).name].is_burnt) then return end
 	-- The actual work
-	digilines:receptor_send(pos, digiline_rules_luatube, channel, msg)
+	digilines.receptor_send(pos, digiline_rules_luatube, channel, msg)
 end)
 
 -----------------------

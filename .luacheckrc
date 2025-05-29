@@ -9,7 +9,7 @@ globals = {
 }
 
 read_globals = {
-	-- https://github.com/lunarmodules/luacheck/issues/121
+	-- remove after luacheck release: https://github.com/lunarmodules/luacheck/issues/121
 	"core",
 	-- mods
 	"default", "mesecon", "digilines",
