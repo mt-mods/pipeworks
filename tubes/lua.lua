@@ -30,6 +30,8 @@
 
 local BASENAME = "pipeworks:lua_tube"
 
+local has_digilines = core.get_modpath("digilines")
+
 local rules = {
 	red    = {x = -1, y =  0, z =  0, name = "red"},
 	blue   = {x =  1, y =  0, z =  0, name = "blue"},
@@ -430,7 +432,7 @@ end
 
 -- itbl: Flat table of functions to run after sandbox cleanup, used to prevent various security hazards
 local function get_digiline_send(pos, itbl, send_warning)
-	if not core.get_modpath("digilines") then return end
+	if not has_digilines then return end
 	local chan_maxlen = mesecon.setting("luacontroller_digiline_channel_maxlen", 256)
 	local maxlen = mesecon.setting("luacontroller_digiline_maxlen", 50000)
 	return function(channel, msg)
@@ -724,7 +726,7 @@ mesecon.queue:add_function("pipeworks:lc_tube_interrupt", function (pos, luac_id
 end)
 
 mesecon.queue:add_function("pipeworks:lt_digiline_relay", function (pos, channel, luac_id, msg)
-	if not digiline then return end
+	if not has_digilines then return end
 	-- This check is only really necessary because in case of server crash, old actions can be thrown into the future
 	if (core.get_meta(pos):get_int("luac_id") ~= luac_id) then return end
 	if (core.registered_nodes[core.get_node(pos).name].is_burnt) then return end
