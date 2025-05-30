@@ -1,7 +1,7 @@
 
-local old_furnace = table.copy(minetest.registered_nodes["mcl_furnaces:furnace"])
-local old_blast_furnace = table.copy(minetest.registered_nodes["mcl_blast_furnace:blast_furnace"])
-local old_smoker = table.copy(minetest.registered_nodes["mcl_smoker:smoker"])
+local old_furnace = table.copy(core.registered_nodes["mcl_furnaces:furnace"])
+local old_blast_furnace = table.copy(core.registered_nodes["mcl_blast_furnace:blast_furnace"])
+local old_smoker = table.copy(core.registered_nodes["mcl_smoker:smoker"])
 
 local tube_entry = "^pipeworks_tube_connection_stony.png"
 
@@ -27,8 +27,8 @@ smoker_groups_active["not_in_creative_inventory"] = 1
 
 -- a hack to give the exp to fake players it's be dropped instead added to (fake) player inv
 local function give_xp(pos, player)
-   local meta = minetest.get_meta(pos)
-   local dir = vector.divide(minetest.facedir_to_dir(minetest.get_node(pos).param2), -1.95)
+   local meta = core.get_meta(pos)
+   local dir = vector.divide(core.facedir_to_dir(core.get_node(pos).param2), -1.95)
    local xp = meta:get_int("xp")
    if xp > 0 then
       mcl_experience.throw_xp(vector.add(pos, dir), xp)
@@ -51,9 +51,9 @@ override.groups = furnace_groups
 
 override.tube = {
    insert_object = function(pos, node, stack, direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
-      local timer = minetest.get_node_timer(pos)
+      local timer = core.get_node_timer(pos)
       if not timer:is_started() then
 	 timer:start(1.0)
       end
@@ -64,7 +64,7 @@ override.tube = {
       end
    end,
    can_insert = function(pos,node,stack,direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
       if direction.y == 1 then
 	 return inv:room_for_item("fuel", stack)
@@ -117,9 +117,9 @@ override_active.groups = furnace_groups_active
 
 override_active.tube = {
    insert_object = function(pos,node,stack,direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
-      local timer = minetest.get_node_timer(pos)
+      local timer = core.get_node_timer(pos)
       if not timer:is_started() then
 	 timer:start(1.0)
       end
@@ -130,7 +130,7 @@ override_active.tube = {
       end
    end,
    can_insert = function(pos, node, stack, direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
       if direction.y == 1 then
 	 return inv:room_for_item("fuel", stack)
@@ -160,9 +160,9 @@ override_blast_furnace.groups = blast_furnace_groups
 
 override_blast_furnace.tube = {
    insert_object = function(pos, node, stack, direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
-      local timer = minetest.get_node_timer(pos)
+      local timer = core.get_node_timer(pos)
       if not timer:is_started() then
 	 timer:start(1.0)
       end
@@ -173,7 +173,7 @@ override_blast_furnace.tube = {
       end
    end,
    can_insert = function(pos,node,stack,direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
       if direction.y == 1 then
 	 return inv:room_for_item("fuel", stack)
@@ -228,9 +228,9 @@ override_blast_active.groups = blast_furnace_groups_active
 
 override_blast_active.tube = {
    insert_object = function(pos,node,stack,direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
-      local timer = minetest.get_node_timer(pos)
+      local timer = core.get_node_timer(pos)
       if not timer:is_started() then
 	 timer:start(1.0)
       end
@@ -241,7 +241,7 @@ override_blast_active.tube = {
       end
    end,
    can_insert = function(pos, node, stack, direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
       if direction.y == 1 then
 	 return inv:room_for_item("fuel", stack)
@@ -271,9 +271,9 @@ override_smoker.groups = smoker_groups
 
 override_smoker.tube = {
    insert_object = function(pos, node, stack, direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
-      local timer = minetest.get_node_timer(pos)
+      local timer = core.get_node_timer(pos)
       if not timer:is_started() then
 	 timer:start(1.0)
       end
@@ -284,7 +284,7 @@ override_smoker.tube = {
       end
    end,
    can_insert = function(pos,node,stack,direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
       if direction.y == 1 then
 	 return inv:room_for_item("fuel", stack)
@@ -339,9 +339,9 @@ override_smoker_active.groups = smoker_groups_active
 
 override_smoker_active.tube = {
    insert_object = function(pos,node,stack,direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
-      local timer = minetest.get_node_timer(pos)
+      local timer = core.get_node_timer(pos)
       if not timer:is_started() then
 	 timer:start(1.0)
       end
@@ -352,7 +352,7 @@ override_smoker_active.tube = {
       end
    end,
    can_insert = function(pos, node, stack, direction)
-      local meta = minetest.get_meta(pos)
+      local meta = core.get_meta(pos)
       local inv = meta:get_inventory()
       if direction.y == 1 then
 	 return inv:room_for_item("fuel", stack)
@@ -366,11 +366,11 @@ override_smoker_active.tube = {
 
 
 -- override
-minetest.override_item("mcl_furnaces:furnace", override)
-minetest.override_item("mcl_furnaces:furnace_active", override_active)
+core.override_item("mcl_furnaces:furnace", override)
+core.override_item("mcl_furnaces:furnace_active", override_active)
 
-minetest.override_item("mcl_blast_furnace:blast_furnace", override_blast_furnace)
-minetest.override_item("mcl_blast_furnace:blast_furnace_active", override_blast_active)
+core.override_item("mcl_blast_furnace:blast_furnace", override_blast_furnace)
+core.override_item("mcl_blast_furnace:blast_furnace_active", override_blast_active)
 
-minetest.override_item("mcl_smoker:smoker", override_smoker)
-minetest.override_item("mcl_smoker:smoker_active", override_smoker_active)
+core.override_item("mcl_smoker:smoker", override_smoker)
+core.override_item("mcl_smoker:smoker_active", override_smoker_active)

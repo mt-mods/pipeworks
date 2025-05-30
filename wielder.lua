@@ -1,12 +1,12 @@
-local S = minetest.get_translator("pipeworks")
-local has_digilines = minetest.get_modpath("digilines")
+local S = core.get_translator("pipeworks")
+local has_digilines = core.get_modpath("digilines")
 
 local function set_wielder_formspec(def, meta)
 	local width, height = def.wield_inv.width, def.wield_inv.height
 	local offset = 5.22 - width * 0.625
 	local size = "10.2,"..(6.5 + height * 1.25 + (has_digilines and 1.25 or 0))
 	local list_bg = ""
-	if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
+	if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 		list_bg = "style_type[box;colors=#666]"
 		for i=0, height-1 do
 			for j=0, width-1 do
@@ -18,7 +18,7 @@ local function set_wielder_formspec(def, meta)
 	local fs = "formspec_version[2]size["..size.."]"..
 		pipeworks.fs_helpers.get_prepends(size)..list_bg..
 		"item_image[0.5,0.3;1,1;"..def.name.."_off]"..
-		"label[1.75,0.8;"..minetest.formspec_escape(def.description).."]"..
+		"label[1.75,0.8;"..core.formspec_escape(def.description).."]"..
 		"list[context;"..def.wield_inv.name..";"..offset..",1.25;"..width..","..height..";]"
 	if has_digilines then
 		fs = fs.."field[1.5,"..inv_offset..";5,0.8;channel;"..S("Channel")..";${channel}]"..
@@ -32,7 +32,7 @@ local function set_wielder_formspec(def, meta)
 end
 
 local function wielder_action(def, pos, node, index)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	local list = inv:get_list(def.wield_inv.name)
 	local wield_index
@@ -51,7 +51,7 @@ local function wielder_action(def, pos, node, index)
 	if not wield_index and not def.wield_hand then
 		return
 	end
-	local dir = minetest.facedir_to_dir(node.param2)
+	local dir = core.facedir_to_dir(node.param2)
 	local fakeplayer = fakelib.create_player({
 		name = meta:get_string("owner"),
 		direction = vector.multiply(dir, -1),
@@ -82,19 +82,19 @@ local function wielder_on(def, pos, node)
 		return
 	end
 	node.name = def.name.."_on"
-	minetest.swap_node(pos, node)
+	core.swap_node(pos, node)
 	wielder_action(def, pos, node)
 end
 
 local function wielder_off(def, pos, node)
 	if node.name == def.name.."_on" then
 		node.name = def.name.."_off"
-		minetest.swap_node(pos, node)
+		core.swap_node(pos, node)
 	end
 end
 
 local function wielder_digiline_action(def, pos, channel, msg)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local set_channel = meta:get_string("channel")
 	if channel ~= set_channel then
 		return
@@ -109,7 +109,7 @@ local function wielder_digiline_action(def, pos, channel, msg)
 		end
 	end
 	if msg.command == "activate" then
-		local node = minetest.get_node(pos)
+		local node = core.get_node(pos)
 		local index = type(msg.slot) == "number" and msg.slot or nil
 		wielder_action(def, pos, node, index)
 	end
@@ -123,7 +123,7 @@ function pipeworks.register_wielder(def)
 			axey = 1, handy = 1, pickaxey = 1,
 			not_in_creative_inventory = state == "on" and 1 or nil
 		}
-		minetest.register_node(def.name.."_"..state, {
+		core.register_node(def.name.."_"..state, {
 			description = def.description,
 			tiles = def.tiles[state],
 			paramtype2 = "facedir",
@@ -157,16 +157,16 @@ function pipeworks.register_wielder(def)
 				can_insert = function(pos, node, stack, direction)
 					if def.eject_drops then
 						-- Prevent ejected items from being inserted
-						local dir = vector.multiply(minetest.facedir_to_dir(node.param2), -1)
+						local dir = vector.multiply(core.facedir_to_dir(node.param2), -1)
 						if vector.equals(direction, dir) then
 							return false
 						end
 					end
-					local inv = minetest.get_meta(pos):get_inventory()
+					local inv = core.get_meta(pos):get_inventory()
 					return inv:room_for_item(def.wield_inv.name, stack)
 				end,
 				insert_object = function(pos, node, stack)
-					local inv = minetest.get_meta(pos):get_inventory()
+					local inv = core.get_meta(pos):get_inventory()
 					return inv:add_item(def.wield_inv.name, stack)
 				end,
 				input_inventory = def.wield_inv.name,
@@ -176,7 +176,7 @@ function pipeworks.register_wielder(def)
 				end,
 			},
 			on_construct = function(pos)
-				local meta = minetest.get_meta(pos)
+				local meta = core.get_meta(pos)
 				local inv = meta:get_inventory()
 				inv:set_size(def.wield_inv.name, def.wield_inv.width * def.wield_inv.height)
 				if def.eject_drops then
@@ -189,15 +189,15 @@ function pipeworks.register_wielder(def)
 				if not placer then
 					return
 				end
-				local node = minetest.get_node(pos)
-				node.param2 = minetest.dir_to_facedir(placer:get_look_dir(), true)
-				minetest.set_node(pos, node)
-				minetest.get_meta(pos):set_string("owner", placer:get_player_name())
+				local node = core.get_node(pos)
+				node.param2 = core.dir_to_facedir(placer:get_look_dir(), true)
+				core.set_node(pos, node)
+				core.get_meta(pos):set_string("owner", placer:get_player_name())
 			end,
 			after_dig_node = function(pos, oldnode, oldmetadata, digger)
 				for _,stack in ipairs(oldmetadata.inventory[def.wield_inv.name] or {}) do
 					if not stack:is_empty() then
-						minetest.add_item(pos, stack)
+						core.add_item(pos, stack)
 					end
 				end
 				pipeworks.scan_for_tube_objects(pos)
@@ -219,7 +219,7 @@ function pipeworks.register_wielder(def)
 				if not fields.channel or not pipeworks.may_configure(pos, sender) then
 					return
 				end
-				minetest.get_meta(pos):set_string("channel", fields.channel)
+				core.get_meta(pos):set_string("channel", fields.channel)
 			end,
 		})
 	end
@@ -249,22 +249,22 @@ if pipeworks.enable_node_breaker then
 		action = function(fakeplayer, pointed)
 			local stack = fakeplayer:get_wielded_item()
 			local old_stack = ItemStack(stack)
-			local item_def = minetest.registered_items[stack:get_name()]
+			local item_def = core.registered_items[stack:get_name()]
 			if item_def.on_use then
 				stack = item_def.on_use(stack, fakeplayer, pointed) or stack
 				fakeplayer:set_wielded_item(stack)
 			else
-				local node = minetest.get_node(pointed.under)
-				local node_def = minetest.registered_nodes[node.name]
+				local node = core.get_node(pointed.under)
+				local node_def = core.registered_nodes[node.name]
 				if not node_def or not node_def.on_dig then
 					return
 				end
 				-- Check if the tool can dig the node
 				local tool = stack:get_tool_capabilities()
-				if not minetest.get_dig_params(node_def.groups, tool).diggable then
+				if not core.get_dig_params(node_def.groups, tool).diggable then
 					-- Try using hand if tool can't dig the node
 					local hand = ItemStack():get_tool_capabilities()
-					if not minetest.get_dig_params(node_def.groups, hand).diggable then
+					if not core.get_dig_params(node_def.groups, hand).diggable then
 						return
 					end
 				end
@@ -274,7 +274,7 @@ if pipeworks.enable_node_breaker then
 				end
 				local sound = node_def.sounds and node_def.sounds.dug
 				if sound then
-					minetest.sound_play(sound, {pos = pointed.under}, true)
+					core.sound_play(sound, {pos = pointed.under}, true)
 				end
 				stack = fakeplayer:get_wielded_item()
 			end
@@ -291,12 +291,12 @@ if pipeworks.enable_node_breaker then
 			end
 		end,
 	})
-	minetest.register_alias("technic:nodebreaker_off", "pipeworks:nodebreaker_off")
-	minetest.register_alias("technic:nodebreaker_on", "pipeworks:nodebreaker_on")
-	minetest.register_alias("technic:node_breaker_off", "pipeworks:nodebreaker_off")
-	minetest.register_alias("technic:node_breaker_on", "pipeworks:nodebreaker_on")
-	minetest.register_alias("auto_tree_tap:off", "pipeworks:nodebreaker_off")
-	minetest.register_alias("auto_tree_tap:on", "pipeworks:nodebreaker_on")
+	core.register_alias("technic:nodebreaker_off", "pipeworks:nodebreaker_off")
+	core.register_alias("technic:nodebreaker_on", "pipeworks:nodebreaker_on")
+	core.register_alias("technic:node_breaker_off", "pipeworks:nodebreaker_off")
+	core.register_alias("technic:node_breaker_on", "pipeworks:nodebreaker_on")
+	core.register_alias("auto_tree_tap:off", "pipeworks:nodebreaker_off")
+	core.register_alias("auto_tree_tap:on", "pipeworks:nodebreaker_on")
 end
 
 if pipeworks.enable_deployer then
@@ -308,29 +308,29 @@ if pipeworks.enable_deployer then
 		wield_inv = {name = "main", width = 3, height = 3},
 		action = function(fakeplayer, pointed)
 			local stack = fakeplayer:get_wielded_item()
-			local def = minetest.registered_items[stack:get_name()]
+			local def = core.registered_items[stack:get_name()]
 			if def and def.on_place then
 				local new_stack, placed_pos = def.on_place(stack, fakeplayer, pointed)
 				fakeplayer:set_wielded_item(new_stack or stack)
-				-- minetest.item_place_node doesn't play sound to the placer
+				-- core.item_place_node doesn't play sound to the placer
 				local sound = placed_pos and def.sounds and def.sounds.place
 				local name = fakeplayer:get_player_name()
 				if sound and name ~= "" then
-					minetest.sound_play(sound, {pos = placed_pos, to_player = name}, true)
+					core.sound_play(sound, {pos = placed_pos, to_player = name}, true)
 				end
 			end
 		end,
 	})
-	minetest.register_alias("technic:deployer_off", "pipeworks:deployer_off")
-	minetest.register_alias("technic:deployer_on", "pipeworks:deployer_on")
+	core.register_alias("technic:deployer_off", "pipeworks:deployer_off")
+	core.register_alias("technic:deployer_on", "pipeworks:deployer_on")
 end
 
 if pipeworks.enable_dispenser then
-	-- Override minetest.item_drop to negate its hardcoded offset
+	-- Override core.item_drop to negate its hardcoded offset
 	-- when the dropper is a fake player.
-	local item_drop = minetest.item_drop
+	local item_drop = core.item_drop
 	-- luacheck: ignore 122
-	function minetest.item_drop(stack, dropper, pos)
+	function core.item_drop(stack, dropper, pos)
 		if dropper and dropper.is_fake_player then
 			pos = vector.new(pos.x, pos.y - 1.2, pos.z)
 		end
@@ -344,7 +344,7 @@ if pipeworks.enable_dispenser then
 		wield_inv = {name = "main", width = 3, height = 3},
 		action = function(fakeplayer)
 			local stack = fakeplayer:get_wielded_item()
-			local def = minetest.registered_items[stack:get_name()]
+			local def = core.registered_items[stack:get_name()]
 			if def and def.on_drop then
 				local pos = fakeplayer:get_pos()
 				fakeplayer:set_wielded_item(def.on_drop(stack, fakeplayer, pos) or stack)
