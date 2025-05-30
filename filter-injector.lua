@@ -117,8 +117,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	}
 
 	-- make sure there's something appropriate to inject the item into
-	local todir = pipeworks.facedir_to_right_dir(filtnode.param2)
-	local topos = vector.add(filtpos, todir)
+	local topos = vector.add(filtpos, dir)
 	local tonode = core.get_node(topos)
 	local todef = core.registered_nodes[tonode.name]
 
