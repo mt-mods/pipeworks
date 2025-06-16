@@ -354,7 +354,7 @@ local function autocraft(inventory, craft, fluid)
 	-- check if we have enough material available
 	local inv_index = count_index(inventory:get_list("src"))
 	local consumption = calculate_consumption(inv_index, craft.consumption)
-	if (not consumption) or (craftfluid and check_fluid_insufficiency(craftfluid, fluid) then
+	if (not consumption) or (craftfluid and check_fluid_insufficiency(craftfluid, fluid)) then
 		return false
 	end
 
