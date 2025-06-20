@@ -35,14 +35,25 @@ end
 function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner, tags)
 	-- Take item in any format
 	local stack = ItemStack(item)
+	local to_pos = vector.add(pos, velocity)
+	local def = minetest.registered_nodes[minetest.get_node(to_pos).name]
+	if not def or not def.groups or not (def.groups.tube
+			or def.groups.tubedevice or def.groups.tubedevice_receiver) then
+		local dropped_item = minetest.add_item(pos, stack)
+		if dropped_item then
+			dropped_item:set_velocity(vector.multiply(velocity, 5))
+		end
+		return
+	end
 	local obj = luaentity.add_entity(pos, "pipeworks:tubed_item")
-	obj:set_item(stack:to_string())
-	obj.start_pos = vector.new(start_pos)
-	obj:set_velocity(velocity)
-	obj.owner = owner
-	obj.tags = tags
-	--obj:set_color("red") -- todo: this is test-only code
-	return obj
+	if obj then
+		obj:set_item(stack:to_string())
+		obj.start_pos = vector.new(start_pos)
+		obj:set_velocity(velocity)
+		obj.owner = owner
+		obj.tags = tags
+		return obj
+	end
 end
 
 -- adding two tube functions
