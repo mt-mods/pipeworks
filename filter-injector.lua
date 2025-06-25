@@ -117,8 +117,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	}
 
 	-- make sure there's something appropriate to inject the item into
-	local todir = pipeworks.facedir_to_right_dir(filtnode.param2)
-	local topos = vector.add(filtpos, todir)
+	local topos = vector.add(filtpos, dir)
 	local tonode = minetest.get_node(topos)
 	local todef = minetest.registered_nodes[tonode.name]
 
@@ -314,6 +313,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				return a < b
 			end)
 		end
+		local available_items = {}
+		local available_count = 0
 		for _, spos in ipairs(sposes) do
 			local stack = frominv:get_stack(frominvname, spos)
 			local doRemove = stack:get_count()
@@ -332,39 +333,63 @@ local function punch_filter(data, filtpos, filtnode, msg)
 					filtmeta:set_int("slotseq_index", nextpos)
 					set_filter_infotext(data, filtmeta)
 				end
-				local item
 				local count
 				if data.stackwise then
 					count = math.min(stack:get_count(), doRemove)
 					if filterfor.count and (filterfor.count > 1 or data.digiline) then
-						if exmatch_mode ~= 0 and filterfor.count > count then
-							return false -- not enough, fail
-						else
-							-- limit quantity to filter amount
-							count = math.min(filterfor.count, count)
-						end
+						count = math.min(filterfor.count - available_count, count)
+					end
+					table.insert(available_items, {spos = spos, count = count})
+					available_count = available_count + count
+					if not filterfor.count or available_count >= filterfor.count then
+						break
 					end
 				else
-					count = 1
+					table.insert(available_items, {spos = spos, count = 1})
+					available_count = 1
+					break  -- only one item allowed so ignore other stacks
 				end
-				if fromtube.remove_items then
-					-- it could be the entire stack...
-					item = fromtube.remove_items(frompos, fromnode, stack, dir, count, frominvname, spos)
-				else
-					item = stack:take_item(count)
-					frominv:set_stack(frominvname, spos, stack)
-					if fromdef.on_metadata_inventory_take then
-						fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakeplayer)
-					end
-				end
-				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
-				local start_pos = vector.add(frompos, dir)
-				pipeworks.tube_inject_item(pos, start_pos, dir, item,
-					fakeplayer:get_player_name(), item_tags)
-				return true -- only fire one item, please
 			end
 		end
-		return false
+		if available_count == 0 or (exmatch_mode ~= 0 and filterfor.count and available_count < filterfor.count) then
+			return false -- not enough, fail
+		end
+		local taken_stacks = {}
+		for _,item in ipairs(available_items) do
+			local stack = frominv:get_stack(frominvname, item.spos)
+			local taken
+			if fromtube.remove_items then
+				taken = fromtube.remove_items(frompos, fromnode, stack, dir, item.count, frominvname, item.spos)
+			else
+				taken = stack:take_item(item.count)
+				frominv:set_stack(frominvname, item.spos, stack)
+				if fromdef.on_metadata_inventory_take then
+					fromdef.on_metadata_inventory_take(frompos, frominvname, item.spos, taken, fakeplayer)
+				end
+			end
+			if not taken:is_empty() then
+				table.insert(taken_stacks, taken)
+			end
+		end
+		if #taken_stacks > 1 then
+			-- merge stacks if possible to reduce items in tubes
+			local merged = {}
+			for _,a in ipairs(taken_stacks) do
+				for _,b in ipairs(merged) do
+					a = b:add_item(a)
+				end
+				if not a:is_empty() then
+					table.insert(merged, a)
+				end
+			end
+			taken_stacks = merged
+		end
+		for _,stack in ipairs(taken_stacks) do
+			local pos = vector.add(frompos, vector.multiply(dir, 1.4))
+			local start_pos = vector.add(frompos, dir)
+			pipeworks.tube_inject_item(pos, start_pos, dir, stack, fakeplayer:get_player_name(), item_tags)
+		end
+		return true
 	end
 
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
