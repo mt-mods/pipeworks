@@ -1,15 +1,15 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
 if not pipeworks.enable_item_tags or not pipeworks.enable_tag_tube then return end
 
-local help_text = minetest.formspec_escape(
+local help_text = core.formspec_escape(
 	S("Separate multiple tags using commas.").."\n"..
 	S("Use \"<none>\" to match items without tags.")
 )
 
 local update_formspec = function(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local buttons_formspec = ""
 	for i = 0, 5 do
 		buttons_formspec = buttons_formspec .. fs_helpers.cycling_button(meta,
@@ -59,7 +59,7 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 			can_go = function(pos, node, velocity, stack, tags)
 				local tbl, tbln = {}, 0
 				local found, foundn = {}, 0
-				local meta = minetest.get_meta(pos)
+				local meta = core.get_meta(pos)
 				local tag_hash = {}
 				if #tags > 0 then
 					for _,tag in ipairs(tags) do
@@ -70,8 +70,8 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 				end
 				for i, vect in ipairs(pipeworks.meseadjlist) do
 					local npos = vector.add(pos, vect)
-					local node = minetest.get_node(npos)
-					local reg_node = minetest.registered_nodes[node.name]
+					local node = core.get_node(npos)
+					local reg_node = core.registered_nodes[node.name]
 					if meta:get_int("l" .. i .. "s") == 1 and reg_node then
 						local tube_def = reg_node.tube
 						if not tube_def or not tube_def.can_insert or
@@ -97,7 +97,7 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 			end
 		},
 		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			for i = 1, 6 do
 				meta:set_int("l" .. tostring(i) .. "s", 1)
 			end
@@ -106,7 +106,7 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 		end,
 		after_place_node = function(pos, placer, itemstack, pointed_thing)
 			if placer and placer:is_player() and placer:get_player_control().aux1 then
-				local meta = minetest.get_meta(pos)
+				local meta = core.get_meta(pos)
 				for i = 1, 6 do
 					meta:set_int("l" .. tostring(i) .. "s", 0)
 				end
@@ -120,7 +120,7 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 				return
 			end
 
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			for i = 1, 6 do
 				local field_name = "tags" .. tostring(i)
 				if fields[field_name] then

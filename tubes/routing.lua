@@ -1,7 +1,7 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 -- the default tube and default textures
 pipeworks.register_tube("pipeworks:tube", S("Pneumatic tube segment"))
-minetest.register_craft( {
+core.register_craft( {
 	output = "pipeworks:tube_1 6",
 	recipe = {
 	        { "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
@@ -53,7 +53,7 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 		is_ground_content = false,
 		tube = {
 			insert_object = function(pos, node, stack, direction)
-				minetest.item_drop(stack, nil, pos)
+				core.item_drop(stack, nil, pos)
 				return ItemStack("")
 			end,
 			can_insert = function(pos,node,stack,direction)
@@ -65,9 +65,9 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 			local itemstack = puncher:get_wielded_item()
 			local wieldname = itemstack:get_name()
 			local playername = puncher:get_player_name()
-			local log_msg = playername.." struck a broken tube at "..minetest.pos_to_string(pos).."\n            "
-			local meta = minetest.get_meta(pos)
-			local was_node = minetest.deserialize(meta:get_string("the_tube_was"))
+			local log_msg = playername.." struck a broken tube at "..core.pos_to_string(pos).."\n            "
+			local meta = core.get_meta(pos)
+			local was_node = core.deserialize(meta:get_string("the_tube_was"))
 			if not was_node then
 				pipeworks.logger(log_msg.."but it can't be repaired.")
 				return
@@ -75,8 +75,8 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 			if not pipeworks.check_and_wear_hammer(puncher) then
 				if wieldname == "" then
 					pipeworks.logger(log_msg.."by hand. It's not very effective.")
-					if minetest.settings:get_bool("enable_damage") then
-						minetest.chat_send_player(playername,S("Broken tubes may be a bit sharp. Perhaps try with a hammer?"))
+					if core.settings:get_bool("enable_damage") then
+						core.chat_send_player(playername,S("Broken tubes may be a bit sharp. Perhaps try with a hammer?"))
 						puncher:set_hp(puncher:get_hp()-1)
 					end
 				else
@@ -85,19 +85,19 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 				return
 			end
 			log_msg = log_msg.."with "..wieldname.." to repair it"
-			local nodedef = minetest.registered_nodes[was_node.name]
+			local nodedef = core.registered_nodes[was_node.name]
 			if nodedef then
 				pipeworks.logger(log_msg..".")
 				if nodedef.tube and nodedef.tube.on_repair then
 					nodedef.tube.on_repair(pos, was_node)
 				else
-					minetest.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
+					core.swap_node(pos, { name = was_node.name, param2 = was_node.param2 })
 					pipeworks.scan_for_tube_objects(pos)
 				end
 				meta:set_string("the_tube_was", "")
 			else
 				pipeworks.logger(log_msg.." but original node "..was_node.name.." is not registered anymore.")
-				minetest.chat_send_player(playername, S("This tube cannot be repaired."))
+				core.chat_send_player(playername, S("This tube cannot be repaired."))
 			end
 		end,
 		allow_metadata_inventory_put = function()
@@ -161,7 +161,7 @@ if pipeworks.enable_crossing_tube then
 	})
 end
 
-local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+local texture_alpha_mode = core.features.use_texture_alpha_string_modes
 	and "clip" or true
 
 if pipeworks.enable_one_way_tube then
@@ -170,7 +170,7 @@ if pipeworks.enable_one_way_tube then
 	for i, tile in ipairs(tiles) do
 		tiles[i] = pipeworks.make_tube_tile(tile)
 	end
-	minetest.register_node("pipeworks:one_way_tube", {
+	core.register_node("pipeworks:one_way_tube", {
 		description = S("One way tube"),
 		tiles = tiles,
 		use_texture_alpha = texture_alpha_mode,
@@ -179,7 +179,7 @@ if pipeworks.enable_one_way_tube then
 		paramtype = "light",
 		node_box = {type = "fixed",
 			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
-		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, axey=1, handy=1, pickaxey=1},
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, tubedevice = 1, tube = 1, axey=1, handy=1, pickaxey=1},
 		is_ground_content = false,
 		_mcl_hardness=0.8,
 		_sound_def = {

@@ -1,15 +1,15 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
 if pipeworks.enable_mese_tube then
 	local function update_formspec(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local old_formspec = meta:get_string("formspec")
 		if string.find(old_formspec, "button1") then -- Old version
 			local inv = meta:get_inventory()
 			for i = 1, 6 do
 				for _, stack in ipairs(inv:get_list("line"..i)) do
-					minetest.add_item(pos, stack)
+					core.add_item(pos, stack)
 				end
 			end
 		end
@@ -24,7 +24,7 @@ if pipeworks.enable_mese_tube then
 			)
 		end
 		local list_backgrounds = ""
-		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
+		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 			list_backgrounds = "style_type[box;colors=#666]"
 			for i=0, 5 do
 				for j=0, 5 do
@@ -83,13 +83,13 @@ if pipeworks.enable_mese_tube then
 				tube = {can_go = function(pos, node, velocity, stack)
 						 local tbl, tbln = {}, 0
 						 local found, foundn = {}, 0
-						 local meta = minetest.get_meta(pos)
+						 local meta = core.get_meta(pos)
 						 local inv = meta:get_inventory()
 						 local name = stack:get_name()
 						 for i, vect in ipairs(pipeworks.meseadjlist) do
 							local npos = vector.add(pos, vect)
-							local node = minetest.get_node(npos)
-							local reg_node = minetest.registered_nodes[node.name]
+							local node = core.get_node(npos)
+							local reg_node = core.registered_nodes[node.name]
 							if meta:get_int("l"..i.."s") == 1 and reg_node then
 								local tube_def = reg_node.tube
 								if not tube_def or not tube_def.can_insert or
@@ -115,7 +115,7 @@ if pipeworks.enable_mese_tube then
 						 return (foundn > 0) and found or tbl
 					end},
 				on_construct = function(pos)
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					local inv = meta:get_inventory()
 					for i = 1, 6 do
 						meta:set_int("l"..tostring(i).."s", 1)
@@ -126,7 +126,7 @@ if pipeworks.enable_mese_tube then
 				end,
 				after_place_node = function(pos, placer, itemstack, pointed_thing)
 					if placer and placer:is_player() and placer:get_player_control().aux1 then
-						local meta = minetest.get_meta(pos)
+						local meta = core.get_meta(pos)
 						for i = 1, 6 do
 							meta:set_int("l"..tostring(i).."s", 0)
 						end
@@ -150,7 +150,7 @@ if pipeworks.enable_mese_tube then
 				allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 					if not pipeworks.may_configure(pos, player) then return 0 end
 					update_formspec(pos) -- For old tubes
-					local inv = minetest.get_meta(pos):get_inventory()
+					local inv = core.get_meta(pos):get_inventory()
 					local stack_copy = ItemStack(stack)
 					stack_copy:set_count(1)
 					inv:set_stack(listname, index, stack_copy)
@@ -159,14 +159,14 @@ if pipeworks.enable_mese_tube then
 				allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 					if not pipeworks.may_configure(pos, player) then return 0 end
 					update_formspec(pos) -- For old tubes
-					local inv = minetest.get_meta(pos):get_inventory()
+					local inv = core.get_meta(pos):get_inventory()
 					inv:set_stack(listname, index, ItemStack(""))
 					return 0
 				end,
 				allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 					if not pipeworks.may_configure(pos, player) then return 0 end
 					update_formspec(pos) -- For old tubes
-					local inv = minetest.get_meta(pos):get_inventory()
+					local inv = core.get_meta(pos):get_inventory()
 
 					if from_list:match("line%d") and to_list:match("line%d") then
 						return count

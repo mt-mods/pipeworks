@@ -1,4 +1,4 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
 local function set_filter_infotext(data, meta)
@@ -21,7 +21,7 @@ local function set_filter_formspec(data, meta)
 		formspec =
 			("size[8.5,%f]"):format(form_height) ..
 			"item_image[0.2,0;1,1;pipeworks:"..data.name.."]"..
-			"label[1.2,0.2;"..minetest.formspec_escape(itemname).."]"..
+			"label[1.2,0.2;"..core.formspec_escape(itemname).."]"..
 			"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
 			"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
 			fs_helpers.cycling_button(meta, ("button[0.2,%f;4.05,1"):format(form_height - 0.7), "slotseq_mode",
@@ -47,7 +47,7 @@ local function set_filter_formspec(data, meta)
 		end
 		local size = "10.2,11"
 		local list_backgrounds = ""
-		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
+		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 			list_backgrounds = "style_type[box;colors=#666]"
 			for i=0, 7 do
 				for j=0, 1 do
@@ -60,7 +60,7 @@ local function set_filter_formspec(data, meta)
 			"size["..size.."]"..
 			pipeworks.fs_helpers.get_prepends(size)..
 			"item_image[0.22,0.22;1,1;pipeworks:"..data.name.."]"..
-			"label[1.22,0.72;"..minetest.formspec_escape(itemname).."]"..
+			"label[1.22,0.72;"..core.formspec_escape(itemname).."]"..
 			"label[0.22,1.5;"..S("Prefer item types:").."]"..
 			list_backgrounds..
 			"list[context;main;0.22,1.75;8,2;]"..
@@ -81,15 +81,15 @@ local function set_filter_formspec(data, meta)
 end
 
 local function punch_filter(data, filtpos, filtnode, msg)
-	local filtmeta = minetest.get_meta(filtpos)
+	local filtmeta = core.get_meta(filtpos)
 	local filtinv = filtmeta:get_inventory()
 	local owner = filtmeta:get_string("owner")
 	local fakeplayer = fakelib.create_player(owner)
 	local dir = pipeworks.facedir_to_right_dir(filtnode.param2)
 	local frompos = vector.subtract(filtpos, dir)
-	local fromnode = minetest.get_node(frompos)
+	local fromnode = core.get_node(frompos)
 	if not fromnode then return end
-	local fromdef = minetest.registered_nodes[fromnode.name]
+	local fromdef = core.registered_nodes[fromnode.name]
 	if not fromdef or not fromdef.tube then return end
 	local fromtube = table.copy(fromdef.tube)
 	local input_special_cases = {
@@ -117,15 +117,14 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	}
 
 	-- make sure there's something appropriate to inject the item into
-	local todir = pipeworks.facedir_to_right_dir(filtnode.param2)
-	local topos = vector.add(filtpos, todir)
-	local tonode = minetest.get_node(topos)
-	local todef = minetest.registered_nodes[tonode.name]
+	local topos = vector.add(filtpos, dir)
+	local tonode = core.get_node(topos)
+	local todef = core.registered_nodes[tonode.name]
 
 	if not todef
-	  or not (minetest.get_item_group(tonode.name, "tube") == 1
-			  or minetest.get_item_group(tonode.name, "tubedevice") == 1
-			  or minetest.get_item_group(tonode.name, "tubedevice_receiver") == 1) then
+	  or not (core.get_item_group(tonode.name, "tube") == 1
+			  or core.get_item_group(tonode.name, "tubedevice") == 1
+			  or core.get_item_group(tonode.name, "tubedevice_receiver") == 1) then
 		return
 	end
 
@@ -252,7 +251,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			return
 		end
 	else
-		local frommeta = minetest.get_meta(frompos)
+		local frommeta = core.get_meta(frompos)
 		frominv = frommeta:get_inventory()
 	end
 	if fromtube.before_filter then fromtube.before_filter(frompos) end
@@ -274,7 +273,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 				          and (not fgroup                                        -- If there's a group filter,
 				               or (type(fgroup) == "string"                      --  it must be a string
-				                   and minetest.get_item_group(                  --  and it must match.
+				                   and core.get_item_group(                  --  and it must match.
 				                                stack:get_name(), fgroup) ~= 0))
 
 				          and (not fwear                                         -- If there's a wear filter:
@@ -314,6 +313,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				return a < b
 			end)
 		end
+		local available_items = {}
+		local available_count = 0
 		for _, spos in ipairs(sposes) do
 			local stack = frominv:get_stack(frominvname, spos)
 			local doRemove = stack:get_count()
@@ -332,39 +333,63 @@ local function punch_filter(data, filtpos, filtnode, msg)
 					filtmeta:set_int("slotseq_index", nextpos)
 					set_filter_infotext(data, filtmeta)
 				end
-				local item
 				local count
 				if data.stackwise then
 					count = math.min(stack:get_count(), doRemove)
 					if filterfor.count and (filterfor.count > 1 or data.digiline) then
-						if exmatch_mode ~= 0 and filterfor.count > count then
-							return false -- not enough, fail
-						else
-							-- limit quantity to filter amount
-							count = math.min(filterfor.count, count)
-						end
+						count = math.min(filterfor.count - available_count, count)
+					end
+					table.insert(available_items, {spos = spos, count = count})
+					available_count = available_count + count
+					if not filterfor.count or available_count >= filterfor.count then
+						break
 					end
 				else
-					count = 1
+					table.insert(available_items, {spos = spos, count = 1})
+					available_count = 1
+					break  -- only one item allowed so ignore other stacks
 				end
-				if fromtube.remove_items then
-					-- it could be the entire stack...
-					item = fromtube.remove_items(frompos, fromnode, stack, dir, count, frominvname, spos)
-				else
-					item = stack:take_item(count)
-					frominv:set_stack(frominvname, spos, stack)
-					if fromdef.on_metadata_inventory_take then
-						fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakeplayer)
-					end
-				end
-				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
-				local start_pos = vector.add(frompos, dir)
-				pipeworks.tube_inject_item(pos, start_pos, dir, item,
-					fakeplayer:get_player_name(), item_tags)
-				return true -- only fire one item, please
 			end
 		end
-		return false
+		if available_count == 0 or (exmatch_mode ~= 0 and filterfor.count and available_count < filterfor.count) then
+			return false -- not enough, fail
+		end
+		local taken_stacks = {}
+		for _,item in ipairs(available_items) do
+			local stack = frominv:get_stack(frominvname, item.spos)
+			local taken
+			if fromtube.remove_items then
+				taken = fromtube.remove_items(frompos, fromnode, stack, dir, item.count, frominvname, item.spos)
+			else
+				taken = stack:take_item(item.count)
+				frominv:set_stack(frominvname, item.spos, stack)
+				if fromdef.on_metadata_inventory_take then
+					fromdef.on_metadata_inventory_take(frompos, frominvname, item.spos, taken, fakeplayer)
+				end
+			end
+			if not taken:is_empty() then
+				table.insert(taken_stacks, taken)
+			end
+		end
+		if #taken_stacks > 1 then
+			-- merge stacks if possible to reduce items in tubes
+			local merged = {}
+			for _,a in ipairs(taken_stacks) do
+				for _,b in ipairs(merged) do
+					a = b:add_item(a)
+				end
+				if not a:is_empty() then
+					table.insert(merged, a)
+				end
+			end
+			taken_stacks = merged
+		end
+		for _,stack in ipairs(taken_stacks) do
+			local pos = vector.add(frompos, vector.multiply(dir, 1.4))
+			local start_pos = vector.add(frompos, dir)
+			pipeworks.tube_inject_item(pos, start_pos, dir, stack, fakeplayer:get_player_name(), item_tags)
+		end
+		return true
 	end
 
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
@@ -417,14 +442,14 @@ for _, data in ipairs({
 			key = "node_sound_wood_defaults",
 		},
 		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			set_filter_formspec(data, meta)
 			set_filter_infotext(data, meta)
 			local inv = meta:get_inventory()
 			inv:set_size("main", 8*2)
 		end,
 		after_place_node = function (pos, placer)
-			minetest.get_meta(pos):set_string("owner", placer:get_player_name())
+			core.get_meta(pos):set_string("owner", placer:get_player_name())
 			pipeworks.after_place(pos)
 		end,
 		after_dig_node = pipeworks.after_dig,
@@ -433,7 +458,7 @@ for _, data in ipairs({
 			if not pipeworks.may_configure(pos, player) then
 				return 0
 			end
-			local inv = minetest.get_meta(pos):get_inventory()
+			local inv = core.get_meta(pos):get_inventory()
 			inv:set_stack("main", index, stack)
 			return 0
 		end,
@@ -441,7 +466,7 @@ for _, data in ipairs({
 			if not pipeworks.may_configure(pos, player) then
 				return 0
 			end
-			local inv = minetest.get_meta(pos):get_inventory()
+			local inv = core.get_meta(pos):get_inventory()
 			local fake_stack = inv:get_stack("main", index)
 			fake_stack:take_item(stack:get_count())
 			inv:set_stack("main", index, fake_stack)
@@ -456,7 +481,7 @@ for _, data in ipairs({
 
 	if data.digiline then
 		node.groups.mesecon = nil
-		if not minetest.get_modpath("digilines") then
+		if not core.get_modpath("digilines") then
 			node.groups.not_in_creative_inventory = 1
 		end
 
@@ -469,10 +494,10 @@ for _, data in ipairs({
 			fs_helpers.on_receive_fields(pos, fields)
 
 			if fields.channel and (fields.key_enter_field == "channel" or fields.set_channel) then
-				minetest.get_meta(pos):set_string("channel", fields.channel)
+				core.get_meta(pos):set_string("channel", fields.channel)
 			end
 
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			if pipeworks.enable_item_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
 				local tags = pipeworks.sanitize_tags(fields.item_tags)
 				meta:set_string("item_tags", table.concat(tags, ","))
@@ -481,10 +506,10 @@ for _, data in ipairs({
 			set_filter_formspec(data, meta)
 			set_filter_infotext(data, meta)
 		end
-		node.digiline = {
+		node.digilines = {
 			effector = {
 				action = function(pos, node, channel, msg)
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					local setchan = meta:get_string("channel")
 					if setchan ~= channel then return end
 
@@ -496,7 +521,7 @@ for _, data in ipairs({
 		node.on_receive_fields = function(pos, formname, fields, sender)
 			if not pipeworks.may_configure(pos, sender) then return end
 			fs_helpers.on_receive_fields(pos, fields)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			meta:set_int("slotseq_index", 1)
 			if pipeworks.enable_item_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
 				local tags = pipeworks.sanitize_tags(fields.item_tags)
@@ -519,7 +544,7 @@ for _, data in ipairs({
 
 
 
-	minetest.register_node("pipeworks:"..data.name, node)
+	core.register_node("pipeworks:"..data.name, node)
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:"..data.name
 end
 
@@ -531,8 +556,8 @@ dropped.
 local function put_to_inputinv(pos, node, filtmeta, list)
 	local dir = pipeworks.facedir_to_right_dir(node.param2)
 	local frompos = vector.subtract(pos, dir)
-	local fromnode = minetest.get_node(frompos)
-	local fromdef = minetest.registered_nodes[fromnode.name]
+	local fromnode = core.get_node(frompos)
+	local fromdef = core.registered_nodes[fromnode.name]
 	if not fromdef or not fromdef.tube then
 		return
 	end
@@ -545,7 +570,7 @@ local function put_to_inputinv(pos, node, filtmeta, list)
 			return
 		end
 	else
-		frominv = minetest.get_meta(frompos):get_inventory()
+		frominv = core.get_meta(frompos):get_inventory()
 	end
 	local listname = type(fromtube.input_inventory) == "table" and
 			fromtube.input_inventory[1] or fromtube.input_inventory
@@ -557,19 +582,19 @@ local function put_to_inputinv(pos, node, filtmeta, list)
 		if not item:is_empty() then
 			local leftover = frominv:add_item(listname, item)
 			if not leftover:is_empty() then
-				minetest.add_item(pos, leftover)
+				core.add_item(pos, leftover)
 			end
 		end
 	end
 	return true
 end
-minetest.register_lbm({
+core.register_lbm({
 	label = "Give back items of old filters that had real inventories",
 	name = "pipeworks:give_back_old_filter_items",
 	nodenames = {"pipeworks:filter", "pipeworks:mese_filter"},
 	run_at_every_load = false,
 	action = function(pos, node)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local list = meta:get_inventory():get_list("main")
 		if put_to_inputinv(pos, node, meta, list) then
 			return
@@ -578,7 +603,7 @@ minetest.register_lbm({
 		for i = 1, #list do
 			local item = list[i]
 			if not item:is_empty() then
-				minetest.add_item(pos, item)
+				core.add_item(pos, item)
 			end
 		end
 	end,

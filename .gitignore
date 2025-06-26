@@ -1,4 +1,4 @@
-## Files related to minetest development cycle
+## Files related to luanti development cycle
 /*.patch
 # GNU Patch reject file
 *.rej
