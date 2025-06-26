@@ -257,7 +257,6 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	if fromtube.before_filter then fromtube.before_filter(frompos) end
 
 	local function grabAndFire(frominvname, filterfor)
-		if (exmatch_mode ~= 0) and not filterfor.count then return false end
 		local sposes = {}
 		if not frominvname or not frominv:get_list(frominvname) then return end
 		for spos,stack in ipairs(frominv:get_list(frominvname)) do
@@ -314,7 +313,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				return a < b
 			end)
 		end
-		local taken = 0
+		local available_items = {}
+		local available_count = 0
 		for _, spos in ipairs(sposes) do
 			local stack = frominv:get_stack(frominvname, spos)
 			local doRemove = stack:get_count()
@@ -336,50 +336,60 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				local count
 				if data.stackwise then
 					count = math.min(stack:get_count(), doRemove)
-					taken = taken + count
+					if filterfor.count and (filterfor.count > 1 or data.digiline) then
+						count = math.min(filterfor.count - available_count, count)
+					end
+					table.insert(available_items, {spos = spos, count = count})
+					available_count = available_count + count
+					if not filterfor.count or available_count >= filterfor.count then
+						break
+					end
 				else
-					taken = 1
-					break
+					table.insert(available_items, {spos = spos, count = 1})
+					available_count = 1
+					break  -- only one item allowed so ignore other stacks
 				end
 			end
 		end
-		local item
-		if taken == 0 then return false end
-		if (exmatch_mode ~= 0) and (filterfor.count > taken) then return false end
-		if filterfor.count then taken = math.min(taken, filterfor.count) end
-		local real_taken = 0
-		if fromtube.remove_items then
-			for i, spos in ipairs(sposes) do
-				-- it could be the entire stack...
-				item = fromtube.remove_items(frompos, fromnode, frominv:get_stack(frominvname, spos), dir, taken, frominvname, spos)
-				local count = math.min(taken, item:get_count())
-				taken = taken - count
-				real_taken = real_taken + count
-				if taken == 0 then break end
-				if not filterfor.count then break end
-			end
-		else
-			for i, spos in ipairs(sposes) do
-				-- it could be the entire stack...
-				local stack = frominv:get_stack(frominvname, spos)
-				local count = math.min(taken, stack:get_count())
-				item = stack:take_item(taken)
-				frominv:set_stack(frominvname, spos, stack)
+		if available_count == 0 or (exmatch_mode ~= 0 and filterfor.count and available_count < filterfor.count) then
+			return false -- not enough, fail
+		end
+		local taken_stacks = {}
+		for _,item in ipairs(available_items) do
+			local stack = frominv:get_stack(frominvname, item.spos)
+			local taken
+			if fromtube.remove_items then
+				taken = fromtube.remove_items(frompos, fromnode, stack, dir, item.count, frominvname, item.spos)
+			else
+				taken = stack:take_item(item.count)
+				frominv:set_stack(frominvname, item.spos, stack)
 				if fromdef.on_metadata_inventory_take then
-					fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakeplayer)
+					fromdef.on_metadata_inventory_take(frompos, frominvname, item.spos, taken, fakeplayer)
 				end
-				taken = taken - count
-				real_taken = real_taken + count
-				if taken == 0 then break end
-				if not filterfor.count then break end
+			end
+			if not taken:is_empty() then
+				table.insert(taken_stacks, taken)
 			end
 		end
-		local pos = vector.add(frompos, vector.multiply(dir, 1.4))
-		local start_pos = vector.add(frompos, dir)
-		item:set_count(real_taken)
-		pipeworks.tube_inject_item(pos, start_pos, dir, item,
-			fakeplayer:get_player_name(), item_tags)
-		return true -- only fire one item, please
+		if #taken_stacks > 1 then
+			-- merge stacks if possible to reduce items in tubes
+			local merged = {}
+			for _,a in ipairs(taken_stacks) do
+				for _,b in ipairs(merged) do
+					a = b:add_item(a)
+				end
+				if not a:is_empty() then
+					table.insert(merged, a)
+				end
+			end
+			taken_stacks = merged
+		end
+		for _,stack in ipairs(taken_stacks) do
+			local pos = vector.add(frompos, vector.multiply(dir, 1.4))
+			local start_pos = vector.add(frompos, dir)
+			pipeworks.tube_inject_item(pos, start_pos, dir, stack, fakeplayer:get_player_name(), item_tags)
+		end
+		return true
 	end
 
 	for _, frominvname in ipairs(type(fromtube.input_inventory) == "table" and fromtube.input_inventory or {fromtube.input_inventory}) do
