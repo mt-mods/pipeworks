@@ -1,9 +1,9 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 
 -- Random variables
 
 pipeworks.expect_infinite_stacks = true
-if minetest.get_modpath("unified_inventory") or not minetest.settings:get_bool("creative_mode") then
+if core.get_modpath("unified_inventory") or not core.settings:get_bool("creative_mode") then
 	pipeworks.expect_infinite_stacks = false
 end
 
@@ -16,7 +16,7 @@ pipeworks.rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y
 
 pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 
-local digilines_enabled = minetest.get_modpath("digilines") ~= nil
+local digilines_enabled = core.get_modpath("digilines") ~= nil
 if digilines_enabled and pipeworks.enable_vertical_digilines_connectivity then
 	pipeworks.digilines_rules=digilines.rules.default
 else
@@ -27,7 +27,7 @@ else
 	pipeworks.digilines_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
 end
 
-pipeworks.liquid_texture = minetest.registered_nodes[pipeworks.liquids.water.flowing].tiles[1]
+pipeworks.liquid_texture = core.registered_nodes[pipeworks.liquids.water.flowing].tiles[1]
 if type(pipeworks.liquid_texture) == "table" then pipeworks.liquid_texture = pipeworks.liquid_texture.name end
 
 pipeworks.button_off   = {text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"}
@@ -60,7 +60,7 @@ function pipeworks.make_tube_tile(tile)
 		tile = table.copy(tile)
 		if tile.color then
 			-- Won't work 100% of the time, but good enough.
-			tile.name = tile.name .. "^[multiply:" .. minetest.colorspec_to_colorstring(tile.color)
+			tile.name = tile.name .. "^[multiply:" .. core.colorspec_to_colorstring(tile.color)
 			tile.color = nil
 		end
 		tile.name = overlay_tube_texture(tile.name)
@@ -78,13 +78,13 @@ end
 
 function pipeworks.may_configure(pos, player)
 	local name = player:get_player_name()
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local owner = meta:get_string("owner")
 
 	if owner ~= "" and owner == name then -- wielders and filters
 		return true
 	end
-	return not minetest.is_protected(pos, name)
+	return not core.is_protected(pos, name)
 end
 
 function pipeworks.replace_name(tbl,tr,name)
@@ -118,7 +118,7 @@ end
 function pipeworks.facedir_to_right_dir(facedir)
 	return vector.cross(
 		pipeworks.facedir_to_top_dir(facedir),
-		minetest.facedir_to_dir(facedir)
+		core.facedir_to_dir(facedir)
 	)
 end
 
@@ -181,7 +181,7 @@ end
 local fs_helpers = {}
 pipeworks.fs_helpers = fs_helpers
 function fs_helpers.on_receive_fields(pos, fields)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	for field in pairs(fields) do
 		if field:match("^fs_helpers_cycling:") then
 			local l = field:split(":")
@@ -208,12 +208,12 @@ function fs_helpers.cycling_button(meta, base, meta_name, values)
 		text = val
 	end
 	local field = "fs_helpers_cycling:"..new_value..":"..meta_name
-	return base..";"..(texture_name and texture_name..";" or "")..field..";"..minetest.formspec_escape(text)..(addopts and ";"..addopts or "").."]"
+	return base..";"..(texture_name and texture_name..";" or "")..field..";"..core.formspec_escape(text)..(addopts and ";"..addopts or "").."]"
 end
 
 function fs_helpers.get_inv(y)
 	local fs = {}
-	if minetest.get_modpath("i3") then
+	if core.get_modpath("i3") then
 		local inv_x = i3.settings.legacy_inventory and 0.75 or 0.22
 		local inv_y = (y + 0.4) or 6.9
 		local size, spacing = 1, 0.1
@@ -238,7 +238,7 @@ function fs_helpers.get_inv(y)
 
 		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
 		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(inv_size / hotbar_len)..";"..hotbar_len.."]")
-	elseif minetest.get_modpath("mcl_formspec") then
+	elseif core.get_modpath("mcl_formspec") then
 		local inv_x = 0.22
 		local inv_y = (y + 0.4) or 6.9
 		local size, spacing = 1, 0.1
@@ -273,7 +273,7 @@ end
 function fs_helpers.get_prepends(size)
 	local prepend = {}
 
-	if minetest.get_modpath("i3") then
+	if core.get_modpath("i3") then
 		prepend = {
 			"no_prepend[]",
 			"bgcolor[black;neither]",
@@ -293,10 +293,10 @@ end
 function pipeworks.load_position(pos)
 	if pos.x < -30912 or pos.y < -30912 or pos.z < -30912 or
 	   pos.x >  30927 or pos.y >  30927 or pos.z >  30927 then return end
-	if minetest.get_node_or_nil(pos) then
+	if core.get_node_or_nil(pos) then
 		return
 	end
-	local vm = minetest.get_voxel_manip()
+	local vm = core.get_voxel_manip()
 	vm:read_from_map(pos, pos)
 end
 

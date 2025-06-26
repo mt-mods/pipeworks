@@ -10,7 +10,7 @@ local function nodeside(node, tubedir)
 		node.param2 = 0
 	end
 
-	local backdir = minetest.facedir_to_dir(node.param2)
+	local backdir = core.facedir_to_dir(node.param2)
 	local back = vector.dot(backdir, tubedir)
 	if back == 1 then
 		return "back"
@@ -40,7 +40,7 @@ local tube_table = {[0] = 1, 2, 2, 4, 2, 4, 4, 5, 2, 3, 4, 6, 4, 6, 5, 7, 2, 4, 
 local tube_table_facedirs = {[0] = 0, 0, 5, 0, 3, 4, 3, 0, 2, 0, 2, 0, 6, 4, 3, 0, 7, 12, 5, 12, 7, 4, 5, 5, 18, 20, 16, 0, 7, 4, 7, 0, 1, 8, 1, 1, 1, 13, 1, 1, 10, 8, 2, 2, 17, 4, 3, 6, 9, 9, 9, 9, 21, 13, 1, 1, 10, 10, 11, 2, 19, 4, 3, 0}
 local function tube_autoroute(pos)
 	local active = {0, 0, 0, 0, 0, 0}
-	local nctr = minetest.get_node(pos)
+	local nctr = core.get_node(pos)
 	if not is_tube(nctr.name) then return end
 
 	local adjustments = {
@@ -57,9 +57,9 @@ local function tube_autoroute(pos)
 
 	for i, adj in ipairs(adjustments) do
 		local position = vector.add(pos, adj)
-		local node = minetest.get_node(position)
+		local node = core.get_node(position)
 
-		local idef = minetest.registered_nodes[node.name]
+		local idef = core.registered_nodes[node.name]
 		-- handle the tubes themselves
 		if is_tube(node.name) then
 			active[i] = 1
@@ -73,11 +73,11 @@ local function tube_autoroute(pos)
 		end
 	end
 
-	minetest.get_meta(pos):set_string("adjlist", minetest.serialize(adjlist))
+	core.get_meta(pos):set_string("adjlist", core.serialize(adjlist))
 
 	-- all sides checked, now figure which tube to use.
 
-	local nodedef = minetest.registered_nodes[nctr.name]
+	local nodedef = core.registered_nodes[nctr.name]
 	local basename = nodedef.basename
 	if nodedef.style == "old" then
 		local nsurround = ""
@@ -95,7 +95,7 @@ local function tube_autoroute(pos)
 		nctr.name = basename.."_"..tube_table[s]
 		nctr.param2 = tube_table_facedirs[s]
 	end
-	minetest.swap_node(pos, nctr)
+	core.swap_node(pos, nctr)
 end
 
 function pipeworks.scan_for_tube_objects(pos)
@@ -123,12 +123,12 @@ end
 -- when they are updated.
 function pipeworks.on_rotate(pos, node, user, mode, new_param2)
 	node.param2 = new_param2
-	minetest.swap_node(pos, node)
+	core.swap_node(pos, node)
 	pipeworks.scan_for_tube_objects(pos)
 	return true
 end
 
-if minetest.get_modpath("mesecons_mvps") then
+if core.get_modpath("mesecons_mvps") then
 	mesecon.register_on_mvps_move(function(moved_nodes)
 		for _, n in ipairs(moved_nodes) do
 			pipeworks.scan_for_tube_objects(n.pos)

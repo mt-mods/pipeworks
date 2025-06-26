@@ -1,13 +1,13 @@
 local materials = xcompat.materials
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 
 local straight = function(pos, node, velocity, stack) return {velocity} end
 local steel_tex = "[combine:16x16^[noalpha^[colorize:#D3D3D3"
-if minetest.get_modpath("default") then steel_tex = "default_steel_block.png" end
+if core.get_modpath("default") then steel_tex = "default_steel_block.png" end
 
 -- register an embedded tube
 function pipeworks.register_embedded_tube(nodename, opts)
-	minetest.register_node(nodename, {
+	core.register_node(nodename, {
 		description = opts.description,
 		tiles = {
 			opts.base_texture,
@@ -41,7 +41,7 @@ function pipeworks.register_embedded_tube(nodename, opts)
 			priority = 50,
 			can_go = straight,
 			can_insert = function(pos, node, stack, direction)
-				local dir = minetest.facedir_to_dir(node.param2)
+				local dir = core.facedir_to_dir(node.param2)
 				return vector.equals(dir, direction) or vector.equals(vector.multiply(dir, -1), direction)
 			end
 		},
@@ -50,7 +50,7 @@ function pipeworks.register_embedded_tube(nodename, opts)
 		on_rotate = pipeworks.on_rotate,
 	})
 
-	minetest.register_craft( {
+	core.register_craft( {
 		output = nodename .. " 1",
 		recipe = {
 			{ opts.base_ingredient, opts.base_ingredient, opts.base_ingredient },
