@@ -36,10 +36,10 @@ function pipeworks.tube_inject_item(pos, start_pos, velocity, item, owner, tags)
 	-- Take item in any format
 	local stack = ItemStack(item)
 	local to_pos = vector.add(pos, velocity)
-	local def = minetest.registered_nodes[minetest.get_node(to_pos).name]
+	local def = core.registered_nodes[core.get_node(to_pos).name]
 	if not def or not def.groups or not (def.groups.tube
 			or def.groups.tubedevice or def.groups.tubedevice_receiver) then
-		local dropped_item = minetest.add_item(pos, stack)
+		local dropped_item = core.add_item(pos, stack)
 		if dropped_item then
 			dropped_item:set_velocity(vector.multiply(velocity, 5))
 		end
