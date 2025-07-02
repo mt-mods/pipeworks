@@ -558,9 +558,10 @@ local function put_to_inputinv(pos, node, filtmeta, list)
 	local frompos = vector.subtract(pos, dir)
 	local fromnode = core.get_node(frompos)
 	local fromdef = core.registered_nodes[fromnode.name]
-	if not fromdef or not fromdef.tube then
+	if not (fromdef and fromdef.tube and list) then
 		return
 	end
+
 	local fromtube = fromdef.tube
 	local frominv
 	if fromtube.return_input_invref then
