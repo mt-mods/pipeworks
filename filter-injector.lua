@@ -558,7 +558,7 @@ local function put_to_inputinv(pos, node, filtmeta, list)
 	local frompos = vector.subtract(pos, dir)
 	local fromnode = core.get_node(frompos)
 	local fromdef = core.registered_nodes[fromnode.name]
-	if not (fromdef and fromdef.tube and list) then
+	if not (fromdef and fromdef.tube) then
 		return
 	end
 
@@ -578,6 +578,7 @@ local function put_to_inputinv(pos, node, filtmeta, list)
 	if not listname then
 		return
 	end
+
 	for i = 1, #list do
 		local item = list[i]
 		if not item:is_empty() then
@@ -597,9 +598,14 @@ core.register_lbm({
 	action = function(pos, node)
 		local meta = core.get_meta(pos)
 		local list = meta:get_inventory():get_list("main")
+		if not list then
+			return
+		end
+
 		if put_to_inputinv(pos, node, meta, list) then
 			return
 		end
+
 		pos.y = pos.y + 1
 		for i = 1, #list do
 			local item = list[i]
@@ -609,3 +615,4 @@ core.register_lbm({
 		end
 	end,
 })
+
