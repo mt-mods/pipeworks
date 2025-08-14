@@ -1,6 +1,6 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 local voidname = "pipeworks:trashcan"
-minetest.register_node(voidname, {
+core.register_node(voidname, {
 	description = S("Trash Can"),
 	drawtype = "normal",
 	tiles = {
@@ -23,10 +23,10 @@ minetest.register_node(voidname, {
 	},
 	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1},
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local size = "10.2,9"
 		local list_background = ""
-		if minetest.get_modpath("i3") or minetest.get_modpath("mcl_formspec") then
+		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 			list_background = "style_type[box;colors=#666]box[4.5,2;1,1;]"
 		end
 		meta:set_string("formspec",
@@ -46,7 +46,7 @@ minetest.register_node(voidname, {
 		meta:get_inventory():set_size("trash", 1)
 	end,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
-		minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
+		core.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 	end,
 	after_place_node = function(pos)
 		pipeworks.scan_for_pipe_objects(pos)

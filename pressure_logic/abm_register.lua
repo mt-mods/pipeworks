@@ -11,7 +11,7 @@ local flowlogic = pipeworks.flowlogic
 
 local register_flowlogic_abm = function(nodename)
 	if pipeworks.toggles.pipe_mode == "pressure" then
-		minetest.register_abm({
+		core.register_abm({
 			label = "pipeworks new_flow_logic run",
 			nodenames = { nodename },
 			interval = 1,
@@ -21,7 +21,7 @@ local register_flowlogic_abm = function(nodename)
 			end
 		})
 	else
-		minetest.log("warning", "pipeworks pressure_logic not enabled but register.flowlogic() requested")
+		core.log("warning", "pipeworks pressure_logic not enabled but register.flowlogic() requested")
 	end
 end
 register.flowlogic = register_flowlogic_abm

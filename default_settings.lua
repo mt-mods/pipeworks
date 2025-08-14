@@ -74,9 +74,9 @@ pipeworks.toggles.finites = {
 for name, value in pairs(settings) do
 	local setting_type = type(value)
 	if setting_type == "boolean" then
-		pipeworks[name] = minetest.settings:get_bool(prefix..name, value)
+		pipeworks[name] = core.settings:get_bool(prefix..name, value)
 	elseif setting_type == "number" then
-		pipeworks[name] = tonumber(minetest.settings:get(prefix..name) or value)
+		pipeworks[name] = tonumber(core.settings:get(prefix..name) or value)
 	else
 		pipeworks[name] = value
 	end

@@ -31,32 +31,32 @@ function pipeworks.get_axis_dir(nodetable, pattern)
 	local pxm,pxp,pym,pyp,pzm,pzp
 
 	if string.find(nodetable.nxm.name, pattern)
-	  and minetest.facedir_to_dir(nodetable.nxm.param2).x ~= 0 then
+	  and core.facedir_to_dir(nodetable.nxm.param2).x ~= 0 then
 		pxm=1
 	end
 
 	if string.find(nodetable.nxp.name, pattern)
-	  and minetest.facedir_to_dir(nodetable.nxp.param2).x ~= 0 then
+	  and core.facedir_to_dir(nodetable.nxp.param2).x ~= 0 then
 		pxp=1
 	end
 
 	if string.find(nodetable.nzm.name, pattern)
-	  and minetest.facedir_to_dir(nodetable.nzm.param2).z ~= 0 then
+	  and core.facedir_to_dir(nodetable.nzm.param2).z ~= 0 then
 		pzm=1
 	end
 
 	if string.find(nodetable.nzp.name, pattern)
-	  and minetest.facedir_to_dir(nodetable.nzp.param2).z ~= 0 then
+	  and core.facedir_to_dir(nodetable.nzp.param2).z ~= 0 then
 		pzp=1
 	end
 
 	if string.find(nodetable.nym.name, pattern)
-	  and minetest.facedir_to_dir(nodetable.nym.param2).y ~= 0 then
+	  and core.facedir_to_dir(nodetable.nym.param2).y ~= 0 then
 		pym=1
 	end
 
 	if string.find(nodetable.nyp.name, pattern)
-	  and minetest.facedir_to_dir(nodetable.nyp.param2).y ~= 0 then
+	  and core.facedir_to_dir(nodetable.nyp.param2).y ~= 0 then
 		pyp=1
 	end
 	local match = pxm or pxp or pym or pyp or pzm or pzp
@@ -67,14 +67,14 @@ local tube_table = {[0] = 1, 2, 2, 4, 2, 4, 4, 5, 2, 3, 4, 6, 4, 6, 5, 7, 2, 4, 
 local tube_table_facedirs = {[0] = 0, 0, 5, 0, 3, 4, 3, 0, 2, 0, 2, 0, 6, 4, 3, 0, 7, 12, 5, 12, 7, 4, 5, 5, 18, 20, 16, 0, 7, 4, 7, 0, 1, 8, 1, 1, 1, 13, 1, 1, 10, 8, 2, 2, 17, 4, 3, 6, 9, 9, 9, 9, 21, 13, 1, 1, 10, 10, 11, 2, 19, 4, 3, 0}
 
 local function autoroute_pipes(pos)
-	local nctr = minetest.get_node(pos)
+	local nctr = core.get_node(pos)
 	local state = "_empty"
 	if (string.find(nctr.name, "pipeworks:pipe_") == nil) then return end
 	if (string.find(nctr.name, "_loaded") ~= nil) then state = "_loaded" end
 	local nsurround = pipeworks.scan_pipe_surroundings(pos)
 
 	if nsurround == 0 then nsurround = 9 end
-	minetest.swap_node(pos, {name = "pipeworks:pipe_"..tube_table[nsurround]..state,
+	core.swap_node(pos, {name = "pipeworks:pipe_"..tube_table[nsurround]..state,
 				param2 = tube_table_facedirs[nsurround]})
 end
 
@@ -98,12 +98,12 @@ function pipeworks.scan_pipe_surroundings(pos)
 	local pzm=0
 	local pzp=0
 
-	local nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	local nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	local nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	local nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	local nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	local nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	local nxm = core.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	local nxp = core.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	local nym = core.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	local nyp = core.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	local nzm = core.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	local nzp = core.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
 	local nodetable = {
 		nxm = nxm,
@@ -173,12 +173,12 @@ function pipeworks.scan_pipe_surroundings(pos)
 
 -- ... other nodes
 
-	local def_left   = minetest.registered_nodes[nxp.name] -- the node that {pos} is to the left of (not the
-	local def_right  = minetest.registered_nodes[nxm.name] -- ...note that is AT the left!), etc.
-	local def_bottom = minetest.registered_nodes[nyp.name]
-	local def_top    = minetest.registered_nodes[nym.name]
-	local def_front  = minetest.registered_nodes[nzp.name]
-	local def_back   = minetest.registered_nodes[nzm.name]
+	local def_left   = core.registered_nodes[nxp.name] -- the node that {pos} is to the left of (not the
+	local def_right  = core.registered_nodes[nxm.name] -- ...note that is AT the left!), etc.
+	local def_bottom = core.registered_nodes[nyp.name]
+	local def_top    = core.registered_nodes[nym.name]
+	local def_front  = core.registered_nodes[nzp.name]
+	local def_back   = core.registered_nodes[nzm.name]
 
 	if def_left and def_left.pipe_connections and def_left.pipe_connections.left
 	  and (not def_left.pipe_connections.pattern or string.find(nxp.name, def_left.pipe_connections.pattern))
@@ -211,16 +211,16 @@ function pipeworks.scan_pipe_surroundings(pos)
 		pzm = 1
 	end
 
-	minetest.log("info", "stage 2 returns "..pxm+8*pxp+2*pym+16*pyp+4*pzm+32*pzp..
-		" for nodes surrounding "..minetest.get_node(pos).name.." at "..minetest.pos_to_string(pos))
+	core.log("info", "stage 2 returns "..pxm+8*pxp+2*pym+16*pyp+4*pzm+32*pzp..
+		" for nodes surrounding "..core.get_node(pos).name.." at "..core.pos_to_string(pos))
 	return pxm+8*pxp+2*pym+16*pyp+4*pzm+32*pzp
 end
 
 function pipeworks.look_for_stackable_tanks(pos)
-	local tym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	local tym = core.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
 
 	if string.find(tym.name, "pipeworks:storage_tank_") ~= nil or
 	    string.find(tym.name, "pipeworks:expansion_tank_") ~= nil then
-		minetest.add_node(pos, { name =  "pipeworks:expansion_tank_0", param2 = tym.param2})
+		core.add_node(pos, { name =  "pipeworks:expansion_tank_0", param2 = tym.param2})
 	end
 end

@@ -1,4 +1,4 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 
 if core.get_modpath("unified_inventory") then
 	core.register_craftitem("pipeworks:text_req", {
@@ -31,8 +31,9 @@ if core.get_modpath("unified_inventory") then
 		end
 	)
 end
+
 -- cache some recipe data to avoid calling the slow function
--- minetest.get_craft_result() every second
+-- core.get_craft_result() every second
 local autocrafterCache = {}
 
 local craft_time = 1
@@ -134,6 +135,13 @@ local function count_index(invlist)
 	return index
 end
 
+local function get_item_info(stack)
+	local name = stack:get_name()
+	local def = core.registered_items[name]
+	local description = def and def.description or S("Unknown item")
+	return description, name
+end
+
 -- Get best matching recipe for what user has put in crafting grid.
 -- This function does not consider crafting method (mix vs craft)
 local function get_matching_craft(output_name, example_recipe, fluid_input)
@@ -141,7 +149,7 @@ local function get_matching_craft(output_name, example_recipe, fluid_input)
 	if fluid_input then
 		recipes = pipeworks.fluid_recipes:get_all(output_name, fluid_input.type)
 	else
-		recipes = minetest.get_all_craft_recipes(output_name)
+		recipes = core.get_all_craft_recipes(output_name)
 	end
 	if not recipes then
 		return example_recipe
@@ -163,7 +171,7 @@ local function get_matching_craft(output_name, example_recipe, fluid_input)
 			elseif recipe_item_name:sub(1, 6) == "group:" then
 				group = recipe_item_name:sub(7)
 				for example_item_name, _ in pairs(index_example) do
-					if minetest.get_item_group(
+					if core.get_item_group(
 						example_item_name, group) ~= 0
 					then
 						score = score + 1
@@ -182,12 +190,12 @@ local function get_matching_craft(output_name, example_recipe, fluid_input)
 end
 
 local function get_craft(pos, inventory, hash)
-	local hash = hash or minetest.hash_node_position(pos)
+	local hash = hash or core.hash_node_position(pos)
 	local craft = autocrafterCache[hash]
 	if craft then return craft end
 
 	local example_recipe = inventory:get_list("recipe")
-	local output, decremented_input = minetest.get_craft_result({
+	local output, decremented_input = core.get_craft_result({
 		method = "normal", width = 3, items = example_recipe
 	})
 
@@ -254,7 +262,7 @@ local function calculate_consumption(inv_index, consumption_with_groups)
 		local found = 0
 		local count_ingredient_groups = #ingredient_groups
 		for i = 1, count_ingredient_groups do
-			if minetest.get_item_group(name,
+			if core.get_item_group(name,
 				ingredient_groups[i]) ~= 0
 			then
 				found = found + 1
@@ -373,7 +381,7 @@ local function autocraft(inventory, craft, fluid)
 	for i = 1, 9 do
 		leftover = inventory:add_item("dst", craft.decremented_input[i])
 		if leftover and not leftover:is_empty() then
-			minetest.log("warning", "[pipeworks] autocrafter didn't " ..
+			core.log("warning", "[pipeworks] autocrafter didn't " ..
 				"calculate output space correctly.")
 		end
 	end
@@ -384,7 +392,7 @@ end
 -- is started only from start_autocrafter(pos) after sanity checks and
 -- recipe is cached
 local function run_autocrafter(pos, elapsed)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local inventory = meta:get_inventory()
 	local craft = get_craft(pos, inventory)
 	local output_item = craft.output.item
@@ -405,9 +413,9 @@ local function run_autocrafter(pos, elapsed)
 end
 
 local function start_crafter(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	if meta:get_int("enabled") == 1 then
-		local timer = minetest.get_node_timer(pos)
+		local timer = core.get_node_timer(pos)
 		if not timer:is_started() then
 			timer:start(craft_time)
 		end
@@ -421,12 +429,12 @@ end
 -- note, that this function assumes allready being updated to virtual items
 -- and doesn't handle recipes with stacksizes > 1
 local function after_recipe_change(pos, inventory)
-	local hash = minetest.hash_node_position(pos)
-	local meta = minetest.get_meta(pos)
+	local hash = core.hash_node_position(pos)
+	local meta = core.get_meta(pos)
 	autocrafterCache[hash] = nil
 	-- if we emptied the grid, there's no point in keeping it running or cached
 	if inventory:is_empty("recipe") then
-		minetest.get_node_timer(pos):stop()
+		core.get_node_timer(pos):stop()
 		meta:set_string("infotext", S("unconfigured Autocrafter"))
 		inventory:set_stack("output", 1, "")
 		return
@@ -442,12 +450,12 @@ end
 
 -- clean out unknown items and groups, which would be handled like unknown
 -- items in the crafting grid
--- if minetest supports query by group one day, this might replace them
+-- if Luanti supports query by group one day, this might replace them
 -- with a canonical version instead
 local function normalize(item_list)
 	for i = 1, #item_list do
 		local name = item_list[i]
-		if not minetest.registered_items[name] then
+		if not core.registered_items[name] then
 			item_list[i] = ""
 		end
 	end
@@ -459,7 +467,7 @@ local function on_output_change(pos, inventory, stack)
 		inventory:set_list("output", {})
 		inventory:set_list("recipe", {})
 	else
-		local input = minetest.get_craft_recipe(stack:get_name())
+		local input = core.get_craft_recipe(stack:get_name())
 		if not input.items or input.type ~= "normal" then return end
 		local items, width = normalize(input.items), input.width
 		local item_idx, width_idx = 1, 1
@@ -478,6 +486,83 @@ local function on_output_change(pos, inventory, stack)
 	after_recipe_change(pos, inventory)
 end
 
+-- returns false if we shouldn't bother attempting to start the timer again
+-- after this
+local function update_meta(meta, enabled)
+	local state = enabled and "on" or "off"
+	meta:set_int("enabled", enabled and 1 or 0)
+	local list_backgrounds = ""
+	if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
+		list_backgrounds = "style_type[box;colors=#666]"
+		for i = 0, 2 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" ..
+					1.5 + (i * 1.25) .. "," .. 0.25 + (j * 1.25) .. ";1,1;]"
+			end
+		end
+		for i = 0, 3 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" ..
+					5.28 + 1.25 + (i * 1.25) .. "," .. 0.25 + (j * 1.25) .. ";1,1;]"
+			end
+		end
+		for i = 0, 7 do
+			for j = 0, 2 do
+				list_backgrounds = list_backgrounds .. "box[" ..
+					1.5 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
+			end
+		end
+	end
+	local size = "11.5,14"
+	local fluid = meta:get("fluidtype")
+	local amount = meta:get_float("fluidamount")
+	local fluid_cap = meta:get_float("fluidcap")
+	local bar_height = 8.25 * amount / fluid_cap
+	local fs =
+		"formspec_version[4]" ..
+		"size[" .. size .. "]" ..
+		pipeworks.fs_helpers.get_prepends(size) ..
+		list_backgrounds ..
+		"list[context;recipe;1.47,0.22;3,3;]" ..
+		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
+		"list[context;output;5.25,1.45;1,1;]" ..
+		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
+		state .. ";;;false;pipeworks_button_interm.png]" ..
+		"list[context;dst;6.53,0.22;4,3;]" ..
+		"list[context;src;1.47,5;8,3;]" ..--
+		pipeworks.fs_helpers.get_inv(9,1.25) ..
+		"listring[current_player;main]" ..
+		"listring[context;src]" ..
+		"listring[current_player;main]" ..
+		"listring[context;dst]" ..
+		"listring[current_player;main]" ..
+		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";pipeworks_fluid_" .. (fluid or "air") .. ".png]" ..
+		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]"
+	if core.get_modpath("digilines") then
+		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
+			";${channel}]" ..
+			"button[6.25,4;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
+			"button_exit[8.05,4;2,0.75;close;" .. S("Close") .. "]"
+	end
+	meta:set_string("formspec", fs)
+
+	-- toggling the button doesn't quite call for running a recipe change check
+	-- so instead we run a minimal version for infotext setting only
+	-- this might be more written code, but actually executes less
+	local output = meta:get_inventory():get_stack("output", 1)
+	if output:is_empty() then -- doesn't matter if paused or not
+		meta:set_string("infotext", S("unconfigured Autocrafter"))
+		return false
+	end
+
+	local description, name = get_item_info(output)
+	local infotext = enabled and S("'@1' Autocrafter (@2)", description, name)
+				or S("paused '@1' Autocrafter", description)
+
+	meta:set_string("infotext", infotext)
+	return enabled
+end
+
 -- 1st version of the autocrafter had actual items in the crafting grid
 -- the 2nd replaced these with virtual items, dropped the content on update and
 --   set "virtual_items" to string "1"
@@ -486,7 +571,7 @@ end
 -- so we work out way backwards on this history and update each single case
 --   to the newest version
 local function upgrade_autocrafter(pos, meta)
-	local meta = meta or minetest.get_meta(pos)
+	local meta = meta or core.get_meta(pos)
 	local inv = meta:get_inventory()
 
 	if inv:get_size("output") == 0 then -- we are version 2 or 1
@@ -503,7 +588,7 @@ local function upgrade_autocrafter(pos, meta)
 			if not recipe then return end
 			for idx, stack in ipairs(recipe) do
 				if not stack:is_empty() then
-					minetest.add_item(pos, stack)
+					core.add_item(pos, stack)
 					stack:set_count(1)
 					stack:set_wear(0)
 					inv:set_stack("recipe", idx, stack)
@@ -512,7 +597,7 @@ local function upgrade_autocrafter(pos, meta)
 		end
 
 		-- update the recipe, cache, and start the crafter
-		autocrafterCache[minetest.hash_node_position(pos)] = nil
+		autocrafterCache[core.hash_node_position(pos)] = nil
 		after_recipe_change(pos, inv)
 	end
 end
@@ -624,7 +709,7 @@ pipeworks.fluid_recipes.get_all = function(self, name, fluid_type)
 	return out
 end
 
-minetest.register_node("pipeworks:autocrafter", {
+core.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
@@ -633,14 +718,14 @@ minetest.register_node("pipeworks:autocrafter", {
 	_mcl_hardness=0.8,
 	pipe_connections = { top = 1, bottom = 1, left = 1, right = 1, front = 1, back = 1 },
 	tube = {insert_object = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
 			local added = inv:add_item("src", stack)
 			after_inventory_change(pos)
 			return added
 		end,
 		can_insert = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
 			return inv:room_for_item("src", stack)
 		end,
@@ -650,7 +735,7 @@ minetest.register_node("pipeworks:autocrafter", {
 			}
 	},
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		meta:set_float("fluidcap", 8)
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3 * 8)
@@ -665,10 +750,10 @@ minetest.register_node("pipeworks:autocrafter", {
 		then
 			return
 		end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		if fields.on then
 			update_meta(meta, false)
-			minetest.get_node_timer(pos):stop()
+			core.get_node_timer(pos):stop()
 		elseif fields.off then
 			if update_meta(meta, true) then
 				start_crafter(pos)
@@ -680,7 +765,7 @@ minetest.register_node("pipeworks:autocrafter", {
 	end,
 	can_dig = function(pos, player)
 		upgrade_autocrafter(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
 		return (inv:is_empty("src") and inv:is_empty("dst"))
 	end,
@@ -693,12 +778,12 @@ minetest.register_node("pipeworks:autocrafter", {
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	on_destruct = function(pos)
-		autocrafterCache[minetest.hash_node_position(pos)] = nil
+		autocrafterCache[core.hash_node_position(pos)] = nil
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		if not pipeworks.may_configure(pos, player) then return 0 end
 		upgrade_autocrafter(pos)
-		local inv = minetest.get_meta(pos):get_inventory()
+		local inv = core.get_meta(pos):get_inventory()
 		if listname == "recipe" then
 			stack:set_count(1)
 			inv:set_stack(listname, index, stack)
@@ -713,13 +798,13 @@ minetest.register_node("pipeworks:autocrafter", {
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		if not pipeworks.may_configure(pos, player) then
-			minetest.log("action", string.format("%s attempted to take from " ..
+			core.log("action", string.format("%s attempted to take from " ..
 				"autocrafter at %s",
-				player:get_player_name(), minetest.pos_to_string(pos)))
+				player:get_player_name(), core.pos_to_string(pos)))
 			return 0
 		end
 		upgrade_autocrafter(pos)
-		local inv = minetest.get_meta(pos):get_inventory()
+		local inv = core.get_meta(pos):get_inventory()
 		if listname == "recipe" then
 			inv:set_stack(listname, index, ItemStack(""))
 			after_recipe_change(pos, inv)
@@ -736,7 +821,7 @@ minetest.register_node("pipeworks:autocrafter", {
 
 		if not pipeworks.may_configure(pos, player) then return 0 end
 		upgrade_autocrafter(pos)
-		local inv = minetest.get_meta(pos):get_inventory()
+		local inv = core.get_meta(pos):get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 
 		if to_list == "output" then
@@ -765,11 +850,11 @@ minetest.register_node("pipeworks:autocrafter", {
 		return count
 	end,
 	on_timer = run_autocrafter,
-	digiline = {
+	digilines = {
 		receptor = {},
 		effector = {
 			action = function(pos,node,channel,msg)
-				local meta = minetest.get_meta(pos)
+				local meta = core.get_meta(pos)
 				if channel ~= meta:get_string("channel") then return end
 				if type(msg) == "table" then
 					if #msg < 3 then return end
@@ -778,7 +863,7 @@ minetest.register_node("pipeworks:autocrafter", {
 						local row = msg[y + 1]
 						for x = 1, 3, 1 do
 							local slot = y * 3 + x
-							if type(row) == "table" and minetest.registered_items[row[x]] then
+							if type(row) == "table" and core.registered_items[row[x]] then
 								inv:set_stack("recipe", slot, ItemStack(
 									row[x]))
 							else
@@ -788,7 +873,7 @@ minetest.register_node("pipeworks:autocrafter", {
 					end
 					after_recipe_change(pos,inv)
 				elseif msg == "get_recipe" then
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					local inv = meta:get_inventory()
 					local recipe = {}
 					for y = 0, 2, 1 do
@@ -802,7 +887,7 @@ minetest.register_node("pipeworks:autocrafter", {
 					end
 					local setchan = meta:get_string("channel")
 					local output = inv:get_stack("output", 1)
-					digiline:receptor_send(pos, digiline.rules.default, setchan, {
+					digilines.receptor_send(pos, digilines.rules.default, setchan, {
 						recipe = recipe,
 						result = {
 							name = output:get_name(),
@@ -811,7 +896,7 @@ minetest.register_node("pipeworks:autocrafter", {
 					  })
 				elseif msg == "off" then
 					update_meta(meta, false)
-					minetest.get_node_timer(pos):stop()
+					core.get_node_timer(pos):stop()
 				elseif msg == "on" then
 					if update_meta(meta, true) then
 						start_crafter(pos)

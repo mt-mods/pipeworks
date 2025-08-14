@@ -1,11 +1,11 @@
 
-local S = minetest.get_translator("pipeworks")
-local filename = minetest.get_worldpath().."/teleport_tubes"  -- Only used for backward-compat
-local storage = minetest.get_mod_storage()
+local S = core.get_translator("pipeworks")
+local filename = core.get_worldpath().."/teleport_tubes"  -- Only used for backward-compat
+local storage = core.get_mod_storage()
 
-local enable_logging = minetest.settings:get_bool("pipeworks_log_teleport_tubes", false)
+local enable_logging = core.settings:get_bool("pipeworks_log_teleport_tubes", false)
 
-local has_digilines = minetest.get_modpath("digilines")
+local has_digilines = core.get_modpath("digilines")
 
 -- V1: Serialized text file indexed by vector position.
 -- V2: Serialized text file indexed by hash position.
@@ -17,7 +17,7 @@ local receiver_cache = {}
 
 local function hash_pos(pos)
 	vector.round(pos)
-	return string.format("%.0f", minetest.hash_node_position(pos))
+	return string.format("%.0f", core.hash_node_position(pos))
 end
 
 local function serialize_tube(tube)
@@ -29,7 +29,7 @@ local function deserialize_tube(hash, str)
 	local cr = tonumber(str:sub(1, 1))
 	local channel = str:sub(3)
 	if sep and cr and channel then
-		local pos = minetest.get_position_from_hash(tonumber(hash))
+		local pos = core.get_position_from_hash(tonumber(hash))
 		return {x = pos.x, y = pos.y, z = pos.z, cr = cr, channel = channel}
 	end
 end
@@ -62,7 +62,7 @@ local function migrate_tube_db()
 	if storage:get_int("version") == 3 then
 		for key, val in pairs(storage:to_table().fields) do
 			if tonumber(key) then
-				tube_db[key] = minetest.deserialize(val)
+				tube_db[key] = core.deserialize(val)
 			elseif key ~= "version" then
 				error("Unknown field in teleport tube database: "..key)
 			end
@@ -75,7 +75,7 @@ local function migrate_tube_db()
 		local content = file:read("*all")
 		io.close(file)
 		if content and content ~= "" then
-			tube_db = minetest.deserialize(content)
+			tube_db = core.deserialize(content)
 		end
 	end
 	local version = tube_db.version or 0
@@ -134,8 +134,8 @@ local function get_receivers(pos, channel)
 	local receivers = {}
 	for key, val in pairs(tube_db) do
 		if val.cr == 1 and val.channel == channel and not vector.equals(val, pos) then
-			minetest.load_area(val)
-			local node_name = minetest.get_node(val).name
+			core.load_area(val)
+			local node_name = core.get_node(val).name
 			if node_name:find("pipeworks:teleport_tube") then
 				table.insert(receivers, val)
 			else
@@ -148,7 +148,7 @@ local function get_receivers(pos, channel)
 	return receivers
 end
 
-local help_text = minetest.formspec_escape(
+local help_text = core.formspec_escape(
 	S("Channels are public by default").."\n"..
 	S("Use <player>:<channel> for fully private channels").."\n"..
 	S("Use <player>;<channel> for private receivers")
@@ -187,7 +187,7 @@ local function update_meta(meta)
 end
 
 local function update_tube(pos, channel, cr, player_name)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	if meta:get_string("channel") == channel and meta:get_int("can_receive") == cr then
 		return
 	end
@@ -200,11 +200,11 @@ local function update_tube(pos, channel, cr, player_name)
 	local name, mode = channel:match("^([^:;]+)([:;])")
 	if name and mode and name ~= player_name then
 		if mode == ":" then
-			minetest.chat_send_player(player_name,
+			core.chat_send_player(player_name,
 				S("Sorry, channel '@1' is reserved for exclusive use by @2", channel, name))
 			return
 		elseif mode == ";" and cr ~= 0 then
-			minetest.chat_send_player(player_name,
+			core.chat_send_player(player_name,
 				S("Sorry, receiving from channel '@1' is reserved for @2", channel, name))
 			return
 		end
@@ -218,7 +218,7 @@ local function receive_fields(pos, _, fields, sender)
 	if not fields.channel or not pipeworks.may_configure(pos, sender) then
 		return
 	end
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local channel = fields.channel:trim()
 	local cr = meta:get_int("can_receive")
 	if fields.cr_on then
@@ -237,7 +237,7 @@ local function can_go(pos, node, velocity, stack)
 	velocity.x = 0
 	velocity.y = 0
 	velocity.z = 0
-	local src_meta = minetest.get_meta(pos)
+	local src_meta = core.get_meta(pos)
 	local channel = src_meta:get_string("channel")
 	if channel == "" then
 		return {}
@@ -249,10 +249,10 @@ local function can_go(pos, node, velocity, stack)
 	local target = receivers[math.random(1, #receivers)]
 	if enable_logging then
 		local src_owner = src_meta:get_string("owner")
-		local dst_meta = minetest.get_meta(pos)
+		local dst_meta = core.get_meta(pos)
 		local dst_owner = dst_meta:get_string("owner")
-		minetest.log("action", string.format("[pipeworks] %s teleported from %s (owner=%s) to %s (owner=%s) via %s",
-			stack:to_string(), minetest.pos_to_string(pos), src_owner, minetest.pos_to_string(target), dst_owner, channel
+		core.log("action", string.format("[pipeworks] %s teleported from %s (owner=%s) to %s (owner=%s) via %s",
+			stack:to_string(), core.pos_to_string(pos), src_owner, core.pos_to_string(target), dst_owner, channel
 		))
 	end
 	pos.x = target.x
@@ -262,9 +262,9 @@ local function can_go(pos, node, velocity, stack)
 end
 
 local function repair_tube(pos, node)
-	minetest.swap_node(pos, {name = node.name, param2 = node.param2})
+	core.swap_node(pos, {name = node.name, param2 = node.param2})
 	pipeworks.scan_for_tube_objects(pos)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	local channel = meta:get_string("channel")
 	if channel ~= "" then
 		set_tube(pos, channel, meta:get_int("can_receive"))
@@ -273,7 +273,7 @@ local function repair_tube(pos, node)
 end
 
 local function digiline_action(pos, _, digiline_channel, msg)
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 	if digiline_channel ~= meta:get_string("digiline_channel") then
 		return
 	end
@@ -304,7 +304,7 @@ local def = {
 		on_repair = repair_tube,
 	},
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		meta:set_int("can_receive", 1)  -- Enabled by default
 		update_meta(meta)
 	end,
@@ -315,10 +315,10 @@ local def = {
 if has_digilines then
 	def.after_place_node = function(pos, placer)
 		-- Set owner for digilines
-		minetest.get_meta(pos):set_string("owner", placer:get_player_name())
+		core.get_meta(pos):set_string("owner", placer:get_player_name())
 		pipeworks.after_place(pos)
 	end
-	def.digiline = {
+	def.digilines = {
 		receptor = {
 			rules = pipeworks.digilines_rules,
 		},
@@ -339,12 +339,12 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 	node_def = def,
 })
 
-if minetest.get_modpath("mesecons_mvps") then
+if core.get_modpath("mesecons_mvps") then
 	-- Update tubes when moved by pistons
 	mesecon.register_on_mvps_move(function(moved_nodes)
 		for _, n in ipairs(moved_nodes) do
 			if n.node.name:find("pipeworks:teleport_tube") then
-				local meta = minetest.get_meta(n.pos)
+				local meta = core.get_meta(n.pos)
 				set_tube(n.pos, meta:get_string("channel"), meta:get_int("can_receive"))
 			end
 		end
