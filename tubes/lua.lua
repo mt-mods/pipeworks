@@ -852,8 +852,8 @@ for white  = 0, 1 do
 	tiles[5] = tiles[5]..tiles_on_off.R_90:format(blue == 1 and "on" or "off");
 	tiles[6] = tiles[6]..tiles_on_off.R270:format(blue == 1 and "on" or "off");
 	-- Yellow
-	tiles[1] = tiles[1]..tiles_on_off.R180:format(yellow == 1 and "on" or "off");
-	tiles[2] = tiles[2]..tiles_on_off.R180:format(yellow == 1 and "on" or "off");
+	tiles[3] = tiles[3]..tiles_on_off.R180:format(yellow == 1 and "on" or "off");
+	tiles[4] = tiles[4]..tiles_on_off.R180:format(yellow == 1 and "on" or "off");
 	tiles[5] = tiles[5]..tiles_on_off.R180:format(yellow == 1 and "on" or "off");
 	tiles[6] = tiles[6]..tiles_on_off.R180:format(yellow == 1 and "on" or "off");
 	-- Green
