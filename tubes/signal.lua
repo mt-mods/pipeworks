@@ -1,14 +1,7 @@
 local S = core.get_translator("pipeworks")
 
--- the core.after() calls below can sometimes trigger after a tube
--- breaks, at which point item_exit() is no longer valid, so we have to make
--- sure that there even IS a callback to run, first.
-
-local function after_break(pos)
-	local name = core.get_node(pos).name
-	if core.registered_nodes[name].item_exit then
-		core.registered_nodes[name].item_exit(pos)
-	end
+local function detector_on_destruct(pos)
+	core.get_node_timer(pos):stop()
 end
 
 if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
@@ -18,52 +11,54 @@ if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
-				tube = {can_go = function(pos, node, velocity, stack)
-						 local meta = core.get_meta(pos)
-						 local nitems = meta:get_int("nitems")+1
-						 meta:set_int("nitems", nitems)
-						 local saved_pos = vector.new(pos)
-						 core.after(detector_tube_step, after_break, saved_pos)
-						 return pipeworks.notvel(pipeworks.meseadjlist,velocity)
-					end},
+				tube = {
+					can_go = function(pos, node, velocity, stack)
+						-- No need to count passing items, as starting a second node timer
+						-- simply overrides the previous one. If enough time is elapsed
+						-- without a new item coming in, the timer can expire and it then
+						-- means that there is currently no item in the tube.
+						local timer = core.get_node_timer(pos)
+						timer:start(detector_tube_step)
+
+						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
+					end,
+				},
 				groups = {mesecon = 2, not_in_creative_inventory = 1},
 				drop = "pipeworks:detector_tube_off_1",
 				mesecons = {receptor = {state = "on", rules = pipeworks.mesecons_rules}},
-				item_exit = function(pos)
-					local meta = core.get_meta(pos)
-					local nitems = meta:get_int("nitems")-1
+
+				on_timer = function(pos, elapsed)
 					local node = core.get_node(pos)
-					local name = node.name
-					local fdir = node.param2
-					if nitems == 0 then
-						 core.set_node(pos, {name = string.gsub(name, "on", "off"), param2 = fdir})
-						 mesecon.receptor_off(pos, pipeworks.mesecons_rules)
-					else
-						 meta:set_int("nitems", nitems)
-					end
+					node.name = string.gsub(node.name, "on", "off")
+					core.swap_node(pos, node)
+					mesecon.receptor_off(pos, pipeworks.mesecons_rules)
 				end,
-				on_construct = function(pos)
-					 local meta = core.get_meta(pos)
-					 meta:set_int("nitems", 1)
-					 core.after(detector_tube_step, after_break, pos)
-				end,
+
+				on_destruct = detector_on_destruct,
 			},
 	})
+
 	pipeworks.register_tube("pipeworks:detector_tube_off", {
 			description = S("Detecting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
-				tube = {can_go = function(pos, node, velocity, stack)
-						local node = core.get_node(pos)
-						local name = node.name
-						local fdir = node.param2
-						core.set_node(pos,{name = string.gsub(name, "off", "on"), param2 = fdir})
+				tube = {
+					can_go = function(pos, node, velocity, stack)
+						-- start a timer that will be handled by the "on" tube
+						local timer = core.get_node_timer(pos)
+						timer:start(detector_tube_step)
+						node.name = string.gsub(node.name, "off", "on")
+						core.swap_node(pos, node)
 						mesecon.receptor_on(pos, pipeworks.mesecons_rules)
+
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
-					end},
+					end,
+				},
 				groups = {mesecon = 2},
 				mesecons = {receptor = {state = "off", rules = pipeworks.mesecons_rules }},
+
+				on_destruct = detector_on_destruct,
 			},
 	})
 
