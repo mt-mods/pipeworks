@@ -1,5 +1,6 @@
 local S = core.get_translator("pipeworks")
-core.register_node("pipeworks:trashcan", {
+local voidname = "pipeworks:trashcan"
+core.register_node(voidname, {
 	description = S("Trash Can"),
 	drawtype = "normal",
 	tiles = {
@@ -20,6 +21,7 @@ core.register_node("pipeworks:trashcan", {
 		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1},
 		priority = 1, -- Lower than anything else
 	},
+	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1},
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
 		local size = "10.2,9"
@@ -43,10 +45,18 @@ core.register_node("pipeworks:trashcan", {
 		meta:set_string("infotext", S("Trash Can"))
 		meta:get_inventory():set_size("trash", 1)
 	end,
-	after_place_node = pipeworks.after_place,
-	after_dig_node = pipeworks.after_dig,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
 		core.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 	end,
+	after_place_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+		pipeworks.after_place(pos)
+	end,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+		pipeworks.after_dig(pos)
+	end,
 })
-pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = voidname
+pipeworks.flowables.register.simple(voidname)
+pipeworks.flowables.register.output(voidname, 0, 0, function(pos, node, currentpressure, finitemode, currentfluidtype) return 4, currentfluidtype end, function()end)
