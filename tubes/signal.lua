@@ -1,3 +1,5 @@
+-- luacheck: globals DIR_DELIM
+
 local S = core.get_translator("pipeworks")
 
 if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
