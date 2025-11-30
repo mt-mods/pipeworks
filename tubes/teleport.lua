@@ -48,7 +48,6 @@ end
 local function save_tube(hash)
 	local tube = tube_db[hash]
 	receiver_cache[tube.channel] = nil
-	storage:set_string(hash, "") -- cleanup prefix-less entry
 	storage:set_string(STORAGE_PREFIX..hash, serialize_tube(tube))
 end
 
@@ -57,18 +56,26 @@ local function remove_tube(pos)
 	if tube_db[hash] then
 		receiver_cache[tube_db[hash].channel] = nil
 		tube_db[hash] = nil
-		storage:set_string(hash, "")
 		storage:set_string(STORAGE_PREFIX..hash, "")
 	end
 end
 
 local function migrate_tube_db()
+	-- check prefix-less version number
+	if storage:get_int("version") == 4 then
+		for key, val in pairs(storage:to_table().fields) do
+			if tonumber(key) then
+				tube_db[key] = deserialize_tube(key, val)
+			end
+			-- ignore other keys
+		end
+		save_tube_db()
+		return
+	end
 	if storage:get_int("version") == 3 then
 		for key, val in pairs(storage:to_table().fields) do
 			if tonumber(key) then
 				tube_db[key] = core.deserialize(val)
-			elseif key ~= "version" then
-				error("Unknown field in teleport tube database: "..key)
 			end
 		end
 		save_tube_db()
@@ -98,33 +105,18 @@ end
 
 local function read_tube_db()
 	local version = storage:get_int(STORAGE_PREFIX.."version")
-	if version ~= 0 then
-		-- storage with prefix
+	if version < tube_db_version then
+		migrate_tube_db()
+	elseif version > tube_db_version then
+		error("Cannot read teleport tube database of version "..version)
+	else
 		for key, val in pairs(storage:to_table().fields) do
 			local short_key = string.match(key, "^"..STORAGE_PREFIX.."(.+)")
 			if short_key then -- only handle keys relevant to tp tubes
 				if tonumber(short_key) then
 					tube_db[short_key] = deserialize_tube(short_key, val)
 				elseif short_key ~= "version" then
-					error("Unknown field in teleport tube database: "..key)
-				end
-			end
-		end
-	else
-		-- legacy, prefix-less storage
-		version = storage:get_int("version")
-		if version < tube_db_version then
-			-- we also get here if no version number was found,
-			-- e.g. on a fresh new world
-			migrate_tube_db()
-		elseif version > tube_db_version then
-			error("Cannot read teleport tube database of version "..version)
-		else
-			for key, val in pairs(storage:to_table().fields) do
-				if tonumber(key) then
-					tube_db[key] = deserialize_tube(key, val)
-				elseif key ~= "version" then
-					error("Unknown field in teleport tube database: "..key)
+					error("Unknown field in teleport tube database: "..short_key)
 				end
 			end
 		end
