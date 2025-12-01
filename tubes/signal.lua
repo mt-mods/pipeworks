@@ -16,7 +16,6 @@ if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 		local short_key = string.match(key, "^"..STORAGE_PREFIX.."(.+)")
 		if short_key then
 			local hash = tonumber(short_key)
-			local pos = core.get_position_from_hash(hash)
 			detector_timers[hash] = tonumber(val)
 		end
 	end
