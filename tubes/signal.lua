@@ -1,56 +1,57 @@
 -- luacheck: globals DIR_DELIM
 
 local S = core.get_translator("pipeworks")
+local storage = core.get_mod_storage()
+local STORAGE_PREFIX = "detector_timer_"
 
 if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 	local detector_tube_step = 5 * (tonumber(core.settings:get("dedicated_server_step")) or 0.09)
 
-	-- this table stores ad-hoc timers (not node timers) for every detector tube
+	-- in-memory table to avoid traversing the whole storage in globalstep
 	-- { [position_hash] = time }
 	local detector_timers = {}
 
-	-- Persistency: load/save pending timers from/into a file across game restarts
-	-- this is basically a copypaste from mesecons code
-	local wpath = core.get_worldpath()
-	local filename = "detector_timers"
-
-	local f = io.open(wpath..DIR_DELIM..filename, "r")
-	if f then
-		local t = f:read("*all")
-		f:close()
-		if t and t ~= "" then
-			detector_timers = core.deserialize(t)
+	-- populate our in-memory table from storage
+	for key, val in pairs(storage:to_table().fields) do
+		local short_key = string.match(key, "^"..STORAGE_PREFIX.."(.+)")
+		if short_key then
+			local hash = tonumber(short_key)
+			local pos = core.get_position_from_hash(hash)
+			detector_timers[hash] = tonumber(val)
 		end
 	end
 
-	core.register_on_shutdown(function()
-		local f = io.open(wpath..DIR_DELIM..filename, "w")
-		f:write(core.serialize(detector_timers))
-		f:close()
-	end)
+	local function detector_set_timer(pos, time)
+		local hash = core.hash_node_position(pos)
+		time = time or detector_tube_step
+		-- timer will be refreshed if already set
+		detector_timers[hash] = time
+		storage:set_float(string.format("%s%.0f", STORAGE_PREFIX, hash), time)
+	end
 
-	local function detector_set_timer(pos)
-		-- refresh timer if already set
-		detector_timers[core.hash_node_position(pos)] = detector_tube_step
+	local function detector_remove_timer(pos)
+		local hash = core.hash_node_position(pos)
+		detector_timers[hash] = nil
+		storage:set_string(string.format("%s%.0f", STORAGE_PREFIX, hash), "")
 	end
 
 	core.register_globalstep(function(dtime)
-		for hash,time in pairs(detector_timers) do
+		for hash, time in pairs(detector_timers) do
+			local pos = core.get_position_from_hash(hash)
 			time = time - dtime
 			if time <= 0 then
-				local pos = core.get_position_from_hash(hash)
 				local node = core.get_node_or_nil(pos)
 				if node then
-					detector_timers[hash] = nil
-					if string.find(node.name, "pipeworks:detector_tube_on", 1, true) then
-						node.name = string.gsub(node.name, "on", "off")
+					detector_remove_timer(pos)
+					if string.find(node.name, "pipeworks:detector_tube_on_", 1, true) then
+						node.name = string.gsub(node.name, "on", "off", 1)
 						core.swap_node(pos, node)
 						mesecon.receptor_off(pos, pipeworks.mesecons_rules)
 					end
 				end
 				-- in case the area wasn't loaded, do not remove the timer
 			else
-				detector_timers[hash] = time
+				detector_set_timer(pos, time)
 			end
 		end
 	end)
@@ -89,7 +90,7 @@ if core.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 			tube = {
 				can_go = function(pos, node, velocity, stack)
 					detector_cleanup_metadata(pos)
-					node.name = string.gsub(node.name, "off", "on")
+					node.name = string.gsub(node.name, "off", "on", 1)
 					core.swap_node(pos, node)
 					mesecon.receptor_on(pos, pipeworks.mesecons_rules)
 					detector_set_timer(pos)
