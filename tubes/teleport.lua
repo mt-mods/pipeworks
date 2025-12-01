@@ -41,14 +41,20 @@ local function save_tube_db()
 	storage:set_int(STORAGE_PREFIX.."version", tube_db_version)
 	for key, val in pairs(tube_db) do
 		storage:set_string(key, "")
-		storage:set_string(STORAGE_PREFIX..key, serialize_tube(val))
+		storage:set_string(
+			string.format("%s%.0f", STORAGE_PREFIX, key),
+			serialize_tube(val)
+		)
 	end
 end
 
 local function save_tube(hash)
 	local tube = tube_db[hash]
 	receiver_cache[tube.channel] = nil
-	storage:set_string(STORAGE_PREFIX..hash, serialize_tube(tube))
+	storage:set_string(
+		string.format("%s%.0f", STORAGE_PREFIX, hash),
+		serialize_tube(tube)
+	)
 end
 
 local function remove_tube(pos)
@@ -56,7 +62,7 @@ local function remove_tube(pos)
 	if tube_db[hash] then
 		receiver_cache[tube_db[hash].channel] = nil
 		tube_db[hash] = nil
-		storage:set_string(STORAGE_PREFIX..hash, "")
+		storage:set_string(string.format("%s%.0f", STORAGE_PREFIX, hash), "")
 	end
 end
 
