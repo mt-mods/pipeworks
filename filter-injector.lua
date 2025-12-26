@@ -540,6 +540,16 @@ for _, data in ipairs({
 		node.on_punch = function (pos, node, puncher)
 			punch_filter(data, pos, node)
 		end
+		node._mcl_redstone = {
+			connects_to = function(node, dir)
+				return true
+			end,
+			update = function(pos, node)
+				if mcl_redstone.get_power(pos) ~= 0 then
+					punch_filter(data, pos, node)
+				end
+			end,
+		}
 	end
 
 
