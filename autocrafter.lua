@@ -541,8 +541,8 @@ local function update_meta(meta, enabled)
 	if core.get_modpath("digilines") then
 		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
 			";${channel}]" ..
-			"button[6.25,4;1.5,0.75;set_channel;" .. S("Set") .. "]" ..
-			"button_exit[8.05,4;2,0.75;close;" .. S("Close") .. "]"
+			"button[6.25,4;2,0.75;set_channel;" .. S("Set") .. "]" ..
+			"button_exit[8.45,4;2,0.75;close;" .. S("Close") .. "]"
 	end
 	meta:set_string("formspec", fs)
 

@@ -2,6 +2,7 @@
 local S = core.get_translator("pipeworks")
 local filename = core.get_worldpath().."/teleport_tubes"  -- Only used for backward-compat
 local storage = core.get_mod_storage()
+local STORAGE_PREFIX = "tptube_"
 
 local enable_logging = core.settings:get_bool("pipeworks_log_teleport_tubes", false)
 
@@ -36,17 +37,24 @@ end
 
 local function save_tube_db()
 	receiver_cache = {}
-	local fields = {version = tube_db_version}
+	storage:set_string("version", "") -- cleanup prefix-less entry
+	storage:set_int(STORAGE_PREFIX.."version", tube_db_version)
 	for key, val in pairs(tube_db) do
-		fields[key] = serialize_tube(val)
+		storage:set_string(key, "")
+		storage:set_string(
+			string.format("%s%.0f", STORAGE_PREFIX, key),
+			serialize_tube(val)
+		)
 	end
-	storage:from_table({fields = fields})
 end
 
 local function save_tube(hash)
 	local tube = tube_db[hash]
 	receiver_cache[tube.channel] = nil
-	storage:set_string(hash, serialize_tube(tube))
+	storage:set_string(
+		string.format("%s%.0f", STORAGE_PREFIX, hash),
+		serialize_tube(tube)
+	)
 end
 
 local function remove_tube(pos)
@@ -54,17 +62,26 @@ local function remove_tube(pos)
 	if tube_db[hash] then
 		receiver_cache[tube_db[hash].channel] = nil
 		tube_db[hash] = nil
-		storage:set_string(hash, "")
+		storage:set_string(string.format("%s%.0f", STORAGE_PREFIX, hash), "")
 	end
 end
 
 local function migrate_tube_db()
+	-- check prefix-less version number
+	if storage:get_int("version") == 4 then
+		for key, val in pairs(storage:to_table().fields) do
+			if tonumber(key) then
+				tube_db[key] = deserialize_tube(key, val)
+			end
+			-- ignore other keys
+		end
+		save_tube_db()
+		return
+	end
 	if storage:get_int("version") == 3 then
 		for key, val in pairs(storage:to_table().fields) do
 			if tonumber(key) then
 				tube_db[key] = core.deserialize(val)
-			elseif key ~= "version" then
-				error("Unknown field in teleport tube database: "..key)
 			end
 		end
 		save_tube_db()
@@ -93,17 +110,20 @@ local function migrate_tube_db()
 end
 
 local function read_tube_db()
-	local version = storage:get_int("version")
+	local version = storage:get_int(STORAGE_PREFIX.."version")
 	if version < tube_db_version then
 		migrate_tube_db()
 	elseif version > tube_db_version then
 		error("Cannot read teleport tube database of version "..version)
 	else
 		for key, val in pairs(storage:to_table().fields) do
-			if tonumber(key) then
-				tube_db[key] = deserialize_tube(key, val)
-			elseif key ~= "version" then
-				error("Unknown field in teleport tube database: "..key)
+			local short_key = string.match(key, "^"..STORAGE_PREFIX.."(.+)")
+			if short_key then -- only handle keys relevant to tp tubes
+				if tonumber(short_key) then
+					tube_db[short_key] = deserialize_tube(short_key, val)
+				elseif short_key ~= "version" then
+					error("Unknown field in teleport tube database: "..short_key)
+				end
 			end
 		end
 	end
