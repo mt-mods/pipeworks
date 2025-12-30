@@ -1,3 +1,5 @@
+-- This file is entirely deprecated, as new behavior requires "pressure" flow logic while this file is only ever used in "classic" flow logic.
+
 -- This file provides the actual flow and pathfinding logic that makes water
 -- move through the pipes.
 --
