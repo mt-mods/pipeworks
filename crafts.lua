@@ -320,14 +320,12 @@ end
 if pipeworks.enable_autocrafter then
 
 local buckets = {}
+buckets.air   = materials.empty_bucket
+buckets.water = materials.water_bucket
 if core.get_modpath("bucket") then
-	buckets.air = "bucket:bucket_empty"
-	buckets.water = "bucket:bucket_water"
 	buckets.river_water = "bucket:bucket_river_water"
 	buckets.lava = "bucket:bucket_lava"
 elseif core.get_modpath("mcl_buckets") then
-	buckets.air = "mcl_buckets:bucket_empty"
-	buckets.water = "mcl_buckets:bucket_water"
 	buckets.river_water = "mcl_buckets:bucket_river_water"
 	buckets.lava = "mcl_buckets:bucket_lava"
 end
