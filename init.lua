@@ -81,7 +81,9 @@ dofile(pipeworks.modpath.."/autoplace_pipes.lua")
 dofile(pipeworks.modpath.."/autoplace_tubes.lua")
 dofile(pipeworks.modpath.."/luaentity.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
-if pipeworks.toggles.pipe_mode == "classic" then dofile(pipeworks.modpath.."/flowing_logic.lua") end
+if pipeworks.toggles.pipe_mode == "classic" then
+	dofile(pipeworks.modpath.."/flowing_logic.lua")
+end
 dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/chests.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
