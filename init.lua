@@ -1,3 +1,5 @@
+local S = core.get_translator("pipeworks")
+
 -- Pipeworks mod by Vanessa Ezekowitz - 2013-07-13
 --
 -- This mod supplies various steel pipes and plastic pneumatic tubes
@@ -8,17 +10,28 @@ pipeworks = {
 	ui_cat_tube_list = {},
 	worldpath = core.get_worldpath(),
 	modpath = core.get_modpath("pipeworks"),
-	liquids = {
-		water = {
-			source = core.registered_nodes["mapgen_water_source"].name,
-			flowing = core.registered_nodes["mapgen_water_source"].liquid_alternative_flowing
-		},
-		river_water = {
-			source = core.registered_nodes["mapgen_river_water_source"].name,
-			flowing = core.registered_nodes["mapgen_river_water_source"].liquid_alternative_flowing
+	register_fluid = function(self, alias, name, density, description)
+		local def = core.registered_nodes[alias]
+		if not def then return false end
+		self.liquids[name] = {
+			def = def,
+			source = def.liquid_alternative_source,
+			description = description or string.gsub(def.description, "%s?"..S("Source").."%s?", ""),
+			flowing = def.liquid_alternative_flowing,
+			density = density, -- in g/cm³ as standard
 		}
-	}
+		self.fluid_types[def.liquid_alternative_source] = name
+		return true
+	end,
+	liquids = {},
+	fluid_types = {}, -- easier indexing
+	gravity = vector.new(0, -0.025, 0), -- pressure bias factor, unit unspecified
 }
+
+-- fluid registration
+pipeworks:register_fluid("mapgen_water_source", "water", 1.05, S("Water"))
+pipeworks:register_fluid("mapgen_river_water_source", "river_water", 1, S("River Water"))
+pipeworks:register_fluid("mapgen_lava_source", "lava", 4, S("Lava"))
 
 dofile(pipeworks.modpath.."/default_settings.lua")
 -- Read the external config file if it exists.
@@ -42,8 +55,8 @@ end
 -------------------------------------------
 -- Load the various other parts of the mod
 
--- early auto-detection for finite water mode if not explicitly disabled
-if pipeworks.toggles.finite_water == nil then
+-- early auto-detection for finite fluids mode if not explicitly disabled
+if pipeworks.toggles.finite == nil then
 	dofile(pipeworks.modpath.."/autodetect-finite-water.lua")
 end
 
@@ -51,13 +64,26 @@ if core.get_modpath("signs_lib") then
 	dofile(pipeworks.modpath.."/signs_compat.lua")
 end
 
+local logicdir = "/pressure_logic/"
+
+-- note that even with these files the new flow logic is not yet default.
+-- registration will take place but no actual ABMs/node logic will be installed,
+-- unless the toggle flag is specifically enabled in the per-world settings flag.
+-- -- disregard previous comments, new flow logic is default now
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
+dofile(pipeworks.modpath..logicdir.."abms.lua")
+dofile(pipeworks.modpath..logicdir.."abm_register.lua")
+dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
+
 dofile(pipeworks.modpath.."/common.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
 dofile(pipeworks.modpath.."/autoplace_tubes.lua")
 dofile(pipeworks.modpath.."/luaentity.lua")
 dofile(pipeworks.modpath.."/item_transport.lua")
-dofile(pipeworks.modpath.."/flowing_logic.lua")
+if pipeworks.toggles.pipe_mode == "classic" then
+	dofile(pipeworks.modpath.."/flowing_logic.lua")
+end
 dofile(pipeworks.modpath.."/filter-injector.lua")
 dofile(pipeworks.modpath.."/chests.lua")
 dofile(pipeworks.modpath.."/trashcan.lua")
@@ -79,16 +105,6 @@ end
 if pipeworks.enable_sand_tube or pipeworks.enable_mese_sand_tube then
 	dofile(pipeworks.modpath.."/tubes/vacuum.lua")
 end
-
-local logicdir = "/pressure_logic/"
-
--- note that even with these files the new flow logic is not yet default.
--- registration will take place but no actual ABMs/node logic will be installed,
--- unless the toggle flag is specifically enabled in the per-world settings flag.
-dofile(pipeworks.modpath..logicdir.."flowable_node_registry.lua")
-dofile(pipeworks.modpath..logicdir.."abms.lua")
-dofile(pipeworks.modpath..logicdir.."abm_register.lua")
-dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 
 if pipeworks.enable_pipes then
 	dofile(pipeworks.modpath.."/pipes.lua")

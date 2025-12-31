@@ -44,25 +44,32 @@ pipeworks.toggles = {}
 -- set to one of the following strings.
 -- "classic": classic mode written by VanessaE
 -- "pressure": pressure metadata based, written by thetaepsilon.
---	has caveats such as water speed issues though.
+--	has caveats such as fluid speed issues though.
 -- setting to nil inhibits all flow logic, useful for debugging ABM crashes,
 -- or for rendering the pipes purely decorative.
 ]]
-pipeworks.toggles.pipe_mode = "classic"
+pipeworks.toggles.pipe_mode = "pressure"
 --[[
--- force-enable finite water handling mode.
--- this changes the way that water node placement is handled;
+-- force-enable finite fluid handling mode.
+-- this changes the way that fluid node placement is handled;
 -- volume will always be preserved,
--- and water is assumed to move itself downwards.
+-- and fluid is assumed to move itself downwards.
 -- nil (the default) means autodetect from installed finite liquid mods,
 -- true is force-on, false is force-off.
 -- note that you should NOT normally explicitly set this to true/false,
 -- unless the mod you want this for is not covered by auto-detection
 -- (please see autodetect-finite-water.lua).
--- please file an issue if you have a finite water mod not covered there,
+-- please file an issue if you have a finite fluid mod not covered there,
 -- and feel it necessary to explicitly set this toggle
-pipeworks.toggles.finite_water = nil
+pipeworks.toggles.finite = nil
 ]]
+-- casewise finite fluid toggles
+-- can be overriden by setting toggles.finite to true
+pipeworks.toggles.finites = {
+	water = false,
+	river_water = true,
+	lava = true,
+}
 
 for name, value in pairs(settings) do
 	local setting_type = type(value)

@@ -1,10 +1,12 @@
+-- This file is entirely deprecated, as new behavior requires "pressure" flow logic while this file is only ever used in "classic" flow logic.
+
 -- This file provides the actual flow and pathfinding logic that makes water
 -- move through the pipes.
 --
 -- Contributed by mauvebic, 2013-01-03, rewritten a bit by Vanessa Ezekowitz
 --
 
-local finitewater = core.settings:get_bool("liquid_finite")
+local finite = core.settings:get_bool("liquid_finite")
 
 pipeworks.check_for_liquids = function(pos)
 	local coords = {
@@ -16,12 +18,12 @@ pipeworks.check_for_liquids = function(pos)
 		{x=pos.x,y=pos.y,z=pos.z+1},	}
 	for i =1,6 do
 		local name = core.get_node(coords[i]).name
-		if name and string.find(name,"water") then
-			if finitewater then core.remove_node(coords[i]) end
-			return true
+		if name and pipeworks.fluid_types[name] then
+			if finite then core.remove_node(coords[i]) end
+			return pipeworks.fluid_types[name]
 		end
 	end
-	return false
+	return nil
 end
 
 pipeworks.check_for_inflows = function(pos,node)
@@ -83,7 +85,7 @@ end
 
 pipeworks.spigot_check = function(pos, node)
 	local belowname = core.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name
-	if belowname and (belowname == "air" or belowname == pipeworks.liquids.water.flowing or belowname == pipeworks.liquids.water.source) then
+	if belowname and (belowname == "air" or core.registered_nodes[belowname].liquid_alternative_flowing) then
 		local spigotname = core.get_node(pos).name
 		local fdir=node.param2 % 4
 		local check = {
@@ -96,14 +98,14 @@ pipeworks.spigot_check = function(pos, node)
 		if near_node and string.find(near_node.name, "_loaded") then
 			if spigotname and spigotname == "pipeworks:spigot" then
 				core.add_node(pos,{name = "pipeworks:spigot_pouring", param2 = fdir})
-				if finitewater or belowname ~= pipeworks.liquids.water.source then
+				if finite or belowname ~= pipeworks.liquids.water.source then
 					core.add_node({x=pos.x,y=pos.y-1,z=pos.z},{name = pipeworks.liquids.water.source})
 				end
 			end
 		else
 			if spigotname == "pipeworks:spigot_pouring" then
 				core.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:spigot", param2 = fdir})
-				if belowname == pipeworks.liquids.water.source and not finitewater then
+				if belowname == pipeworks.liquids.water.source and not finite then
 					core.remove_node({x=pos.x,y=pos.y-1,z=pos.z})
 				end
 			end
@@ -119,14 +121,14 @@ pipeworks.fountainhead_check = function(pos, node)
 		if near_node and string.find(near_node.name, "_loaded") then
 			if fountainhead_name and fountainhead_name == "pipeworks:fountainhead" then
 				core.add_node(pos,{name = "pipeworks:fountainhead_pouring"})
-				if finitewater or abovename ~= pipeworks.liquids.water.source then
+				if finite or abovename ~= pipeworks.liquids.water.source then
 					core.add_node({x=pos.x,y=pos.y+1,z=pos.z},{name = pipeworks.liquids.water.source})
 				end
 			end
 		else
 			if fountainhead_name == "pipeworks:fountainhead_pouring" then
 				core.add_node({x=pos.x,y=pos.y,z=pos.z},{name = "pipeworks:fountainhead"})
-				if abovename == pipeworks.liquids.water.source and not finitewater then
+				if abovename == pipeworks.liquids.water.source and not finite then
 					core.remove_node({x=pos.x,y=pos.y+1,z=pos.z})
 				end
 			end

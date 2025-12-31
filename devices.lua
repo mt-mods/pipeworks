@@ -127,6 +127,57 @@ local pipes_devicelist = {
 
 -- Now define the nodes.
 
+local sourcename = "pipeworks:source"
+core.register_node(sourcename, {
+	description = S("Infinite Fluid Source"),
+	tiles = { "pipeworks_source_frame.png" },
+	paramtype = "light",
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
+	walkable = true,
+	pipe_connections = { top = 1, bottom = 1, front = 1, back = 1, left = 1, right = 1 },
+	on_receive_fields = function(pos, _, fields, sender)
+		local playername = sender:get_player_name()
+		if core.is_protected(pos, playername) then
+			core.record_protection_violation(pos, playername)
+			core.chat_send_player(playername, S("Changes not saved, node protected!"))
+			return
+		end
+		if not core.is_creative_enabled(playername) then
+			core.chat_send_player(playername, S("Changes not saved, \"creative\" priv missing!"))
+			return
+		end
+		local meta = core.get_meta(pos)
+		meta:set_string("fluidamount",fields.pressure or meta:get_string("fluidamount"))
+		meta:set_string("fluidtype",(pipeworks.liquids[fields.fluidtype] and fields.fluidtype) or meta:get_string("fluidtype"))
+	end,
+	on_construct = function(pos)
+		local meta = core.get_meta(pos)
+		local fs =
+		"formspec_version[4]"..
+		"size[4.75,1.5]"..
+		"field[0.25,0.5;2.5,0.75;fluidtype;"..S("Fluid Type")..";${fluidtype}]"..
+		"field[3,0.5;1.5,0.75;pressure;"..S("Pressure")..";${fluidamount}]"
+		meta:set_string("formspec",fs)
+	end,
+	after_place_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end
+})
+
+new_flow_logic_register.simple(sourcename)
+new_flow_logic_register.intake(sourcename, math.huge, function(pos)
+	local meta = core.get_meta(pos)
+	return meta:get_float("fluidamount") - meta:get_float("pipeworks.pressure"), meta:get("fluidtype")
+end)
+
 local states = { "on", "off" }
 
 for s in ipairs(states) do
@@ -370,7 +421,7 @@ core.register_node(nodename_spigot_loaded, {
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
-		core.registered_nodes[pipeworks.liquids.water.source].tiles[1],
+		pipeworks.liquids.water.def.tiles[1],
 		{ name = "pipeworks_spigot.png" }
 	},
 	use_texture_alpha = texture_alpha_mode and "blend" or true,
@@ -579,7 +630,17 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_sensor_loaded, tru
 -- activate flow sensor at roughly half the pressure pumps drive pipes
 local sensor_pressure_set = { { nodename_sensor_empty, 0.0 }, { nodename_sensor_loaded, 1.0 } }
 new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pipeworks.mesecons_rules })
-
+core.register_abm({
+	label = "flow sensor info",
+	nodenames = { "pipeworks:flow_sensor_empty", "pipeworks:flow_sensor_loaded" },
+	interval = 1,
+	chance = 1,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		local meta = core.get_meta(pos)
+		local fluid_def = pipeworks.liquids[meta:get("pipeworks.fluid_type")]
+		meta:set_string("infotext", S("@1: @2", (fluid_def and fluid_def.description) or S("none"), (meta:get("pipeworks.pressure") or 0)))
+	end
+})
 
 
 -- tanks
