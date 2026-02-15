@@ -133,6 +133,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 	local slotseq_mode
 	local exmatch_mode
+	local matching_mode
 
 	local item_tags = pipeworks.sanitize_tags(filtmeta:get_string("item_tags"))
 	local filters = {}
@@ -176,6 +177,14 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				exmatch_mode = exmatch and 1 or 0
 			end
 
+			local matching = msg.matching
+			local t_matching = type(matching)
+			if t_matching == "number" and (matching == 0 or matching == 1) then
+				matching_mode = matching
+			elseif t_exmatch == "boolean" then
+				matching_mode = matching and 1 or 0
+			end
+
 			local slotseq_index = msg.slotseq_index
 			if type(slotseq_index) == "number" then
 				-- This should allow any valid index, but I'm not completely sure what
@@ -194,7 +203,11 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				filtmeta:set_int("exmatch_mode", exmatch_mode)
 			end
 
-			if slotseq_mode ~= nil or exmatch_mode ~= nil then
+			if matching_mode ~= nil then
+				filtmeta:set_int("matching_mode", matching_mode)
+			end
+
+			if slotseq_mode ~= nil or exmatch_mode ~= nil or matching_mode ~= nil then
 				set_filter_formspec(data, filtmeta)
 			end
 
@@ -242,6 +255,10 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 	if exmatch_mode == nil then
 		exmatch_mode = filtmeta:get_int("exmatch_mode")
+	end
+
+	if matching_mode == nil then
+		matching_mode = filtmeta:get_int("matching_mode")
 	end
 
 	local frominv
@@ -325,6 +342,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			end
 			-- stupid lack of continue statements grumble
 			if doRemove > 0 then
+				if matching_mode then filterfor.name = stack:get_name() end
 				if slotseq_mode == 2 then
 					local nextpos = spos + 1
 					if nextpos > frominv:get_size(frominvname) then
