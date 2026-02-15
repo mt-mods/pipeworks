@@ -342,7 +342,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			end
 			-- stupid lack of continue statements grumble
 			if doRemove > 0 then
-				if matching_mode then filterfor.name = stack:get_name() end
+				if matching_mode == 1 then filterfor.name = stack:get_name() end
 				if slotseq_mode == 2 then
 					local nextpos = spos + 1
 					if nextpos > frominv:get_size(frominvname) then
