@@ -280,7 +280,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			local matches
 			if filterfor == "" then
 				matches = stack:get_name() ~= ""
-				if (not fname) and matching_mode == 1 then
+				if matching_mode == 1 then
 					filterfor = {name = stack:get_name()}
 				end
 			else
@@ -288,12 +288,12 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				local fgroup = filterfor.group
 				local fwear = filterfor.wear
 				local fmetadata = filterfor.metadata
-				
+
 				if (not fname) and matching_mode == 1 then
 					fname = stack:get_name()
 					filterfor.name = fname
 				end
-				
+
 				matches = (not fname                                             -- If there's a name filter,
 				           or stack:get_name() == fname)                         --  it must match.
 
