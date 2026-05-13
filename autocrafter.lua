@@ -1,33 +1,27 @@
 local S = core.get_translator("pipeworks")
 
 if core.get_modpath("unified_inventory") then
-	core.register_craftitem("pipeworks:text_req", {
-		description = S("Requirements"),
-		inventory_image = "text_req.png",
-		groups = {not_in_creative_inventory = 1},
-		stack_max = 1,
-	})
-
-	core.register_craftitem("pipeworks:text_div1000", {
-		description = S("Liters (divide by 1000 for m³)"),
-		inventory_image = "text_div1000.png",
-		groups = {not_in_creative_inventory = 1},
-		stack_max = 1,
-	})
-
 	unified_inventory.register_craft_type("fluidshaped", {
 		description = S("Shaped Fluid Craft"),
 		icon = "pipeworks_autocrafter.png",
 		width = 3,
 		height = 4,
 	})
+	
+	local reqstack = ItemStack("air")
+	local meta = reqstack:get_meta()
+	meta:set_string("count_meta","FLUID\nREQ:")
+	meta:set_int("count_alignment",10)
+	meta:set_string("inventory_image","blank.png")
 
 	unified_inventory.register_on_craft_registered(
 		function (item_name, options)
 			if options.type ~= "fluidshaped" then return end
-			options.items[10] = "pipeworks:text_req"
-			options.items[11] = pipeworks.liquids[options.fluid.type].source .. " " .. (options.fluid.amount * 1000)
-			options.items[12] = "pipeworks:text_div1000"
+			options.items[10] = reqstack:to_string()
+			local fluidstack = ItemStack(pipeworks.liquids[options.fluid.type].source)
+			local meta = fluidstack:get_meta()
+			meta:set_string("count_meta",(options.fluid.amount * 1000).."L")
+			options.items[11] = fluidstack:to_string()
 		end
 	)
 end
@@ -484,83 +478,6 @@ local function on_output_change(pos, inventory, stack)
 		-- result of the new recipe
 	end
 	after_recipe_change(pos, inventory)
-end
-
--- returns false if we shouldn't bother attempting to start the timer again
--- after this
-local function update_meta(meta, enabled)
-	local state = enabled and "on" or "off"
-	meta:set_int("enabled", enabled and 1 or 0)
-	local list_backgrounds = ""
-	if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
-		list_backgrounds = "style_type[box;colors=#666]"
-		for i = 0, 2 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					1.5 + (i * 1.25) .. "," .. 0.25 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 3 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					5.28 + 1.25 + (i * 1.25) .. "," .. 0.25 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 7 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					1.5 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-	end
-	local size = "11.5,14"
-	local fluid = meta:get("fluidtype")
-	local amount = meta:get_float("fluidamount")
-	local fluid_cap = meta:get_float("fluidcap")
-	local bar_height = 8.25 * amount / fluid_cap
-	local fs =
-		"formspec_version[4]" ..
-		"size[" .. size .. "]" ..
-		pipeworks.fs_helpers.get_prepends(size) ..
-		list_backgrounds ..
-		"list[context;recipe;1.47,0.22;3,3;]" ..
-		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
-		"list[context;output;5.25,1.45;1,1;]" ..
-		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
-		state .. ";;;false;pipeworks_button_interm.png]" ..
-		"list[context;dst;6.53,0.22;4,3;]" ..
-		"list[context;src;1.47,5;8,3;]" ..--
-		pipeworks.fs_helpers.get_inv(9,1.25) ..
-		"listring[current_player;main]" ..
-		"listring[context;src]" ..
-		"listring[current_player;main]" ..
-		"listring[context;dst]" ..
-		"listring[current_player;main]" ..
-		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";pipeworks_fluid_" .. (fluid or "air") .. ".png]" ..
-		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]"
-	if core.get_modpath("digilines") then
-		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
-			";${channel}]" ..
-			"button[6.25,4;2,0.75;set_channel;" .. S("Set") .. "]" ..
-			"button_exit[8.45,4;2,0.75;close;" .. S("Close") .. "]"
-	end
-	meta:set_string("formspec", fs)
-
-	-- toggling the button doesn't quite call for running a recipe change check
-	-- so instead we run a minimal version for infotext setting only
-	-- this might be more written code, but actually executes less
-	local output = meta:get_inventory():get_stack("output", 1)
-	if output:is_empty() then -- doesn't matter if paused or not
-		meta:set_string("infotext", S("unconfigured Autocrafter"))
-		return false
-	end
-
-	local description, name = get_item_info(output)
-	local infotext = enabled and S("'@1' Autocrafter (@2)", description, name)
-				or S("paused '@1' Autocrafter", description)
-
-	meta:set_string("infotext", infotext)
-	return enabled
 end
 
 -- 1st version of the autocrafter had actual items in the crafting grid
