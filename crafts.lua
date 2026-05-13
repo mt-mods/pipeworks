@@ -320,19 +320,19 @@ end
 pipeworks.specialized_fluid_containers = {
 	register = function(self, container, fluid, remainder) -- fluid = {type = "type", amount = 1000}
 		local container_def = core.registered_items[container]
-		assert(container_def, "Container \"" .. item .. "\" doesn't exist!")
+		assert(container_def, "Container \"" .. container .. "\" doesn't exist!")
 		local remainder_def
 		if remainder then
 			remainder_def = core.registered_items[remainder]
-			assert(remainder_def, "Remainder \"" .. item .. "\" doesn't exist!")
+			assert(remainder_def, "Remainder \"" .. container .. "\" doesn't exist!")
 		end
-		
+
 		self[container_def.name] = {remainder = remainder and remainder_def.name, fluid = table.copy(fluid)}
 		if remainder then
 			self.fill[remainder_def.name] = self.fill[remainder_def.name] or {}
 			self.fill[remainder_def.name][fluid.type] = {result = container_def.name, fluid = table.copy(fluid)}
 		end
-		
+
 		return true
 	end,
 

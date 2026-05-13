@@ -7,7 +7,7 @@ if core.get_modpath("unified_inventory") then
 		width = 3,
 		height = 4,
 	})
-	
+
 	local reqstack = ItemStack("air")
 	local meta = reqstack:get_meta()
 	meta:set_string("count_meta","FLUID\nREQ:")
