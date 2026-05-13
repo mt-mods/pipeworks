@@ -72,26 +72,28 @@ local function update_meta(meta, enabled)
 	local amount = meta:get_float("fluidamount")
 	local fluid_cap = meta:get_float("fluidcap")
 	local bar_height = 8.25 * amount / fluid_cap
-	local fs =
-		"formspec_version[4]" ..
-		"size[" .. size .. "]" ..
-		pipeworks.fs_helpers.get_prepends(size) ..
-		list_backgrounds ..
-		"list[context;recipe;1.47,0.22;3,3;]" ..
-		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
-		"list[context;output;5.25,1.45;1,1;]" ..
-		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
-		state .. ";;;false;pipeworks_button_interm.png]" ..
-		"list[context;dst;6.53,0.22;4,3;]" ..
-		"list[context;src;1.47,5;8,3;]" ..--
-		pipeworks.fs_helpers.get_inv(9,1.25) ..
-		"listring[current_player;main]" ..
-		"listring[context;src]" ..
-		"listring[current_player;main]" ..
-		"listring[context;dst]" ..
-		"listring[current_player;main]" ..
-		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";pipeworks_fluid_" .. (fluid or "air") .. ".png]" ..
-		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]"
+	local fs = table.concat({
+		"formspec_version[4]",
+		"size[" .. size .. "]",
+		pipeworks.fs_helpers.get_prepends(size),
+		list_backgrounds,
+		"list[context;recipe;1.47,0.22;3,3;]",
+		"image[5.25,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
+		"list[context;output;5.25,1.45;1,1;]",
+		"image_button[5.25,2.6;1,0.6;pipeworks_button_" .. state .. ".png;",
+		state .. ";;;false;pipeworks_button_interm.png]",
+		"list[context;dst;6.53,0.22;4,3;]",
+		"list[context;src;1.47,5;8,3;]",
+		pipeworks.fs_helpers.get_inv(9,1.25),
+		"listring[current_player;main]",
+		"listring[context;src]",
+		"listring[current_player;main]",
+		"listring[context;dst]",
+		"listring[current_player;main]",
+		"image[0.22," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";" .. (fluid and ("pipeworks_fluid_" .. fluid) or "blank") .. ".png]",
+		"image[0.22,0.25;1,8.25;pipeworks_fluidbar.png]",
+		"tooltip[0.22,0.25;1,8.25;" .. S("@1L @2", ("%d"):format(amount*1000), (pipeworks.liquids[fluid] or {description = S("Empty")}).description) .. "]",
+	})
 	if minetest.get_modpath("digilines") then
 		fs = fs .. "field[1.47,4;4.5,0.75;channel;" .. S("Channel") ..
 			";${channel}]" ..

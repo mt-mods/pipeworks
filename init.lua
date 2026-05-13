@@ -16,7 +16,7 @@ pipeworks = {
 		self.liquids[name] = {
 			def = def,
 			source = def.liquid_alternative_source,
-			description = description or string.gsub(def.description, "%s?"..S("Source").."%s?", ""),
+			description = description or string.gsub(def.description, "%s?".."Source".."%s?", ""),
 			flowing = def.liquid_alternative_flowing,
 			density = density, -- in g/cm³ as standard
 		}

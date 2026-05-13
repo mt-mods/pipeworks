@@ -44,6 +44,7 @@ Fluid Storage Tank (@1)=
 Fountainhead=
 Straight-only Pipe=
 Infinite Fluid Source=
+@1L @2=
 
 ## filter-injector
 (slot #@1 next)=
@@ -120,6 +121,7 @@ Deployer=
 Dispenser=
 
 ## fluids
+Empty=
 Water=
 River Water=
 Lava=
