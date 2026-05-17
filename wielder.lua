@@ -35,6 +35,10 @@ local function wielder_action(def, pos, node, index)
 	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	local list = inv:get_list(def.wield_inv.name)
+	if not list then
+		-- Node breakers digging each other will cause this to happen
+		return
+	end
 	local wield_index
 	if index then
 		if list[index] and (def.wield_hand or not list[index]:is_empty()) then
