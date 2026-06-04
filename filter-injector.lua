@@ -193,7 +193,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			elseif t_matching == "boolean" then
 				dividing_mode = dividing and 1 or 0
 			end
-			
+
 
 			local slotseq_index = msg.slotseq_index
 			if type(slotseq_index) == "number" then
