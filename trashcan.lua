@@ -49,5 +49,3 @@ minetest.register_node(voidname, {
 	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = voidname
-pipeworks.flowables.register.simple(voidname)
-pipeworks.flowables.register.output(voidname, 0, 0, function(pos, node, currentpressure, finitemode, currentfluidtype) return 4, currentfluidtype end, function()end)
