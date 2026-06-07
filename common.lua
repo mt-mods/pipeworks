@@ -7,14 +7,40 @@ if core.get_modpath("unified_inventory") or not core.settings:get_bool("creative
 	pipeworks.expect_infinite_stacks = false
 end
 
-pipeworks.meseadjlist={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,y=0,z=0},{x=-1,y=0,z=0}}
+pipeworks.meseadjlist={
+	vector.new( 0, 0, 1),
+	vector.new( 0, 0,-1),
+	vector.new( 0, 1, 0),
+	vector.new( 0,-1, 0),
+	vector.new( 1, 0, 0),
+	vector.new(-1, 0, 0),
+}
 
-pipeworks.rules_all = {{x=0, y=0, z=1},{x=0, y=0, z=-1},{x=1, y=0, z=0},{x=-1, y=0, z=0},
-		{x=0, y=1, z=1},{x=0, y=1, z=-1},{x=1, y=1, z=0},{x=-1, y=1, z=0},
-		{x=0, y=-1, z=1},{x=0, y=-1, z=-1},{x=1, y=-1, z=0},{x=-1, y=-1, z=0},
-		{x=0, y=1, z=0}, {x=0, y=-1, z=0}}
+pipeworks.rules_all = {
+	vector.new( 0, 0, 1),
+	vector.new( 0, 0,-1),
+	vector.new( 1, 0, 0),
+	vector.new(-1, 0, 0),
+	vector.new( 0, 1, 1),
+	vector.new( 0, 1,-1),
+	vector.new( 1, 1, 0),
+	vector.new(-1, 1, 0),
+	vector.new( 0,-1, 1),
+	vector.new( 0,-1,-1),
+	vector.new( 1,-1, 0),
+	vector.new(-1,-1, 0),
+	vector.new( 0, 1, 0),
+	vector.new( 0,-1, 0),
+}
 
-pipeworks.mesecons_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
+pipeworks.mesecons_rules = {
+	vector.new( 0, 0, 1),
+	vector.new( 0, 0,-1),
+	vector.new( 1, 0, 0),
+	vector.new(-1, 0, 0),
+	vector.new( 0, 1, 0),
+	vector.new( 0,-1, 0),
+}
 
 local digilines_enabled = core.get_modpath("digilines") ~= nil
 if digilines_enabled and pipeworks.enable_vertical_digilines_connectivity then
@@ -24,7 +50,14 @@ else
 	-- via digiline conducting tubes. Changing them may break some builds on some servers, so the setting was added
 	-- for server admins to be able to revert to the old "broken" behavior as some builds may use it as a "feature".
 	-- See https://github.com/mt-mods/pipeworks/issues/64
-	pipeworks.digilines_rules={{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=1,y=0,z=0},{x=-1,y=0,z=0},{x=0,y=1,z=0},{x=0,y=-1,z=0}}
+	pipeworks.digilines_rules = {
+		vector.new( 0, 0, 1),
+		vector.new( 0, 0,-1),
+		vector.new( 1, 0, 0),
+		vector.new(-1, 0, 0),
+		vector.new( 0, 1, 0),
+		vector.new( 0,-1, 0),
+	}
 end
 
 pipeworks.liquid_texture = core.registered_nodes[pipeworks.liquids.water.flowing].tiles[1]
@@ -106,12 +139,12 @@ end
 -----------------------
 
 function pipeworks.facedir_to_top_dir(facedir)
-	return 	({[0] = {x =  0, y =  1, z =  0},
-	                {x =  0, y =  0, z =  1},
-	                {x =  0, y =  0, z = -1},
-	                {x =  1, y =  0, z =  0},
-	                {x = -1, y =  0, z =  0},
-	                {x =  0, y = -1, z =  0}})
+	return 	({[0] = vector.new( 0, 1, 0),
+	                vector.new( 0, 0, 1),
+	                vector.new( 0, 0,-1),
+	                vector.new( 1, 0, 0),
+	                vector.new(-1, 0, 0),
+	                vector.new( 0,-1, 0)})
 		[math.floor(facedir / 4)]
 end
 
