@@ -7,7 +7,7 @@ if core.get_modpath("unified_inventory") or not core.settings:get_bool("creative
 	pipeworks.expect_infinite_stacks = false
 end
 
-pipeworks.meseadjlist={
+pipeworks.meseadjlist = {
 	vector.new( 0, 0, 1),
 	vector.new( 0, 0,-1),
 	vector.new( 0, 1, 0),
