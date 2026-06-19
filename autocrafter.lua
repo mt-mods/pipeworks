@@ -1,5 +1,9 @@
 local S = core.get_translator("pipeworks")
 
+local fluid_type_meta_key = "pipeworks:fluid_type"
+local fluid_amount_meta_key = "pipeworks:fluid_amount"
+local max_fluid_meta_key = "pipeworks:max_fluid"
+
 if core.get_modpath("unified_inventory") then
 	unified_inventory.register_craft_type("fluidshaped", {
 		description = S("Shaped Fluid Craft"),
@@ -68,9 +72,9 @@ local function update_meta(meta, enabled)
 		end
 	end
 	local size = "11.5,14"
-	local fluid = meta:get("fluidtype")
-	local amount = meta:get_float("fluidamount")
-	local fluid_cap = meta:get_float("fluidcap")
+	local fluid = meta:get(fluid_type_meta_key)
+	local amount = meta:get_float(fluid_amount_meta_key)
+	local fluid_cap = meta:get_float(max_fluid_meta_key)
 	local bar_height = 8.25 * amount / fluid_cap
 	local fs = table.concat({
 		"formspec_version[4]",
@@ -198,7 +202,7 @@ local function get_craft(pos, inventory, hash)
 	local fluid
 	if (not output) or output.item:is_empty() then
 		output, decremented_input, fluid = pipeworks.fluid_recipes:get({
-			items = example_recipe, fluid_type = core.get_meta(pos):get("fluidtype") -- GOHERE
+			items = example_recipe, fluid_type = core.get_meta(pos):get(fluid_type_meta_key) -- GOHERE
 		})
 	end
 
@@ -398,11 +402,11 @@ local function run_autocrafter(pos, elapsed)
 		return false
 	end
 
-	local fluid = {type = meta:get("fluidtype"), amount = meta:get_float("fluidamount")}
+	local fluid = {type = meta:get(fluid_type_meta_key), amount = meta:get_float(fluid_amount_meta_key)}
 	for _ = 1, math.floor(elapsed / craft_time) do
 		local continue = autocraft(inventory, craft, fluid)
 		if not continue then return false end
-		meta:set_float("fluidamount", fluid.amount)
+		meta:set_float(fluid_amount_meta_key, fluid.amount)
 		update_meta(meta, meta:get_int("enabled") == 1)
 	end
 	return true
@@ -655,7 +659,7 @@ core.register_node("pipeworks:autocrafter", {
 	},
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
-		meta:set_float("fluidcap", 8)
+		meta:set_float(max_fluid_meta_key, 8)
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3 * 8)
 		inv:set_size("recipe", 3 * 3)
@@ -834,18 +838,18 @@ pipeworks.flowables.register.simple(autocraftername)
 pipeworks.flowables.register.output(autocraftername, 0, 0, function(pos, node, currentpressure, finitemode, fluid_type)
 	if fluid_type == nil  then return 0, fluid_type end -- you can't put empty in something and expect displacement
 	local meta = core.get_meta(pos)
-	local fluid_cap = meta:get_float("fluidcap")
-	local fluid_amount = meta:get_float("fluidamount")
-	local current_fluid_type = meta:get("fluidtype")
+	local fluid_cap = meta:get_float(max_fluid_meta_key)
+	local fluid_amount = meta:get_float(fluid_amount_meta_key)
+	local current_fluid_type = meta:get(fluid_type_meta_key)
 	if current_fluid_type ~= fluid_type then
 		if fluid_amount == 0 then
-			meta:set_string("fluidtype", fluid_type)
+			meta:set_string(fluid_type_meta_key, fluid_type)
 		else
 			return 0, fluid_type
 		end
 	end
 	local taken = math.min(fluid_cap - fluid_amount, currentpressure)
-	meta:set_float("fluidamount", fluid_amount + taken)
+	meta:set_float(fluid_amount_meta_key, fluid_amount + taken)
 	update_meta(meta, meta:get_int("enabled") == 1)
 	return taken, fluid_type
 end, function()end)

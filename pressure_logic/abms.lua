@@ -33,6 +33,7 @@ end
 
 
 
+local label_pressure = "pipeworks.pressure"
 -- new version of liquid check
 -- accepts a limit parameter to only delete fluid blocks that the receptacle can accept,
 -- and returns it so that the receptacle can update it's pressure values.
@@ -40,7 +41,7 @@ local check_for_liquids_v2 = function(pos, limit, current_type)
 	if limit == 0 then return 0, current_type end
 	local coords = make_coords_offsets(pos, false)
 	local total = 0
-	local fluid_type = (core.get_meta(pos):get_float("pipeworks.pressure") > 0.001) and current_type
+	local fluid_type = (core.get_meta(pos):get_float(label_pressure) > 0.001) and current_type
 	local fluid_nodename = fluid_type and pipeworks.liquids[current_type].source
 	for _, tpos in ipairs(coords) do
 		local name = core.get_node(tpos).name
@@ -64,7 +65,6 @@ flowlogic.check_for_liquids_v2 = check_for_liquids_v2
 
 
 
-local label_pressure = "pipeworks.pressure"
 local get_pressure_access = function(pos)
 	local metaref = core.get_meta(pos)
 	return {

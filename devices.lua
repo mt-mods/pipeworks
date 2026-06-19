@@ -6,6 +6,9 @@ local texture_alpha_mode = core.features.use_texture_alpha_string_modes
 local polys = ""
 if pipeworks.enable_lowpoly then polys = "_lowpoly" end
 
+local fluid_type_meta_key = "pipeworks:fluid_type"
+local fluid_pressure_meta_key = "pipeworks.pressure"
+
 -- rotation handlers
 
 function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
@@ -128,6 +131,7 @@ local pipes_devicelist = {
 -- Now define the nodes.
 
 local sourcename = "pipeworks:source"
+local fluid_amount_meta_key = "pipeworks:fluid_amount"
 core.register_node(sourcename, {
 	description = S("Infinite Fluid Source"),
 	tiles = { "pipeworks_source_frame.png" },
@@ -152,16 +156,22 @@ core.register_node(sourcename, {
 			return
 		end
 		local meta = core.get_meta(pos)
-		meta:set_string("fluidamount",fields.pressure or meta:get_string("fluidamount"))
-		meta:set_string("fluidtype",(pipeworks.liquids[fields.fluidtype] and fields.fluidtype) or meta:get_string("fluidtype"))
+		local newpressure = fields.pressure
+		if newpressure then
+			meta:set_string(fluid_amount_meta_key, newpressure)
+		end
+		local newtype = (pipeworks.liquids[fields.fluidtype] and fields.fluidtype)
+		if newtype then
+			meta:set_string(fluid_type_meta_key, newtype)
+		end
 	end,
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
 		local fs =
 		"formspec_version[4]"..
 		"size[4.75,1.5]"..
-		"field[0.25,0.5;2.5,0.75;fluidtype;"..S("Fluid Type")..";${fluidtype}]"..
-		"field[3,0.5;1.5,0.75;pressure;"..S("Pressure")..";${fluidamount}]"
+		"field[0.25,0.5;2.5,0.75;fluidtype;"..S("Fluid Type")..";${"..fluid_type_meta_key.."}]"..
+		"field[3,0.5;1.5,0.75;pressure;"..S("Pressure")..";${"..fluid_amount_meta_key.."}]"
 		meta:set_string("formspec",fs)
 	end,
 	after_place_node = function(pos)
@@ -175,7 +185,7 @@ core.register_node(sourcename, {
 new_flow_logic_register.simple(sourcename)
 new_flow_logic_register.intake(sourcename, math.huge, function(pos)
 	local meta = core.get_meta(pos)
-	return meta:get_float("fluidamount") - meta:get_float("pipeworks.pressure"), meta:get("fluidtype")
+	return meta:get_float(fluid_amount_meta_key) - meta:get_float(fluid_pressure_meta_key), meta:get(fluid_type_meta_key)
 end)
 
 local states = { "on", "off" }
@@ -637,8 +647,8 @@ core.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local meta = core.get_meta(pos)
-		local fluid_def = pipeworks.liquids[meta:get("pipeworks.fluid_type")]
-		meta:set_string("infotext", S("@1: @2", (fluid_def and fluid_def.description) or S("none"), (meta:get("pipeworks.pressure") or 0)))
+		local fluid_def = pipeworks.liquids[meta:get(fluid_type_meta_key)]
+		meta:set_string("infotext", S("@1: @2", (fluid_def and fluid_def.description) or S("none"), (meta:get(fluid_pressure_meta_key) or 0)))
 	end
 })
 
