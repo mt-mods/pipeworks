@@ -551,7 +551,7 @@ local function parse_recipe(msg)
 end
 
 local function format_recipe(list)
-	local recipe = {}
+	local recipe, items = {}
 	for y = 0, 2, 1 do
 		local row = {}
 		for x = 1, 3, 1 do
@@ -559,10 +559,11 @@ local function format_recipe(list)
 			local item = list[slot]
 			item = item:get_meta():get("group") or item:get_name()
 			table.insert(row, item)
+			items[slot] = item
 		end
 		table.insert(recipe, row)
 	end
-	return recipe
+	return recipe, items
 end
 
 local function digilines_action(pos, _, channel, msg)
@@ -590,11 +591,14 @@ local function digilines_action(pos, _, channel, msg)
 		msg = {command = "set", recipe = msg}
 	end
 	if msg.command == "get" then
+		local recipe, input = format_recipe(inv:get_list("recipe"))
 		local output = inv:get_stack("output", 1)
 		local keep_items = ({"none", "replacements", "all"})[meta:get_int("keep_items")+1]
 		digilines.receptor_send(pos, digilines.rules.default, channel, {
-			recipe = format_recipe(inv:get_list("recipe")),
+			recipe = recipe,
+			input = input,
 			result = {name = output:get_name(), count = output:get_count()},
+			output = output:get_name(),
 			keep_items = keep_items,
 			active = meta:get_int("enabled") == 1,
 		})
