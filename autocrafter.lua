@@ -595,10 +595,8 @@ local function digilines_action(pos, _, channel, msg)
 		local output = inv:get_stack("output", 1)
 		local keep_items = ({"none", "replacements", "all"})[meta:get_int("keep_items")+1]
 		digilines.receptor_send(pos, digilines.rules.default, channel, {
-			recipe = recipe,
-			input = input,
-			result = {name = output:get_name(), count = output:get_count()},
-			output = output:get_name(),
+			recipe = recipe, input = input,
+			result = output:to_table(), output = output:get_name(),
 			keep_items = keep_items,
 			active = meta:get_int("enabled") == 1,
 		})
