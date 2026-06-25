@@ -153,9 +153,9 @@ local function get_craft_result(items, fake_player)
 	for _,stack in ipairs(fake_inv:get_list("craft")) do
 		if not stack:is_empty() then
 			if recipe_items[stack:get_name()] then
-				table.insert(replacements, stack)
+				replacements[#replacements+1] = stack
 			else
-				table.insert(outputs, stack)
+				outputs[#outputs+1] = stack
 			end
 		end
 	end
@@ -558,10 +558,10 @@ local function format_recipe(list)
 			local slot = y * 3 + x
 			local item = list[slot]
 			item = item:get_meta():get("group") or item:get_name()
-			table.insert(row, item)
+			row[#row+1] = item
 			items[slot] = item
 		end
-		table.insert(recipe, row)
+		recipe[#recipe+1] = row
 	end
 	return recipe, items
 end
