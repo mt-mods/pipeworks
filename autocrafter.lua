@@ -559,7 +559,7 @@ local function format_recipe(list)
 			local item = list[slot]
 			item = item:get_meta():get("group") or item:get_name()
 			row[#row+1] = item
-			items[slot] = item
+			items[slot] = item ~= "" and item or nil
 		end
 		recipe[#recipe+1] = row
 	end
