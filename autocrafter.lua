@@ -88,6 +88,19 @@ local function can_stack_in_list(list, stack)
 	return false
 end
 
+-- Makes recipes with width 1-2 fit the 3x3 grid correctly
+local function widen_recipe(items, width)
+	if width == 1 and #items > 1 then
+		items[4], items[2] = items[2], nil
+		items[7], items[3] = items[3], nil
+	elseif width == 2 then
+		items[3], items[4], items[5], items[7] = nil, items[3], items[4], items[5]
+		items[8], items[6] = items[6], nil
+	end
+	-- Width 0 is shapeless, width 3 doesn't need widening
+	return items
+end
+
 ----------------------
 -- Autocrafter code --
 ----------------------
@@ -220,7 +233,8 @@ local function set_craft_by_output(pos, output)
 	if not best_recipe then
 		return
 	end
-	return set_craft_by_input(pos, best_recipe.items)
+	local items = widen_recipe(best_recipe.items, best_recipe.width)
+	return set_craft_by_input(pos, items)
 end
 
 local function get_ingredients(src, recipe)
