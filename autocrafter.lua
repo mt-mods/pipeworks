@@ -551,7 +551,7 @@ local function parse_recipe(msg)
 end
 
 local function format_recipe(list)
-	local recipe, items = {}
+	local recipe, items = {}, {}
 	for y = 0, 2, 1 do
 		local row = {}
 		for x = 1, 3, 1 do
