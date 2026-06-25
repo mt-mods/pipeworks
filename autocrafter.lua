@@ -697,9 +697,7 @@ core.register_node("pipeworks:autocrafter", {
 			end
 			return 0
 		elseif list == "output" then
-			if not set_craft_by_output(pos, stack) then
-				reset_autocrafter(pos)
-			end
+			set_craft_by_output(pos, stack)
 			return 0
 		end
 		return stack:get_count()
@@ -729,9 +727,7 @@ core.register_node("pipeworks:autocrafter", {
 		local inv = core.get_meta(pos):get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 		if to_list == "output" then
-			if not set_craft_by_output(pos, stack) then
-				reset_autocrafter(pos)
-			end
+			set_craft_by_output(pos, stack)
 			return 0
 		elseif from_list == "output" then
 			inv:set_list("recipe", {})
