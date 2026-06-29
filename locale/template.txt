@@ -21,6 +21,11 @@ unconfigured Autocrafter=
 Save=
 paused '@1' Autocrafter=
 Autocrafter=
+# Reserve button:
+Reserve: ON=
+Reserve: OFF=
+
+Keep 1 item in slot to prevent other items from filling it.=
 
 ## compat-furnaces
 Allow splitting incoming material (not fuel) stacks from tubes=
@@ -63,7 +68,6 @@ Auto-Tap=
 ## pipes
 Pipe Segment=
 Pipe Segment (legacy)=
-
 
 ## routing tubes
 Pneumatic tube segment=

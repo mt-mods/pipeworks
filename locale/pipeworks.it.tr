@@ -1,0 +1,86 @@
+# textdomain: pipeworks
+
+## generic interaction
+Set=Imposta
+Cancel=Annulla
+
+## digilines interfacing
+Channel=Canale
+
+## init
+Allow splitting incoming stacks from tubes=Permetti di dividere gli stack in entrata dai tubi
+
+## autocrafter
+Unknown item=Oggetto sconosciuto
+unconfigured Autocrafter: unknown recipe=Autocrafter non configurato: ricetta sconosciuta
+unconfigured Autocrafter=Autocrafter non configurato
+'@1' Autocrafter (@2)=Autocrafter di '@1' (@2)
+Save=Salva
+paused '@1' Autocrafter=Autocrafter di '@1' in pausa
+Autocrafter=Autocrafter
+
+# NUOVE TRADUZIONI PER LA RISERVA:
+Reserve: ON=Riserva: ON
+Reserve: OFF=Riserva: OFF
+Keep 1 item in slot to prevent other items from filling it.=Mantieni 1 pezzo nello slot per evitare che altri oggetti lo riempiano.
+
+## devices
+Pump/Intake Module=Modulo Pompa/Aspirazione
+Valve=Valvola
+Decorative grating=Grata decorativa
+Spigot outlet=Rubinetto di scarico
+Airtight Pipe entry/exit=Ingresso/Uscita tubo ermetico
+Flow Sensor=Sensore di flusso
+Flow sensor (on)=Sensore di flusso (acceso)
+empty=vuoto
+@1% full=@1% pieno
+Expansion Tank (@1)=Serbatoio di espansione (@1)
+Fluid Storage Tank (@1)=Serbatoio di stoccaggio liquidi (@1)
+Fountainhead=Sorgente a fontana
+Straight-only Pipe=Tubo solo dritto
+
+## filter-injector
+(slot #@1 next)=(slot #@1 successivo)
+@1 Filter-Injector=Iniettore-Filtro @1
+Sequence slots by Priority=Sequenza slot per priorità
+Sequence slots Randomly=Sequenza slot casuale
+Sequence slots by Rotation=Sequenza slot per rotazione
+Exact match - off=Corrispondenza esatta - OFF
+Exact match - on=Corrispondenza esatta - ON
+Prefer item types:=Preferisci tipi di oggetto:
+Itemwise=Per oggetto
+Stackwise=Per stack
+Digiline=Digiline
+
+## routing tubes
+Pneumatic tube segment=Segmento di tubo pneumatico
+Broken Tube=Tubo rotto
+High Priority Tube Segment=Segmento di tubo ad alta priorità
+Accelerating Pneumatic Tube Segment=Segmento di tubo pneumatico acceleratore
+Crossing Pneumatic Tube Segment=Segmento di tubo pneumatico a incrocio
+One way tube=Tubo a senso unico
+
+## sorting tubes
+Sorting Pneumatic Tube Segment=Segmento di tubo pneumatico di smistamento
+Sorting pneumatic tube=Tubo pneumatico di smistamento
+
+## teleport tube
+Receive=Ricevi
+Channels are public by default=I canali sono pubblici per impostazione predefinita
+Use <player>:<channel> for fully private channels=Usa <giocatore>:<canale> per canali privati
+Teleporting Pneumatic Tube Segment=Segmento di tubo pneumatico di teletrasporto
+Teleporting Tube=Tubo di teletrasporto
+Unconfigured Teleportation Tube=Tubo di teletrasporto non configurato
+
+## trashcan
+Trash Can=Cestino dei rifiuti
+
+## vacuum tubes
+Radius=Raggio
+Vacuuming Pneumatic Tube Segment=Segmento di tubo pneumatico aspirante
+Adjustable Vacuuming Tube=Tubo aspirante regolabile
+
+## wielder
+Node Breaker=Rompiblocco
+Deployer=Posizionatore
+Dispenser=Dispenser
