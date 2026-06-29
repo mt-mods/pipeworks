@@ -41,11 +41,11 @@ local function set_filter_formspec(data, meta)
 		local exmatch_button = ""
 		if data.stackwise then
 			exmatch_button =
-				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4,1", "exmatch_mode",
+				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4.5,1", "exmatch_mode",
 					{S("Exact match - off"),
 					 S("Exact match - on")})
 		end
-		local size = "10.2,11"
+		local size = "10.7,11"
 		local list_backgrounds = ""
 		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 			list_backgrounds = "style_type[box;colors=#666]"
@@ -64,7 +64,7 @@ local function set_filter_formspec(data, meta)
 			"label[0.22,1.5;"..S("Prefer item types:").."]"..
 			list_backgrounds..
 			"list[context;main;0.22,1.75;8,2;]"..
-			fs_helpers.cycling_button(meta, "button[0.22,4.5;4,1", "slotseq_mode",
+			fs_helpers.cycling_button(meta, "button[0.22,4.5;5.7,1", "slotseq_mode",
 				{S("Sequence slots by Priority"),
 				 S("Sequence slots Randomly"),
 				 S("Sequence slots by Rotation")})..
@@ -74,7 +74,7 @@ local function set_filter_formspec(data, meta)
 		if pipeworks.enable_item_tags then
 			formspec = formspec ..
 				"field[5.8,0.5;3,0.8;item_tags;" .. S("Item Tags") .. ";${item_tags}]" ..
-				"button[9,0.3;1,1.1;set_item_tags;" .. S("Set") .. "]"
+				"button[8.9,0.3;1.6,1.1;set_item_tags;" .. S("Set") .. "]"
 		end
 	end
 	meta:set_string("formspec", formspec)
