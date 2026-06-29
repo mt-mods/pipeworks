@@ -5,7 +5,8 @@ std = "minetest+max"
 
 globals = {
 	"pipeworks",
-	"luaentity"
+	"luaentity",
+	"core"
 }
 
 read_globals = {
