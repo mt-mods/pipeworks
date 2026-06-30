@@ -52,6 +52,7 @@ if core.get_modpath("signs_lib") then
 end
 
 dofile(pipeworks.modpath.."/common.lua")
+dofile(pipeworks.modpath.."/fs_helpers.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
 dofile(pipeworks.modpath.."/autoplace_tubes.lua")

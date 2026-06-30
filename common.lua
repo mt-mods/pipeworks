@@ -1,5 +1,3 @@
-local S = core.get_translator("pipeworks")
-
 -- Random variables
 
 pipeworks.expect_infinite_stacks = true
@@ -62,11 +60,6 @@ end
 
 pipeworks.liquid_texture = core.registered_nodes[pipeworks.liquids.water.flowing].tiles[1]
 if type(pipeworks.liquid_texture) == "table" then pipeworks.liquid_texture = pipeworks.liquid_texture.name end
-
-pipeworks.button_off   = {text="", texture="pipeworks_button_off.png", addopts="false;false;pipeworks_button_interm.png"}
-pipeworks.button_on    = {text="", texture="pipeworks_button_on.png",  addopts="false;false;pipeworks_button_interm.png"}
-pipeworks.button_base  = "image_button[0,4.3;1,0.6"
-pipeworks.button_label = "label[0.9,4.31;"..S("Allow splitting incoming stacks from tubes").."]"
 
 -- Helper functions
 
@@ -205,118 +198,6 @@ function pipeworks.table_recursive_replace(tbl, pattern, replace_with)
 	else
 		return tbl
 	end
-end
-
-------------------------
--- Formspec functions --
-------------------------
-
-local fs_helpers = {}
-pipeworks.fs_helpers = fs_helpers
-function fs_helpers.on_receive_fields(pos, fields)
-	local meta = core.get_meta(pos)
-	for field in pairs(fields) do
-		if field:match("^fs_helpers_cycling:") then
-			local l = field:split(":")
-			local new_value = tonumber(l[2])
-			local meta_name = l[3]
-			meta:set_int(meta_name, new_value)
-		end
-	end
-end
-
-function fs_helpers.cycling_button(meta, base, meta_name, values)
-	local current_value = meta:get_int(meta_name)
-	local new_value = (current_value + 1) % (#values)
-	local val = values[current_value + 1]
-	local text
-	local texture_name = nil
-	local addopts = nil
-	--when we get a table, we know the caller wants an image_button
-	if type(val) == "table" then
-		text = val["text"]
-		texture_name = val["texture"]
-		addopts = val["addopts"]
-	else
-		text = val
-	end
-	local field = "fs_helpers_cycling:"..new_value..":"..meta_name
-	return base..";"..(texture_name and texture_name..";" or "")..field..";"..core.formspec_escape(text)..(addopts and ";"..addopts or "").."]"
-end
-
-function fs_helpers.get_inv(y)
-	local fs = {}
-	if core.get_modpath("i3") then
-		local inv_x = i3.settings.legacy_inventory and 0.75 or 0.22
-		local inv_y = (y + 0.4) or 6.9
-		local size, spacing = 1, 0.1
-		local hotbar_len = i3.settings.hotbar_len or (i3.settings.legacy_inventory and 8 or 9)
-		local inv_size = i3.settings.inv_size or (hotbar_len * 4)
-
-		table.insert(fs, "style_type[box;colors=#77777710,#77777710,#777,#777]")
-
-		for i = 0, hotbar_len - 1 do
-			table.insert(fs, "box["..(i * size + inv_x + (i * spacing))..","..inv_y..";"..size..","..size..";]")
-		end
-
-		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
-		table.insert(fs, "list[current_player;main;"..inv_x..","..inv_y..";"..hotbar_len..",1;]")
-
-		table.insert(fs, "style_type[box;colors=#666]")
-		for i=0, 2 do
-			for j=0, hotbar_len - 1 do
-				table.insert(fs, "box["..0.2+(j*0.1)+(j*size)..","..(inv_y+size+spacing+0.05)+(i*0.1)+(i*size)..";"..size..","..size..";]")
-			end
-		end
-
-		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
-		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(inv_size / hotbar_len)..";"..hotbar_len.."]")
-	elseif core.get_modpath("mcl_formspec") then
-		local inv_x = 0.22
-		local inv_y = (y + 0.4) or 6.9
-		local size, spacing = 1, 0.1
-		local hotbar_len = 9
-		local inv_size = hotbar_len * 4
-
-		table.insert(fs, "style_type[box;colors=#77777710,#77777710,#777,#777]")
-
-		for i = 0, hotbar_len - 1 do
-			table.insert(fs, "box["..(i * size + inv_x + (i * spacing))..","..inv_y..";"..size..","..size..";]")
-		end
-
-		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
-		table.insert(fs, "list[current_player;main;"..inv_x..","..inv_y..";"..hotbar_len..",1;]")
-
-		table.insert(fs, "style_type[box;colors=#666]")
-		for i=0, 2 do
-			for j=0, hotbar_len - 1 do
-				table.insert(fs, "box["..0.2+(j*0.1)+(j*size)..","..(inv_y+size+spacing+0.05)+(i*0.1)+(i*size)..";"..size..","..size..";]")
-			end
-		end
-
-		table.insert(fs, "style_type[list;size="..size..";spacing="..spacing.."]")
-		table.insert(fs, "list[current_player;main;"..inv_x..","..(inv_y + 1.15)..";"..hotbar_len..","..(inv_size / hotbar_len)..";"..hotbar_len.."]")
-	else
-		table.insert(fs, "list[current_player;main;0.22,"..y..";8,4;]")
-	end
-
-	return table.concat(fs, "")
-end
-
-function fs_helpers.get_prepends(size)
-	local prepend = {}
-
-	if core.get_modpath("i3") then
-		prepend = {
-			"no_prepend[]",
-			"bgcolor[black;neither]",
-			"background9[0,0;"..size..";i3_bg_full.png;false;10]",
-			"style_type[button;border=false;bgimg=[combine:16x16^[noalpha^[colorize:#6b6b6b]",
-			"listcolors[#0000;#ffffff20]"
-		}
-	end
-
-	return table.concat(prepend, "")
 end
 
 ---------
