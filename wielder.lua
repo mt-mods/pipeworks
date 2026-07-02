@@ -1,31 +1,21 @@
 local S = core.get_translator("pipeworks")
+local fs_helpers = pipeworks.fs_helpers
+
 local has_digilines = core.get_modpath("digilines")
 
 local function set_wielder_formspec(def, meta)
-	local width, height = def.wield_inv.width, def.wield_inv.height
-	local offset = 5.22 - width * 0.625
-	local size = "10.2,"..(6.5 + height * 1.25 + (has_digilines and 1.25 or 0))
-	local list_bg = ""
-	if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
-		list_bg = "style_type[box;colors=#666]"
-		for i=0, height-1 do
-			for j=0, width-1 do
-				list_bg = list_bg.."box["..offset+(i*1.25)..","..1.25+(j*1.25)..";1,1;]"
-			end
-		end
-	end
-	local inv_offset = 1.5 + height * 1.25
-	local fs = "formspec_version[2]size["..size.."]"..
-		pipeworks.fs_helpers.get_prepends(size)..list_bg..
-		"item_image[0.5,0.3;1,1;"..def.name.."_off]"..
-		"label[1.75,0.8;"..core.formspec_escape(def.description).."]"..
-		"list[context;"..def.wield_inv.name..";"..offset..",1.25;"..width..","..height..";]"
+	local inv_w, inv_h = def.wield_inv.width, def.wield_inv.height
+	local inv_x = 5.25 - inv_w * 0.625
+	local height = 6.5 + inv_h * 1.25 + (has_digilines and 1.3 or 0)
+	local fs = table.concat({
+		fs_helpers.prepends(10.25, height),
+		fs_helpers.node_label(def.name.."_off"),
+		fs_helpers.inv_list(inv_x, 1.25, inv_w, inv_h, def.wield_inv.name),
+		fs_helpers.player_inv(0.25, height - 5),
+	})
 	if has_digilines then
-		fs = fs.."field[1.5,"..inv_offset..";5,0.8;channel;"..S("Channel")..";${channel}]"..
-			"button_exit[6.5,"..inv_offset..";2,0.8;save;"..S("Save").."]"..
-			pipeworks.fs_helpers.get_inv(inv_offset + 1.25).."listring[]"
-	else
-		fs = fs..pipeworks.fs_helpers.get_inv(inv_offset).."listring[]"
+		local offset = 1.5 + inv_h * 1.25
+		fs = fs..fs_helpers.field(1.5, offset, 7.25, "channel", S("Digiline Channel"))
 	end
 	meta:set_string("formspec", fs)
 	meta:set_string("infotext", def.description)
