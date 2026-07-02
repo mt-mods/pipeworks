@@ -19,21 +19,24 @@ local function set_filter_formspec(data, meta)
 		formspec = table.concat({
 			fs_helpers.prepends(10.25, use_tags and 4 or 2.75),
 			fs_helpers.node_label("pipeworks:"..data.name),
-			fs_helpers.toggle_button(6, 0.45, meta, "exmatch_mode"),
-			"label[7.1,0.75;"..S("Exact match").."]",
 			fs_helpers.field(0.25, 1.75, 5.5, "channel", S("Digiline Channel")),
 			fs_helpers.cycling_button(meta, "button[6,1.75;4,0.75", "slotseq_mode", slotseq_modes),
 			use_tags and fs_helpers.field(0.25, 3, 5.5, "item_tags", S("Item Tags")) or nil,
 		})
 	else
 		formspec = table.concat({
-			fs_helpers.standard_formspec(10.5),
+			fs_helpers.prepends(10.25, 10.5),
 			fs_helpers.node_label("pipeworks:"..data.name),
-			fs_helpers.toggle_button(6, 0.45, meta, "exmatch_mode"),
-			"label[7.1,0.75;"..S("Exact match").."]",
 			fs_helpers.inv_list(0.25, 1.5, 8, 2, "main", S("Filtered items")),
 			fs_helpers.cycling_button(meta, "button[0.25,4.25;4,0.75", "slotseq_mode", slotseq_modes),
 			use_tags and fs_helpers.field(4.5, 4.25, 5.5, "item_tags", S("Item Tags")) or nil,
+			fs_helpers.player_inv(0.25, 5.5),
+		})
+	end
+	if data.stackwise then
+		formspec = table.concat({formspec,
+			fs_helpers.toggle_button(6, 0.45, meta, "exmatch_mode"),
+			"label[7.1,0.75;"..S("Exact match").."]",
 		})
 	end
 	meta:set_string("formspec", formspec)

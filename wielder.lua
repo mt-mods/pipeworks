@@ -8,9 +8,10 @@ local function set_wielder_formspec(def, meta)
 	local inv_x = 5.25 - inv_w * 0.625
 	local height = 6.5 + inv_h * 1.25 + (has_digilines and 1.3 or 0)
 	local fs = table.concat({
-		fs_helpers.standard_formspec(height),
+		fs_helpers.prepends(10.25, height),
 		fs_helpers.node_label(def.name.."_off"),
 		fs_helpers.inv_list(inv_x, 1.25, inv_w, inv_h, def.wield_inv.name),
+		fs_helpers.player_inv(0.25, height - 5),
 	})
 	if has_digilines then
 		local offset = 1.5 + inv_h * 1.25

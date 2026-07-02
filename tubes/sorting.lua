@@ -4,7 +4,7 @@ local insert = table.insert
 
 if pipeworks.enable_mese_tube then
 	local formspec = {
-		fs_helpers.standard_formspec(13),
+		fs_helpers.prepends(10.25, 13),
 		"listring[current_player;main]",  -- Blocks shift-clicking into slots
 	}
 	for i, color in ipairs({"ffffff", "000000", "41de3b", "ffeb10", "3866ea", "e53e11"}) do
@@ -12,6 +12,7 @@ if pipeworks.enable_mese_tube then
 		insert(formspec, "box[0.25,"..height..";1,1;#"..color.."ff]")
 		insert(formspec, fs_helpers.inv_list(1.5, height, 6, 1, "line"..i))
 	end
+	insert(formspec, fs_helpers.player_inv(0.25, 8))
 	formspec = table.concat(formspec)
 
 	local function update_formspec(pos)

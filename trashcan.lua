@@ -25,9 +25,10 @@ core.register_node("pipeworks:trashcan", {
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
 		local fs = table.concat({
-			fs_helpers.standard_formspec(8.5),
+			fs_helpers.prepends(10.25, 8.5),
 			fs_helpers.node_label("pipeworks:trashcan"),
 			fs_helpers.inv_list(4.625, 1.25, 1, 1, "trash"),
+			fs_helpers.player_inv(0.25, 3.5),
 		})
 		meta:set_string("formspec", fs)
 		meta:set_string("infotext", S("Trash Can"))

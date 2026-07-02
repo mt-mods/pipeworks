@@ -349,13 +349,14 @@ end
 -- returns false if we shouldn't bother attempting to start the timer again
 -- after this
 local base_formspec = table.concat({
-	fs_helpers.standard_formspec(has_digilines and 14.25 or 13.25),
+	fs_helpers.prepends(10.25, has_digilines and 14.25 or 13.25),
 	fs_helpers.inv_list(0.25, has_digilines and 5.25 or 4.25, 8, 3, "src", S("Input inventory")),
 	fs_helpers.inv_list(0.25, 0.25, 3, 3, "recipe", S("Recipe")),
 	fs_helpers.inv_list(4, 1.5, 1, 1, "output", S("Output preview")),
 	"image[4,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
 	fs_helpers.inv_list(5.25, 0.25, 4, 3, "dst", S("Crafted items")),
 	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or nil,
+	fs_helpers.player_inv(0.25, has_digilines and 9.25 or 8.25),
 })
 
 local function update_meta(meta, enabled)
