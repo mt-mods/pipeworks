@@ -133,6 +133,8 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 	local slotseq_mode
 	local exmatch_mode
+	local matching_mode
+	local dividing_mode
 
 	local item_tags = pipeworks.sanitize_tags(filtmeta:get_string("item_tags"))
 	local filters = {}
@@ -176,6 +178,23 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				exmatch_mode = exmatch and 1 or 0
 			end
 
+			local matching = msg.matching
+			local t_matching = type(matching)
+			if t_matching == "number" and (matching == 0 or matching == 1) then
+				matching_mode = matching
+			elseif t_matching == "boolean" then
+				matching_mode = matching and 1 or 0
+			end
+
+			local dividing = msg.dividing
+			local t_dividing = type(dividing)
+			if t_dividing == "number" and (dividing == 0 or dividing == 1) then
+				dividing_mode = dividing
+			elseif t_matching == "boolean" then
+				dividing_mode = dividing and 1 or 0
+			end
+
+
 			local slotseq_index = msg.slotseq_index
 			if type(slotseq_index) == "number" then
 				-- This should allow any valid index, but I'm not completely sure what
@@ -192,6 +211,14 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 			if exmatch_mode ~= nil then
 				filtmeta:set_int("exmatch_mode", exmatch_mode)
+			end
+
+			if matching_mode ~= nil then
+				filtmeta:set_int("matching_mode", matching_mode)
+			end
+
+			if dividing_mode ~= nil then
+				filtmeta:set_int("dividing_mode", dividing_mode)
 			end
 
 			if slotseq_mode ~= nil or exmatch_mode ~= nil then
@@ -244,6 +271,14 @@ local function punch_filter(data, filtpos, filtnode, msg)
 		exmatch_mode = filtmeta:get_int("exmatch_mode")
 	end
 
+	if matching_mode == nil then
+		matching_mode = filtmeta:get_int("matching_mode")
+	end
+
+	if dividing_mode == nil then
+		dividing_mode = filtmeta:get_int("dividing_mode")
+	end
+
 	local frominv
 	if fromtube.return_input_invref then
 		frominv = fromtube.return_input_invref(frompos, fromnode, dir, owner)
@@ -263,11 +298,20 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			local matches
 			if filterfor == "" then
 				matches = stack:get_name() ~= ""
+				if matching_mode == 1 then
+					filterfor = {name = stack:get_name()}
+				end
 			else
 				local fname = filterfor.name
 				local fgroup = filterfor.group
 				local fwear = filterfor.wear
 				local fmetadata = filterfor.metadata
+
+				if (not fname) and matching_mode == 1 then
+					fname = stack:get_name()
+					filterfor.name = fname
+				end
+
 				matches = (not fname                                             -- If there's a name filter,
 				           or stack:get_name() == fname)                         --  it must match.
 
@@ -371,7 +415,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				table.insert(taken_stacks, taken)
 			end
 		end
-		if #taken_stacks > 1 then
+		if dividing_mode ~= 1 and #taken_stacks > 1 then
 			-- merge stacks if possible to reduce items in tubes
 			local merged = {}
 			for _,a in ipairs(taken_stacks) do
