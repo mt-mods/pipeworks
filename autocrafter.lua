@@ -1,4 +1,7 @@
 local S = core.get_translator("pipeworks")
+local fs_helpers = pipeworks.fs_helpers
+local has_digilines = core.get_modpath("digilines")
+
 -- cache some recipe data to avoid calling the slow function
 -- core.get_craft_result() every second
 local autocrafterCache = {}
@@ -345,56 +348,20 @@ end
 
 -- returns false if we shouldn't bother attempting to start the timer again
 -- after this
+local base_formspec = table.concat({
+	fs_helpers.prepends(10.25, has_digilines and 14.25 or 13.25),
+	fs_helpers.inv_list(0.25, has_digilines and 5.25 or 4.25, 8, 3, "src", S("Input inventory")),
+	fs_helpers.inv_list(0.25, 0.25, 3, 3, "recipe", S("Recipe")),
+	fs_helpers.inv_list(4, 1.5, 1, 1, "output", S("Output preview")),
+	"image[4,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
+	fs_helpers.inv_list(5.25, 0.25, 4, 3, "dst", S("Crafted items")),
+	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or nil,
+	fs_helpers.player_inv(0.25, has_digilines and 9.25 or 8.25),
+})
+
 local function update_meta(meta, enabled)
-	local state = enabled and "on" or "off"
 	meta:set_int("enabled", enabled and 1 or 0)
-	local list_backgrounds = ""
-	if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
-		list_backgrounds = "style_type[box;colors=#666]"
-		for i = 0, 2 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					0.22 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 3 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					5.28 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 7 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					0.22 + (i * 1.25) .. "," .. 5 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-	end
-	local size = "10.2,14"
-	local fs =
-		"formspec_version[2]" ..
-		"size[" .. size .. "]" ..
-		pipeworks.fs_helpers.get_prepends(size) ..
-		list_backgrounds ..
-		"list[context;recipe;0.22,0.22;3,3;]" ..
-		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]" ..
-		"list[context;output;4,1.45;1,1;]" ..
-		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" ..
-		state .. ";;;false;pipeworks_button_interm.png]" ..
-		"list[context;dst;5.28,0.22;4,3;]" ..
-		"list[context;src;0.22,5;8,3;]" ..
-		pipeworks.fs_helpers.get_inv(9) ..
-		"listring[current_player;main]" ..
-		"listring[context;src]" ..
-		"listring[current_player;main]" ..
-		"listring[context;dst]" ..
-		"listring[current_player;main]"
-	if core.get_modpath("digilines") then
-		fs = fs .. "field[0.22,4.1;4.5,0.75;channel;" .. S("Channel") ..
-			";${channel}]" ..
-			"button[5,4.1;2,0.75;set_channel;" .. S("Set") .. "]" ..
-			"button_exit[7.2,4.1;2,0.75;close;" .. S("Close") .. "]"
-	end
+	local fs = base_formspec..fs_helpers.toggle_button(4, 2.9, meta, "enabled", true)
 	meta:set_string("formspec", fs)
 
 	-- toggling the button doesn't quite call for running a recipe change check
@@ -488,8 +455,7 @@ core.register_node("pipeworks:autocrafter", {
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		if (fields.quit and not fields.key_enter_field)
-			or not pipeworks.may_configure(pos, sender)
-		then
+				or not pipeworks.may_configure(pos, sender) then
 			return
 		end
 		local meta = core.get_meta(pos)
@@ -502,7 +468,7 @@ core.register_node("pipeworks:autocrafter", {
 			end
 		end
 		if fields.channel then
-			meta:set_string("channel", fields.channel)
+			meta:set_string("channel", fields.channel:trim())
 		end
 	end,
 	can_dig = function(pos, player)

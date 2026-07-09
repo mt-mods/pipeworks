@@ -1,5 +1,6 @@
 local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
+local use_tags = pipeworks.enable_item_tags
 
 local function set_filter_infotext(data, meta)
 	local infotext = S("@1 Filter-Injector", data.wise_desc)
@@ -9,73 +10,34 @@ local function set_filter_infotext(data, meta)
 	meta:set_string("infotext", infotext)
 end
 
+local slotseq_modes = {
+	S("Mode: Priority"), S("Mode: Random"), S("Mode: Round-Robin")
+}
 local function set_filter_formspec(data, meta)
-	local itemname = S("@1 Filter-Injector", data.wise_desc)
-
 	local formspec
 	if data.digiline then
-		local form_height = 3
-		if pipeworks.enable_item_tags then
-			form_height = 4
-		end
-		formspec =
-			("size[8.5,%f]"):format(form_height) ..
-			"item_image[0.2,0;1,1;pipeworks:"..data.name.."]"..
-			"label[1.2,0.2;"..core.formspec_escape(itemname).."]"..
-			"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
-			"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
-			fs_helpers.cycling_button(meta, ("button[0.2,%f;4.05,1"):format(form_height - 0.7), "slotseq_mode",
-				{S("Sequence slots by Priority"),
-				 S("Sequence slots Randomly"),
-				 S("Sequence slots by Rotation")})..
-			fs_helpers.cycling_button(meta, ("button[4.25,%f;4.05,1"):format(form_height - 0.7), "exmatch_mode",
-				{S("Exact match - off"),
-				 S("Exact match - on")})..
-			("button_exit[6.3,%f;2,1;close;" .. S("Close") .. "]"):format(form_height - 1.7)
-		if pipeworks.enable_item_tags then
-			formspec = formspec ..
-				("field[0.5,%f;4.6,1;item_tags;"):format(form_height - 1.4) .. S("Item Tags") .. ";${item_tags}]" ..
-				("button[4.8,%f;1.5,1;set_item_tags;"):format(form_height - 1.7) .. S("Set") .. "]"
-		end
+		formspec = table.concat({
+			fs_helpers.prepends(10.25, use_tags and 4 or 2.75),
+			fs_helpers.node_label("pipeworks:"..data.name),
+			fs_helpers.field(0.25, 1.75, 5.5, "channel", S("Digiline Channel")),
+			fs_helpers.cycling_button(meta, "button[6,1.75;4,0.75", "slotseq_mode", slotseq_modes),
+			use_tags and fs_helpers.field(0.25, 3, 5.5, "item_tags", S("Item Tags")) or nil,
+		})
 	else
-		local exmatch_button = ""
-		if data.stackwise then
-			exmatch_button =
-				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4,1", "exmatch_mode",
-					{S("Exact match - off"),
-					 S("Exact match - on")})
-		end
-		local size = "10.2,11"
-		local list_backgrounds = ""
-		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
-			list_backgrounds = "style_type[box;colors=#666]"
-			for i=0, 7 do
-				for j=0, 1 do
-					list_backgrounds = list_backgrounds .. "box[".. 0.22+(i*1.25) ..",".. 1.75+(j*1.25) ..";1,1;]"
-				end
-			end
-		end
-		formspec =
-			"formspec_version[2]"..
-			"size["..size.."]"..
-			pipeworks.fs_helpers.get_prepends(size)..
-			"item_image[0.22,0.22;1,1;pipeworks:"..data.name.."]"..
-			"label[1.22,0.72;"..core.formspec_escape(itemname).."]"..
-			"label[0.22,1.5;"..S("Prefer item types:").."]"..
-			list_backgrounds..
-			"list[context;main;0.22,1.75;8,2;]"..
-			fs_helpers.cycling_button(meta, "button[0.22,4.5;4,1", "slotseq_mode",
-				{S("Sequence slots by Priority"),
-				 S("Sequence slots Randomly"),
-				 S("Sequence slots by Rotation")})..
-			exmatch_button..
-			pipeworks.fs_helpers.get_inv(6)..
-			"listring[]"
-		if pipeworks.enable_item_tags then
-			formspec = formspec ..
-				"field[5.8,0.5;3,0.8;item_tags;" .. S("Item Tags") .. ";${item_tags}]" ..
-				"button[9,0.3;1,1.1;set_item_tags;" .. S("Set") .. "]"
-		end
+		formspec = table.concat({
+			fs_helpers.prepends(10.25, 10.5),
+			fs_helpers.node_label("pipeworks:"..data.name),
+			fs_helpers.inv_list(0.25, 1.5, 8, 2, "main", S("Filtered items")),
+			fs_helpers.cycling_button(meta, "button[0.25,4.25;4,0.75", "slotseq_mode", slotseq_modes),
+			use_tags and fs_helpers.field(4.5, 4.25, 5.5, "item_tags", S("Item Tags")) or nil,
+			fs_helpers.player_inv(0.25, 5.5),
+		})
+	end
+	if data.stackwise then
+		formspec = table.concat({formspec,
+			fs_helpers.toggle_button(6, 0.45, meta, "exmatch_mode"),
+			"label[7.1,0.75;"..S("Exact match").."]",
+		})
 	end
 	meta:set_string("formspec", formspec)
 end
@@ -198,7 +160,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				set_filter_formspec(data, filtmeta)
 			end
 
-			if pipeworks.enable_item_tags then
+			if use_tags then
 				if type(msg.tags) == "table" or type(msg.tags) == "string" then
 					item_tags = pipeworks.sanitize_tags(msg.tags)
 				elseif type(msg.tag) == "string" then
@@ -498,7 +460,7 @@ for _, data in ipairs({
 			end
 
 			local meta = core.get_meta(pos)
-			if pipeworks.enable_item_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
+			if use_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
 				local tags = pipeworks.sanitize_tags(fields.item_tags)
 				meta:set_string("item_tags", table.concat(tags, ","))
 			end
@@ -523,7 +485,7 @@ for _, data in ipairs({
 			fs_helpers.on_receive_fields(pos, fields)
 			local meta = core.get_meta(pos)
 			meta:set_int("slotseq_index", 1)
-			if pipeworks.enable_item_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
+			if use_tags and fields.item_tags and (fields.key_enter_field == "item_tags" or fields.set_item_tags) then
 				local tags = pipeworks.sanitize_tags(fields.item_tags)
 				meta:set_string("item_tags", table.concat(tags, ","))
 			end
