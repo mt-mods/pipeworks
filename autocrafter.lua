@@ -362,7 +362,7 @@ local base_formspec = table.concat({
 	fs_helpers.inv_list(4, 1.5, 1, 1, "output", S("Output preview")),
 	"image[4,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
 	fs_helpers.inv_list(5.25, 0.25, 4, 3, "dst", S("Crafted items")),
-	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or nil,
+	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or "",
 	fs_helpers.player_inv(0.25, has_digilines and 9.25 or 8.25),
 })
 
