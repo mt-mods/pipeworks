@@ -1,6 +1,6 @@
 
 local S = core.get_translator("pipeworks")
-
+local fs_helpers = pipeworks.fs_helpers
 local has_digilines = core.get_modpath("digilines")
 
 -- Autocrafter rate-limiting settings
@@ -355,61 +355,31 @@ local function run_autocrafter(pos, elapsed)
 	return continue and (enabled or crafts_remaining > 0 or queued > 0)
 end
 
+local base_formspec = table.concat({
+	fs_helpers.prepends(10.25, has_digilines and 14.25 or 13.25),
+	fs_helpers.inv_list(0.25, has_digilines and 5.25 or 4.25, 8, 3, "src", S("Input inventory")),
+	fs_helpers.inv_list(0.25, 0.25, 3, 3, "recipe", S("Recipe")),
+	fs_helpers.inv_list(4, 1.5, 1, 1, "output", S("Output preview")),
+	"image[4,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
+	fs_helpers.inv_list(5.25, 0.25, 4, 3, "dst", S("Crafted items")),
+	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or nil,
+	fs_helpers.player_inv(0.25, has_digilines and 9.25 or 8.25),
+})
+
+local tooltip_text = {
+	[0] = S("Output all items"),
+	[1] = S("Keep non-consumables"),
+	[2] = S("Keep all items"),
+}
+
 local function update_formspec(meta)
-	local list_backgrounds = ""
-	if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
-		list_backgrounds = "style_type[box;colors=#666]"
-		for i = 0, 2 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					0.22 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 3 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					5.28 + (i * 1.25) .. "," .. 0.22 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-		for i = 0, 7 do
-			for j = 0, 2 do
-				list_backgrounds = list_backgrounds .. "box[" ..
-					0.22 + (i * 1.25) .. "," .. 5.2 + (j * 1.25) .. ";1,1;]"
-			end
-		end
-	end
-	local state = meta:get_int("enabled") == 1 and "on" or "off"
 	local keep_items = meta:get_int("keep_items")
-	local text = S(({"Output all items", "Keep non-consumables", "Keep all items"})[keep_items+1])
-	local size = "10.2,14.2"
-	local fs =
-		"formspec_version[2]".."size["..size.."]"..
-		pipeworks.fs_helpers.get_prepends(size)..
-		list_backgrounds..
-		"list[context;recipe;0.22,0.22;3,3;]"..
-		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]"..
-		"list[context;output;4,1.45;1,1;]" ..
-		"image_button[4,0.45;1,0.6;pipeworks_button_"..state..".png;"..
-		state..";;;false;pipeworks_button_interm.png]"..
-		"image_button[4,2.75;1,1;pipeworks_arrow_"..keep_items..".png;keep_items;;;false;]"..
-		"tooltip[keep_items;"..text.."]"..
-		"list[context;dst;5.28,0.22;4,3;]"..
-		"list[context;src;0.22,5.2;8,3;]"..
-		pipeworks.fs_helpers.get_inv(9.2)..
-		"listring[current_player;main]"..
-		"listring[context;src]"..
-		"listring[current_player;main]"..
-		"listring[context;dst]"..
-		"listring[current_player;main]"..
-		"listring[context;recipe]"..
-		"listring[current_player;main]"..
-		"listring[context;output]"..
-		"listring[current_player;main]"
-	if has_digilines then
-		fs = fs.."field[0.5,4.2;5,0.75;channel;"..S("Digilines Channel")..";${channel}]"..
-			"button[5.6,4.2;2,0.75;set_channel;"..S("Set").."]"..
-			"button_exit[7.7,4.2;2,0.75;close;"..S("Close").."]"
-	end
+	local fs = table.concat({
+		base_formspec,
+		fs_helpers.toggle_button(4, 0.45, meta, "enabled", true),
+		"image_button[4,2.75;1,1;pipeworks_arrow_"..keep_items..".png;keep_items;;;false;]",
+		"tooltip[keep_items;"..tooltip_text[keep_items].."]",
+	})
 	meta:set_string("formspec", fs)
 end
 
