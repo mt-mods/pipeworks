@@ -431,7 +431,7 @@ core.register_node(nodename_spigot_loaded, {
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
-		pipeworks.liquids.water.def.tiles[1],
+		pipeworks.liquids.water and pipeworks.liquids.water.def.tiles[1] or "blank.png",
 		{ name = "pipeworks_spigot.png" }
 	},
 	use_texture_alpha = texture_alpha_mode and "blend" or true,
