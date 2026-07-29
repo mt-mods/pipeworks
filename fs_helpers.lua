@@ -66,11 +66,16 @@ function fs_helpers.on_receive_fields(pos, fields)
 	local meta = core.get_meta(pos)
 	for field in pairs(fields) do
 		if field:sub(1, 19) == "fs_helpers_cycling:" then
-			local split = field:split(":")
-			meta:set_int(split[3], tonumber(split[2]))
+			local value, key = field:match("^fs_helpers_cycling:(.+):(.+)$")
+			value = tonumber(value)
+			if key and value then
+				meta:set_int(key, value)
+			end
 		elseif field:sub(1, 18) == "fs_helpers_toggle:" then
 			local key = field:sub(19)
-			meta:set_int(key, meta:get_int(key) == 1 and 0 or 1)
+			if key then
+				meta:set_int(key, meta:get_int(key) == 1 and 0 or 1)
+			end
 		end
 	end
 end
