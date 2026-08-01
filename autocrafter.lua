@@ -1,4 +1,6 @@
 local S = core.get_translator("pipeworks")
+local fs_helpers = pipeworks.fs_helpers
+local has_digilines = core.get_modpath("digilines")
 
 local fluid_type_meta_key = "pipeworks:fluid_type"
 local fluid_amount_meta_key = "pipeworks:fluid_amount"
@@ -486,6 +488,41 @@ local function on_output_change(pos, inventory, stack)
 	after_recipe_change(pos, inventory)
 end
 
+-- returns false if we shouldn't bother attempting to start the timer again
+-- after this
+local base_formspec = table.concat({
+	fs_helpers.prepends(10.25, has_digilines and 14.25 or 13.25),
+	fs_helpers.inv_list(0.25, has_digilines and 5.25 or 4.25, 8, 3, "src", S("Input inventory")),
+	fs_helpers.inv_list(0.25, 0.25, 3, 3, "recipe", S("Recipe")),
+	fs_helpers.inv_list(4, 1.5, 1, 1, "output", S("Output preview")),
+	"image[4,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
+	fs_helpers.inv_list(5.25, 0.25, 4, 3, "dst", S("Crafted items")),
+	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or "",
+	fs_helpers.player_inv(0.25, has_digilines and 9.25 or 8.25),
+})
+
+local function update_meta(meta, enabled)
+	meta:set_int("enabled", enabled and 1 or 0)
+	local fs = base_formspec..fs_helpers.toggle_button(4, 2.9, meta, "enabled", true)
+	meta:set_string("formspec", fs)
+
+	-- toggling the button doesn't quite call for running a recipe change check
+	-- so instead we run a minimal version for infotext setting only
+	-- this might be more written code, but actually executes less
+	local output = meta:get_inventory():get_stack("output", 1)
+	if output:is_empty() then -- doesn't matter if paused or not
+		meta:set_string("infotext", S("unconfigured Autocrafter"))
+		return false
+	end
+
+	local description, name = get_item_info(output)
+	local infotext = enabled and S("'@1' Autocrafter (@2)", description, name)
+				or S("paused '@1' Autocrafter", description)
+
+	meta:set_string("infotext", infotext)
+	return enabled
+end
+
 -- 1st version of the autocrafter had actual items in the crafting grid
 -- the 2nd replaced these with virtual items, dropped the content on update and
 --   set "virtual_items" to string "1"
@@ -669,8 +706,7 @@ core.register_node("pipeworks:autocrafter", {
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		if (fields.quit and not fields.key_enter_field)
-			or not pipeworks.may_configure(pos, sender)
-		then
+				or not pipeworks.may_configure(pos, sender) then
 			return
 		end
 		local meta = core.get_meta(pos)
@@ -683,7 +719,7 @@ core.register_node("pipeworks:autocrafter", {
 			end
 		end
 		if fields.channel then
-			meta:set_string("channel", fields.channel)
+			meta:set_string("channel", fields.channel:trim())
 		end
 	end,
 	can_dig = function(pos, player)

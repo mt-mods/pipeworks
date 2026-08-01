@@ -1,4 +1,5 @@
 local S = core.get_translator("pipeworks")
+local fs_helpers = pipeworks.fs_helpers
 
 -- the core.after() calls below can sometimes trigger after a tube
 -- breaks, at which point item_exit() is no longer valid, so we have to make
@@ -79,6 +80,11 @@ end
 
 local digiline_enabled = core.get_modpath("digilines") ~= nil
 if digiline_enabled and pipeworks.enable_digiline_detector_tube then
+	local formspec = table.concat({
+		fs_helpers.prepends(7, 2.75),
+		fs_helpers.node_label("pipeworks:digiline_detector_tube_1", S("Digiline Detecting Tube")),
+		fs_helpers.field(0.25, 1.75, 6.5, "channel", S("Digiline Channel"), true),
+	})
 	pipeworks.register_tube("pipeworks:digiline_detector_tube", {
 			description = S("Digiline Detecting Pneumatic Tube Segment"),
 			inventory_image = "pipeworks_digiline_detector_tube_inv.png",
@@ -94,25 +100,13 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 						return pipeworks.notvel(pipeworks.meseadjlist, velocity)
 					end},
 				on_construct = function(pos)
-					local meta = core.get_meta(pos)
-					meta:set_string("formspec",
-						"size[8.5,2.2]"..
-						"image[0.2,0;1,1;pipeworks_digiline_detector_tube_inv.png]"..
-						"label[1.2,0.2;"..S("Digiline Detecting Tube").."]"..
-						"field[0.5,1.6;4.6,1;channel;"..S("Channel")..";${channel}]"..
-						"button[4.8,1.3;1.5,1;set_channel;"..S("Set").."]"..
-						"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"
-					)
+					core.get_meta(pos):set_string("formspec", formspec)
 				end,
 				on_receive_fields = function(pos, formname, fields, sender)
-					if (fields.quit and not fields.key_enter_field)
-					or (fields.key_enter_field ~= "channel" and not fields.set_channel)
-					or not pipeworks.may_configure(pos, sender) then
+					if not fields.channel or not pipeworks.may_configure(pos, sender) then
 						return
 					end
-					if fields.channel then
-						core.get_meta(pos):set_string("channel", fields.channel)
-					end
+					core.get_meta(pos):set_string("channel", fields.channel:trim())
 				end,
 				groups = {},
 				digilines = {

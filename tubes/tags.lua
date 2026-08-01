@@ -1,5 +1,6 @@
 local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
+local insert = table.insert
 
 if not pipeworks.enable_item_tags or not pipeworks.enable_tag_tube then return end
 
@@ -8,40 +9,26 @@ local help_text = core.formspec_escape(
 	S("Use \"<none>\" to match items without tags.")
 )
 
+local formspec = {
+	fs_helpers.prepends(8.5, 7.5),
+	"label[0.3,6.5;"..help_text.."]",
+	"image_button[7.25,6.25;1,1;pipeworks_checkmark.png;set_item_tags;]",
+}
+for i, color in ipairs({"ffffff", "000000", "41de3b", "ffeb10", "3866ea", "e53e11"}) do
+	local height = 0.25 + (i - 1)
+	insert(formspec, "box[0.25,"..height..";0.75,0.75;#"..color.."ff]")
+	insert(formspec, "field[1.25,"..height..";5.75,0.75;tags"..i..";;${tags"..i.."}]")
+end
+formspec = table.concat(formspec)
+
 local update_formspec = function(pos)
 	local meta = core.get_meta(pos)
-	local buttons_formspec = ""
-	for i = 0, 5 do
-		buttons_formspec = buttons_formspec .. fs_helpers.cycling_button(meta,
-			"image_button[9," .. (i + (i * 0.25) + 0.5) .. ";1,0.6", "l" .. (i + 1) .. "s",
-			{
-				pipeworks.button_off,
-				pipeworks.button_on
-			}
-		)
+	local fs = {formspec}
+	for i=1, 6 do
+		local height = 0.3 + (i - 1)
+		insert(fs, fs_helpers.toggle_button(7.25, height, meta, "l"..i.."s"))
 	end
-	local size = "10.2,9"
-	meta:set_string("formspec",
-		"formspec_version[2]" ..
-		"size[" .. size .. "]" ..
-		pipeworks.fs_helpers.get_prepends(size) ..
-		"field[1.5,0.25;7.25,1;tags1;;${tags1}]" ..
-		"field[1.5,1.5;7.25,1;tags2;;${tags2}]" ..
-		"field[1.5,2.75;7.25,1;tags3;;${tags3}]" ..
-		"field[1.5,4.0;7.25,1;tags4;;${tags4}]" ..
-		"field[1.5,5.25;7.25,1;tags5;;${tags5}]" ..
-		"field[1.5,6.5;7.25,1;tags6;;${tags6}]" ..
-
-		"image[0.22,0.25;1,1;pipeworks_white.png]" ..
-		"image[0.22,1.50;1,1;pipeworks_black.png]" ..
-		"image[0.22,2.75;1,1;pipeworks_green.png]" ..
-		"image[0.22,4.00;1,1;pipeworks_yellow.png]" ..
-		"image[0.22,5.25;1,1;pipeworks_blue.png]" ..
-		"image[0.22,6.50;1,1;pipeworks_red.png]" ..
-		buttons_formspec ..
-		"label[0.22,7.9;"..help_text.."]"..
-		"button[7.25,7.8;1.5,0.8;set_item_tags;" .. S("Set") .. "]"
-	)
+	meta:set_string("formspec", table.concat(fs))
 end
 
 pipeworks.register_tube("pipeworks:tag_tube", {
@@ -119,7 +106,6 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 				or not pipeworks.may_configure(pos, sender) then
 				return
 			end
-
 			local meta = core.get_meta(pos)
 			for i = 1, 6 do
 				local field_name = "tags" .. tostring(i)
@@ -128,7 +114,6 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 					meta:set_string(field_name, table.concat(tags, ","))
 				end
 			end
-
 			fs_helpers.on_receive_fields(pos, fields)
 			update_formspec(pos)
 		end,

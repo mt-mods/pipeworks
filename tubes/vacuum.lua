@@ -1,5 +1,6 @@
 
 local S = core.get_translator("pipeworks")
+local fs_helpers = pipeworks.fs_helpers
 
 local has_vislib = core.get_modpath("vizlib")
 
@@ -73,13 +74,11 @@ if pipeworks.enable_sand_tube then
 end
 
 if pipeworks.enable_mese_sand_tube then
-	local formspec = "formspec_version[2]size[8,3]"..
-		pipeworks.fs_helpers.get_prepends("8,3")..
-		"image[0.5,0.3;1,1;pipeworks_mese_sand_tube_inv.png]"..
-		"label[1.75,0.8;"..S("Adjustable Vacuuming Tube").."]"..
-		"field[0.5,1.7;5,0.8;dist;"..S("Radius")..";${dist}]"..
-		"button_exit[5.5,1.7;2,0.8;save;"..S("Save").."]"
-
+	local formspec = table.concat({
+		fs_helpers.prepends(7, 2.75),
+		fs_helpers.node_label("pipeworks:mese_sand_tube_1", S("Adjustable Vacuuming Tube")),
+		fs_helpers.field(0.25, 1.75, 6.5, "dist", S("Radius"), true),
+	})
 	pipeworks.register_tube("pipeworks:mese_sand_tube", {
 		description = S("Adjustable Vacuuming Tube"),
 		inventory_image = "pipeworks_mese_sand_tube_inv.png",
@@ -109,7 +108,7 @@ if pipeworks.enable_mese_sand_tube then
 					return
 				end
 				local meta = core.get_meta(pos)
-				local dist = math.min(math.max(tonumber(fields.dist) or 0, 0), 8)
+				local dist = math.min(math.max(math.floor(tonumber(fields.dist) or 0), 0), 8)
 				meta:set_int("dist", dist)
 				meta:set_string("infotext", S("Adjustable Vacuuming Tube (@1m)", dist))
 			end,

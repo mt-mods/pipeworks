@@ -76,6 +76,7 @@ dofile(pipeworks.modpath..logicdir.."abm_register.lua")
 dofile(pipeworks.modpath..logicdir.."flowable_node_registry_install.lua")
 
 dofile(pipeworks.modpath.."/common.lua")
+dofile(pipeworks.modpath.."/fs_helpers.lua")
 dofile(pipeworks.modpath.."/models.lua")
 dofile(pipeworks.modpath.."/autoplace_pipes.lua")
 dofile(pipeworks.modpath.."/autoplace_tubes.lua")

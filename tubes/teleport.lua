@@ -1,5 +1,7 @@
 
 local S = core.get_translator("pipeworks")
+local fs_helpers = pipeworks.fs_helpers
+
 local filename = core.get_worldpath().."/teleport_tubes"  -- Only used for backward-compat
 local storage = core.get_mod_storage()
 local STORAGE_PREFIX = "tptube_"
@@ -174,36 +176,26 @@ local help_text = core.formspec_escape(
 	S("Use <player>;<channel> for private receivers")
 )
 
-local size = has_digilines and "8,5.9" or "8,4.4"
-
-local formspec = "formspec_version[2]size["..size.."]"..
-	pipeworks.fs_helpers.get_prepends(size)..
-	"image[0.5,0.3;1,1;pipeworks_teleport_tube_inv.png]"..
-	"label[1.75,0.8;"..S("Teleporting Tube").."]"..
-	"field[0.5,1.7;5,0.8;channel;"..S("Channel")..";${channel}]"..
-	"button_exit[5.5,1.7;2,0.8;save;"..S("Save").."]"..
-	"label[6.5,0.6;"..S("Receive").."]"..
-	"label[0.5,2.8;"..help_text.."]"
-
-if has_digilines then
-	formspec = formspec..
-		"field[0.5,4.6;5,0.8;digiline_channel;"..S("Digiline Channel")..";${digiline_channel}]"..
-		"button_exit[5.5,4.6;2,0.8;save;"..S("Save").."]"
-end
+local formspec = table.concat({
+	fs_helpers.prepends(7, has_digilines and 5.75 or 4.25),
+	fs_helpers.node_label("pipeworks:teleport_tube_1", S("Teleporting Tube")),
+	fs_helpers.field(0.25, 1.75, 6.5, "channel", S("Channel")),
+	"label[5.35,0.75;"..S("Receive").."]",
+	"label[0.3,2.9;"..help_text.."]",
+	has_digilines and fs_helpers.field(0.25, 4.75, 6.5, "digiline_channel", S("Digiline Channel")) or nil,
+})
 
 local function update_meta(meta)
 	local channel = meta:get_string("channel")
-	local cr = meta:get_int("can_receive") == 1
 	if channel == "" then
-		meta:set_string("infotext", S("Unconfigured Teleportation Tube"))
+		meta:set_string("infotext", S("Unconfigured Teleporting Tube"))
 	else
+		local cr = meta:get_int("can_receive") == 1
 		local desc = cr and "sending and receiving" or "sending"
-		meta:set_string("infotext", S("Teleportation Tube @1 on '@2'", desc, channel))
+		meta:set_string("infotext", S("Teleporting Tube @1 on '@2'", desc, channel))
 	end
-	local state = cr and "on" or "off"
-	meta:set_string("formspec", formspec..
-		"image_button[6.4,0.8;1,0.6;pipeworks_button_"..state..
-		".png;cr_"..state..";;;false;pipeworks_button_interm.png]")
+	local fs = formspec..fs_helpers.toggle_button(4.25, 0.45, meta, "can_receive", true)
+	meta:set_string("formspec", fs)
 end
 
 local function update_tube(pos, channel, cr, player_name)
@@ -235,21 +227,20 @@ local function update_tube(pos, channel, cr, player_name)
 end
 
 local function receive_fields(pos, _, fields, sender)
-	if not fields.channel or not pipeworks.may_configure(pos, sender) then
+	if (fields.quit and not fields.key_enter_field) or not pipeworks.may_configure(pos, sender) then
 		return
 	end
 	local meta = core.get_meta(pos)
-	local channel = fields.channel:trim()
 	local cr = meta:get_int("can_receive")
-	if fields.cr_on then
+	if fields.on then
 		cr = 0
-	elseif fields.cr_off then
+	elseif fields.off then
 		cr = 1
 	end
-	if has_digilines and fields.digiline_channel then
-		meta:set_string("digiline_channel", fields.digiline_channel)
+	if fields.digiline_channel then
+		meta:set_string("digiline_channel", fields.digiline_channel:trim())
 	end
-	update_tube(pos, channel, cr, sender:get_player_name())
+	update_tube(pos, fields.channel:trim(), cr, sender:get_player_name())
 	update_meta(meta)
 end
 
