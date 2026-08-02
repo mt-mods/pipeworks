@@ -1,6 +1,13 @@
 local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
+local formspec = table.concat({
+	fs_helpers.prepends(10.25, 8.5),
+	fs_helpers.node_label("pipeworks:trashcan", S("Trash Can")),
+	fs_helpers.inv_list(4.625, 1.25, 1, 1, "trash"),
+	fs_helpers.player_inv(0.25, 3.5),
+})
+
 core.register_node("pipeworks:trashcan", {
 	description = S("Trash Can"),
 	drawtype = "normal",
@@ -24,13 +31,7 @@ core.register_node("pipeworks:trashcan", {
 	},
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
-		local fs = table.concat({
-			fs_helpers.prepends(10.25, 8.5),
-			fs_helpers.node_label("pipeworks:trashcan"),
-			fs_helpers.inv_list(4.625, 1.25, 1, 1, "trash"),
-			fs_helpers.player_inv(0.25, 3.5),
-		})
-		meta:set_string("formspec", fs)
+		meta:set_string("formspec", formspec)
 		meta:set_string("infotext", S("Trash Can"))
 		meta:get_inventory():set_size("trash", 1)
 	end,
@@ -38,6 +39,9 @@ core.register_node("pipeworks:trashcan", {
 	after_dig_node = pipeworks.after_dig,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
 		core.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
+	end,
+	_update_formspec = function(pos)
+		core.get_meta(pos):set_string("formspec", formspec)
 	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"

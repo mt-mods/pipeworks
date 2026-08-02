@@ -215,6 +215,9 @@ function pipeworks.register_wielder(def)
 				end
 				core.get_meta(pos):set_string("channel", fields.channel)
 			end,
+			_update_formspec = function(pos)
+				set_wielder_formspec(def, core.get_meta(pos))
+			end,
 		})
 	end
 	table.insert(pipeworks.ui_cat_tube_list, def.name.."_off")

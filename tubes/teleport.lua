@@ -321,6 +321,9 @@ local def = {
 	end,
 	on_receive_fields = receive_fields,
 	on_destruct = remove_tube,
+	_update_formspec = function(pos)
+		update_meta(core.get_meta(pos))
+	end,
 }
 
 if has_digilines then
