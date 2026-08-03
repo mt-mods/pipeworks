@@ -4,7 +4,7 @@ local insert = table.insert
 local has_mcl = core.get_modpath("mcl_formspec")
 local has_i3 = core.get_modpath("i3")
 
-local fs_helpers = {}
+local fs_helpers = {version = 2}
 pipeworks.fs_helpers = fs_helpers
 
 -- Pipeworks formspec standard:
@@ -151,6 +151,26 @@ function fs_helpers.inv_list(x, y, w, h, list, desc)
 	end
 	return table.concat(fs)
 end
+
+core.register_on_mods_loaded(function()
+	local nodenames = {}
+	local update_functions = {}
+	for name, def in pairs(core.registered_nodes) do
+		if type(def._update_formspec) == "function" then
+			insert(nodenames, name)
+			update_functions[name] = def._update_formspec
+		end
+	end
+	core.register_lbm({
+		label = "Pipeworks Formspec Update",
+		name = ":pipeworks:fs_update_v"..fs_helpers.version,
+		nodenames = nodenames,
+		run_at_every_load = false,
+		action = function(pos, node)
+			update_functions[node.name](pos)
+		end,
+	})
+end)
 
 -- Deprecated, but kept for compatibility
 pipeworks.button_off = {
