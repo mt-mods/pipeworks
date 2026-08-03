@@ -124,6 +124,7 @@ if pipeworks.enable_mese_tube then
 						return 0
 					end
 				end,
+				_update_formspec = update_formspec,
 			},
 	})
 end

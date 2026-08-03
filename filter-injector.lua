@@ -439,6 +439,9 @@ for _, data in ipairs({
 			return count
 		end,
 		tube = {connect_sides = {right = 1}},
+		_update_formspec = function(pos)
+			set_filter_formspec(data, core.get_meta(pos))
+		end,
 	}
 
 	if data.digiline then
