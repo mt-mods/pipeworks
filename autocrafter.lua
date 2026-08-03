@@ -740,43 +740,11 @@ core.register_node("pipeworks:autocrafter", {
 			action = digilines_action,
 		},
 	},
+	_update_formspec = function(pos)
+		update_formspec(core.get_meta(pos))
+	end,
 })
 table.insert(pipeworks.ui_cat_tube_list, "pipeworks:autocrafter")
-
--- V1 had actual items in the crafting grid,
--- V2 replaced these with virtual items, dropped the content on update and set "virtual_items" to string "1",
--- V3 added an output inventory and changed the formspec, adding a button for enabling/disabling,
--- V4 changed the formspec again, adding a button for changing what items to output.
-local function upgrade_autocrafter(pos)
-	local meta = core.get_meta(pos)
-	local inv = meta:get_inventory()
-	if inv:get_size("output") == 0 then  -- V1 or V2
-		inv:set_size("output", 1)
-		inv:set_size("recipe", 9)
-		meta:set_int("enabled", 1)
-		if meta:get_string("virtual_items") == "1" then  -- V2
-			meta:set_string("virtual_items", "")
-		else  -- V1
-			local recipe = inv:get_list("recipe")
-			for i, stack in ipairs(recipe) do
-				if not stack:is_empty() then
-					core.add_item(pos, stack)
-					inv:set_stack("recipe", i, stack:get_name())
-				end
-			end
-		end
-		set_craft_by_input(pos, inv:get_list("recipe"))
-	end
-	update_formspec(meta)
-end
-
-core.register_lbm({
-    label = "Autocrafter Upgrade",
-    name = "pipeworks:autocrafter_upgrade",
-    nodenames = {"pipeworks:autocrafter"},
-    run_at_every_load = false,
-    action = upgrade_autocrafter,
-})
 
 ----------------------
 -- Group index code --
