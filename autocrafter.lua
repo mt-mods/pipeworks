@@ -572,6 +572,7 @@ local function digilines_action(pos, _, channel, msg)
 		})
 	elseif msg.command == "set" then
 		local start = false
+		local update = false
 		if msg.recipe or type(msg.input) == "table" then
 			local recipe = msg.input or parse_recipe(msg.recipe)
 			if recipe and set_craft_by_input(pos, recipe) then
@@ -588,16 +589,25 @@ local function digilines_action(pos, _, channel, msg)
 			if msg.active then
 				start = true
 			end
+			update = true
 		end
 		if msg.keep_items then
-			local keep_items = ({none = 0, replacements = 1, all = 2})[msg.keep_items]
+			local keep_items
+			if type(msg.keep_items) == "number" and msg.keep_items >= 0 and msg.keep_items <= 2 then
+				keep_items = msg.keep_items
+			else
+				keep_items = ({none = 0, replacements = 1, all = 2})[msg.keep_items]
+			end
 			if keep_items then
 				meta:set_int("keep_items", keep_items)
-				update_formspec(meta)
+				update = true
 			end
 		end
 		if start then
 			start_autocrafter(pos)
+		end
+		if update then
+			update_formspec(meta)
 		end
 	elseif msg.command == "craft" and meta:get_int("enabled") ~= 1 then
 		local amount = math.max(tonumber(msg.amount) or 1, 1) + meta:get_int("queued")
@@ -611,7 +621,6 @@ local function digilines_action(pos, _, channel, msg)
 			end
 		end
 	end
-	return
 end
 
 core.register_node("pipeworks:autocrafter", {
