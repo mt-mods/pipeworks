@@ -239,9 +239,11 @@ end
 
 local function get_ingredients(src, recipe)
 	local items = {}
-	for i, stack in ipairs(src) do
+	-- Work backwards to avoid creating gaps or partial stacks
+	for i=#src, 1, -1 do
+		local stack = src[i]
 		if not stack:is_empty() then
-			items[i] = stack:get_name()
+			items[#items+1] = {stack = stack, name = stack:get_name()}
 		end
 	end
 	local ingredients = {}
@@ -255,11 +257,12 @@ local function get_ingredients(src, recipe)
 			if group and group_index[group] then
 				match_items = group_index[group].items
 			end
-			for j, name in pairs(items) do
-				if match_items[name] then
-					ingredients[i] = src[j]:take_item()
-					if src[j]:is_empty() then
-						items[j] = nil
+			for j, item in ipairs(items) do
+				if match_items[item.name] then
+					ingredients[i] = item.stack:take_item()
+					if item.stack:is_empty() then
+						-- Need to use `table.remove` to not break subsequent iterations
+						table.remove(items, j)
 					end
 					found = true ; break
 				end
