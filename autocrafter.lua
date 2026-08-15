@@ -1,4 +1,3 @@
-
 local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 local has_digilines = core.get_modpath("digilines")
@@ -19,7 +18,7 @@ local group_index = {}
 
 -- Turns any list of items or groups into a list of nine itemstacks
 local function normalize_items(items)
-	for i=1, 9 do
+	for i = 1, 9 do
 		local item = items[i]
 		local t = type(item)
 		if t == "string" then
@@ -50,7 +49,7 @@ local function stack_items(items)
 			item = stack:add_item(item)
 		end
 		if not item:is_empty() then
-			stacked[#stacked+1] = item
+			stacked[#stacked + 1] = item
 		end
 	end
 	return stacked
@@ -61,7 +60,7 @@ local function add_to_list(list, stack)
 	local empty = {}
 	for _,s in ipairs(list) do
 		if s:is_empty() then
-			empty[#empty+1] = s
+			empty[#empty + 1] = s
 		else
 			stack = s:add_item(stack)
 			if stack:is_empty() then
@@ -153,9 +152,9 @@ local function get_craft_result(items, fake_player)
 	for _,stack in ipairs(fake_inv:get_list("craft")) do
 		if not stack:is_empty() then
 			if recipe_items[stack:get_name()] then
-				replacements[#replacements+1] = stack
+				replacements[#replacements + 1] = stack
 			else
-				outputs[#outputs+1] = stack
+				outputs[#outputs + 1] = stack
 			end
 		end
 	end
@@ -214,7 +213,7 @@ local function set_craft_by_output(pos, output)
 					-- Avoid dyeing/repairing recipes
 					score = 0 ; break
 				elseif item:sub(1, 6) == "group:" then
-					 -- Recipes that use groups are better
+					-- Recipes that use groups are better
 					score = score + 1
 				elseif not core.registered_items[item] then
 					-- Never use a recipe with an unknown item
@@ -239,9 +238,11 @@ end
 
 local function get_ingredients(src, recipe)
 	local items = {}
-	for i, stack in ipairs(src) do
+	-- Work backwards to avoid creating gaps or partial stacks
+	for i = #src, 1, -1 do
+		local stack = src[i]
 		if not stack:is_empty() then
-			items[i] = stack:get_name()
+			items[#items + 1] = {stack = stack, name = stack:get_name()}
 		end
 	end
 	local ingredients = {}
@@ -255,11 +256,12 @@ local function get_ingredients(src, recipe)
 			if group and group_index[group] then
 				match_items = group_index[group].items
 			end
-			for j, name in pairs(items) do
-				if match_items[name] then
-					ingredients[i] = src[j]:take_item()
-					if src[j]:is_empty() then
-						items[j] = nil
+			for j, item in ipairs(items) do
+				if match_items[item.name] then
+					ingredients[i] = item.stack:take_item()
+					if item.stack:is_empty() then
+						-- Need to use `table.remove` to not break subsequent iterations
+						table.remove(items, j)
 					end
 					found = true ; break
 				end
@@ -468,7 +470,7 @@ local function can_insert_stack(pos, stack)
 		end
 	end
 	-- Loop backwards to find empty slots quicker
-	for i=#src, 1, -1 do
+	for i = #src, 1, -1 do
 		local item = src[i]
 		if item:is_empty() then
 			empty = empty + 1
@@ -528,10 +530,10 @@ local function format_recipe(list)
 			local slot = y * 3 + x
 			local item = list[slot]
 			item = item:get_meta():get("group") or item:get_name()
-			row[#row+1] = item
+			row[#row + 1] = item
 			items[slot] = item ~= "" and item or nil
 		end
-		recipe[#recipe+1] = row
+		recipe[#recipe + 1] = row
 	end
 	return recipe, items
 end
@@ -563,10 +565,12 @@ local function digilines_action(pos, _, channel, msg)
 	if msg.command == "get" then
 		local recipe, input = format_recipe(inv:get_list("recipe"))
 		local output = inv:get_stack("output", 1)
-		local keep_items = ({"none", "replacements", "all"})[meta:get_int("keep_items")+1]
+		local keep_items = ({"none", "replacements", "all"})[meta:get_int("keep_items") + 1]
 		digilines.receptor_send(pos, digilines.rules.default, channel, {
-			recipe = recipe, input = input,
-			result = output:to_table(), output = output:get_name(),
+			recipe = recipe,
+			result = output:to_table(),
+			input = input,
+			output = output:get_name(),
 			keep_items = keep_items,
 			active = meta:get_int("enabled") == 1,
 		})
@@ -732,7 +736,7 @@ core.register_node("pipeworks:autocrafter", {
 			start_autocrafter(pos)
 		end
 	end,
-    on_metadata_inventory_put = function(pos, list, index, stack, player)
+	on_metadata_inventory_put = function(pos, list, index, stack, player)
 		if list == "src" then
 			start_autocrafter(pos)
 		end
