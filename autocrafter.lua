@@ -143,7 +143,7 @@ local function get_craft_result(items, fake_player, fluid)
 	local is_fluid_recipe = false
 	if output:is_empty() then
 		if not fluid then return end
-		local not_enough = false
+		local not_enough
 		output, leftover, fluid_cost, leftover_fluid, not_enough = pipeworks.fluid_recipes:get({items = items}, fluid)
 		output, leftover = output.item, leftover.items
 		if not_enough then return false end
