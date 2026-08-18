@@ -138,7 +138,7 @@ local format_fluid_amount = function(amount)
 	return (amount * 1000) .. "L"
 end
 
-if core.get_modpath("unified_inventory") then
+if core.global_exists("unified_inventory") then
 	unified_inventory.register_craft_type("fluidshaped", {
 		description = S("Shaped Fluid Craft"),
 		icon = "pipeworks_autocrafter.png",

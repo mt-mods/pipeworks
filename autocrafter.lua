@@ -1,7 +1,6 @@
 local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 local has_digilines = core.get_modpath("digilines")
-local has_unified_inventory = core.global_exists("unified_inventory")
 
 -- Autocrafter rate-limiting settings
 local craft_time = tonumber(core.settings:get("pipeworks_autocrafter_craft_time")) or 1
