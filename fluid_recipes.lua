@@ -1,3 +1,4 @@
+local S = core.get_translator("pipeworks")
 
 pipeworks.fluid_recipes = {
 	trie = {}
