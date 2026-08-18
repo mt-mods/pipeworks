@@ -43,6 +43,8 @@ Expansion Tank (@1)=
 Fluid Storage Tank (@1)=
 Fountainhead=
 Straight-only Pipe=
+Infinite Fluid Source=
+@1L @2=
 
 ## filter-injector
 (slot #@1 next)=
@@ -117,3 +119,10 @@ Adjustable Vacuuming Pneumatic Tube Segment (@1m)=
 Node Breaker=
 Deployer=
 Dispenser=
+
+## fluids
+Empty=
+Water=
+River Water=
+Lava=
+

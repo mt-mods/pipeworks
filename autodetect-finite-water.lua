@@ -1,4 +1,4 @@
--- enable finite liquid in the presence of dynamic liquid to preserve water volume.
+-- enable finite liquid in the presence of dynamic liquid to preserve fluid volume.
 local enable = false
 
 if core.get_modpath("dynamic_liquid") then
@@ -6,4 +6,4 @@ if core.get_modpath("dynamic_liquid") then
 	enable = true
 end
 
-pipeworks.toggles.finite_water = enable
+pipeworks.toggles.finite = enable
