@@ -113,6 +113,9 @@ if pipeworks.enable_mese_sand_tube then
 				meta:set_string("infotext", S("Adjustable Vacuuming Tube (@1m)", dist))
 			end,
 			on_punch = has_vislib and show_area or nil,
+			_update_formspec = function(pos)
+				core.get_meta(pos):set_string("formspec", formspec)
+			end,
 		},
 	})
 end

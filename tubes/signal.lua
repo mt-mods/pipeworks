@@ -118,6 +118,9 @@ if digiline_enabled and pipeworks.enable_digiline_detector_tube then
 						rules = pipeworks.digilines_rules
 					},
 				},
+				_update_formspec = function(pos)
+					core.get_meta(pos):set_string("formspec", formspec)
+				end,
 			},
 	})
 

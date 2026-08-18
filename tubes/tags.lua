@@ -120,5 +120,6 @@ pipeworks.register_tube("pipeworks:tag_tube", {
 		can_dig = function(pos, player)
 			return true
 		end,
+		_update_formspec = update_formspec,
 	},
 })
