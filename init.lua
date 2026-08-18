@@ -123,6 +123,7 @@ if pipeworks.enable_redefines and core.get_modpath("mcl_furnaces") then
 	dofile(pipeworks.modpath.."/mcl_furnaces.lua")
 end
 if pipeworks.enable_autocrafter then
+	dofile(pipeworks.modpath.."/fluid_recipes.lua")
 	dofile(pipeworks.modpath.."/autocrafter.lua")
 end
 
