@@ -1,0 +1,44 @@
+name: Optimize PNGs
+
+on:
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "**.png"
+
+jobs:
+  optimize-pngs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
+      - run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - uses: actions/cache@main
+        with:
+          path: ~/.cargo/bin/
+          key: ${{ runner.os }}-cargo-oxipng
+
+      - run: which oxipng || cargo install oxipng
+
+      - name: Optimize PNGs
+        run: oxipng -z --nc -p -s -r -o max .
+
+      - name: Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "[ci] Optimize PNGs"
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            echo "No files modified."
+          fi
