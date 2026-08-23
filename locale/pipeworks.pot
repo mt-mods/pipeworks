@@ -16,47 +16,51 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-#: autocrafter.lua:182
+#: autocrafter.lua:202
 msgid "'@1' Autocrafter (@2)"
 msgstr ""
 
-#: autocrafter.lua:315
-msgid "Unconfigured Autocrafter"
-msgstr ""
-
-#: autocrafter.lua:362
+#: autocrafter.lua:309
 msgid "Input inventory"
 msgstr ""
 
-#: autocrafter.lua:363
+#: autocrafter.lua:310
 msgid "Recipe"
 msgstr ""
 
-#: autocrafter.lua:364
+#: autocrafter.lua:311
 msgid "Output preview"
 msgstr ""
 
-#: autocrafter.lua:366
+#: autocrafter.lua:313
 msgid "Crafted items"
 msgstr ""
 
-#: autocrafter.lua:367 filter-injector.lua:22 tubes/signal.lua:86 tubes/teleport.lua:185 wielder.lua:18
+#: autocrafter.lua:314 filter-injector.lua:22 tubes/signal.lua:86 tubes/teleport.lua:185 wielder.lua:18
 msgid "Digiline Channel"
 msgstr ""
 
-#: autocrafter.lua:372
+#: autocrafter.lua:337
+msgid "Empty"
+msgstr ""
+
+#: autocrafter.lua:319
 msgid "Output all items"
 msgstr ""
 
-#: autocrafter.lua:373
+#: autocrafter.lua:320
 msgid "Keep non-consumables"
 msgstr ""
 
-#: autocrafter.lua:374
+#: autocrafter.lua:321
 msgid "Keep all items"
 msgstr ""
 
-#: autocrafter.lua:631
+#: autocrafter.lua:384
+msgid "Unconfigured Autocrafter"
+msgstr ""
+
+#: autocrafter.lua:672
 msgid "Autocrafter"
 msgstr ""
 
@@ -158,6 +162,18 @@ msgstr ""
 
 #: fs_helpers.lua:17
 msgid "Allow splitting incoming stacks from tubes"
+msgstr ""
+
+#: init.lua:32
+msgid "Water"
+msgstr ""
+
+#: init.lua:33
+msgid "River Water"
+msgstr ""
+
+#: init.lua:34
+msgid "Lava"
 msgstr ""
 
 #: pipes.lua:41 pipes.lua:45
