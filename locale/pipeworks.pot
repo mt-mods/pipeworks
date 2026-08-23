@@ -1,0 +1,353 @@
+# Translation template for pipeworks.
+# Copyright (C) 2026 pipeworks contributors
+# This file is distributed under the same license as the pipeworks package.
+#
+#, fuzzy
+
+msgid ""
+msgstr ""
+"Project-Id-Version: pipeworks\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-23 01:45+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+#: autocrafter.lua:182
+msgid "'@1' Autocrafter (@2)"
+msgstr ""
+
+#: autocrafter.lua:315
+msgid "Unconfigured Autocrafter"
+msgstr ""
+
+#: autocrafter.lua:362
+msgid "Input inventory"
+msgstr ""
+
+#: autocrafter.lua:363
+msgid "Recipe"
+msgstr ""
+
+#: autocrafter.lua:364
+msgid "Output preview"
+msgstr ""
+
+#: autocrafter.lua:366
+msgid "Crafted items"
+msgstr ""
+
+#: autocrafter.lua:367 filter-injector.lua:22 tubes/signal.lua:86 tubes/teleport.lua:185 wielder.lua:18
+msgid "Digiline Channel"
+msgstr ""
+
+#: autocrafter.lua:372
+msgid "Output all items"
+msgstr ""
+
+#: autocrafter.lua:373
+msgid "Keep non-consumables"
+msgstr ""
+
+#: autocrafter.lua:374
+msgid "Keep all items"
+msgstr ""
+
+#: autocrafter.lua:631
+msgid "Autocrafter"
+msgstr ""
+
+#: devices.lua:143
+msgid "Pump/Intake Module"
+msgstr ""
+
+#: devices.lua:191 devices.lua:243
+msgid "Valve"
+msgstr ""
+
+#: devices.lua:295
+msgid "Decorative grating"
+msgstr ""
+
+#: devices.lua:334 devices.lua:369
+msgid "Spigot outlet"
+msgstr ""
+
+#: devices.lua:434 devices.lua:458
+msgid "Airtight Pipe entry/exit"
+msgstr ""
+
+#: devices.lua:491
+msgid "Flow Sensor"
+msgstr ""
+
+#: devices.lua:534
+msgid "Flow sensor (on)"
+msgstr ""
+
+#: devices.lua:589
+msgid "empty"
+msgstr ""
+
+#: devices.lua:594
+msgid "@1% full"
+msgstr ""
+
+#: devices.lua:600
+msgid "Expansion Tank (@1)"
+msgstr ""
+
+#: devices.lua:632
+msgid "Fluid Storage Tank (@1)"
+msgstr ""
+
+#: devices.lua:669 devices.lua:708
+msgid "Fountainhead"
+msgstr ""
+
+#: devices.lua:762 devices.lua:788
+msgid "Straight-only Pipe"
+msgstr ""
+
+#: filter-injector.lua:6 filter-injector.lua:389
+msgid "@1 Filter-Injector"
+msgstr ""
+
+#: filter-injector.lua:8
+msgid "(slot #@1 next)"
+msgstr ""
+
+#: filter-injector.lua:14
+msgid "Mode: Priority"
+msgstr ""
+
+#: filter-injector.lua:14
+msgid "Mode: Random"
+msgstr ""
+
+#: filter-injector.lua:14
+msgid "Mode: Round-Robin"
+msgstr ""
+
+#: filter-injector.lua:24 filter-injector.lua:32
+msgid "Item Tags"
+msgstr ""
+
+#: filter-injector.lua:30
+msgid "Filtered items"
+msgstr ""
+
+#: filter-injector.lua:39
+msgid "Exact match"
+msgstr ""
+
+#: filter-injector.lua:373
+msgid "Itemwise"
+msgstr ""
+
+#: filter-injector.lua:378
+msgid "Stackwise"
+msgstr ""
+
+#: filter-injector.lua:383
+msgid "Digiline"
+msgstr ""
+
+#: fs_helpers.lua:17
+msgid "Allow splitting incoming stacks from tubes"
+msgstr ""
+
+#: pipes.lua:41 pipes.lua:45
+msgid "Pipe Segment"
+msgstr ""
+
+#: pipes.lua:154
+msgid "Pipe Segment (legacy)"
+msgstr ""
+
+#: trashcan.lua:6 trashcan.lua:12 trashcan.lua:35
+msgid "Trash Can"
+msgstr ""
+
+#: tubes/embedded_tube.lua:66
+msgid "Airtight steelblock embedded tube"
+msgstr ""
+
+#: tubes/lua.lua:915
+msgid "Lua controlled Tube"
+msgstr ""
+
+#: tubes/pane_embedded_tube.lua:18
+msgid "Airtight panel embedded tube"
+msgstr ""
+
+#: tubes/registration.lua:227
+msgid "Pneumatic tube segment (legacy)"
+msgstr ""
+
+#: tubes/routing.lua:3
+msgid "Pneumatic tube segment"
+msgstr ""
+
+#: tubes/routing.lua:45
+msgid "Broken Tube"
+msgstr ""
+
+#: tubes/routing.lua:79
+msgid "Broken tubes may be a bit sharp. Perhaps try with a hammer?"
+msgstr ""
+
+#: tubes/routing.lua:100
+msgid "This tube cannot be repaired."
+msgstr ""
+
+#: tubes/routing.lua:121
+msgid "High Priority Tube Segment"
+msgstr ""
+
+#: tubes/routing.lua:135
+msgid "Accelerating Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/routing.lua:152
+msgid "Crossing Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/routing.lua:174
+msgid "One way tube"
+msgstr ""
+
+#: tubes/signal.lua:18
+msgid "Detecting Pneumatic Tube Segment on"
+msgstr ""
+
+#: tubes/signal.lua:54
+msgid "Detecting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/signal.lua:85
+msgid "Digiline Detecting Tube"
+msgstr ""
+
+#: tubes/signal.lua:89
+msgid "Digiline Detecting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/signal.lua:139
+msgid "Conducting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/signal.lua:153
+msgid "Conducting Pneumatic Tube Segment on"
+msgstr ""
+
+#: tubes/signal.lua:177
+msgid "Digiline Conducting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/signal.lua:195
+msgid "Mesecon and Digiline Conducting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/signal.lua:212
+msgid "Mesecon and Digiline Conducting Pneumatic Tube Segment on"
+msgstr ""
+
+#: tubes/sorting.lua:29
+msgid "Sorting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/sorting.lua:81
+msgid "Sorting pneumatic tube"
+msgstr ""
+
+#: tubes/tags.lua:8
+msgid "Separate multiple tags using commas."
+msgstr ""
+
+#: tubes/tags.lua:9
+msgid "Use \"<none>\" to match items without tags."
+msgstr ""
+
+#: tubes/tags.lua:35
+msgid "Tag Sorting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/tags.lua:92
+msgid "Tag sorting pneumatic tube"
+msgstr ""
+
+#: tubes/teleport.lua:174
+msgid "Channels are public by default"
+msgstr ""
+
+#: tubes/teleport.lua:175
+msgid "Use <player>:<channel> for fully private channels"
+msgstr ""
+
+#: tubes/teleport.lua:176
+msgid "Use <player>;<channel> for private receivers"
+msgstr ""
+
+#: tubes/teleport.lua:181
+msgid "Teleporting Tube"
+msgstr ""
+
+#: tubes/teleport.lua:182
+msgid "Channel"
+msgstr ""
+
+#: tubes/teleport.lua:183
+msgid "Receive"
+msgstr ""
+
+#: tubes/teleport.lua:191
+msgid "Unconfigured Teleporting Tube"
+msgstr ""
+
+#: tubes/teleport.lua:195
+msgid "Teleporting Tube @1 on '@2'"
+msgstr ""
+
+#: tubes/teleport.lua:216
+msgid "Sorry, channel '@1' is reserved for exclusive use by @2"
+msgstr ""
+
+#: tubes/teleport.lua:220
+msgid "Sorry, receiving from channel '@1' is reserved for @2"
+msgstr ""
+
+#: tubes/teleport.lua:347
+msgid "Teleporting Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/vacuum.lua:55
+msgid "Vacuuming Pneumatic Tube Segment"
+msgstr ""
+
+#: tubes/vacuum.lua:79 tubes/vacuum.lua:83
+msgid "Adjustable Vacuuming Tube"
+msgstr ""
+
+#: tubes/vacuum.lua:80
+msgid "Radius"
+msgstr ""
+
+#: tubes/vacuum.lua:98 tubes/vacuum.lua:113
+msgid "Adjustable Vacuuming Tube (@1m)"
+msgstr ""
+
+#: wielder.lua:240
+msgid "Node Breaker"
+msgstr ""
+
+#: wielder.lua:302
+msgid "Deployer"
+msgstr ""
+
+#: wielder.lua:338
+msgid "Dispenser"
+msgstr ""

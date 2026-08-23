@@ -29,7 +29,7 @@
 -- Something nice to play is appending core.env to it.
 
 local BASENAME = "pipeworks:lua_tube"
-
+local S = core.get_translator(core.get_current_modname())
 local has_digilines = core.get_modpath("digilines")
 
 local rules = {
@@ -912,7 +912,7 @@ for white  = 0, 1 do
 	}
 
 	core.register_node(node_name, {
-		description = "Lua controlled Tube",
+		description = S("Lua controlled Tube"),
 		drawtype = "nodebox",
 		tiles = tiles,
 		use_texture_alpha = texture_alpha_mode,
