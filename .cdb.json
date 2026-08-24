@@ -1,0 +1,21 @@
+{
+  "$schema": "https://content.luanti.org/api/cdb_schema/",
+  "title": "Pipeworks",
+  "tags": [
+    "building",
+    "building_mechanics",
+    "technology",
+    "transport",
+    "storage"
+  ],
+  "type": "MOD",
+  "dev_state": "MAINTENANCE_ONLY",
+  "ai_disclosure": "NONE",
+  "license": "LGPL-3.0-only",
+  "media_license": "CC-BY-SA-4.0",
+  "repo": "https://github.com/mt-mods/pipeworks",
+  "issue_tracker": "https://github.com/mt-mods/pipeworks/issues/new/choose/",
+  "translation_url": "https://translate.luanti.ch/engage/mt-mods/",
+  "forum_url": "https://forum.luanti.org/viewtopic.php?t=2155",
+  "short_description": "Supplies a complete set of nice, round mesh-based water pipes, boxy item-transport tubes, and devices that work with them."
+}
