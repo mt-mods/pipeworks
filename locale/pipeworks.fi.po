@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: pipeworks\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-23 01:45+0000\n"
-"PO-Revision-Date: 2026-08-24 14:06+0000\n"
+"PO-Revision-Date: 2026-08-25 20:09+0000\n"
 "Last-Translator: Jouni Järvinen <rautajunk@gmail.com>\n"
 "Language-Team: Finnish <https://translate.luanti.ch/projects/mt-mods/"
 "pipeworks/fi/>\n"
@@ -44,7 +44,7 @@ msgstr ""
 
 #: autocrafter.lua:367 filter-injector.lua:22 tubes/signal.lua:86 tubes/teleport.lua:185 wielder.lua:18
 msgid "Digiline Channel"
-msgstr ""
+msgstr "Digiline-kanava"
 
 #: autocrafter.lua:372
 msgid "Output all items"
