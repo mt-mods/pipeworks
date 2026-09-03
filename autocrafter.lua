@@ -12,6 +12,12 @@ local autocrafter_cache = {}
 -- Index of group items used in recipes, self-populating when accessed
 local group_index = {}
 
+local devicename = "pipeworks:autocrafter"
+
+local fluid_type_meta_key = "pipeworks:fluid_type"
+local fluid_amount_meta_key = "pipeworks:fluid_amount"
+local max_fluid_meta_key = "pipeworks:max_fluid"
+
 ----------------------
 -- Helper functions --
 ----------------------
@@ -130,12 +136,26 @@ local function get_fake_player(pos)
 	return fake_player
 end
 
-local function get_craft_result(items, fake_player)
+local function get_craft_result(items, fake_player, fluid)
 	local output, leftover = core.get_craft_result({method = "normal", width = 3, items = items})
 	output, leftover = output.item, leftover.items
+	local fluid_cost, leftover_fluid = nil, fluid
+	local is_fluid_recipe = false
 	if output:is_empty() then
-		return
+		if not fluid then return end
+		local not_enough
+		output, leftover, fluid_cost, leftover_fluid, not_enough = pipeworks.fluid_recipes:get({items = items}, fluid)
+		output, leftover = output.item, leftover.items
+		if not_enough then return false end
+		if output:is_empty() then
+			return
+		end
 	end
+
+	if is_fluid_recipe then
+		return {output}, {}, fluid_cost, leftover_fluid
+	end
+
 	-- Execute on_craft callbacks using a fake inventory and player
 	local fake_inv = fake_player:get_inventory()
 	fake_inv:set_list("craft", leftover)
@@ -158,7 +178,7 @@ local function get_craft_result(items, fake_player)
 			end
 		end
 	end
-	return outputs, replacements
+	return outputs, replacements, fluid_cost, leftover_fluid
 end
 
 local function start_autocrafter(pos)
@@ -183,12 +203,19 @@ local function set_craft(pos, recipe, output)
 	start_autocrafter(pos)
 end
 
+local function get_fluid(meta)
+	return {
+		amount = meta:get_float(fluid_amount_meta_key),
+		type = meta:get_string(fluid_type_meta_key),
+	}
+end
+
 local function set_craft_by_input(pos, input)
 	local recipe = normalize_items(input)
 	if not recipe then
 		return
 	end
-	local outputs = get_craft_result(recipe, get_fake_player(pos))
+	local outputs = get_craft_result(recipe, get_fake_player(pos), {type = input.fluid_type or core.get_meta(pos):get_string(fluid_type_meta_key), amount = math.huge})
 	if not outputs then
 		return
 	end
@@ -196,8 +223,10 @@ local function set_craft_by_input(pos, input)
 	return true
 end
 
-local function set_craft_by_output(pos, output)
-	local recipes = core.get_all_craft_recipes(output:get_name())
+local function set_craft_by_output(pos, output, fluid_type)
+	local output_name = output:get_name()
+	local recipes = core.get_all_craft_recipes(output_name) or
+		fluid_type and pipeworks.fluid_recipes:get_all_with(output_name, fluid_type) or pipeworks.fluid_recipes:get_all(output_name)
 	if not recipes then
 		return
 	end
@@ -275,14 +304,52 @@ local function get_ingredients(src, recipe)
 	return ingredients
 end
 
-local function autocraft(inv, recipe, fake_player, keep_items)
+local base_formspec = table.concat({
+	fs_helpers.prepends(11.5, has_digilines and 14.25 or 13.25),
+	fs_helpers.inv_list(1.5, has_digilines and 5.25 or 4.25, 8, 3, "src", S("Input inventory")),
+	fs_helpers.inv_list(1.5, 0.25, 3, 3, "recipe", S("Recipe")),
+	fs_helpers.inv_list(5.25, 1.5, 1, 1, "output", S("Output preview")),
+	"image[5.25,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
+	fs_helpers.inv_list(6.5, 0.25, 4, 3, "dst", S("Crafted items")),
+	has_digilines and fs_helpers.field(2.75, 4.25, 7.25, "channel", S("Digiline Channel")) or "",
+	fs_helpers.player_inv(1.5, has_digilines and 9.25 or 8.25),
+})
+
+local tooltip_text = {
+	[0] = S("Output all items"),
+	[1] = S("Keep non-consumables"),
+	[2] = S("Keep all items"),
+}
+
+local function update_formspec(meta)
+	local keep_items = meta:get_int("keep_items")
+	local fluid = meta:get(fluid_type_meta_key)
+	local amount = meta:get_float(fluid_amount_meta_key)
+	local fluid_cap = meta:get_float(max_fluid_meta_key)
+	local bar_height = 8.25 * amount / fluid_cap
+	local fs = table.concat({
+		base_formspec,
+		fs_helpers.toggle_button(5.25, 0.45, meta, "enabled", true),
+		"image_button[5.25,2.75;1,1;pipeworks_arrow_"..keep_items..".png;keep_items;;;false;]",
+		"tooltip[keep_items;"..tooltip_text[keep_items].."]",
+		"image[0.25," .. (8.5 - bar_height) .. ";1," .. bar_height .. ";" .. (fluid and ("pipeworks_fluid_" .. fluid) or "blank") .. ".png]",
+		"image[0.25,0.25;1,8.25;pipeworks_fluidbar.png]",
+		"tooltip[0.25,0.25;1,8.25;" .. S("@1L @2", ("%d"):format(amount*1000), (pipeworks.liquids[fluid] or {description = S("Empty")}).description) .. "]",
+	})
+	meta:set_string("formspec", fs)
+end
+
+local function autocraft(inv, recipe, fake_player, keep_items, meta)
 	local src = inv:get_list("src")
 	local ingredients = get_ingredients(src, recipe)
 	if not ingredients then
 		return
 	end
-	local outputs, replacements = get_craft_result(ingredients, fake_player)
-	if not outputs then
+	local outputs, replacements, _, leftover_fluid = get_craft_result(ingredients, fake_player, get_fluid(meta))
+	if outputs == false then
+		-- Insufficient fluid, don't clear the output
+		return
+	elseif outputs == nil then
 		-- Broken recipe, clear the output
 		inv:set_stack("output", 1, "")
 		return
@@ -306,6 +373,8 @@ local function autocraft(inv, recipe, fake_player, keep_items)
 	-- Crafting was sucessful, so the modified lists can be saved
 	inv:set_list("src", src)
 	inv:set_list("dst", dst)
+	meta:set_float(fluid_amount_meta_key, leftover_fluid.amount)
+	update_formspec(meta)
 	return true
 end
 
@@ -339,7 +408,7 @@ local function run_autocrafter(pos, elapsed)
 	local keep_items = meta:get_int("keep_items")
 	local continue = true
 	for _=1, math.min(crafts_remaining, batch_size) do
-		if not autocraft(inv, recipe, fake_player, keep_items) then
+		if not autocraft(inv, recipe, fake_player, keep_items, meta) then
 			crafts_remaining = 0
 			continue = false
 			break
@@ -355,34 +424,6 @@ local function run_autocrafter(pos, elapsed)
 		digilines.receptor_send(pos, digilines.rules.default, channel, {finished = true})
 	end
 	return continue and (enabled or crafts_remaining > 0 or queued > 0)
-end
-
-local base_formspec = table.concat({
-	fs_helpers.prepends(10.25, has_digilines and 14.25 or 13.25),
-	fs_helpers.inv_list(0.25, has_digilines and 5.25 or 4.25, 8, 3, "src", S("Input inventory")),
-	fs_helpers.inv_list(0.25, 0.25, 3, 3, "recipe", S("Recipe")),
-	fs_helpers.inv_list(4, 1.5, 1, 1, "output", S("Output preview")),
-	"image[4,1.5;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]",
-	fs_helpers.inv_list(5.25, 0.25, 4, 3, "dst", S("Crafted items")),
-	has_digilines and fs_helpers.field(1.5, 4.25, 7.25, "channel", S("Digiline Channel")) or "",
-	fs_helpers.player_inv(0.25, has_digilines and 9.25 or 8.25),
-})
-
-local tooltip_text = {
-	[0] = S("Output all items"),
-	[1] = S("Keep non-consumables"),
-	[2] = S("Keep all items"),
-}
-
-local function update_formspec(meta)
-	local keep_items = meta:get_int("keep_items")
-	local fs = table.concat({
-		base_formspec,
-		fs_helpers.toggle_button(4, 0.45, meta, "enabled", true),
-		"image_button[4,2.75;1,1;pipeworks_arrow_"..keep_items..".png;keep_items;;;false;]",
-		"tooltip[keep_items;"..tooltip_text[keep_items].."]",
-	})
-	meta:set_string("formspec", fs)
 end
 
 local function receive_fields(pos, _, fields, player)
@@ -627,7 +668,7 @@ local function digilines_action(pos, _, channel, msg)
 	end
 end
 
-core.register_node("pipeworks:autocrafter", {
+core.register_node(devicename, {
 	description = S("Autocrafter"),
 	drawtype = "normal",
 	tiles = {"pipeworks_autocrafter.png"},
@@ -653,6 +694,7 @@ core.register_node("pipeworks:autocrafter", {
 	on_construct = function(pos)
 		local meta = core.get_meta(pos)
 		meta:set_int("keep_items", 1)
+		meta:set_float(max_fluid_meta_key, 8)
 		local inv = meta:get_inventory()
 		inv:set_size("src", 3 * 8)
 		inv:set_size("recipe", 3 * 3)
@@ -757,7 +799,7 @@ core.register_node("pipeworks:autocrafter", {
 		update_formspec(core.get_meta(pos))
 	end,
 })
-table.insert(pipeworks.ui_cat_tube_list, "pipeworks:autocrafter")
+table.insert(pipeworks.ui_cat_tube_list, devicename)
 
 ----------------------
 -- Group index code --
@@ -844,3 +886,28 @@ end
 
 -- Use a metatable to make access cleaner
 setmetatable(group_index, {__index = find_group})
+
+-------------------------
+-- Fluid functionality --
+-------------------------
+
+pipeworks.flowables.register.simple(devicename)
+pipeworks.flowables.register.output(devicename, 0, 0, function(pos, node, currentpressure, finitemode, fluid_type)
+	if fluid_type == nil then return 0, fluid_type end
+	local meta = core.get_meta(pos)
+	local fluid_cap = meta:get_float(max_fluid_meta_key)
+	local fluid_amount = meta:get_float(fluid_amount_meta_key)
+	local current_fluid_type = meta:get(fluid_type_meta_key)
+	if current_fluid_type ~= fluid_type then
+		if fluid_amount == 0 then
+			meta:set_string(fluid_type_meta_key, fluid_type)
+			set_craft_by_input(pos, core.get_meta(pos):get_inventory():get_list("recipe"))
+		else
+			return 0, fluid_type
+		end
+	end
+	local taken = math.min(fluid_cap - fluid_amount, currentpressure)
+	meta:set_float(fluid_amount_meta_key, fluid_amount + taken)
+	update_formspec(meta)
+	return taken, fluid_type
+end, function()end)
