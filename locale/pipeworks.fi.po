@@ -1,30 +1,30 @@
-# Translations for pipeworks (Chinese (Simplified)).
+# Translation template for pipeworks.
+# Copyright (C) 2026 pipeworks contributors
 # This file is distributed under the same license as the pipeworks package.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pipeworks\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-23 01:09+0000\n"
+"POT-Creation-Date: 2026-08-23 01:45+0000\n"
 "PO-Revision-Date: 2026-08-26 02:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified Han script) <https://translate.luanti.ch/"
-"projects/mt-mods/pipeworks/zh_Hans/>\n"
-"Language: zh_CN\n"
+"Language-Team: Finnish <https://translate.luanti.ch/projects/mt-mods/"
+"pipeworks/fi/>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2026.8.1\n"
 
 #: autocrafter.lua:182
 msgid "'@1' Autocrafter (@2)"
-msgstr "自动工作台 '@1' (@2)"
+msgstr ""
 
 #: autocrafter.lua:315
-#, fuzzy
 msgid "Unconfigured Autocrafter"
-msgstr "未配置的自动工作台"
+msgstr ""
 
 #: autocrafter.lua:362
 msgid "Input inventory"
@@ -44,7 +44,7 @@ msgstr ""
 
 #: autocrafter.lua:367 filter-injector.lua:22 tubes/signal.lua:86 tubes/teleport.lua:185 wielder.lua:18
 msgid "Digiline Channel"
-msgstr ""
+msgstr "Digiline-kanava"
 
 #: autocrafter.lua:372
 msgid "Output all items"
@@ -60,82 +60,79 @@ msgstr ""
 
 #: autocrafter.lua:631
 msgid "Autocrafter"
-msgstr "自动工作台"
+msgstr ""
 
 #: devices.lua:143
 msgid "Pump/Intake Module"
-msgstr "泵/进气模块"
+msgstr ""
 
 #: devices.lua:191 devices.lua:243
 msgid "Valve"
-msgstr "阀门"
+msgstr ""
 
 #: devices.lua:295
 msgid "Decorative grating"
-msgstr "Decorative grating"
+msgstr ""
 
 #: devices.lua:334 devices.lua:369
 msgid "Spigot outlet"
-msgstr "龙头"
+msgstr ""
 
 #: devices.lua:434 devices.lua:458
 msgid "Airtight Pipe entry/exit"
-msgstr "密闭管进/出"
+msgstr ""
 
 #: devices.lua:491
 msgid "Flow Sensor"
-msgstr "流量传感器"
+msgstr ""
 
 #: devices.lua:534
 msgid "Flow sensor (on)"
-msgstr "流量传感器（上）"
+msgstr ""
 
 #: devices.lua:589
 msgid "empty"
-msgstr "空的"
+msgstr ""
 
 #: devices.lua:594
 msgid "@1% full"
-msgstr "满的@1 %"
+msgstr ""
 
 #: devices.lua:600
 msgid "Expansion Tank (@1)"
-msgstr "扩展水箱 (@1)"
+msgstr ""
 
 #: devices.lua:632
 msgid "Fluid Storage Tank (@1)"
-msgstr "储液罐 (@1)"
+msgstr ""
 
 #: devices.lua:669 devices.lua:708
 msgid "Fountainhead"
-msgstr "源泉"
+msgstr ""
 
 #: devices.lua:762 devices.lua:788
 msgid "Straight-only Pipe"
-msgstr "直管"
+msgstr ""
 
 #: filter-injector.lua:6 filter-injector.lua:389
 msgid "@1 Filter-Injector"
-msgstr "@1取物器"
+msgstr ""
 
 #: filter-injector.lua:8
 msgid "(slot #@1 next)"
-msgstr "(下一个插槽 : #@1)"
+msgstr ""
 
 #: filter-injector.lua:14
-#, fuzzy
 msgid "Mode: Priority"
-msgstr "优先顺序排列"
+msgstr ""
 
 #: filter-injector.lua:14
-#, fuzzy
 msgid "Mode: Random"
-msgstr "随机排列时隙"
+msgstr ""
 
 #: filter-injector.lua:14
-#, fuzzy
 msgid "Mode: Round-Robin"
-msgstr "旋转顺序槽"
+msgstr ""
 
 #: filter-injector.lua:24 filter-injector.lua:32
 msgid "Item Tags"
@@ -151,35 +148,35 @@ msgstr ""
 
 #: filter-injector.lua:373
 msgid "Itemwise"
-msgstr "逐项"
+msgstr ""
 
 #: filter-injector.lua:378
 msgid "Stackwise"
-msgstr "堆叠方式"
+msgstr ""
 
 #: filter-injector.lua:383
 msgid "Digiline"
-msgstr "Digiline"
+msgstr ""
 
 #: fs_helpers.lua:17
 msgid "Allow splitting incoming stacks from tubes"
-msgstr "允许从管道中拆分传入堆栈"
+msgstr ""
 
 #: pipes.lua:41 pipes.lua:45
 msgid "Pipe Segment"
-msgstr "管道"
+msgstr ""
 
 #: pipes.lua:154
 msgid "Pipe Segment (legacy)"
-msgstr "管道（旧版）"
+msgstr ""
 
 #: trashcan.lua:6 trashcan.lua:12 trashcan.lua:35
 msgid "Trash Can"
-msgstr "垃圾箱"
+msgstr ""
 
 #: tubes/embedded_tube.lua:66
 msgid "Airtight steelblock embedded tube"
-msgstr "密封嵌入式铁块管道"
+msgstr ""
 
 #: tubes/lua.lua:915
 msgid "Lua controlled Tube"
@@ -187,19 +184,19 @@ msgstr ""
 
 #: tubes/pane_embedded_tube.lua:18
 msgid "Airtight panel embedded tube"
-msgstr "密封嵌入式片状管道"
+msgstr ""
 
 #: tubes/registration.lua:227
 msgid "Pneumatic tube segment (legacy)"
-msgstr "普通管道（旧式）"
+msgstr ""
 
 #: tubes/routing.lua:3
 msgid "Pneumatic tube segment"
-msgstr "普通管道"
+msgstr ""
 
 #: tubes/routing.lua:45
 msgid "Broken Tube"
-msgstr "断管"
+msgstr ""
 
 #: tubes/routing.lua:79
 msgid "Broken tubes may be a bit sharp. Perhaps try with a hammer?"
@@ -211,63 +208,63 @@ msgstr ""
 
 #: tubes/routing.lua:121
 msgid "High Priority Tube Segment"
-msgstr "高优先级管段"
+msgstr ""
 
 #: tubes/routing.lua:135
 msgid "Accelerating Pneumatic Tube Segment"
-msgstr "加速管道"
+msgstr ""
 
 #: tubes/routing.lua:152
 msgid "Crossing Pneumatic Tube Segment"
-msgstr "定向管道"
+msgstr ""
 
 #: tubes/routing.lua:174
 msgid "One way tube"
-msgstr "单向管"
+msgstr ""
 
 #: tubes/signal.lua:18
 msgid "Detecting Pneumatic Tube Segment on"
-msgstr "检测管道（运行中）"
+msgstr ""
 
 #: tubes/signal.lua:54
 msgid "Detecting Pneumatic Tube Segment"
-msgstr "检测管道"
+msgstr ""
 
 #: tubes/signal.lua:85
 msgid "Digiline Detecting Tube"
-msgstr "Digiline检测管"
+msgstr ""
 
 #: tubes/signal.lua:89
 msgid "Digiline Detecting Pneumatic Tube Segment"
-msgstr "Digiline检测管道"
+msgstr ""
 
 #: tubes/signal.lua:139
 msgid "Conducting Pneumatic Tube Segment"
-msgstr "传导管道"
+msgstr ""
 
 #: tubes/signal.lua:153
 msgid "Conducting Pneumatic Tube Segment on"
-msgstr "传导管道（运行中）"
+msgstr ""
 
 #: tubes/signal.lua:177
 msgid "Digiline Conducting Pneumatic Tube Segment"
-msgstr "Digiline传导式气动管道"
+msgstr ""
 
 #: tubes/signal.lua:195
 msgid "Mesecon and Digiline Conducting Pneumatic Tube Segment"
-msgstr "Mesecon和Digiline传导管道"
+msgstr ""
 
 #: tubes/signal.lua:212
 msgid "Mesecon and Digiline Conducting Pneumatic Tube Segment on"
-msgstr "Mesecon和Digiline传导管道（运行中）"
+msgstr ""
 
 #: tubes/sorting.lua:29
 msgid "Sorting Pneumatic Tube Segment"
-msgstr "分类管道"
+msgstr ""
 
 #: tubes/sorting.lua:81
 msgid "Sorting pneumatic tube"
-msgstr "分类管道"
+msgstr ""
 
 #: tubes/tags.lua:8
 msgid "Separate multiple tags using commas."
@@ -287,15 +284,15 @@ msgstr ""
 
 #: tubes/teleport.lua:174
 msgid "Channels are public by default"
-msgstr "频道默认为公开"
+msgstr ""
 
 #: tubes/teleport.lua:175
 msgid "Use <player>:<channel> for fully private channels"
-msgstr "将<player>:<channel>用于完全私人的频道"
+msgstr ""
 
 #: tubes/teleport.lua:176
 msgid "Use <player>;<channel> for private receivers"
-msgstr "使用<player>;<channel>作为私人接收器"
+msgstr ""
 
 #: tubes/teleport.lua:181
 msgid "Teleporting Tube"
@@ -303,37 +300,35 @@ msgstr ""
 
 #: tubes/teleport.lua:182
 msgid "Channel"
-msgstr "频道"
+msgstr "Kanava"
 
 #: tubes/teleport.lua:183
 msgid "Receive"
-msgstr "接收"
+msgstr ""
 
 #: tubes/teleport.lua:191
-#, fuzzy
 msgid "Unconfigured Teleporting Tube"
-msgstr "未配置的传送管道"
+msgstr ""
 
 #: tubes/teleport.lua:195
-#, fuzzy
 msgid "Teleporting Tube @1 on '@2'"
-msgstr "传送管'@1'在'@2'上"
+msgstr ""
 
 #: tubes/teleport.lua:216
 msgid "Sorry, channel '@1' is reserved for exclusive use by @2"
-msgstr "抱歉，频道‘@1’保留供‘@2’专用"
+msgstr ""
 
 #: tubes/teleport.lua:220
 msgid "Sorry, receiving from channel '@1' is reserved for @2"
-msgstr "抱歉，从频道'@1'接收的内容已保留给'@2'"
+msgstr ""
 
 #: tubes/teleport.lua:347
 msgid "Teleporting Pneumatic Tube Segment"
-msgstr "传送管道"
+msgstr ""
 
 #: tubes/vacuum.lua:55
 msgid "Vacuuming Pneumatic Tube Segment"
-msgstr "拾取管道"
+msgstr ""
 
 #: tubes/vacuum.lua:79 tubes/vacuum.lua:83
 msgid "Adjustable Vacuuming Tube"
@@ -344,76 +339,17 @@ msgid "Radius"
 msgstr ""
 
 #: tubes/vacuum.lua:98 tubes/vacuum.lua:113
-#, fuzzy
 msgid "Adjustable Vacuuming Tube (@1m)"
-msgstr "高级拾取管道(@1m)"
+msgstr ""
 
 #: wielder.lua:240
 msgid "Node Breaker"
-msgstr "方块破坏器"
+msgstr ""
 
 #: wielder.lua:302
 msgid "Deployer"
-msgstr "放置器"
+msgstr ""
 
 #: wielder.lua:338
 msgid "Dispenser"
-msgstr "投掷器"
-
-# Obsolete entries kept for reference (source strings no longer used in the code)
-#~ msgid "Adjustable Vacuuming Pneumatic Tube Segment"
-#~ msgstr "高级拾取管道"
-
-#~ msgid "Adjustable Vacuuming Pneumatic Tube Segment (@1m)"
-#~ msgstr "高级拾取管道(@1m)"
-
-#~ msgid "Allow splitting incoming material (not fuel) stacks from tubes"
-#~ msgstr "允许从管子中分离进来的材料（不是燃料）堆"
-
-#~ msgid "Auto-Tap"
-#~ msgstr "自动轴阀"
-
-#~ msgid "Cancel"
-#~ msgstr ""
-
-#~ msgid "Exact match - off"
-#~ msgstr "完全匹配-关闭"
-
-#~ msgid "Exact match - on"
-#~ msgstr "完全匹配-开启"
-
-#~ msgid "Prefer item types:"
-#~ msgstr "偏好物品类型 :"
-
-#~ msgid "Save"
-#~ msgstr "保存"
-
-#~ msgid "Sequence slots Randomly"
-#~ msgstr "随机排列时隙"
-
-#~ msgid "Sequence slots by Priority"
-#~ msgstr "优先顺序排列"
-
-#~ msgid "Sequence slots by Rotation"
-#~ msgstr "旋转顺序槽"
-
-#~ msgid "Set"
-#~ msgstr ""
-
-#~ msgid "Teleportation Tube @1 on '@2'"
-#~ msgstr "传送管'@1'在'@2'上"
-
-#~ msgid "Unconfigured Teleportation Tube"
-#~ msgstr "未配置的传送管道"
-
-#~ msgid "Unknown item"
-#~ msgstr "通道"
-
-#~ msgid "paused '@1' Autocrafter"
-#~ msgstr "暂停的自动工作台"
-
-#~ msgid "unconfigured Autocrafter"
-#~ msgstr "未配置的自动工作台"
-
-#~ msgid "unconfigured Autocrafter: unknown recipe"
-#~ msgstr "未配置的自动工作台: 未知配方"
+msgstr ""
