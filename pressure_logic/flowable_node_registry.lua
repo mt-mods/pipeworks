@@ -35,7 +35,7 @@ pipeworks.flowables.list.simple_nodenames = {}
 -- the neighbour is to participate in pressure balancing.
 pipeworks.flowables.list.directional = {}
 
--- simple intakes - try to absorb any adjacent water nodes
+-- simple intakes - try to absorb any adjacent fluid nodes
 pipeworks.flowables.inputs = {}
 pipeworks.flowables.inputs.list = {}
 pipeworks.flowables.inputs.nodenames = {}

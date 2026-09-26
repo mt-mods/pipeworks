@@ -316,3 +316,71 @@ if pipeworks.enable_node_breaker then
 		}
 	})
 end
+
+pipeworks.specialized_fluid_containers = {
+	register = function(self, container, fluid, remainder) -- fluid = {type = "type", amount = 1000}
+		local container_def = core.registered_items[container]
+		assert(container_def, "Container \"" .. container .. "\" doesn't exist!")
+		local remainder_def
+		if remainder then
+			remainder_def = core.registered_items[remainder]
+			assert(remainder_def, "Remainder \"" .. container .. "\" doesn't exist!")
+		end
+
+		self[container_def.name] = {remainder = remainder and remainder_def.name, fluid = table.copy(fluid)}
+		if remainder then
+			self.fill[remainder_def.name] = self.fill[remainder_def.name] or {}
+			self.fill[remainder_def.name][fluid.type] = {result = container_def.name, fluid = table.copy(fluid)}
+		end
+
+		return true
+	end,
+
+	fill = {},
+}
+
+if pipeworks.enable_autocrafter then
+
+local buckets = {}
+buckets.air   = materials.empty_bucket
+buckets.water = materials.water_bucket
+if core.get_modpath("bucket") then
+	buckets.river_water = "bucket:bucket_river_water"
+	buckets.lava = "bucket:bucket_lava"
+elseif core.get_modpath("mcl_buckets") then
+	buckets.river_water = "mcl_buckets:bucket_river_water"
+	buckets.lava = "mcl_buckets:bucket_lava"
+end
+
+if buckets.air and buckets.water then
+	local def = {
+		fluid = {type = "water", amount = 1},
+		output = ItemStack(buckets.water),
+		items = {
+			buckets.air, "", "", "", "", "", "", "", ""
+		}
+	}
+	pipeworks.fluid_recipes:register(def)
+end
+if buckets.air and buckets.lava then
+	local def = {
+		fluid = {type = "lava", amount = 1},
+		output = ItemStack(buckets.lava),
+		items = {
+			buckets.air, "", "", "", "", "", "", "", ""
+		}
+	}
+	pipeworks.fluid_recipes:register(def)
+end
+if buckets.river_water and buckets.lava then
+	local def = {
+		fluid = {type = "river_water", amount = 1},
+		output = ItemStack(buckets.river_water),
+		items = {
+			buckets.air, "", "", "", "", "", "", "", ""
+		}
+	}
+	pipeworks.fluid_recipes:register(def)
+end
+
+end

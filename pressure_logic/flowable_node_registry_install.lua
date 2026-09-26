@@ -143,7 +143,7 @@ end
 
 
 -- Register a node as a simple intake:
--- tries to absorb water source nodes from it's surroundings.
+-- tries to absorb fluid source nodes from it's surroundings.
 -- may exceed limit slightly due to needing to absorb whole nodes.
 register.intake_simple = function(nodename, maxpressure)
 	register.intake(nodename, maxpressure, pipeworks.flowlogic.check_for_liquids_v2)
@@ -157,10 +157,10 @@ end
 -- if not (the default unless auto-detected),
 -- nodes above their upper threshold have their outputfn invoked (and pressure deducted),
 -- nodes between upper and lower are left idle,
--- and nodes below lower have their cleanup fn invoked (to say remove water sources).
+-- and nodes below lower have their cleanup fn invoked (to say remove fluid sources).
 -- the upper and lower difference acts as a hysteresis to try and avoid "gaps" in the flow.
 -- if finite mode is on, upper is ignored and lower is used to determine whether to run outputfn;
--- cleanupfn is ignored in this mode as finite mode assumes something causes water to move itself.
+-- cleanupfn is ignored in this mode as finite mode assumes something causes fluid to move itself.
 register.output = function(nodename, upper, lower, outputfn, cleanupfn)
 	if pipeworks.flowables.outputs.list[nodename] then
 		error("pipeworks.flowables.outputs duplicate registration!")
