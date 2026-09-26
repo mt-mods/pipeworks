@@ -112,7 +112,7 @@ msgstr ""
 msgid "Straight-only Pipe"
 msgstr ""
 
-#: filter-injector.lua:6 filter-injector.lua:389
+#: filter-injector.lua:6 filter-injector.lua:484
 msgid "@1 Filter-Injector"
 msgstr ""
 
@@ -144,15 +144,35 @@ msgstr ""
 msgid "Exact match"
 msgstr ""
 
-#: filter-injector.lua:373
+#: filter-injector.lua:60
+msgid "Mode: Allow list"
+msgstr ""
+
+#: filter-injector.lua:60
+msgid "Mode: Deny list"
+msgstr ""
+
+#: filter-injector.lua:70
+msgid "Filtered item list"
+msgstr ""
+
+#: filter-injector.lua:77
+msgid "Count"
+msgstr ""
+
+#: filter-injector.lua:108
+msgid "Filter Template"
+msgstr ""
+
+#: filter-injector.lua:468
 msgid "Itemwise"
 msgstr ""
 
-#: filter-injector.lua:378
+#: filter-injector.lua:473
 msgid "Stackwise"
 msgstr ""
 
-#: filter-injector.lua:383
+#: filter-injector.lua:478
 msgid "Digiline"
 msgstr ""
 

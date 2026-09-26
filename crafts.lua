@@ -316,3 +316,12 @@ if pipeworks.enable_node_breaker then
 		}
 	})
 end
+
+core.register_craft({
+	output = "pipeworks:filter_template",
+	recipe = {
+		{"basic_materials:ic"},
+		{"basic_materials:plastic_sheet"},
+		{materials.mese_crystal_fragment},
+	}
+})

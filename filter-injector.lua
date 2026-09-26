@@ -42,6 +42,77 @@ local function set_filter_formspec(data, meta)
 	meta:set_string("formspec", formspec)
 end
 
+local filter_template_name = "pipeworks:filter_template"
+local filter_template_form_name = "pipeworks:configure_filter_template"
+local filter_mode_key = "pipeworks:filter_mode"
+local filter_list_key = "pipeworks:filter_list"
+local filter_count_key = "pipeworks:filter_count"
+local get_filter_template_formspec
+
+do
+	local margin = 0.25
+	local textpadding = 0.25
+	local padding = 0.25
+	local basespec = table.concat({
+		fs_helpers.prepends(margin + 8 + margin,  margin + textpadding + 0.75 + padding + textpadding + 0.75 + margin)
+	})
+	local filter_modes = {
+		S("Mode: Deny list"), S("Mode: Allow list")
+	}
+	get_filter_template_formspec = function(meta)
+		return table.concat({
+			basespec,
+			fs_helpers.field_meta(meta,
+				margin,
+				textpadding + margin,
+				8,
+				filter_list_key,
+				S("Filtered item list")
+			),
+			fs_helpers.field_meta(meta,
+				margin,
+				margin + textpadding + 0.75 + padding + textpadding,
+				4 - padding,
+				filter_count_key,
+				S("Count")
+			),
+			fs_helpers.cycling_button(meta, "button[4.25,1.75;4,0.75", filter_mode_key, filter_modes)
+		})
+	end
+end
+
+local process_filter_template_fields = function(stack, player, fields)
+	local meta = stack:get_meta()
+	fs_helpers.on_receive_fields_meta(meta, fields)
+	local list_input = fields[filter_list_key]
+	if list_input then
+		meta:set_string(filter_list_key, list_input)
+	end
+	local count_input = tonumber(fields[filter_count_key])
+	if count_input then
+		meta:set_int(filter_count_key, count_input)
+	end
+	if not fields.quit then core.show_formspec(player:get_player_name(), filter_template_form_name, get_filter_template_formspec(meta)) end
+end
+
+core.register_on_player_receive_fields(function(player, formname, fields)
+	if formname == filter_template_form_name then
+		local stack = player:get_wielded_item()
+		if stack:get_name() ~= filter_template_name then return end
+		process_filter_template_fields(stack, player, fields)
+		player:set_wielded_item(stack, true)
+	end
+end)
+
+core.register_craftitem(filter_template_name, {
+	description = S("Filter Template"),
+	stack_max = 1,
+	inventory_image = "pipeworks_filter_template.png",
+	on_use = function(itemstack, user)
+		core.show_formspec(user:get_player_name(), filter_template_form_name, get_filter_template_formspec(itemstack:get_meta()))
+	end,
+})
+
 local function punch_filter(data, filtpos, filtnode, msg)
 	local filtmeta = core.get_meta(filtpos)
 	local filtinv = filtmeta:get_inventory()
@@ -99,18 +170,19 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	local item_tags = pipeworks.sanitize_tags(filtmeta:get_string("item_tags"))
 	local filters = {}
 	if data.digiline then
-		local function add_filter(name, group, count, wear, metadata)
-			table.insert(filters, {name = name, group = group, count = tonumber(count), wear = wear, metadata = metadata})
+		local function add_filter(names, group, count, wear, metadata, invert)
+			if invert == nil then invert = false end
+			table.insert(filters, {names = names, group = group, count = tonumber(count), wear = wear, metadata = metadata, invert = invert})
 		end
 
 		local function add_itemstring_filter(filter)
 			local filterstack = ItemStack(filter)
-			local filtername = filterstack:get_name()
+			local filternames = {[filterstack:get_name()] = true}
 			local filtercount = filterstack:get_count()
 			local filterwear = string.match(filter, "%S*:%S*%s%d%s(%d)") and filterstack:get_wear()
 			local filtermetadata = string.match(filter, "%S*:%S*%s%d%s%d(%s.*)") and filterstack:get_metadata()
 
-			add_filter(filtername, nil, filtercount, filterwear, filtermetadata)
+			add_filter(filternames, nil, filtercount, filterwear, filtermetadata)
 		end
 
 		local t_msg = type(msg)
@@ -172,8 +244,14 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				return
 			end
 
-			if msg.name or msg.group or msg.count or msg.wear or msg.metadata then
-				add_filter(msg.name, msg.group, msg.count, msg.wear, msg.metadata)
+			if msg.names or msg.group or msg.count or msg.wear or msg.metadata or msg.name then
+				local names
+				if msg.name then
+					names = {[msg.name] = true}
+				else
+					names = msg.names
+				end
+				add_filter(names, msg.group, msg.count, msg.wear, msg.metadata)
 			else
 				for _, filter in ipairs(msg) do
 					local t_filter = type(filter)
@@ -192,8 +270,24 @@ local function punch_filter(data, filtpos, filtnode, msg)
 	else
 		for _, filterstack in ipairs(filtinv:get_list("main")) do
 			local filtername = filterstack:get_name()
-			local filtercount = filterstack:get_count()
-			if filtername ~= "" then table.insert(filters, {name = filtername, count = filtercount}) end
+			if filtername == filter_template_name then
+				local meta = filterstack:get_meta()
+				local raw_list = meta:get_string(filter_list_key)
+				local list = raw_list:split(",")
+				local set = {}
+				for _, v in ipairs(list) do
+					set[v:trim()] = true
+				end
+				local filtercount = meta:get_int(filter_count_key)
+				table.insert(filters, {
+					names = set,
+					count = filtercount,
+					invert = meta:get_int(filter_mode_key) == 1
+				})
+			elseif filtername ~= "" then
+				local filtercount = filterstack:get_count()
+				table.insert(filters, {names = {[filtername] = true}, count = filtercount, invert = false})
+			end
 		end
 	end
 	if #filters == 0 then table.insert(filters, "") end
@@ -226,12 +320,13 @@ local function punch_filter(data, filtpos, filtnode, msg)
 			if filterfor == "" then
 				matches = stack:get_name() ~= ""
 			else
-				local fname = filterfor.name
+				local fnames = filterfor.names
+				local blacklist = filterfor.invert
 				local fgroup = filterfor.group
 				local fwear = filterfor.wear
 				local fmetadata = filterfor.metadata
-				matches = (not fname                                             -- If there's a name filter,
-				           or stack:get_name() == fname)                         --  it must match.
+				matches = (not fnames                                           -- If there's a name filter,
+				           or (not fnames[stack:get_name()]) ~= (not blacklist))--  it must match.
 
 				          and (not fgroup                                        -- If there's a group filter,
 				               or (type(fgroup) == "string"                      --  it must be a string
