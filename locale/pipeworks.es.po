@@ -7,146 +7,148 @@ msgstr ""
 "Project-Id-Version: pipeworks\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-23 01:45+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-10-20 18:07+0000\n"
+"Last-Translator: Fdm66 <fabriziomazzeodiaz79@gmail.com>\n"
+"Language-Team: Spanish <https://translate.luanti.ch/projects/mt-mods/"
+"pipeworks/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2026.8.1\n"
 
 #: autocrafter.lua:182
 msgid "'@1' Autocrafter (@2)"
-msgstr ""
+msgstr "'@1' Autocreador (@2)"
 
 #: autocrafter.lua:315
 msgid "Unconfigured Autocrafter"
-msgstr ""
+msgstr "Autocreador sin configurar"
 
 #: autocrafter.lua:362
 msgid "Input inventory"
-msgstr ""
+msgstr "Inventario de entrada"
 
 #: autocrafter.lua:363
 msgid "Recipe"
-msgstr ""
+msgstr "Receta"
 
 #: autocrafter.lua:364
 msgid "Output preview"
-msgstr ""
+msgstr "Vista previa del resultado"
 
 #: autocrafter.lua:366
 msgid "Crafted items"
-msgstr ""
+msgstr "Objetos fabricados"
 
 #: autocrafter.lua:367 filter-injector.lua:22 tubes/signal.lua:86 tubes/teleport.lua:185 wielder.lua:18
 msgid "Digiline Channel"
-msgstr ""
+msgstr "Canal Digiline"
 
 #: autocrafter.lua:372
 msgid "Output all items"
-msgstr ""
+msgstr "Mostrar todos los elementos"
 
 #: autocrafter.lua:373
 msgid "Keep non-consumables"
-msgstr ""
+msgstr "Conserva los artículos no consumibles"
 
 #: autocrafter.lua:374
 msgid "Keep all items"
-msgstr ""
+msgstr "Conserva todos los artículos"
 
 #: autocrafter.lua:631
 msgid "Autocrafter"
-msgstr ""
+msgstr "Autocreador"
 
 #: devices.lua:143
 msgid "Pump/Intake Module"
-msgstr ""
+msgstr "Módulo de bomba/admisión"
 
 #: devices.lua:191 devices.lua:243
 msgid "Valve"
-msgstr ""
+msgstr "válvula"
 
 #: devices.lua:295
 msgid "Decorative grating"
-msgstr ""
+msgstr "Rejilla decorativa"
 
 #: devices.lua:334 devices.lua:369
 msgid "Spigot outlet"
-msgstr ""
+msgstr "Salida con espiga"
 
 #: devices.lua:434 devices.lua:458
 msgid "Airtight Pipe entry/exit"
-msgstr ""
+msgstr "Entrada/salida de tubería hermética"
 
 #: devices.lua:491
 msgid "Flow Sensor"
-msgstr ""
+msgstr "Sensor de flujo"
 
 #: devices.lua:534
 msgid "Flow sensor (on)"
-msgstr ""
+msgstr "Sensor de flujo (activado)"
 
 #: devices.lua:589
 msgid "empty"
-msgstr ""
+msgstr "vacío"
 
 #: devices.lua:594
 msgid "@1% full"
-msgstr ""
+msgstr "@1% full"
 
 #: devices.lua:600
 msgid "Expansion Tank (@1)"
-msgstr ""
+msgstr "Tanque de expansión (@1)"
 
 #: devices.lua:632
 msgid "Fluid Storage Tank (@1)"
-msgstr ""
+msgstr "Tanque de almacenamiento de fluidos (@1)"
 
 #: devices.lua:669 devices.lua:708
 msgid "Fountainhead"
-msgstr ""
+msgstr "Cabeza de fuente"
 
 #: devices.lua:762 devices.lua:788
 msgid "Straight-only Pipe"
-msgstr ""
+msgstr "Tubería exclusivamente recta"
 
 #: filter-injector.lua:6 filter-injector.lua:389
 msgid "@1 Filter-Injector"
-msgstr ""
+msgstr "@1 Inyector de filtro"
 
 #: filter-injector.lua:8
 msgid "(slot #@1 next)"
-msgstr ""
+msgstr "(espacio n.º @1 siguiente)"
 
 #: filter-injector.lua:14
 msgid "Mode: Priority"
-msgstr ""
+msgstr "Modo: Prioridad"
 
 #: filter-injector.lua:14
 msgid "Mode: Random"
-msgstr ""
+msgstr "Modo: Aleatorio"
 
 #: filter-injector.lua:14
 msgid "Mode: Round-Robin"
-msgstr ""
+msgstr "Modo: Todos contra todos"
 
 #: filter-injector.lua:24 filter-injector.lua:32
 msgid "Item Tags"
-msgstr ""
+msgstr "Etiquetas de elemento"
 
 #: filter-injector.lua:30
 msgid "Filtered items"
-msgstr ""
+msgstr "Elementos filtrados"
 
 #: filter-injector.lua:39
 msgid "Exact match"
-msgstr ""
+msgstr "Coincidencia exacta"
 
 #: filter-injector.lua:373
 msgid "Itemwise"
-msgstr ""
+msgstr "Elemento por elemento"
 
 #: filter-injector.lua:378
 msgid "Stackwise"
@@ -154,200 +156,202 @@ msgstr ""
 
 #: filter-injector.lua:383
 msgid "Digiline"
-msgstr ""
+msgstr "Línea digital"
 
 #: fs_helpers.lua:17
 msgid "Allow splitting incoming stacks from tubes"
-msgstr ""
+msgstr "Permitir dividir los lotes entrantes provenientes de tubos"
 
 #: pipes.lua:41 pipes.lua:45
 msgid "Pipe Segment"
-msgstr ""
+msgstr "Segmento de tubería"
 
 #: pipes.lua:154
 msgid "Pipe Segment (legacy)"
-msgstr ""
+msgstr "Segmento de tubería (legacy)"
 
 #: trashcan.lua:6 trashcan.lua:12 trashcan.lua:35
 msgid "Trash Can"
-msgstr ""
+msgstr "Cubo de basura"
 
 #: tubes/embedded_tube.lua:66
 msgid "Airtight steelblock embedded tube"
-msgstr ""
+msgstr "Tubo embebido en bloque de acero, hermético"
 
 #: tubes/lua.lua:915
 msgid "Lua controlled Tube"
-msgstr ""
+msgstr "Tubo controlado por Lua"
 
 #: tubes/pane_embedded_tube.lua:18
 msgid "Airtight panel embedded tube"
-msgstr ""
+msgstr "Tubo integrado en panel estanco"
 
 #: tubes/registration.lua:227
 msgid "Pneumatic tube segment (legacy)"
-msgstr ""
+msgstr "Segmento de tubo neumático (legacy)"
 
 #: tubes/routing.lua:3
 msgid "Pneumatic tube segment"
-msgstr ""
+msgstr "Segmento de tubo neumático"
 
 #: tubes/routing.lua:45
 msgid "Broken Tube"
-msgstr ""
+msgstr "Tubo roto"
 
 #: tubes/routing.lua:79
 msgid "Broken tubes may be a bit sharp. Perhaps try with a hammer?"
 msgstr ""
+"Los tubos rotos pueden estar algo afilados. ¿Quizás podrías probar con un "
+"martillo?"
 
 #: tubes/routing.lua:100
 msgid "This tube cannot be repaired."
-msgstr ""
+msgstr "Este tubo no se puede reparar."
 
 #: tubes/routing.lua:121
 msgid "High Priority Tube Segment"
-msgstr ""
+msgstr "Segmento de tubería de alta prioridad"
 
 #: tubes/routing.lua:135
 msgid "Accelerating Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático de aceleración"
 
 #: tubes/routing.lua:152
 msgid "Crossing Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático de cruce"
 
 #: tubes/routing.lua:174
 msgid "One way tube"
-msgstr ""
+msgstr "Tubo de sentido único"
 
 #: tubes/signal.lua:18
 msgid "Detecting Pneumatic Tube Segment on"
-msgstr ""
+msgstr "Detección de segmento de tubo neumático on"
 
 #: tubes/signal.lua:54
 msgid "Detecting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Detección de un segmento de tubo neumático"
 
 #: tubes/signal.lua:85
 msgid "Digiline Detecting Tube"
-msgstr ""
+msgstr "Tubo detector Digiline"
 
 #: tubes/signal.lua:89
 msgid "Digiline Detecting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático con detección Digiline"
 
 #: tubes/signal.lua:139
 msgid "Conducting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático conductor"
 
 #: tubes/signal.lua:153
 msgid "Conducting Pneumatic Tube Segment on"
-msgstr ""
+msgstr "Conducción de un segmento de tubo neumático on"
 
 #: tubes/signal.lua:177
 msgid "Digiline Conducting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático de conducción Digiline"
 
 #: tubes/signal.lua:195
 msgid "Mesecon and Digiline Conducting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático de Mesecon y Digiline"
 
 #: tubes/signal.lua:212
 msgid "Mesecon and Digiline Conducting Pneumatic Tube Segment on"
-msgstr ""
+msgstr "Mesecon y Digiline gestionan el segmento de tubo neumático on"
 
 #: tubes/sorting.lua:29
 msgid "Sorting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático de clasificación"
 
 #: tubes/sorting.lua:81
 msgid "Sorting pneumatic tube"
-msgstr ""
+msgstr "Clasificación mediante tubo neumático"
 
 #: tubes/tags.lua:8
 msgid "Separate multiple tags using commas."
-msgstr ""
+msgstr "Separa las etiquetas múltiples mediante comas."
 
 #: tubes/tags.lua:9
 msgid "Use \"<none>\" to match items without tags."
-msgstr ""
+msgstr "Utiliza «<none>» para encontrar elementos sin etiquetas."
 
 #: tubes/tags.lua:35
 msgid "Tag Sorting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático con clasificación por etiquetas"
 
 #: tubes/tags.lua:92
 msgid "Tag sorting pneumatic tube"
-msgstr ""
+msgstr "Clasificación mediante etiquetas en sistemas de tubos neumáticos"
 
 #: tubes/teleport.lua:174
 msgid "Channels are public by default"
-msgstr ""
+msgstr "Los canales son públicos de forma predeterminada"
 
 #: tubes/teleport.lua:175
 msgid "Use <player>:<channel> for fully private channels"
-msgstr ""
+msgstr "Utiliza <player>:<channel> para canales totalmente privados"
 
 #: tubes/teleport.lua:176
 msgid "Use <player>;<channel> for private receivers"
-msgstr ""
+msgstr "Utiliza <player>;<channel> para receptores privados"
 
 #: tubes/teleport.lua:181
 msgid "Teleporting Tube"
-msgstr ""
+msgstr "Tubo de teletransportación"
 
 #: tubes/teleport.lua:182
 msgid "Channel"
-msgstr ""
+msgstr "Canal"
 
 #: tubes/teleport.lua:183
 msgid "Receive"
-msgstr ""
+msgstr "Recibir"
 
 #: tubes/teleport.lua:191
 msgid "Unconfigured Teleporting Tube"
-msgstr ""
+msgstr "Tubo de teletransporte sin configurar"
 
 #: tubes/teleport.lua:195
 msgid "Teleporting Tube @1 on '@2'"
-msgstr ""
+msgstr "Tubo de teletransporte @1 en '@2'"
 
 #: tubes/teleport.lua:216
 msgid "Sorry, channel '@1' is reserved for exclusive use by @2"
-msgstr ""
+msgstr "Lo sentimos, el canal «@1» está reservado para uso exclusivo de @2"
 
 #: tubes/teleport.lua:220
 msgid "Sorry, receiving from channel '@1' is reserved for @2"
-msgstr ""
+msgstr "Lo sentimos, la recepción desde el canal '@1' está reservada para @2"
 
 #: tubes/teleport.lua:347
 msgid "Teleporting Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático con capacidad de teletransporte"
 
 #: tubes/vacuum.lua:55
 msgid "Vacuuming Pneumatic Tube Segment"
-msgstr ""
+msgstr "Segmento de tubo neumático de aspiración"
 
 #: tubes/vacuum.lua:79 tubes/vacuum.lua:83
 msgid "Adjustable Vacuuming Tube"
-msgstr ""
+msgstr "Tubo de aspiración ajustable"
 
 #: tubes/vacuum.lua:80
 msgid "Radius"
-msgstr ""
+msgstr "Radio"
 
 #: tubes/vacuum.lua:98 tubes/vacuum.lua:113
 msgid "Adjustable Vacuuming Tube (@1m)"
-msgstr ""
+msgstr "Tubo de aspiración ajustable (aprox. 1 m)"
 
 #: wielder.lua:240
 msgid "Node Breaker"
-msgstr ""
+msgstr "Rompenodos"
 
 #: wielder.lua:302
 msgid "Deployer"
-msgstr ""
+msgstr "Desplegador"
 
 #: wielder.lua:338
 msgid "Dispenser"
-msgstr ""
+msgstr "Dispensador"
