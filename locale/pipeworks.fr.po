@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: pipeworks\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-23 01:09+0000\n"
-"PO-Revision-Date: 2026-09-16 07:37+0000\n"
+"PO-Revision-Date: 2026-10-26 12:48+0000\n"
 "Last-Translator: GGepic64 <alex2019.bouhlel@laposte.net>\n"
 "Language-Team: French <https://translate.luanti.ch/projects/mt-mods/"
 "pipeworks/fr/>\n"
@@ -318,7 +318,7 @@ msgstr "Tuyau de téléportation @1 sur '@2'"
 
 #: tubes/teleport.lua:216
 msgid "Sorry, channel '@1' is reserved for exclusive use by @2"
-msgstr "Désolé, le canal '@1' est réservé exclusivement à l’utilisateur @2."
+msgstr "Désolé, le canal '@1' est réservé exclusivement à l’utilisateur @2"
 
 #: tubes/teleport.lua:220
 msgid "Sorry, receiving from channel '@1' is reserved for @2"
