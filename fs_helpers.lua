@@ -32,6 +32,17 @@ function fs_helpers.field(x, y, width, name, label, exit)
 	return s:format(x, y, width, name, label, name, exit and "_exit" or "", x + width, y, name)
 end
 
+function fs_helpers.field_meta(meta, x, y, width, name, label, exit)
+	width = width - 0.75  -- Subtract button width
+	local s = "field[%f,%f;%f,0.75;%s;%s;%s]image_button%s[%f,%f;0.75,0.75;pipeworks_checkmark.png;set_%s;]"
+	if has_i3 then
+		-- This is the only image button with a background
+		s = "style[set_"..name..";bgimg=i3_btn9.png;bgimg_hovered=i3_btn9_hovered.png;"..
+				"bgimg_pressed=i3_btn9_pressed.png;bgimg_middle=4,6]"..s
+	end
+	return s:format(x, y, width, name, label, core.formspec_escape(meta:get_string(name)), exit and "_exit" or "", x + width, y, name)
+end
+
 function fs_helpers.toggle_button(x, y, meta, name, on_off)
 	local state = meta:get_int(name) == 1 and "on" or "off"
 	name = on_off and state or "fs_helpers_toggle:"..name
@@ -62,11 +73,10 @@ function fs_helpers.cycling_button(meta, base, key, values)
 	return s:format(base, texture, next_value, key, text, addopts)
 end
 
-function fs_helpers.on_receive_fields(pos, fields)
-	local meta = core.get_meta(pos)
+function fs_helpers.on_receive_fields_meta(meta, fields)
 	for field in pairs(fields) do
 		if field:sub(1, 19) == "fs_helpers_cycling:" then
-			local value, key = field:match("^fs_helpers_cycling:(.+):(.+)$")
+			local value, key = field:match("^fs_helpers_cycling:(%d+):(.+)$")
 			value = tonumber(value)
 			if key and value then
 				meta:set_int(key, value)
@@ -78,6 +88,11 @@ function fs_helpers.on_receive_fields(pos, fields)
 			end
 		end
 	end
+end
+
+function fs_helpers.on_receive_fields(pos, fields)
+	local meta = core.get_meta(pos)
+	fs_helpers.on_receive_fields_meta(meta, fields)
 end
 
 function fs_helpers.player_inv(x, y)
