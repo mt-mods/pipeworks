@@ -132,4 +132,9 @@ if core.get_modpath("unified_inventory") and unified_inventory.registered_catego
 	unified_inventory.add_category_items("automation", pipeworks.ui_cat_tube_list)
 end
 
+if core.get_modpath("mtt") and mtt.enabled then
+	dofile(pipeworks.modpath.."/mtt/smoketests.spec.lua")
+	dofile(pipeworks.modpath.."/mtt/network.spec.lua")
+end
+
 core.log("info", "Pipeworks loaded!")
