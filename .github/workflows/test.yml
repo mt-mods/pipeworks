@@ -1,0 +1,15 @@
+name: test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: buckaroobanzay/mtt@main
+      with:
+        modname: pipeworks
+        git_dependencies: |
+          https://github.com/BuckarooBanzay/mtt
+          https://github.com/OgelGames/fakelib
+          https://github.com/mt-mods/xcompat
+          https://github.com/mt-mods/basic_materials

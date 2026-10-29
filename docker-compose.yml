@@ -1,0 +1,15 @@
+services:
+  mtt:
+    image: ghcr.io/buckaroobanzay/mtt:latest
+    volumes:
+     - "./:/github/workspace"
+    environment:
+     INPUT_MODNAME: "pipeworks"
+     INPUT_TEST_MODE: "mod"
+     INPUT_MAPGEN: "singlenode"
+     INPUT_GIT_GAME_REPO: "https://github.com/minetest/minetest_game"
+     INPUT_GIT_DEPENDENCIES: |
+      https://github.com/BuckarooBanzay/mtt
+      https://github.com/OgelGames/fakelib
+      https://github.com/mt-mods/xcompat
+      https://github.com/mt-mods/basic_materials
