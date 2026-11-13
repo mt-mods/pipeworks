@@ -75,7 +75,7 @@ local override_active = {
 		"default_furnace_side.png"..tube_entry,
 		"default_furnace_side.png"..tube_entry,
 		{
-			image = "default_furnace_front_active.png",
+			name = "default_furnace_front_active.png",
 			backface_culling = false,
 			animation = {
 				type = "vertical_frames",
